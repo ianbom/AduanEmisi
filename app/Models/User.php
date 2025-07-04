@@ -177,4 +177,29 @@ class User extends Authenticatable
     {
         return $this->hasMany(Notification::class);
     }
+
+    public function isProfileComplete(): bool
+    {
+
+        $requiredFields = [
+            'province_id',
+            'city_id',
+            'district_id',
+            'address',
+            'phone',
+            'name',
+            'email',
+
+        ];
+
+        foreach ($requiredFields as $field) {
+
+            if (empty($this->$field)) {
+                return false;
+            }
+        }
+
+
+        return true;
+    }
 }

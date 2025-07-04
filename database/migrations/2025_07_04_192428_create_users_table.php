@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('phone')->unique()->nullable();
             $table->string('profile_url')->nullable();
             $table->enum('role', ['citizen', 'community', 'admin', 'superadmin'])->default('citizen');
+            $table->text('address')->nullable();
             $table->string('name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();

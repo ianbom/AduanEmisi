@@ -15,7 +15,7 @@ import {
     User,
 } from 'lucide-react';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, router as Inertia } from '@inertiajs/react';
 
 const CitizenDashboardPage = () => {
     const [activeTab, setActiveTab] = useState('reports');
@@ -194,7 +194,7 @@ const CitizenDashboardPage = () => {
 
                     {/* Quick Actions */}
                     <div className="grid gap-4 md:grid-cols-2">
-                        <Link to="/create-report">
+                        <Link href="/report-create">
                             <Card className="h-full cursor-pointer transition-shadow hover:shadow-lg">
                                 <CardContent className="p-6 text-center">
                                     <Plus className="mx-auto mb-3 h-12 w-12 text-green-600" />
@@ -209,7 +209,7 @@ const CitizenDashboardPage = () => {
                             </Card>
                         </Link>
 
-                        <Link to="/map">
+                        <Link href="/map">
                             <Card className="h-full cursor-pointer transition-shadow hover:shadow-lg">
                                 <CardContent className="p-6 text-center">
                                     <Map className="mx-auto mb-3 h-12 w-12 text-blue-600" />

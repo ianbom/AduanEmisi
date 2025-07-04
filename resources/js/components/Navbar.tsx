@@ -15,7 +15,7 @@ const Navbar = ({
     onProfileClick,
 }: NavbarProps) => {
     const navItems = [
-        { id: 'reports', label: 'Laporan/Misi', key: 'reports' },
+        { id: 'report', label: 'Laporan', key: 'report' },
         { id: 'map', label: 'Peta', key: 'map' },
         { id: 'education', label: 'Konten Edukasi', key: 'education' },
     ];
@@ -27,7 +27,7 @@ const Navbar = ({
                     {/* Logo */}
                     <div
                         className="group flex cursor-pointer items-center"
-                        onClick={() => onNavigate('')}
+                        onClick={() => onNavigate('/homepage')}
                     >
                         <div className="mr-3 flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 transition-shadow group-hover:shadow-lg">
                             <span className="text-lg font-bold text-white">

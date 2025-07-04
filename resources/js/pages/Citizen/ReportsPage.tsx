@@ -1,32 +1,42 @@
-import MapPage from '@/components/MapPage';
 import Navbar from '@/components/Navbar';
 import NotificationSidebar from '@/components/NotificationSidebar';
+import ReportsPage from '@/components/ReportsPage';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { router as Inertia } from '@inertiajs/react';
 
-const MapPageRoute = () => {
-    const navigate = useNavigate();
+const ReportsPageRoute = () => {
+
+
     const [isNotificationOpen, setIsNotificationOpen] = useState(false);
 
     const handleNavigate = (page: string) => {
-        navigate(`/${page}`);
+        Inertia.visit(`/${page}`);
     };
 
-    const handleViewReport = (id: string) => {
-        navigate(`/report-details/${id}`);
+    const handleViewDetails = (id: string) => {
+
+        Inertia.visit(route('report.show', { report: id }));
+    };
+
+    const handleCreateReport = () => {
+
+        Inertia.visit(route('create.report'));
     };
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-white">
             <Navbar
                 onNavigate={handleNavigate}
-                currentPage="map"
+                currentPage="reports"
                 onNotificationClick={() => setIsNotificationOpen(true)}
-                onProfileClick={() => navigate('/')}
+                onProfileClick={() => Inertia.visit(route('dashboard'))}
             />
 
             <main className="pt-16">
-                <MapPage onViewReport={handleViewReport} />
+                <ReportsPage
+                    onViewDetails={handleViewDetails}
+                    onCreateReport={handleCreateReport}
+                />
             </main>
 
             <NotificationSidebar
@@ -37,4 +47,4 @@ const MapPageRoute = () => {
     );
 };
 
-export default MapPageRoute;
+export default ReportsPageRoute;

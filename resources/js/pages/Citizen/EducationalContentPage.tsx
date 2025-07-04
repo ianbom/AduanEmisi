@@ -2,27 +2,32 @@ import EducationalContentPage from '@/components/EducationalContentPage';
 import Navbar from '@/components/Navbar';
 import NotificationSidebar from '@/components/NotificationSidebar';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { router as Inertia } from '@inertiajs/react'; // Import router sebagai Inertia
 
 const EducationalContentPageRoute = () => {
-    const navigate = useNavigate();
+    // useNavigate dari react-router-dom tidak lagi diperlukan
+    // const navigate = useNavigate();
+
     const [isNotificationOpen, setIsNotificationOpen] = useState(false);
 
+    // Fungsi navigasi akan menggunakan Inertia.visit
     const handleNavigate = (page: string) => {
-        navigate(`/${page}`);
+        // Sesuaikan dengan rute Laravel Anda, bisa pakai route() helper
+        Inertia.visit(`/${page}`);
     };
 
     const handleViewContent = (id: string) => {
-        navigate(`/content-details/${id}`);
+        // Asumsikan ada rute 'content.show' di Laravel yang menerima ID konten
+        Inertia.visit(route('content.show', { content: id }));
     };
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-white">
             <Navbar
-                onNavigate={handleNavigate}
+                onNavigate={handleNavigate} // Teruskan fungsi navigasi Inertia
                 currentPage="education"
                 onNotificationClick={() => setIsNotificationOpen(true)}
-                onProfileClick={() => navigate('/')}
+                onProfileClick={() => Inertia.visit(route('dashboard'))} // Navigasi Inertia ke dashboard atau root
             />
 
             <main className="pt-16">
