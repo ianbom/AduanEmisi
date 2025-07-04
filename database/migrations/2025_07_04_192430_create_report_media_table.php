@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('report_media', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('report_id')->constrained('reports')->onDelete('cascade');
+            $table->string('media_url');
+            $table->enum('media_type', ['image', 'video']);
             $table->timestamps();
         });
     }

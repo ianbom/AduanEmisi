@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('report_votes', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('report_id')->constrained('reports')->onDelete('cascade');
+            $table->enum('vote_type', ['upvote', 'dislike']);
+            $table->unique(['user_id', 'report_id']); // Pastikan setiap user hanya bisa vote sekali per report
             $table->timestamps();
         });
     }

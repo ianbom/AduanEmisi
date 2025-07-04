@@ -13,6 +13,13 @@ return new class extends Migration
     {
         Schema::create('mission_communities', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('mission_id')->constrained('missions')->onDelete('cascade');
+            $table->foreignId('community_id')->constrained('communities')->onDelete('cascade');
+            $table->enum('status', ['requested', 'rejected', 'accepted'])->default('requested');
+            $table->timestamp('answered_at')->nullable();
+            $table->string('certificate_url')->nullable();
+            $table->timestamp('awarded_at')->nullable();
+            $table->unique(['mission_id', 'community_id']); // Satu komunitas hanya bisa terlibat sekali per misi
             $table->timestamps();
         });
     }

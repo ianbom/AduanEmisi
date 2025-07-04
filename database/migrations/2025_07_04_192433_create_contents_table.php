@@ -11,8 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('contents', function (Blueprint $table) {
+         Schema::create('contents', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('author_user_id')->constrained('users')->onDelete('cascade');
+            $table->string('title');
+            $table->text('body');
+            $table->string('content_type')->nullable(); // Misal: 'article', 'news', 'guide'
             $table->timestamps();
         });
     }

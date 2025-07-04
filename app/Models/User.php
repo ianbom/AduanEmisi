@@ -17,10 +17,8 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
+    protected $guarded = [
+        'id'
     ];
 
     /**
@@ -44,5 +42,139 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+    public function province()
+    {
+        return $this->belongsTo(Province::class);
+    }
+
+    /**
+     * Get the city that owns the user.
+     */
+    public function city()
+    {
+        return $this->belongsTo(City::class);
+    }
+
+    /**
+     * Get the subdistrict (district) that owns the user.
+     */
+    public function subdistrict()
+    {
+        return $this->belongsTo(District::class);
+    }
+
+    /**
+     * Get the community created by the user.
+     */
+    public function community()
+    {
+        return $this->hasOne(Community::class, 'user_id');
+    }
+
+    /**
+     * Get the reports reported by the user.
+     */
+    public function reports()
+    {
+        return $this->hasMany(Report::class, 'reporter_id');
+    }
+
+    /**
+     * Get the reports verified by the user.
+     */
+    public function verifiedReports()
+    {
+        return $this->hasMany(Report::class, 'verified_by_user_id');
+    }
+
+    /**
+     * Get the reports completed by the user.
+     */
+    public function completedReports()
+    {
+        return $this->hasMany(Report::class, 'completed_by_user_id');
+    }
+
+    /**
+     * The badges that belong to the user.
+     */
+    public function badges()
+    {
+        return $this->belongsToMany(Badge::class, 'user_badges');
+    }
+
+    /**
+     * Get the comments made by the user.
+     */
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+    /**
+     * Get the report votes made by the user.
+     */
+    public function reportVotes()
+    {
+        return $this->hasMany(ReportVote::class);
+    }
+
+    /**
+     * Get the donations made by the user.
+     */
+    public function donations()
+    {
+        return $this->hasMany(Donation::class);
+    }
+
+    /**
+     * Get the missions created by the user.
+     */
+    public function createdMissions()
+    {
+        return $this->hasMany(Mission::class, 'creator_user_id');
+    }
+
+    /**
+     * Get the missions assigned to the user as a volunteer.
+     */
+    public function assignedMissions()
+    {
+        return $this->hasMany(Mission::class, 'assigned_volunteer_id');
+    }
+
+    /**
+     * The missions the user volunteers in.
+     */
+    public function volunteeredMissions()
+    {
+        return $this->belongsToMany(Mission::class, 'mission_volunteers')
+                    ->withPivot('participation_status', 'is_leader', 'certificate_url', 'awarded_at')
+                    ->withTimestamps();
+    }
+
+    /**
+     * Get the mission documentation uploaded by the user.
+     */
+    public function uploadedMissionDocumentation()
+    {
+        return $this->hasMany(MissionDocumentation::class, 'uploader_user_id');
+    }
+
+    /**
+     * Get the contents authored by the user.
+     */
+    public function contents()
+    {
+        return $this->hasMany(Content::class, 'author_user_id');
+    }
+
+    /**
+     * Get the notifications for the user.
+     */
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class);
     }
 }

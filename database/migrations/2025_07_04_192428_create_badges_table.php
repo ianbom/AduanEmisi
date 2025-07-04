@@ -11,8 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('badges', function (Blueprint $table) {
+         Schema::create('badges', function (Blueprint $table) {
             $table->id();
+            $table->string('title');
+            $table->text('description')->nullable();
+            $table->string('icon_url')->nullable();
             $table->timestamps();
         });
     }

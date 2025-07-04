@@ -13,6 +13,22 @@ return new class extends Migration
     {
         Schema::create('reports', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('reporter_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('city_id')->constrained('cities')->onDelete('cascade');
+            $table->foreignId('subdistrict_id')->constrained('districts')->onDelete('cascade');
+            $table->foreignId('verified_by_user_id')->nullable()->constrained('users')->onDelete('set null');
+            $table->foreignId('completed_by_user_id')->nullable()->constrained('users')->onDelete('set null');
+            $table->string('title');
+            $table->text('description');
+            $table->string('category')->nullable(); // Pertimbangkan tabel terpisah jika kategori adalah daftar terbatas
+            $table->decimal('latitude', 10, 7)->nullable(); // Sesuaikan presisi sesuai kebutuhan
+            $table->decimal('longitude', 10, 7)->nullable(); // Sesuaikan presisi sesuai kebutuhan
+            $table->text('address')->nullable();
+            $table->enum('status', ['pending', 'verified', 'on-progress', 'rejected', 'completed'])->default('pending');
+            $table->integer('upvotes_count')->default(0);
+            $table->integer('dislikes_count')->default(0);
+            $table->timestamp('verified_at')->nullable();
+            $table->text('completion_details')->nullable();
             $table->timestamps();
         });
     }

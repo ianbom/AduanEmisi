@@ -11,8 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('community_badges', function (Blueprint $table) {
+       Schema::create('community_badges', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('community_id')->constrained('communities')->onDelete('cascade');
+            $table->foreignId('badge_id')->constrained('badges')->onDelete('cascade');
+            $table->unique(['community_id', 'badge_id']); // Mencegah duplikat badge untuk komunitas yang sama
             $table->timestamps();
         });
     }

@@ -13,6 +13,21 @@ return new class extends Migration
     {
         Schema::create('missions', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('report_id')->nullable()->constrained('reports')->onDelete('set null'); // Misi bisa terkait report atau berdiri sendiri
+            $table->foreignId('creator_user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('city_id')->constrained('cities')->onDelete('cascade');
+            $table->foreignId('subdistrict_id')->constrained('districts')->onDelete('cascade');
+            $table->string('title');
+            $table->text('description');
+            $table->decimal('latitude', 10, 7)->nullable();
+            $table->decimal('longitude', 10, 7)->nullable();
+            $table->text('address')->nullable();
+            $table->enum('status', ['open', 'on-progress', 'completed', 'cancelled'])->default('open');
+            $table->timestamp('scheduled_date')->nullable();
+            $table->timestamp('completed_at')->nullable();
+            $table->enum('assigned_to_type', ['community', 'volunteer'])->nullable();
+            $table->foreignId('assigned_volunteer_id')->nullable()->constrained('users')->onDelete('set null'); // Jika ditugaskan ke individu
+            // Tidak ada assigned_community_id langsung di sini, akan ada di Mission_Communities
             $table->timestamps();
         });
     }
