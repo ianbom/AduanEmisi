@@ -1,8 +1,8 @@
 import CitizenDashboardPage from '@/components/CitizenDashboardPage';
 import Navbar from '@/components/Navbar';
 import NotificationSidebar from '@/components/NotificationSidebar';
-import { useState } from 'react';
 import { router as Inertia, usePage } from '@inertiajs/react'; // Import router dan usePage
+import { useState } from 'react';
 
 const Index = () => {
     // useNavigate dan useLocation dari react-router-dom tidak lagi diperlukan

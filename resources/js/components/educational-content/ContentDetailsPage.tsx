@@ -37,7 +37,7 @@ const ContentDetailsPage = ({ contentId, onBack }: ContentDetailsPageProps) => {
         content: `
       <h2>Pengenalan Pengelolaan Sampah</h2>
       <p>Pengelolaan sampah rumah tangga yang baik merupakan langkah penting dalam menjaga kelestarian lingkungan. Dengan menerapkan prinsip 3R (Reduce, Reuse, Recycle), kita dapat mengurangi dampak negatif sampah terhadap lingkungan.</p>
-      
+
       <h3>1. Reduce (Mengurangi)</h3>
       <p>Langkah pertama adalah mengurangi produksi sampah dengan cara:</p>
       <ul>
@@ -107,26 +107,32 @@ const ContentDetailsPage = ({ contentId, onBack }: ContentDetailsPageProps) => {
     };
 
     return (
-        <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
-            {/* Header */}
-            <div className="mb-8">
+        <div className="px-4 py-8 mx-auto max-w-7xl sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between mb-6">
                 <Button
                     variant="ghost"
                     onClick={onBack}
-                    className="mb-4 text-gray-600 hover:text-emerald-600"
+                    className="text-gray-600 hover:text-emerald-600"
                 >
                     <ArrowLeft size={20} className="mr-2" />
                     Kembali ke Daftar Konten
                 </Button>
+                <div className="space-x-1 text-sm text-gray-500">
+                    <span className="cursor-pointer hover:underline">Home</span>
+                    <span className="cursor-pointer hover:underline">
+                        / Konten
+                    </span>{' '}
+                    /<span className="font-medium text-gray-700">Detail</span>
+                </div>
             </div>
 
             <div className="space-y-8">
                 {/* Content Header */}
                 <Card>
                     <CardContent className="p-6">
-                        <div className="mb-6 flex flex-col items-start justify-between md:flex-row">
+                        <div className="flex flex-col items-start justify-between mb-6 md:flex-row">
                             <div className="flex-1">
-                                <div className="mb-3 flex flex-wrap gap-2">
+                                <div className="flex flex-wrap gap-2 mb-3">
                                     <Badge variant="outline">
                                         {content.topic}
                                     </Badge>
@@ -166,7 +172,7 @@ const ContentDetailsPage = ({ contentId, onBack }: ContentDetailsPageProps) => {
                                 </div>
                             </div>
 
-                            <div className="mt-4 flex gap-2 md:mt-0">
+                            <div className="flex gap-2 mt-4 md:mt-0">
                                 <Button variant="outline" size="sm">
                                     <Share2 size={16} className="mr-2" />
                                     Bagikan
@@ -194,13 +200,13 @@ const ContentDetailsPage = ({ contentId, onBack }: ContentDetailsPageProps) => {
                     <CardContent className="p-6">
                         {content.type === 'Video' && (
                             <div className="mb-6">
-                                <div className="relative aspect-video overflow-hidden rounded-lg bg-gray-900">
+                                <div className="relative overflow-hidden bg-gray-900 rounded-lg aspect-video">
                                     {!isPlaying ? (
                                         <div className="relative">
                                             <img
                                                 src={content.videoUrl}
                                                 alt={content.title}
-                                                className="h-full w-full object-cover"
+                                                className="object-cover w-full h-full"
                                             />
                                             <div className="absolute inset-0 flex items-center justify-center bg-black/40">
                                                 <Button
@@ -208,7 +214,7 @@ const ContentDetailsPage = ({ contentId, onBack }: ContentDetailsPageProps) => {
                                                     onClick={() =>
                                                         setIsPlaying(true)
                                                     }
-                                                    className="h-20 w-20 rounded-full bg-white/90 hover:bg-white"
+                                                    className="w-20 h-20 rounded-full bg-white/90 hover:bg-white"
                                                 >
                                                     <Play
                                                         size={32}
@@ -218,7 +224,7 @@ const ContentDetailsPage = ({ contentId, onBack }: ContentDetailsPageProps) => {
                                             </div>
                                         </div>
                                     ) : (
-                                        <div className="flex h-full w-full items-center justify-center bg-gray-800 text-white">
+                                        <div className="flex items-center justify-center w-full h-full text-white bg-gray-800">
                                             <div className="text-center">
                                                 <Play
                                                     size={48}
@@ -267,18 +273,18 @@ const ContentDetailsPage = ({ contentId, onBack }: ContentDetailsPageProps) => {
                                 {content.relatedMedia.map((media) => (
                                     <div
                                         key={media.id}
-                                        className="flex cursor-pointer items-center space-x-4 rounded-lg border p-4 transition-colors hover:bg-gray-50"
+                                        className="flex items-center p-4 space-x-4 transition-colors border rounded-lg cursor-pointer hover:bg-gray-50"
                                     >
                                         <img
                                             src={media.thumbnail}
                                             alt={media.title}
-                                            className="h-16 w-16 rounded object-cover"
+                                            className="object-cover w-16 h-16 rounded"
                                         />
                                         <div className="flex-1">
                                             <h4 className="font-medium text-gray-900">
                                                 {media.title}
                                             </h4>
-                                            <div className="mt-1 flex items-center">
+                                            <div className="flex items-center mt-1">
                                                 {getTypeIcon(media.type)}
                                                 <span className="ml-1 text-sm text-gray-500">
                                                     {media.type}
