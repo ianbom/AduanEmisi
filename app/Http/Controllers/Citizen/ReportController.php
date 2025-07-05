@@ -10,6 +10,7 @@ use App\Services\ReportService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
@@ -240,4 +241,55 @@ class ReportController extends Controller
         ], 500);
     }
 }
+
+        public function registerAsVolunteer(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $data = $request->only(['mission_id']);
+            $isLeader = false;
+            $missionVolunteer = $this->reportService->registerAsVolunteer($data, $isLeader);
+
+            DB::commit();
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Pendaftaran sebagai relawan berhasil',
+                'data' => $missionVolunteer
+            ], 201);
+
+        } catch (Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal mendaftar sebagai relawan',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+      public function registerAsLeaderVolunteer(Request $request)
+{
+    DB::beginTransaction();
+    try {
+        $data = $request->only(['mission_id']);
+        $isLeader = true;
+        $missionVolunteer = $this->reportService->registerAsVolunteer($data, $isLeader);
+
+        DB::commit();
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Pendaftaran sebagai relawan berhasil',
+            'data' => $missionVolunteer
+        ], 201);
+
+    } catch (Exception $e) {
+        DB::rollBack();
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Gagal mendaftar sebagai relawan',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
+
 }

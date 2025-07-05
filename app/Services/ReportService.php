@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\MissionVolunteer;
 use App\Models\Report;
 use App\Models\ReportMedia;
 use Exception;
@@ -310,4 +311,17 @@ public function updateReportMedia(int $id, array $mediaData): bool
         throw new Exception('Gagal memperbarui media laporan: ' . $e->getMessage());
     }
 }
+
+    public function registerAsVolunteer($data, bool $isLeader){
+        $user = Auth::user();
+
+        $missionVolunter = MissionVolunteer::create([
+            'mission_id' => $data['mission_id'],
+            'user_id' => $user->id,
+            'is_leader' => $isLeader,
+            'status' => 'pending',
+        ]);
+        return $missionVolunter;
+    }
+
 }

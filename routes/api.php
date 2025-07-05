@@ -27,4 +27,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('comment/by-report/{id}', [CtzCommentController::class, 'getByReport']);
 
     Route::post('create-mission', [MissionController::class, 'store']);
+
+    Route::post('register-volunteer', [CtzReportController::class, 'registerAsVolunteer']);
+    Route::post('register-leader-volunteer', [CtzReportController::class, 'registerAsLeaderVolunteer']);
 });
