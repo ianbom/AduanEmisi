@@ -59,6 +59,15 @@ Route::get('/complete-profile', function () {
 
 
 
+
+Route::prefix('admin')->middleware(['auth'])->group(function () {
+
+    Route::get('/report', function(){
+        return view('admin.report.index');
+    });
+
+});
+
 // Route::middleware('auth')->group(function () {
 //     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
 //     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
