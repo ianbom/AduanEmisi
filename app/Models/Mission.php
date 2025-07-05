@@ -40,9 +40,9 @@ class Mission extends Model
     }
 
     /**
-     * Get the subdistrict (district) where the mission takes place.
+     * Get the district (district) where the mission takes place.
      */
-    public function subdistrict()
+    public function district()
     {
         return $this->belongsTo(District::class);
     }

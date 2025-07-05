@@ -51,7 +51,7 @@ interface User {
     phone: string | null;
     province_id: number | null;
     city_id: number | null;
-    subdistrict_id: number | null;
+    district_id: number | null;
     address: string | null;
 }
 
@@ -82,7 +82,7 @@ export default function CompleteProfile() {
         phone: user.phone || '',
         province_id: user.province_id || null,
         city_id: user.city_id || null,
-        subdistrict_id: user.subdistrict_id || null,
+        district_id: user.district_id || null,
         address: user.address || '',
     });
 
@@ -156,7 +156,7 @@ export default function CompleteProfile() {
             ...prev,
             province_id: id,
             city_id: null,
-            subdistrict_id: null,
+            district_id: null,
         }));
 
         setCities([]);
@@ -181,7 +181,7 @@ export default function CompleteProfile() {
         setData((prev) => ({
             ...prev,
             city_id: id,
-            subdistrict_id: null,
+            district_id: null,
         }));
 
         setDistricts([]);
@@ -382,10 +382,10 @@ export default function CompleteProfile() {
                                 Kecamatan/Kelurahan
                             </Label>
                             <Select
-                                value={data.subdistrict_id?.toString() || ''}
+                                value={data.district_id?.toString() || ''}
                                 onValueChange={(value) =>
                                     handleInputChange(
-                                        'subdistrict_id',
+                                        'district_id',
                                         Number.parseInt(value),
                                     )
                                 }
@@ -413,9 +413,9 @@ export default function CompleteProfile() {
                                     ))}
                                 </SelectContent>
                             </Select>
-                            {errors.subdistrict_id && (
+                            {errors.district_id && (
                                 <p className="text-sm text-red-600">
-                                    {errors.subdistrict_id}
+                                    {errors.district_id}
                                 </p>
                             )}
                         </div>

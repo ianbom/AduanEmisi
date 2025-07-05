@@ -13,7 +13,7 @@ interface City {
     province_id: number;
 }
 
-interface Subdistrict {
+interface district {
     id: number;
     name: string;
     city_id: number;
@@ -22,7 +22,7 @@ interface Subdistrict {
 interface PageProps {
     provinces: Province[];
     cities: City[];
-    subdistricts: Subdistrict[];
+    districts: district[];
     auth: {
         user: {
             id: number;
@@ -35,7 +35,7 @@ interface PageProps {
 interface FormData {
     province_id: string;
     city_id: string;
-    subdistrict_id: string;
+    district_id: string;
     address: string;
     phone: string;
     name: string;
@@ -43,18 +43,18 @@ interface FormData {
 }
 
 export default function CompleteProfile() {
-    const { provinces, cities, subdistricts, auth } =
+    const { provinces, cities, districts, auth } =
         usePage<PageProps>().props;
     const [filteredCities, setFilteredCities] = useState<City[]>([]);
-    const [filteredSubdistricts, setFilteredSubdistricts] = useState<
-        Subdistrict[]
+    const [filtereddistricts, setFiltereddistricts] = useState<
+        district[]
     >([]);
 
     const { data, setData, post, processing, errors, reset } =
         useForm<FormData>({
             province_id: '',
             city_id: '',
-            subdistrict_id: '',
+            district_id: '',
             address: '',
             phone: '',
             name: auth.user.name || '',
@@ -68,24 +68,24 @@ export default function CompleteProfile() {
                 (city) => city.province_id === parseInt(data.province_id),
             );
             setFilteredCities(filtered);
-            setData((prev) => ({ ...prev, city_id: '', subdistrict_id: '' }));
+            setData((prev) => ({ ...prev, city_id: '', district_id: '' }));
         } else {
             setFilteredCities([]);
         }
     }, [data.province_id, cities]);
 
-    // Filter subdistricts based on selected city
+    // Filter districts based on selected city
     useEffect(() => {
         if (data.city_id) {
-            const filtered = subdistricts.filter(
-                (subdistrict) => subdistrict.city_id === parseInt(data.city_id),
+            const filtered = districts.filter(
+                (district) => district.city_id === parseInt(data.city_id),
             );
-            setFilteredSubdistricts(filtered);
-            setData((prev) => ({ ...prev, subdistrict_id: '' }));
+            setFiltereddistricts(filtered);
+            setData((prev) => ({ ...prev, district_id: '' }));
         } else {
-            setFilteredSubdistricts([]);
+            setFiltereddistricts([]);
         }
-    }, [data.city_id, subdistricts]);
+    }, [data.city_id, districts]);
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
@@ -300,23 +300,23 @@ export default function CompleteProfile() {
 
                                     <div>
                                         <label
-                                            htmlFor="subdistrict_id"
+                                            htmlFor="district_id"
                                             className="block mb-1 text-sm font-medium text-gray-700"
                                         >
                                             Kecamatan *
                                         </label>
                                         <select
-                                            id="subdistrict_id"
-                                            value={data.subdistrict_id}
+                                            id="district_id"
+                                            value={data.district_id}
                                             onChange={(e) =>
                                                 setData(
-                                                    'subdistrict_id',
+                                                    'district_id',
                                                     e.target.value,
                                                 )
                                             }
                                             disabled={!data.city_id}
                                             className={`w-full rounded-lg border px-3 py-2 transition-colors focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed disabled:bg-gray-100 ${
-                                                errors.subdistrict_id
+                                                errors.district_id
                                                     ? 'border-red-500'
                                                     : 'border-gray-300'
                                             }`}
@@ -324,20 +324,20 @@ export default function CompleteProfile() {
                                             <option value="">
                                                 Pilih Kecamatan
                                             </option>
-                                            {filteredSubdistricts.map(
-                                                (subdistrict) => (
+                                            {filtereddistricts.map(
+                                                (district) => (
                                                     <option
-                                                        key={subdistrict.id}
-                                                        value={subdistrict.id}
+                                                        key={district.id}
+                                                        value={district.id}
                                                     >
-                                                        {subdistrict.name}
+                                                        {district.name}
                                                     </option>
                                                 ),
                                             )}
                                         </select>
-                                        {errors.subdistrict_id && (
+                                        {errors.district_id && (
                                             <p className="mt-1 text-sm text-red-600">
-                                                {errors.subdistrict_id}
+                                                {errors.district_id}
                                             </p>
                                         )}
                                     </div>
