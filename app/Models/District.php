@@ -14,11 +14,11 @@ class District extends Model
     }
 
     /**
-     * Get the users for the district (subdistrict).
+     * Get the users for the district (district).
      */
     public function users()
     {
-        return $this->hasMany(User::class, 'subdistrict_id');
+        return $this->hasMany(User::class, 'district_id');
     }
 
     /**
@@ -26,7 +26,7 @@ class District extends Model
      */
     public function reports()
     {
-        return $this->hasMany(Report::class, 'subdistrict_id');
+        return $this->hasMany(Report::class, 'district_id');
     }
 
     /**
@@ -34,6 +34,6 @@ class District extends Model
      */
     public function missions()
     {
-        return $this->hasMany(Mission::class, 'subdistrict_id');
+        return $this->hasMany(Mission::class, 'district_id');
     }
 }

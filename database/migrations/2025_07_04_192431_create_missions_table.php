@@ -15,8 +15,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('report_id')->nullable()->constrained('reports')->onDelete('set null'); // Misi bisa terkait report atau berdiri sendiri
             $table->foreignId('creator_user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('province_id')->nullable()->constrained('provinces')->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignId('city_id')->constrained('cities')->onDelete('cascade');
-            $table->foreignId('subdistrict_id')->constrained('districts')->onDelete('cascade');
+            $table->foreignId('district_id')->constrained('districts')->onDelete('cascade');
             $table->string('title');
             $table->text('description');
             $table->decimal('latitude', 10, 7)->nullable();
@@ -27,7 +28,6 @@ return new class extends Migration
             $table->timestamp('completed_at')->nullable();
             $table->enum('assigned_to_type', ['community', 'volunteer'])->nullable();
             $table->foreignId('assigned_volunteer_id')->nullable()->constrained('users')->onDelete('set null'); // Jika ditugaskan ke individu
-            // Tidak ada assigned_community_id langsung di sini, akan ada di Mission_Communities
             $table->timestamps();
         });
     }

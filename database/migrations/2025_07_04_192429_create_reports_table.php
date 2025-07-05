@@ -14,8 +14,9 @@ return new class extends Migration
         Schema::create('reports', function (Blueprint $table) {
             $table->id();
             $table->foreignId('reporter_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('province_id')->nullable()->constrained('provinces')->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignId('city_id')->constrained('cities')->onDelete('cascade');
-            $table->foreignId('subdistrict_id')->constrained('districts')->onDelete('cascade');
+            $table->foreignId('district_id')->constrained('districts')->onDelete('cascade');
             $table->foreignId('verified_by_user_id')->nullable()->constrained('users')->onDelete('set null');
             $table->foreignId('completed_by_user_id')->nullable()->constrained('users')->onDelete('set null');
             $table->string('title');

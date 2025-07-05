@@ -21,7 +21,7 @@ export interface ProfileFormData {
     phone: string;
     province_id: number | null;
     city_id: number | null;
-    subdistrict_id: number | null;
+    district_id: number | null;
     address: string;
 }
 

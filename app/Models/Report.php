@@ -22,6 +22,14 @@ class Report extends Model
         return $this->belongsTo(User::class, 'reporter_id');
     }
 
+    public function verifiedByUser(){
+        return $this->belongsTo(User::class, 'verified_by_user_id');
+    }
+
+    public function completedByUser(){
+        return $this->belongsTo(User::class, 'completed_by_user_id');
+    }
+
     /**
      * Get the city where the report occurred.
      */
@@ -31,9 +39,9 @@ class Report extends Model
     }
 
     /**
-     * Get the subdistrict (district) where the report occurred.
+     * Get the district (district) where the report occurred.
      */
-    public function subdistrict()
+    public function district()
     {
         return $this->belongsTo(District::class);
     }

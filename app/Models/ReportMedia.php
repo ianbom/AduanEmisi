@@ -20,4 +20,29 @@ class ReportMedia extends Model
     {
         return $this->belongsTo(Report::class);
     }
+
+    public function isImage(): bool
+    {
+        return $this->media_type === 'image';
+    }
+
+    /**
+     * Check if media is a video
+     */
+    public function isVideo(): bool
+    {
+        return $this->media_type === 'video';
+    }
+
+    /**
+     * Get full URL for media
+     */
+    public function getFullUrlAttribute(): string
+    {
+        if (filter_var($this->media_url, FILTER_VALIDATE_URL)) {
+            return $this->media_url;
+        }
+
+        return asset('storage/' . $this->media_url);
+    }
 }
