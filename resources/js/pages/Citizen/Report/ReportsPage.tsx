@@ -1,20 +1,22 @@
 import Navbar from '@/components/Navbar';
 import NotificationSidebar from '@/components/NotificationSidebar';
-import ReportDetailsPage from '@/components/ReportDetailsPage';
+import ReportsPage from '@/components/report/ReportsPage';
+import { router as Inertia } from '@inertiajs/react';
 import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
 
-const ReportDetailsPageRoute = () => {
-    const navigate = useNavigate();
-    const { id } = useParams<{ id: string }>();
+const ReportsPageRoute = () => {
     const [isNotificationOpen, setIsNotificationOpen] = useState(false);
 
     const handleNavigate = (page: string) => {
-        navigate(`/${page}`);
+        Inertia.visit(`/${page}`);
     };
 
-    const handleBack = () => {
-        navigate('/reports');
+    const handleViewDetails = (id: string) => {
+        Inertia.visit(route('report.show', { report: id }));
+    };
+
+    const handleCreateReport = () => {
+        Inertia.visit(route('create.report'));
     };
 
     return (
@@ -23,11 +25,14 @@ const ReportDetailsPageRoute = () => {
                 onNavigate={handleNavigate}
                 currentPage="reports"
                 onNotificationClick={() => setIsNotificationOpen(true)}
-                onProfileClick={() => navigate('/')}
+                onProfileClick={() => Inertia.visit(route('dashboard'))}
             />
 
             <main className="pt-16">
-                <ReportDetailsPage reportId={id || '1'} onBack={handleBack} />
+                <ReportsPage
+                    onViewDetails={handleViewDetails}
+                    onCreateReport={handleCreateReport}
+                />
             </main>
 
             <NotificationSidebar
@@ -38,4 +43,4 @@ const ReportDetailsPageRoute = () => {
     );
 };
 
-export default ReportDetailsPageRoute;
+export default ReportsPageRoute;

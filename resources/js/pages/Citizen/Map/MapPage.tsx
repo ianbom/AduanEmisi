@@ -1,8 +1,8 @@
-import MapPage from '@/components/MapPage';
+import MapPage from '@/components/map/MapPage';
 import Navbar from '@/components/Navbar';
 import NotificationSidebar from '@/components/NotificationSidebar';
-import { useState } from 'react';
 import { router as Inertia } from '@inertiajs/react'; // Import router sebagai Inertia
+import { useState } from 'react';
 
 const MapPageRoute = () => {
     // useNavigate dari react-router-dom tidak lagi diperlukan
