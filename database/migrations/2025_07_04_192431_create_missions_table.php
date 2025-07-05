@@ -20,8 +20,8 @@ return new class extends Migration
             $table->foreignId('district_id')->constrained('districts')->onDelete('cascade');
             $table->string('title');
             $table->text('description');
-            $table->decimal('latitude', 10, 7)->nullable();
-            $table->decimal('longitude', 10, 7)->nullable();
+            $table->float('latitude')->nullable();
+            $table->float('longitude')->nullable();
             $table->text('address')->nullable();
             $table->enum('status', ['open', 'on-progress', 'completed', 'cancelled'])->default('open');
             $table->timestamp('scheduled_date')->nullable();
