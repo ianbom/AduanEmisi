@@ -79,7 +79,7 @@ const CommentUploadCard = () => {
                 preview: null,
             };
 
-            // Create preview untuk gambar
+        
             if (file.type.startsWith('image/')) {
                 const reader = new FileReader();
                 reader.onload = (e) => {
@@ -123,11 +123,11 @@ const CommentUploadCard = () => {
             return;
         }
 
-        // Di sini Anda bisa menangani pengiriman data ke backend
+
         console.log('Comment:', comment);
         console.log('Files:', files);
 
-        // Reset form
+
         setComment('');
         setFiles([]);
     };
@@ -156,7 +156,7 @@ const CommentUploadCard = () => {
                             {files.map((file) => (
                                 <div key={file.id} className="relative">
                                     {file.type.startsWith('image/') ? (
-                                        // Preview gambar
+
                                         <div className="relative inline-block max-w-full">
                                             {file.preview ? (
                                                 <img
@@ -182,7 +182,7 @@ const CommentUploadCard = () => {
                                             </button>
                                         </div>
                                     ) : file.type.startsWith('video/') ? (
-                                        // Preview video (nama file)
+
                                         <div className="flex items-center justify-between p-3 border border-gray-200 rounded-lg bg-gray-50">
                                             <div className="flex items-center space-x-3">
                                                 <div className="flex-shrink-0">
@@ -212,7 +212,7 @@ const CommentUploadCard = () => {
                                             </button>
                                         </div>
                                     ) : (
-                                        // Preview file lainnya
+
                                         <div className="flex items-center justify-between p-3 border border-gray-200 rounded-lg bg-gray-50">
                                             <div className="flex items-center space-x-3">
                                                 <div className="flex-shrink-0">
