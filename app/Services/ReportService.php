@@ -9,7 +9,7 @@ use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
-class ReportService
+class ReportService extends Service
 {
 
     public function __construct()
@@ -323,5 +323,88 @@ public function updateReportMedia(int $id, array $mediaData): bool
         ]);
         return $missionVolunter;
     }
+
+
+    public function getReportByFilter($filters)
+{
+    $allowedFilters = [
+        'reports.status'      => 'value',
+        'reports.city_id'     => 'value',
+        'reports.district_id' => 'value',
+        'reports.category'    => 'value',
+        'reports.created_at'  => 'date',
+        'reports.verified_at' => 'date',
+        'reports.title'       => 'like',
+        'reports.address'     => 'like',
+    ];
+
+    $selectColumns = [
+       'reports.*',
+       'cities.name as city_name',
+       'districts.name as district_name',
+       'reporter.name as reporter_name',
+    ];
+
+    $query = Report::select($selectColumns)
+        // PERBAIKAN: Sesuaikan join untuk tabel 'reports'
+        ->join('cities', 'reports.city_id', '=', 'cities.id')
+        ->join('districts', 'reports.district_id', '=', 'districts.id')
+        ->join('users as reporter', 'reports.reporter_id', '=', 'reporter.id') // Join untuk mendapatkan nama pelapor
+        ->orderBy('reports.id', 'desc');
+
+
+    $query = $this->applyFilters($query, $filters, $allowedFilters);
+
+    $query->with([
+        'city',
+        'district',
+        'reporter'
+    ]);
+
+    return $query->get();
+}
+
+public function buildFilter($request)
+{
+    $filters = [];
+
+    if ($request->filled('status')) {
+        $filters['reports.status'] = $request->input('status');
+    }
+    if ($request->filled('city_id')) {
+        $filters['reports.city_id'] = $request->input('city_id');
+    }
+    if ($request->filled('district_id')) {
+        $filters['reports.district_id'] = $request->input('district_id');
+    }
+
+    if ($request->filled('category')) {
+        $filters['reports.category'] = $request->input('category');
+    }
+
+    if ($request->filled('search')) {
+
+        $filters['reports.title'] = $request->input('search');
+    }
+
+    if ($request->filled('created_from') && $request->filled('created_to')) {
+        $filters['reports.created_at'] = [
+            'start' => $request->input('created_from'),
+            'end'   => $request->input('created_to')
+        ];
+    }
+
+
+    if ($request->filled('verified_from') && $request->filled('verified_to')) {
+        $filters['reports.verified_at'] = [
+            'start' => $request->input('verified_from'),
+            'end'   => $request->input('verified_to')
+        ];
+    }
+
+    return $filters;
+}
+
+
 
 }
