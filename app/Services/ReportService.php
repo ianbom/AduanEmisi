@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Mission;
 use App\Models\MissionVolunteer;
 use App\Models\Report;
 use App\Models\ReportMedia;
@@ -154,7 +155,7 @@ class ReportService extends Service
 
 
 
-    public function updateStatus(int $id, string $status, ?int $userId = null, ?string $completionDetails = null): bool
+    public function updateStatus(int $id, string $status, ?int $userId = null, ?string $completionDetails = null, ?string $assignedType = null): bool
     {
         try {
             DB::beginTransaction();
@@ -165,6 +166,7 @@ class ReportService extends Service
             if ($status === 'verified') {
                 $updateData['verified_by_user_id'] = $userId;
                 $updateData['verified_at'] = now();
+
             } elseif ($status === 'completed') {
                 $updateData['completed_by_user_id'] = $userId;
                 $updateData['completion_details'] = $completionDetails;
@@ -178,6 +180,17 @@ class ReportService extends Service
             DB::rollback();
             throw new Exception('Gagal mengupdate status laporan: ' . $e->getMessage());
         }
+    }
+
+    private function approveAndMakeReportMission($reportId, $assignedType){
+
+        Mission::create([
+            'report_id' => $reportId,
+            'creator_user_id' => Auth::id(),
+            'assigned_to_type' => $assignedType,
+            'status' => 'open',
+        ]);
+
     }
 
     public function updateReport(int $id, array $data): ?Report
