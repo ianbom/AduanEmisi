@@ -18,8 +18,8 @@ return new class extends Migration
             $table->foreignId('province_id')->nullable()->constrained('provinces')->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignId('city_id')->constrained('cities')->onDelete('cascade');
             $table->foreignId('district_id')->constrained('districts')->onDelete('cascade');
-            $table->string('title');
-            $table->text('description');
+            $table->string('title')->nullable();
+            $table->text('description')->nullable();
             $table->float('latitude')->nullable();
             $table->float('longitude')->nullable();
             $table->text('address')->nullable();

@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateMissionRequest;
+use App\Models\City;
+use App\Models\District;
 use App\Services\MissionServices;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -72,30 +74,14 @@ class MissionController extends Controller
     public function index(Request $request)
     {
         try {
-            $filters = $request->only([
-                'status', 'city_id', 'district_id', 'assigned_to_type',
-                'creator_user_id', 'assigned_volunteer_id', 'search',
-                'date_from', 'date_to'
-            ]);
+        $filters = $this->missionService->buildFilter($request);
 
-            $perPage = $request->query('per_page', 10);
-            $missions = $this->missionService->getMissions($filters, $perPage);
+        $missions = $this->missionService->getMissionByFilters($filters);
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Misi berhasil diambil',
-                'data' => [
-                    'missions' => $missions->items(),
-                    'pagination' => [
-                        'current_page' => $missions->currentPage(),
-                        'per_page' => $missions->perPage(),
-                        'total' => $missions->total(),
-                        'last_page' => $missions->lastPage(),
-                        'from' => $missions->firstItem(),
-                        'to' => $missions->lastItem(),
-                    ]
-                ]
-            ]);
+        $cities = City::all();
+        $districts = District::all();
+
+        return view('admin.missions.index', ['missions' => $missions, 'cities' => $cities, 'districts' => $districts]);
 
         } catch (\Exception $e) {
             return response()->json([

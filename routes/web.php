@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Admin\MissionController as AdmMissionController;
+use App\Http\Controllers\Admin\ReportController as AdmReportController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -60,12 +62,10 @@ Route::get('/complete-profile', function () {
 
 
 
-Route::prefix('admin')->middleware(['auth'])->group(function () {
+Route::prefix('admin')->as('admin.')->middleware(['auth'])->group(function () {
 
-    Route::get('/report', function(){
-        return view('admin.report.index');
-    });
-
+    Route::resource('missions', AdmMissionController::class);
+    Route::resource('reports', AdmReportController::class);
 });
 
 // Route::middleware('auth')->group(function () {

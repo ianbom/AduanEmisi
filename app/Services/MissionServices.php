@@ -5,17 +5,18 @@ namespace App\Services;
 use App\Models\Mission;
 use App\Models\Report;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
-class MissionServices
+class MissionServices extends Service
 {
     /**
      * Create a new class instance.
      */
-    public function __construct()
+    public function __construct(Mission $mission)
     {
-        //
+        parent::__construct($mission);
     }
 
     public function createMission(array $data): Mission
@@ -101,6 +102,87 @@ class MissionServices
         return $query->orderBy('created_at', 'desc')->paginate($perPage);
     }
 
+     public function getMissionByFilters(array $filters = []) : Collection
+    {
+        $allowedFilters = [
+          'missions.city_id' => 'value',
+            'missions.district_id' => 'value',
+            'missions.status' => 'value',
+            'missions.assigned_to_type' => 'value',
+            'missions.scheduled_date' => 'date',
+            'missions.created_at' => 'date',
+            'missions.completed_at' => 'date',
+            'missions.address' => 'like',
+        ];
+
+        $selectColumns = [
+           'missions.*',
+
+        ];
+
+        $query = Mission::select($selectColumns)
+        ->join('districts', 'missions.district_id' , '=', 'districts.id')
+        // ->join('kota', 'users.id_kota' , '=', 'kota.id_kota')
+        ->join('cities', 'missions.city_id' , '=', 'cities.id')
+            ->orderBy('missions.id', 'desc');
+
+        $query = $this->applyFilters($query, $filters, $allowedFilters);
+
+        $query->with([
+            'city', 'district'
+        ]);
+
+        return $query->get();
+    }
+
+        public function buildFilter($request)
+    {
+    $filters = [];
+
+    // Filter berdasarkan nilai (value) & pencarian (like)
+    if ($request->filled('status')) {
+        $filters['missions.status'] = $request->input('status');
+    }
+    if ($request->filled('city_id')) {
+        $filters['missions.city_id'] = $request->input('city_id');
+    }
+    if ($request->filled('district_id')) {
+        $filters['missions.district_id'] = $request->input('district_id');
+    }
+    if ($request->filled('assigned_to_type')) {
+        $filters['missions.assigned_to_type'] = $request->input('assigned_to_type');
+    }
+    if ($request->filled('search')) {
+        // 'search' dari request akan memfilter kolom 'address'
+        $filters['missions.address'] = $request->input('search');
+    }
+
+    // Filter berdasarkan rentang tanggal (date range)
+    if ($request->filled('date_from') && $request->filled('date_to')) {
+        $filters['missions.scheduled_date'] = [
+            'start' => $request->input('date_from'),
+            'end'   => $request->input('date_to')
+        ];
+    }
+
+    // Menambahkan filter tanggal lain yang ada di allowedFilters
+    if ($request->filled('created_from') && $request->filled('created_to')) {
+        $filters['missions.created_at'] = [
+            'start' => $request->input('created_from'),
+            'end'   => $request->input('created_to')
+        ];
+    }
+
+    if ($request->filled('completed_from') && $request->filled('completed_to')) {
+        $filters['missions.completed_at'] = [
+            'start' => $request->input('completed_from'),
+            'end'   => $request->input('completed_to')
+        ];
+    }
+
+    return $filters;
+}
+
     public function updateMissionStatus(int $missionId, string $status): Mission
     {
         $mission = Mission::findOrFail($missionId);
@@ -121,6 +203,8 @@ class MissionServices
 
         return $mission;
     }
+
+
 
     // public function assignVolunteer(int $missionId, int $volunteerId)
     // {

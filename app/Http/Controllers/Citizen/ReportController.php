@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ProfileRequest;
 use App\Http\Requests\ReportRequest;
 use App\Http\Requests\UpdateReportRequest;
+use App\Jobs\NotificationJob;
 use App\Services\ReportService;
 use Exception;
 use Illuminate\Http\Request;
@@ -25,16 +26,17 @@ class ReportController extends Controller
     }
     public function store(ReportRequest $request)
     {
+        DB::beginTransaction();
         try {
             // Debug log
             Log::info('Store method called', [
-                'user_id' => auth()->id(),
+                'user_id' => Auth::id(),
                 'request_data' => $request->all(),
                 'validated_data' => $request->validated()
             ]);
 
             // Cek apakah user sudah login
-            if (!auth()->check()) {
+            if (!Auth::check()) {
                 Log::warning('User not authenticated in store method');
                 return response()->json([
                     'status' => 'error',
@@ -46,12 +48,20 @@ class ReportController extends Controller
 
             Log::info('Report created successfully', ['report_id' => $report->id]);
 
+            NotificationJob::dispatch(
+                'Laporan Baru Telah Dibuat',
+                'Laporan anda telah berhasil dibuat. Silakan cek detail laporan Anda.',
+                $report->reporter_id,
+                'report'
+            );
+            DB::commit();
             return response()->json([
                 'status' => 'success',
                 'message' => 'Laporan berhasil dibuat',
                 'data' => $report
             ], 201);
         } catch (\Exception $e) {
+            DB::rollBack();
             Log::error('Error creating report', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
@@ -117,7 +127,7 @@ class ReportController extends Controller
     {
         try {
             $filters = $request->only(['status', 'city_id', 'district_id', 'category', 'search']);
-            $filters['reporter_id'] = auth()->id();
+            $filters['reporter_id'] = Auth::id();
             $perPage = $request->get('per_page', 15);
 
             $reports = $this->reportService->getReports($filters, $perPage);
@@ -141,14 +151,14 @@ class ReportController extends Controller
     try {
         // Debug log
         Log::info('Update method called', [
-            'user_id' => auth()->id(),
+            'user_id' => Auth::id(),
             'report_id' => $id,
             'request_data' => $request->all(),
             'validated_data' => $request->validated()
         ]);
 
         // Cek apakah user sudah login
-        if (!auth()->check()) {
+        if (!Auth::check() ) {
             Log::warning('User not authenticated in update method');
             return response()->json([
                 'status' => 'error',
@@ -202,7 +212,7 @@ class ReportController extends Controller
         ]);
 
         // Cek apakah user sudah login
-        if (!auth()->check()) {
+        if (!Auth::check()) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'User tidak terautentikasi'
