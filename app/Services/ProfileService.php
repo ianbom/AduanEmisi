@@ -10,12 +10,9 @@ class ProfileService
     /**
      * Create a new class instance.
      */
-    public function __construct()
-    {
+    public function __construct() {}
 
-    }
-
-   public function updateProfile(array $data)
+    public function updateProfile(array $data)
     {
         $user = Auth::user();
 

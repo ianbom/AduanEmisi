@@ -3,12 +3,14 @@ import NotificationSidebar from '@/components/NotificationSidebar';
 import ReportDetailsPage from '@/components/report/ReportDetailsPage';
 import { useState } from 'react';
 // import { useNavigate, useParams } from 'react-router-dom';
-import { useParams } from 'react-router-dom';
+import { usePage } from '@inertiajs/react';
 
 const ReportDetailsPageRoute = () => {
     // const navigate = useNavigate();
-    const { id } = useParams<{ id: string }>();
+    // const { id } = useParams<{ id: string }>();
     const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+    const { props } = usePage();
+    const report = (props as any).report;
 
     // const handleNavigate = (page: string) => {
     //     navigate(`/${page}`);
@@ -26,7 +28,7 @@ const ReportDetailsPageRoute = () => {
             />
 
             <main className="pt-16">
-                <ReportDetailsPage reportId={id || '1'} onBack={() => {}} />
+                <ReportDetailsPage report={report} onBack={() => {}} />
             </main>
 
             <NotificationSidebar

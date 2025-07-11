@@ -13,7 +13,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Models\Province;
+use App\Models\City;
+use App\Models\District;
 use Throwable;
+use Inertia\Inertia;
 
 class ReportController extends Controller
 {
@@ -24,18 +28,24 @@ class ReportController extends Controller
     {
         $this->reportService = $reportService;
     }
+    public function create()
+    {
+        $provinces = Province::with('cities.districts')->get();
+
+        return Inertia::render('Citizen/Report/CreateReportPage', [
+            'provinces' => $provinces
+        ]);
+    }
+
     public function store(ReportRequest $request)
     {
         DB::beginTransaction();
         try {
-            // Debug log
             Log::info('Store method called', [
                 'user_id' => Auth::id(),
                 'request_data' => $request->all(),
                 'validated_data' => $request->validated()
             ]);
-
-            // Cek apakah user sudah login
             if (!Auth::check()) {
                 Log::warning('User not authenticated in store method');
                 return response()->json([
@@ -45,7 +55,6 @@ class ReportController extends Controller
             }
 
             $report = $this->reportService->createReport($request->validated());
-
             Log::info('Report created successfully', ['report_id' => $report->id]);
 
             NotificationJob::dispatch(
@@ -60,7 +69,7 @@ class ReportController extends Controller
                 'message' => 'Laporan berhasil dibuat',
                 'data' => $report
             ], 201);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             DB::rollBack();
             Log::error('Error creating report', [
                 'error' => $e->getMessage(),
@@ -74,21 +83,45 @@ class ReportController extends Controller
             ], 500);
         }
     }
+    public function viewMyReportsPage()
+    {
+        $filters = request()->only(['status', 'city_id', 'district_id', 'category', 'search']);
+        $filters['reporter_id'] = Auth::id();
+        $perPage = request()->get('per_page', 15);
+
+        $reports = $this->reportService->getReports($filters, $perPage);
+
+        return Inertia::render('Citizen/Report/ReportsPage', [
+            'reports' => $reports,
+            'myReports' => true
+
+        ]);
+    }
+    public function viewAllReportsPage()
+    {
+        $filters = request()->only(['status', 'city_id', 'district_id', 'category', 'search']);
+        $perPage = request()->get('per_page', 15);
+
+        $reports = $this->reportService->getReports($filters, $perPage);
+
+        return Inertia::render('Citizen/Report/ReportsPage', [
+            'reports' => $reports,
+            'myReports' => false,
+        ]);
+    }
 
     public function index(Request $request)
     {
         try {
             $filters = $request->only(['status', 'city_id', 'district_id', 'category', 'reporter_id', 'search']);
             $perPage = $request->get('per_page', 15);
-
             $reports = $this->reportService->getReports($filters, $perPage);
-
             return response()->json([
                 'status' => 'success',
                 'message' => 'Data laporan berhasil diambil',
                 'data' => $reports
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Gagal mengambil data laporan',
@@ -108,13 +141,10 @@ class ReportController extends Controller
                     'message' => 'Laporan tidak ditemukan'
                 ], 404);
             }
-
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Data laporan berhasil diambil',
-                'data' => $report
+            return Inertia::render('Citizen/Report/ReportDetailsPage', [
+                'report' => $report
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Gagal mengambil data laporan',
@@ -137,7 +167,7 @@ class ReportController extends Controller
                 'message' => 'Data laporan Anda berhasil diambil',
                 'data' => $reports
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Gagal mengambil data laporan',
@@ -147,112 +177,110 @@ class ReportController extends Controller
     }
 
     public function update(UpdateReportRequest $request, int $id)
-{
-    try {
-        // Debug log
-        Log::info('Update method called', [
-            'user_id' => Auth::id(),
-            'report_id' => $id,
-            'request_data' => $request->all(),
-            'validated_data' => $request->validated()
-        ]);
+    {
+        try {
+            // Debug log
+            Log::info('Update method called', [
+                'user_id' => Auth::id(),
+                'report_id' => $id,
+                'request_data' => $request->all(),
+                'validated_data' => $request->validated()
+            ]);
 
-        // Cek apakah user sudah login
-        if (!Auth::check() ) {
-            Log::warning('User not authenticated in update method');
+            // Cek apakah user sudah login
+            if (!Auth::check()) {
+                Log::warning('User not authenticated in update method');
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'User tidak terautentikasi'
+                ], 401);
+            }
+
+            $report = $this->reportService->updateReport($id, $request->validated());
+
+            if (!$report) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Laporan tidak ditemukan atau Anda tidak memiliki akses'
+                ], 404);
+            }
+
+            Log::info('Report updated successfully', ['report_id' => $report->id]);
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Laporan berhasil diperbarui',
+                'data' => $report
+            ], 200);
+        } catch (Exception $e) {
+            Log::error('Error updating report', [
+                'report_id' => $id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
             return response()->json([
                 'status' => 'error',
-                'message' => 'User tidak terautentikasi'
-            ], 401);
+                'message' => 'Gagal memperbarui laporan',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-        $report = $this->reportService->updateReport($id, $request->validated());
-
-        if (!$report) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Laporan tidak ditemukan atau Anda tidak memiliki akses'
-            ], 404);
-        }
-
-        Log::info('Report updated successfully', ['report_id' => $report->id]);
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Laporan berhasil diperbarui',
-            'data' => $report
-        ], 200);
-
-    } catch (\Exception $e) {
-        Log::error('Error updating report', [
-            'report_id' => $id,
-            'error' => $e->getMessage(),
-            'trace' => $e->getTraceAsString()
-        ]);
-
-        return response()->json([
-            'status' => 'error',
-            'message' => 'Gagal memperbarui laporan',
-            'error' => $e->getMessage()
-        ], 500);
-    }
     }
 
     public function updateMedia(Request $request, int $id)
-{
-    try {
-        // Validasi request untuk media
-        $request->validate([
-            'media' => 'sometimes|array',
-            'media.*' => 'file|mimes:jpg,jpeg,png,gif,webp,mp4,mov,avi,mkv,wmv|max:10240', // 10MB max
-            'media_urls' => 'sometimes|array',
-            'media_urls.*' => 'url',
-            'media_types' => 'sometimes|array',
-            'media_types.*' => 'in:image,video',
-        ]);
+    {
+        try {
+            // Validasi request untuk media
+            $request->validate([
+                'media' => 'sometimes|array',
+                'media.*' => 'file|mimes:jpg,jpeg,png,gif,webp,mp4,mov,avi,mkv,wmv|max:10240', // 10MB max
+                'media_urls' => 'sometimes|array',
+                'media_urls.*' => 'url',
+                'media_types' => 'sometimes|array',
+                'media_types.*' => 'in:image,video',
+            ]);
 
-        // Cek apakah user sudah login
-        if (!Auth::check()) {
+            // Cek apakah user sudah login
+            if (!Auth::check()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'User tidak terautentikasi'
+                ], 401);
+            }
+
+            $success = $this->reportService->updateReportMedia($id, $request->all());
+
+            if (!$success) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Laporan tidak ditemukan atau Anda tidak memiliki akses'
+                ], 404);
+            }
+
+            // Ambil data report yang sudah diupdate
+            $report = $this->reportService->getReportById($id);
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Media laporan berhasil diperbarui',
+                'data' => $report
+            ], 200);
+        } catch (Exception $e) {
+            Log::error('Error updating report media', [
+                'report_id' => $id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
             return response()->json([
                 'status' => 'error',
-                'message' => 'User tidak terautentikasi'
-            ], 401);
+                'message' => 'Gagal memperbarui media laporan',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-        $success = $this->reportService->updateReportMedia($id, $request->all());
-
-        if (!$success) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Laporan tidak ditemukan atau Anda tidak memiliki akses'
-            ], 404);
-        }
-
-        // Ambil data report yang sudah diupdate
-        $report = $this->reportService->getReportById($id);
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Media laporan berhasil diperbarui',
-            'data' => $report
-        ], 200);
-
-    } catch (\Exception $e) {
-        Log::error('Error updating report media', [
-            'report_id' => $id,
-            'error' => $e->getMessage(),
-            'trace' => $e->getTraceAsString()
-        ]);
-
-        return response()->json([
-            'status' => 'error',
-            'message' => 'Gagal memperbarui media laporan',
-            'error' => $e->getMessage()
-        ], 500);
     }
-}
 
-        public function registerAsVolunteer(Request $request)
+    public function registerAsVolunteer(Request $request)
     {
         DB::beginTransaction();
         try {
@@ -266,7 +294,6 @@ class ReportController extends Controller
                 'message' => 'Pendaftaran sebagai relawan berhasil',
                 'data' => $missionVolunteer
             ], 201);
-
         } catch (Exception $e) {
             DB::rollBack();
             return response()->json([
@@ -277,29 +304,27 @@ class ReportController extends Controller
         }
     }
 
-      public function registerAsLeaderVolunteer(Request $request)
-{
-    DB::beginTransaction();
-    try {
-        $data = $request->only(['mission_id']);
-        $isLeader = true;
-        $missionVolunteer = $this->reportService->registerAsVolunteer($data, $isLeader);
+    public function registerAsLeaderVolunteer(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $data = $request->only(['mission_id']);
+            $isLeader = true;
+            $missionVolunteer = $this->reportService->registerAsVolunteer($data, $isLeader);
 
-        DB::commit();
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Pendaftaran sebagai relawan berhasil',
-            'data' => $missionVolunteer
-        ], 201);
-
-    } catch (Exception $e) {
-        DB::rollBack();
-        return response()->json([
-            'status' => 'error',
-            'message' => 'Gagal mendaftar sebagai relawan',
-            'error' => $e->getMessage()
-        ], 500);
+            DB::commit();
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Pendaftaran sebagai relawan berhasil',
+                'data' => $missionVolunteer
+            ], 201);
+        } catch (Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal mendaftar sebagai relawan',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
-}
-
 }

@@ -14,21 +14,21 @@ const HomePage = () => {
 
     const features = [
         {
-            icon: <FileText className="w-8 h-8 text-green-600" />,
+            icon: <FileText className="h-8 w-8 text-green-600" />,
             title: 'Laporkan Isu Lingkungan',
             description:
                 'Laporkan masalah lingkungan di sekitar Anda dengan mudah dan cepat',
             link: '/reports/create',
         },
         {
-            icon: <Map className="w-8 h-8 text-blue-600" />,
+            icon: <Map className="h-8 w-8 text-blue-600" />,
             title: 'Lihat Peta Laporan',
             description:
                 'Jelajahi peta interaktif untuk melihat laporan di berbagai daerah',
             link: '/map',
         },
         {
-            icon: <Image className="w-8 h-8 text-purple-600" />,
+            icon: <Image className="h-8 w-8 text-purple-600" />,
             title: 'Konten Edukasi',
             description:
                 'Akses berbagai materi edukasi tentang pelestarian lingkungan',
@@ -39,9 +39,9 @@ const HomePage = () => {
     return (
         <div className="min-h-screen bg-gradient-to-b from-green-50 to-white">
             {/* Hero Section */}
-            <section className="relative overflow-hidden text-white bg-gradient-to-r from-green-600 to-green-700">
+            <section className="relative overflow-hidden bg-gradient-to-r from-green-600 to-green-700 text-white">
                 <div className="absolute inset-0 bg-black opacity-10"></div>
-                <div className="relative px-4 py-20 mx-auto max-w-7xl sm:px-6 lg:px-8">
+                <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
                     <div className="text-center">
                         <h1 className="mb-6 text-4xl font-bold md:text-6xl">
                             Bersama Menjaga
@@ -49,7 +49,7 @@ const HomePage = () => {
                                 Lingkungan Indonesia
                             </span>
                         </h1>
-                        <p className="max-w-3xl mx-auto mb-8 text-xl text-green-100 md:text-2xl">
+                        <p className="mx-auto mb-8 max-w-3xl text-xl text-green-100 md:text-2xl">
                             Platform kolaboratif untuk melaporkan, mengatasi,
                             dan mencegah masalah lingkungan di seluruh Indonesia
                         </p>
@@ -59,9 +59,9 @@ const HomePage = () => {
                                 {/* Gunakan 'href' bukan 'to' */}
                                 <Button
                                     size="lg"
-                                    className="text-green-600 bg-white hover:bg-green-50"
+                                    className="bg-white text-green-600 hover:bg-green-50"
                                 >
-                                    <Plus className="w-5 h-5 mr-2" />
+                                    <Plus className="mr-2 h-5 w-5" />
                                     Laporkan Isu Sekarang
                                 </Button>
                             </Link>
@@ -71,10 +71,10 @@ const HomePage = () => {
                                 <Button
                                     size="lg"
                                     variant="outline"
-                                    className="text-white border-white hover:bg-white hover:text-green-600"
+                                    className="border-white text-white hover:bg-white hover:text-green-600"
                                 >
                                     Lihat Semua Laporan
-                                    <ArrowRight className="w-5 h-5 ml-2" />
+                                    <ArrowRight className="ml-2 h-5 w-5" />
                                 </Button>
                             </Link>
                         </div>
@@ -83,8 +83,8 @@ const HomePage = () => {
             </section>
 
             {/* Stats Section */}
-            <section className="py-16 bg-white">
-                <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+            <section className="bg-white py-16">
+                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
                         {stats.map((stat, index) => (
                             <div key={index} className="text-center">
@@ -103,13 +103,13 @@ const HomePage = () => {
             </section>
 
             {/* Features Section */}
-            <section className="py-16 bg-gray-50">
-                <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+            <section className="bg-gray-50 py-16">
+                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="mb-12 text-center">
                         <h2 className="mb-4 text-3xl font-bold text-gray-900 md:text-4xl">
                             Mulai Berkontribusi Hari Ini
                         </h2>
-                        <p className="max-w-2xl mx-auto text-xl text-gray-600">
+                        <p className="mx-auto max-w-2xl text-xl text-gray-600">
                             Pilih cara Anda untuk berpartisipasi dalam menjaga
                             kelestarian lingkungan
                         </p>
@@ -121,7 +121,7 @@ const HomePage = () => {
                                 className="transition-shadow duration-300 hover:shadow-lg"
                             >
                                 <CardContent className="p-6 text-center">
-                                    <div className="flex justify-center mb-4">
+                                    <div className="mb-4 flex justify-center">
                                         {feature.icon}
                                     </div>
                                     <h3 className="mb-3 text-xl font-semibold text-gray-900">
@@ -138,7 +138,7 @@ const HomePage = () => {
                                             className="w-full"
                                         >
                                             Mulai Sekarang
-                                            <ArrowRight className="w-4 h-4 ml-2" />
+                                            <ArrowRight className="ml-2 h-4 w-4" />
                                         </Button>
                                     </Link>
                                 </CardContent>
@@ -149,8 +149,8 @@ const HomePage = () => {
             </section>
 
             {/* CTA Section */}
-            <section className="py-16 text-white bg-green-600">
-                <div className="max-w-4xl px-4 mx-auto text-center sm:px-6 lg:px-8">
+            <section className="bg-green-600 py-16 text-white">
+                <div className="mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
                     <h2 className="mb-4 text-3xl font-bold md:text-4xl">
                         Bergabunglah dengan Gerakan Lingkungan
                     </h2>
@@ -163,10 +163,10 @@ const HomePage = () => {
                         {/* Gunakan 'href' bukan 'to' */}
                         <Button
                             size="lg"
-                            className="text-green-600 bg-white hover:bg-green-50"
+                            className="bg-white text-green-600 hover:bg-green-50"
                         >
                             Lihat Dashboard Saya
-                            <ArrowRight className="w-5 h-5 ml-2" />
+                            <ArrowRight className="ml-2 h-5 w-5" />
                         </Button>
                     </Link>
                 </div>
