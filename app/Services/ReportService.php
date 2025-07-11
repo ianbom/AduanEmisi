@@ -18,13 +18,14 @@ class ReportService extends Service
         //
     }
 
-   public function createReport(array $data): Report
+    public function createReport(array $data): Report
     {
         try {
             DB::beginTransaction();
 
             $report = Report::create([
                 'reporter_id' => Auth::id(),
+                'province_id' => $data['province_id'],
                 'city_id' => $data['city_id'],
                 'district_id' => $data['district_id'],
                 'title' => $data['title'],
@@ -69,7 +70,6 @@ class ReportService extends Service
             }
 
             DB::commit();
-
             // Load relationships untuk response
             $report->load(['reporter', 'city', 'district', 'media']);
 
@@ -106,13 +106,13 @@ class ReportService extends Service
 
     public function getReportById(int $id): ?Report
     {
-        return Report::with(['reporter', 'city', 'district', 'verifiedByUser', 'completedByUser', 'media'])
+        return Report::with(['reporter', 'province', 'city', 'district', 'verifiedByUser', 'completedByUser', 'media'])
             ->find($id);
     }
 
     public function getReports(array $filters = [], int $perPage = 15)
     {
-        $query = Report::with(['reporter', 'city', 'district', 'media']);
+        $query = Report::with(['reporter', 'city', 'district', 'media', 'province']);
 
         // Filter by status
         if (isset($filters['status'])) {
@@ -143,7 +143,7 @@ class ReportService extends Service
         if (isset($filters['search'])) {
             $query->where(function ($q) use ($filters) {
                 $q->where('title', 'like', '%' . $filters['search'] . '%')
-                  ->orWhere('description', 'like', '%' . $filters['search'] . '%');
+                    ->orWhere('description', 'like', '%' . $filters['search'] . '%');
             });
         }
 
@@ -166,7 +166,6 @@ class ReportService extends Service
             if ($status === 'verified') {
                 $updateData['verified_by_user_id'] = $userId;
                 $updateData['verified_at'] = now();
-
             } elseif ($status === 'completed') {
                 $updateData['completed_by_user_id'] = $userId;
                 $updateData['completion_details'] = $completionDetails;
@@ -182,7 +181,8 @@ class ReportService extends Service
         }
     }
 
-    private function approveAndMakeReportMission($reportId, $assignedType){
+    private function approveAndMakeReportMission($reportId, $assignedType)
+    {
 
         Mission::create([
             'report_id' => $reportId,
@@ -190,142 +190,140 @@ class ReportService extends Service
             'assigned_to_type' => $assignedType,
             'status' => 'open',
         ]);
-
     }
 
     public function updateReport(int $id, array $data): ?Report
-{
-    try {
-        DB::beginTransaction();
+    {
+        try {
+            DB::beginTransaction();
 
-        // Cari report berdasarkan ID dan pastikan hanya pemilik yang bisa update
-        $report = Report::where('id', $id)
-            ->where('reporter_id', Auth::id())
-            ->first();
+            // Cari report berdasarkan ID dan pastikan hanya pemilik yang bisa update
+            $report = Report::where('id', $id)
+                ->where('reporter_id', Auth::id())
+                ->first();
 
-        if (!$report) {
-            DB::rollback();
-            return null;
-        }
-
-        // Cek apakah status masih pending (hanya laporan pending yang bisa diupdate)
-        if ($report->status !== 'pending') {
-            DB::rollback();
-            throw new Exception('Laporan yang sudah diverifikasi atau sedang diproses tidak dapat diubah');
-        }
-
-        // Update data report
-        $report->update([
-            'city_id' => $data['city_id'] ?? $report->city_id,
-            'district_id' => $data['district_id'] ?? $report->district_id,
-            'title' => $data['title'] ?? $report->title,
-            'description' => $data['description'] ?? $report->description,
-            'category' => $data['category'] ?? $report->category,
-            'latitude' => $data['latitude'] ?? $report->latitude,
-            'longitude' => $data['longitude'] ?? $report->longitude,
-            'address' => $data['address'] ?? $report->address,
-        ]);
-
-        // Handle media update jika ada
-        if (isset($data['media']) && is_array($data['media'])) {
-            // Hapus media lama
-            ReportMedia::where('report_id', $report->id)->delete();
-
-            // Upload media baru
-            foreach ($data['media'] as $file) {
-                $mediaUrl = $this->uploadFile($file);
-                $mediaType = $this->getMediaType($file);
-
-                ReportMedia::create([
-                    'report_id' => $report->id,
-                    'media_url' => $mediaUrl,
-                    'media_type' => $mediaType,
-                ]);
+            if (!$report) {
+                DB::rollback();
+                return null;
             }
-        }
 
-        // Handle media URLs update (jika ada external URLs)
-        if (isset($data['media_urls']) && isset($data['media_types'])) {
-            // Hapus media lama
-            ReportMedia::where('report_id', $report->id)->delete();
+            // Cek apakah status masih pending (hanya laporan pending yang bisa diupdate)
+            if ($report->status !== 'pending') {
+                DB::rollback();
+                throw new Exception('Laporan yang sudah diverifikasi atau sedang diproses tidak dapat diubah');
+            }
 
-            $mediaUrls = $data['media_urls'];
-            $mediaTypes = $data['media_types'];
+            // Update data report
+            $report->update([
+                'city_id' => $data['city_id'] ?? $report->city_id,
+                'district_id' => $data['district_id'] ?? $report->district_id,
+                'title' => $data['title'] ?? $report->title,
+                'description' => $data['description'] ?? $report->description,
+                'category' => $data['category'] ?? $report->category,
+                'latitude' => $data['latitude'] ?? $report->latitude,
+                'longitude' => $data['longitude'] ?? $report->longitude,
+                'address' => $data['address'] ?? $report->address,
+            ]);
 
-            for ($i = 0; $i < count($mediaUrls); $i++) {
-                if (isset($mediaUrls[$i]) && isset($mediaTypes[$i])) {
+            // Handle media update jika ada
+            if (isset($data['media']) && is_array($data['media'])) {
+                // Hapus media lama
+                ReportMedia::where('report_id', $report->id)->delete();
+
+                // Upload media baru
+                foreach ($data['media'] as $file) {
+                    $mediaUrl = $this->uploadFile($file);
+                    $mediaType = $this->getMediaType($file);
+
                     ReportMedia::create([
                         'report_id' => $report->id,
-                        'media_url' => $mediaUrls[$i],
-                        'media_type' => $mediaTypes[$i],
+                        'media_url' => $mediaUrl,
+                        'media_type' => $mediaType,
                     ]);
                 }
             }
-        }
 
-        DB::commit();
+            // Handle media URLs update (jika ada external URLs)
+            if (isset($data['media_urls']) && isset($data['media_types'])) {
+                // Hapus media lama
+                ReportMedia::where('report_id', $report->id)->delete();
 
-        // Load relationships untuk response
-        $report->load(['reporter', 'city', 'district', 'media']);
+                $mediaUrls = $data['media_urls'];
+                $mediaTypes = $data['media_types'];
 
-        return $report;
+                for ($i = 0; $i < count($mediaUrls); $i++) {
+                    if (isset($mediaUrls[$i]) && isset($mediaTypes[$i])) {
+                        ReportMedia::create([
+                            'report_id' => $report->id,
+                            'media_url' => $mediaUrls[$i],
+                            'media_type' => $mediaTypes[$i],
+                        ]);
+                    }
+                }
+            }
 
-    } catch (Exception $e) {
-        DB::rollback();
-        throw new Exception('Gagal memperbarui laporan: ' . $e->getMessage());
-    }
-}
+            DB::commit();
 
-// Method tambahan untuk update media saja (opsional)
-public function updateReportMedia(int $id, array $mediaData): bool
-{
-    try {
-        DB::beginTransaction();
+            // Load relationships untuk response
+            $report->load(['reporter', 'city', 'district', 'media']);
 
-        $report = Report::where('id', $id)
-            ->where('reporter_id', Auth::id())
-            ->where('status', 'pending')
-            ->first();
-
-        if (!$report) {
+            return $report;
+        } catch (Exception $e) {
             DB::rollback();
-            return false;
+            throw new Exception('Gagal memperbarui laporan: ' . $e->getMessage());
         }
-
-        // Hapus media lama
-        $oldMedia = ReportMedia::where('report_id', $report->id)->get();
-        foreach ($oldMedia as $media) {
-            // Hapus file dari storage
-            if (file_exists(storage_path('app/public/' . $media->media_url))) {
-                unlink(storage_path('app/public/' . $media->media_url));
-            }
-        }
-        ReportMedia::where('report_id', $report->id)->delete();
-
-        // Upload media baru
-        if (isset($mediaData['media']) && is_array($mediaData['media'])) {
-            foreach ($mediaData['media'] as $file) {
-                $mediaUrl = $this->uploadFile($file);
-                $mediaType = $this->getMediaType($file);
-
-                ReportMedia::create([
-                    'report_id' => $report->id,
-                    'media_url' => $mediaUrl,
-                    'media_type' => $mediaType,
-                ]);
-            }
-        }
-
-        DB::commit();
-        return true;
-
-    } catch (Exception $e) {
-        DB::rollback();
-        throw new Exception('Gagal memperbarui media laporan: ' . $e->getMessage());
     }
-}
 
-    public function registerAsVolunteer($data, bool $isLeader){
+    // Method tambahan untuk update media saja (opsional)
+    public function updateReportMedia(int $id, array $mediaData): bool
+    {
+        try {
+            DB::beginTransaction();
+
+            $report = Report::where('id', $id)
+                ->where('reporter_id', Auth::id())
+                ->where('status', 'pending')
+                ->first();
+
+            if (!$report) {
+                DB::rollback();
+                return false;
+            }
+
+            // Hapus media lama
+            $oldMedia = ReportMedia::where('report_id', $report->id)->get();
+            foreach ($oldMedia as $media) {
+                // Hapus file dari storage
+                if (file_exists(storage_path('app/public/' . $media->media_url))) {
+                    unlink(storage_path('app/public/' . $media->media_url));
+                }
+            }
+            ReportMedia::where('report_id', $report->id)->delete();
+
+            // Upload media baru
+            if (isset($mediaData['media']) && is_array($mediaData['media'])) {
+                foreach ($mediaData['media'] as $file) {
+                    $mediaUrl = $this->uploadFile($file);
+                    $mediaType = $this->getMediaType($file);
+
+                    ReportMedia::create([
+                        'report_id' => $report->id,
+                        'media_url' => $mediaUrl,
+                        'media_type' => $mediaType,
+                    ]);
+                }
+            }
+
+            DB::commit();
+            return true;
+        } catch (Exception $e) {
+            DB::rollback();
+            throw new Exception('Gagal memperbarui media laporan: ' . $e->getMessage());
+        }
+    }
+
+    public function registerAsVolunteer($data, bool $isLeader)
+    {
         $user = Auth::user();
 
         $missionVolunter = MissionVolunteer::create([
@@ -339,85 +337,82 @@ public function updateReportMedia(int $id, array $mediaData): bool
 
 
     public function getReportByFilter($filters)
-{
-    $allowedFilters = [
-        'reports.status'      => 'value',
-        'reports.city_id'     => 'value',
-        'reports.district_id' => 'value',
-        'reports.category'    => 'value',
-        'reports.created_at'  => 'date',
-        'reports.verified_at' => 'date',
-        'reports.title'       => 'like',
-        'reports.address'     => 'like',
-    ];
-
-    $selectColumns = [
-       'reports.*',
-       'cities.name as city_name',
-       'districts.name as district_name',
-       'reporter.name as reporter_name',
-    ];
-
-    $query = Report::select($selectColumns)
-        // PERBAIKAN: Sesuaikan join untuk tabel 'reports'
-        ->join('cities', 'reports.city_id', '=', 'cities.id')
-        ->join('districts', 'reports.district_id', '=', 'districts.id')
-        ->join('users as reporter', 'reports.reporter_id', '=', 'reporter.id') // Join untuk mendapatkan nama pelapor
-        ->orderBy('reports.id', 'desc');
-
-
-    $query = $this->applyFilters($query, $filters, $allowedFilters);
-
-    $query->with([
-        'city',
-        'district',
-        'reporter'
-    ]);
-
-    return $query->get();
-}
-
-public function buildFilter($request)
-{
-    $filters = [];
-
-    if ($request->filled('status')) {
-        $filters['reports.status'] = $request->input('status');
-    }
-    if ($request->filled('city_id')) {
-        $filters['reports.city_id'] = $request->input('city_id');
-    }
-    if ($request->filled('district_id')) {
-        $filters['reports.district_id'] = $request->input('district_id');
-    }
-
-    if ($request->filled('category')) {
-        $filters['reports.category'] = $request->input('category');
-    }
-
-    if ($request->filled('search')) {
-
-        $filters['reports.title'] = $request->input('search');
-    }
-
-    if ($request->filled('created_from') && $request->filled('created_to')) {
-        $filters['reports.created_at'] = [
-            'start' => $request->input('created_from'),
-            'end'   => $request->input('created_to')
+    {
+        $allowedFilters = [
+            'reports.status'      => 'value',
+            'reports.city_id'     => 'value',
+            'reports.district_id' => 'value',
+            'reports.category'    => 'value',
+            'reports.created_at'  => 'date',
+            'reports.verified_at' => 'date',
+            'reports.title'       => 'like',
+            'reports.address'     => 'like',
         ];
-    }
 
-
-    if ($request->filled('verified_from') && $request->filled('verified_to')) {
-        $filters['reports.verified_at'] = [
-            'start' => $request->input('verified_from'),
-            'end'   => $request->input('verified_to')
+        $selectColumns = [
+            'reports.*',
+            'cities.name as city_name',
+            'districts.name as district_name',
+            'reporter.name as reporter_name',
         ];
+
+        $query = Report::select($selectColumns)
+            // PERBAIKAN: Sesuaikan join untuk tabel 'reports'
+            ->join('cities', 'reports.city_id', '=', 'cities.id')
+            ->join('districts', 'reports.district_id', '=', 'districts.id')
+            ->join('users as reporter', 'reports.reporter_id', '=', 'reporter.id') // Join untuk mendapatkan nama pelapor
+            ->orderBy('reports.id', 'desc');
+
+
+        $query = $this->applyFilters($query, $filters, $allowedFilters);
+
+        $query->with([
+            'city',
+            'district',
+            'reporter'
+        ]);
+
+        return $query->get();
     }
 
-    return $filters;
-}
+    public function buildFilter($request)
+    {
+        $filters = [];
+
+        if ($request->filled('status')) {
+            $filters['reports.status'] = $request->input('status');
+        }
+        if ($request->filled('city_id')) {
+            $filters['reports.city_id'] = $request->input('city_id');
+        }
+        if ($request->filled('district_id')) {
+            $filters['reports.district_id'] = $request->input('district_id');
+        }
+
+        if ($request->filled('category')) {
+            $filters['reports.category'] = $request->input('category');
+        }
+
+        if ($request->filled('search')) {
+
+            $filters['reports.title'] = $request->input('search');
+        }
+
+        if ($request->filled('created_from') && $request->filled('created_to')) {
+            $filters['reports.created_at'] = [
+                'start' => $request->input('created_from'),
+                'end'   => $request->input('created_to')
+            ];
+        }
 
 
+        if ($request->filled('verified_from') && $request->filled('verified_to')) {
+            $filters['reports.verified_at'] = [
+                'start' => $request->input('verified_from'),
+                'end'   => $request->input('verified_to')
+            ];
+        }
 
+        return $filters;
+    }
 }

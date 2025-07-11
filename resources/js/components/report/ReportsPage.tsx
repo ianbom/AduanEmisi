@@ -9,8 +9,12 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { Report } from '@/types/report';
+import { getStatusColor } from '@/utils/reportStatusColor';
+import { router as Inertia } from '@inertiajs/react';
 import {
     Calendar,
+    Eye,
     Filter,
     MapPin,
     Plus,
@@ -18,79 +22,35 @@ import {
     TrendingUp,
 } from 'lucide-react';
 import { useState } from 'react';
-
 interface ReportsPageProps {
-    onViewDetails: (id: string) => void;
+    reports: Report[];
+    myReports: boolean;
+    onViewDetails: (id: number) => void;
     onCreateReport: () => void;
 }
-
-const ReportsPage = ({ onViewDetails, onCreateReport }: ReportsPageProps) => {
+const ReportsPage = ({
+    reports,
+    myReports,
+    onViewDetails,
+    onCreateReport,
+}: ReportsPageProps) => {
     const [sortBy, setSortBy] = useState('newest');
-
-    const reports = [
-        {
-            id: '1',
-            title: 'Sampah Plastik di Pantai Kuta',
-            location: 'Pantai Kuta, Bali',
-            status: 'Dalam Progress',
-            category: 'Pencemaran Laut',
-            image: 'https://images.unsplash.com/photo-1472396961693-142e6e269027?w=400',
-            hasMission: true,
-            upvotes: 45,
-            date: '2024-01-15',
-        },
-        {
-            id: '2',
-            title: 'Deforestasi Ilegal di Hutan Lindung',
-            location: 'Bogor, Jawa Barat',
-            status: 'Menunggu',
-            category: 'Kerusakan Hutan',
-            image: 'https://images.unsplash.com/photo-1482938289607-e9573fc25ebb?w=400',
-            hasMission: false,
-            upvotes: 32,
-            date: '2024-01-14',
-        },
-        {
-            id: '3',
-            title: 'Pencemaran Sungai Citarum',
-            location: 'Bandung, Jawa Barat',
-            status: 'Selesai',
-            category: 'Pencemaran Air',
-            image: 'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?w=400',
-            hasMission: true,
-            upvotes: 78,
-            date: '2024-01-10',
-        },
-    ];
-
-    const getStatusColor = (status: string) => {
-        switch (status) {
-            case 'Selesai':
-                return 'bg-green-100 text-green-700';
-            case 'Dalam Progress':
-                return 'bg-yellow-100 text-yellow-700';
-            case 'Menunggu':
-                return 'bg-red-100 text-red-700';
-            default:
-                return 'bg-gray-100 text-gray-700';
-        }
-    };
-
     return (
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-            {/* Header */}
             <div className="mb-8 flex flex-col items-start justify-between md:flex-row md:items-center">
                 <div>
                     <h1 className="mb-2 text-3xl font-bold text-gray-900">
-                        Laporan Lingkungan
+                        {myReports ? 'Laporan Saya' : 'Daftar Laporan'}
                     </h1>
                     <p className="text-gray-600">
-                        Temukan dan bergabung dalam aksi penyelamatan lingkungan
+                        {myReports
+                            ? 'Laporan yang dibuat oleh Anda'
+                            : 'Temukan Laporan dan bergabung dalam aksi penyelamatan lingkungan'}
                     </p>
                 </div>
                 <Button
                     onClick={onCreateReport}
-                    className="mt-4 bg-emerald-600 text-white hover:bg-emerald-700 md:mt-0"
+                    className="mt-4 bg-emerald-700 text-white hover:bg-emerald-800 md:mt-0"
                     size="lg"
                 >
                     <Plus size={20} className="mr-2" />
@@ -245,21 +205,74 @@ const ReportsPage = ({ onViewDetails, onCreateReport }: ReportsPageProps) => {
                             />
                         </div>
                     </div>
-
-                    {/* Reports Grid */}
                     <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
-                        {reports.map((report) => (
+                        {reports.map((report: Report) => (
                             <Card
                                 key={report.id}
                                 className="group cursor-pointer border-0 shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
                                 onClick={() => onViewDetails(report.id)}
                             >
-                                <div className="relative overflow-hidden rounded-t-lg">
+                                {/* <div className="relative overflow-hidden rounded-t-lg">
                                     <img
-                                        src={report.image}
+                                        src={`/storage/${report.media?.[0]?.media_url}`}
                                         alt={report.title}
-                                        className="h-48 w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                        className="object-cover w-full h-48 transition-transform duration-300 group-hover:scale-105"
                                     />
+                                    <div className="absolute right-3 top-3">
+                                        <Badge
+                                            className={getStatusColor(
+                                                report.status,
+                                            )}
+                                        >
+                                            {report.status}
+                                        </Badge>
+                                    </div>
+                                    {report.hasMission && (
+                                        <div className="absolute left-3 top-3">
+                                            <Badge className="text-blue-700 bg-blue-100">
+                                                Ada Misi
+                                            </Badge>
+                                        </div>
+                                    )}
+                                </div> */}
+                                <div className="relative overflow-hidden rounded-t-lg">
+                                    {report.media?.[0]?.media_type?.startsWith(
+                                        'video',
+                                    ) ? (
+                                        <div className="relative h-48 w-full bg-black">
+                                            <video
+                                                className="h-full w-full object-cover opacity-50"
+                                                src={`/storage/${report.media[0].media_url}`}
+                                                muted
+                                                preload="metadata"
+                                            />
+                                            <div className="absolute inset-0 flex items-center justify-center">
+                                                <div className="rounded-full bg-white/80 p-2">
+                                                    <svg
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        className="h-6 w-6 text-black"
+                                                        fill="none"
+                                                        viewBox="0 0 24 24"
+                                                        stroke="currentColor"
+                                                    >
+                                                        <path
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                            strokeWidth={2}
+                                                            d="M14.752 11.168l-5.197-3.03A1 1 0 008 9.03v5.94a1 1 0 001.555.832l5.197-3.03a1 1 0 000-1.664z"
+                                                        />
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <img
+                                            src={`/storage/${report.media?.[0]?.media_url}`}
+                                            alt={report.title}
+                                            className="h-48 w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                        />
+                                    )}
+
                                     <div className="absolute right-3 top-3">
                                         <Badge
                                             className={getStatusColor(
@@ -295,32 +308,46 @@ const ReportsPage = ({ onViewDetails, onCreateReport }: ReportsPageProps) => {
                                     <div className="mb-3 flex items-center text-sm text-gray-500">
                                         <MapPin size={14} className="mr-1" />
                                         <span className="truncate">
-                                            {report.location}
+                                            {report.district?.name} ,
+                                            {report.city?.name},{' '}
+                                            {report.province?.name},{' '}
                                         </span>
                                     </div>
 
-                                    <div className="flex items-center justify-between">
+                                    <div className="mb-4 flex items-center justify-between">
                                         <div className="flex items-center text-sm text-gray-500">
                                             <Calendar
                                                 size={14}
                                                 className="mr-1"
                                             />
-                                            <span>{report.date}</span>
+                                            <span>{report.created_at}</span>
                                         </div>
                                         <div className="flex items-center text-sm font-medium text-emerald-600">
                                             <TrendingUp
                                                 size={14}
                                                 className="mr-1"
                                             />
-                                            <span>{report.upvotes}</span>
+                                            <span>
+                                                {report.upvotes_count || 0}
+                                            </span>
                                         </div>
                                     </div>
+
+                                    <Button
+                                        className="mt-auto w-full bg-amber-500 transition-colors duration-200 hover:bg-amber-700"
+                                        onClick={() =>
+                                            Inertia.visit(
+                                                `/report/${report.id}`,
+                                            )
+                                        }
+                                    >
+                                        <Eye size={16} className="mr-2" />
+                                        Lihat Detail
+                                    </Button>
                                 </CardContent>
                             </Card>
                         ))}
                     </div>
-
-                    {/* Load More */}
                     <div className="mt-8 text-center">
                         <Button
                             variant="outline"
