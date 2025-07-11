@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Admin\MissionController as AdmMissionController;
 use App\Http\Controllers\Admin\ReportController as AdmReportController;
+use App\Http\Controllers\Citizen\ReportController as CtzReportController;
+use App\Http\Controllers\Citizen\ProfileController as CtzProfileController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -26,20 +28,17 @@ Route::prefix('')->middleware(['auth'])->group(function () {
         return Inertia::render('Citizen/HomePage');
     })->name('homepage');
 
-    Route::get('/profile', function () {
-        return Inertia::render('Citizen/Index');
-    })->name('profile');
+    Route::get('/profile', [CtzProfileController::class, 'showProfile'])->name('profile.show');
 
     // Route untuk keperluan yang berkaitan dengan Laporan
-    Route::get('/report', function () {
-        return Inertia::render('Citizen/Report/ReportsPage');
-    })->name('report');
-    Route::get('/report-detail/1', function () {
-        return Inertia::render('Citizen/Report/ReportDetailsPage');
-    })->name('report-detail');
-    Route::get('/report-create', function () {
-        return Inertia::render('Citizen/Report/CreateReportPage');
-    })->name('create.report');
+    Route::get('/report', [CtzReportController::class, 'viewAllReportsPage'])->name('report');
+    Route::get('/my-report', [CtzReportController::class, 'viewMyReportsPage'])->name('my-report');
+    Route::get('/report/{id}', [CtzReportController::class, 'show'])->name('report.show');
+
+    Route::get('/report-create', [CtzReportController::class, 'create'])->name('create.report');
+    Route::post('/reports', [CtzReportController::class, 'store'])->name('reports.store');
+
+
 
     // Route untuk keperluan yang berkaitan dengan Peta
     Route::get('/map', function () {
@@ -55,9 +54,12 @@ Route::prefix('')->middleware(['auth'])->group(function () {
     })->name('education-detail');
 });
 
-Route::get('/complete-profile', function () {
-    return Inertia::render('Citizen/CompleteProfile');
-})->name('complete.profile')->middleware(['auth']);
+Route::get('/complete-profile', [CtzProfileController::class, 'completeProfile'])->name('profile.complete');
+Route::post('/complete-profile', [CtzProfileController::class, 'updateCompleteProfile'])->name('profile.complete.update');
+
+// Route::get('/complete-profile', function () {
+//     return Inertia::render('Citizen/CompleteProfile');
+// })->name('complete.profile')->middleware(['auth']);
 
 
 

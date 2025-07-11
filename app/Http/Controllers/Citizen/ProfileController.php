@@ -11,7 +11,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use App\Models\Province;
 use Throwable;
+use Inertia\Inertia;
 
 class ProfileController extends Controller
 {
@@ -22,23 +24,59 @@ class ProfileController extends Controller
     {
         $this->profileService = $profileService;
     }
+    public function showProfile()
+    {
+        $user = Auth::user();
+        
+        return Inertia::render('Citizen/Index', [
+            'auth' => [
+                'user' => $user
+            ]
+        ]);
+    }
+    public function completeProfile()
+    {
+        $user = Auth::user();
+        $provinces = Province::with('cities.districts')->get();
+        return Inertia::render('Citizen/CompleteProfile', [
+            'provinces' => $provinces,
+            'auth' => [
+                'user' => $user
+            ]
+        ]);
+    }
 
-   public function updateCompleteProfile(ProfileRequest $request) 
+    // public function updateCompleteProfile(ProfileRequest $request)
+    // {
+    //     $data = $request->validated();
+
+    //     try {
+    //         $user = $this->profileService->updateProfile($data);
+    //         return response()->json([
+    //             'status'  => 'success',
+    //             'message' => 'Profile updated successfully',
+    //             'data'    => $user
+    //         ], 200);
+    //     } catch (Throwable $th) {
+    //         return response()->json([
+    //             'status'  => 'error',
+    //             'message' => 'Failed to update profile. ' . $th->getMessage(),
+    //         ], 500);
+    //     }
+    // }
+    public function updateCompleteProfile(ProfileRequest $request)
     {
         $data = $request->validated();
 
         try {
-            $user = $this->profileService->updateProfile($data);
-            return response()->json([
-                'status'  => 'success',
-                'message' => 'Profile updated successfully',
-                'data'    => $user
-            ], 200);
+            $this->profileService->updateProfile($data);
+            return redirect()
+                ->route('profile.show')
+                ->with('success', 'Profile berhasil diperbarui');
         } catch (Throwable $th) {
-            return response()->json([
-                'status'  => 'error',
-                'message' => 'Failed to update profile. ' . $th->getMessage(),
-            ], 500);
+            return back()
+                ->withErrors(['error' => 'Gagal memperbarui profile. ' . $th->getMessage()])
+                ->withInput();
         }
     }
 
@@ -100,7 +138,7 @@ class ProfileController extends Controller
     {
         $user = Auth::user();
         return response()->json([
-           'data' => $user,
+            'data' => $user,
         ]);
     }
 }

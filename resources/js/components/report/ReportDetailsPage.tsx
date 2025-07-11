@@ -3,14 +3,16 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
+import { Report } from '@/types/report';
+import { getStatusColor } from '@/utils/reportStatusColor';
 import {
     ArrowLeft,
     Calendar,
     Heart,
+    LocateFixed,
     MapPin,
     MessageCircle,
     Share2,
-    ThumbsDown,
     ThumbsUp,
     User,
 } from 'lucide-react';
@@ -19,11 +21,11 @@ import AttendanceFormModal from './AttendanceFormModal';
 import ConfirmVolunteerModal from './ConfirmVolunteerModal';
 import CommentUploadCard from './InputCommentReport';
 interface ReportDetailsPageProps {
-    reportId: string;
+    report: Report;
     onBack: () => void;
 }
 
-const ReportDetailsPage = ({ reportId, onBack }: ReportDetailsPageProps) => {
+const ReportDetailsPage = ({ report, onBack }: ReportDetailsPageProps) => {
     const [hasUpvoted, setHasUpvoted] = useState(false);
     const [hasDownvoted, setHasDownvoted] = useState(false);
     const [replying, setReplying] = useState<string | null>(null);
@@ -53,37 +55,37 @@ const ReportDetailsPage = ({ reportId, onBack }: ReportDetailsPageProps) => {
         { id: 8, name: 'Aldino Erlangga' },
         { id: 9, name: 'M. Ainur Ramadhan' },
     ];
-    const report = {
-        id: reportId,
-        title: 'Sampah Plastik di Pantai Kuta',
-        category: 'Pencemaran Laut',
-        reporter: 'Ahmad Wijaya',
-        date: '15 Januari 2024',
-        address: 'Pantai Kuta, Badung, Bali',
-        status: 'Dalam Progress',
-        description:
-            'Saya menemukan banyak sekali sampah plastik yang berserakan di sepanjang Pantai Kuta. Kondisi ini sangat mengkhawatirkan karena dapat membahayakan ekosistem laut dan mengganggu aktivitas wisata. Sampah-sampah ini tampaknya berasal dari aktivitas wisatawan dan juga terbawa arus laut.',
-        images: [
-            'https://images.unsplash.com/photo-1472396961693-142e6e269027?w=800',
-            'https://images.unsplash.com/photo-1482938289607-e9573fc25ebb?w=800',
-        ],
-        upvotes: 45,
-        downvotes: 3,
-        hasMission: true,
-        mission: {
-            title: 'Pembersihan Pantai Kuta',
-            assignedTo: 'Volunteer',
-            teamLeader: 'Budi Santoso',
-            members: 12,
-            documentation: [
-                {
-                    image: 'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?w=400',
-                    caption: 'Tim volunteer sedang mengumpulkan sampah',
-                    uploader: 'Sari Dewi',
-                },
-            ],
-        },
-    };
+    // const reportd = {
+    //     id: r,
+    //     title: 'Sampah Plastik di Pantai Kuta',
+    //     category: 'Pencemaran Laut',
+    //     reporter: 'Ahmad Wijaya',
+    //     date: '15 Januari 2024',
+    //     address: 'Pantai Kuta, Badung, Bali',
+    //     status: 'Dalam Progress',
+    //     description:
+    //         'Saya menemukan banyak sekali sampah plastik yang berserakan di sepanjang Pantai Kuta. Kondisi ini sangat mengkhawatirkan karena dapat membahayakan ekosistem laut dan mengganggu aktivitas wisata. Sampah-sampah ini tampaknya berasal dari aktivitas wisatawan dan juga terbawa arus laut.',
+    //     images: [
+    //         'https://images.unsplash.com/photo-1472396961693-142e6e269027?w=800',
+    //         'https://images.unsplash.com/photo-1482938289607-e9573fc25ebb?w=800',
+    //     ],
+    //     upvotes: 45,
+    //     downvotes: 3,
+    //     hasMission: true,
+    //     mission: {
+    //         title: 'Pembersihan Pantai Kuta',
+    //         assignedTo: 'Volunteer',
+    //         teamLeader: 'Budi Santoso',
+    //         members: 12,
+    //         documentation: [
+    //             {
+    //                 image: 'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?w=400',
+    //                 caption: 'Tim volunteer sedang mengumpulkan sampah',
+    //                 uploader: 'Sari Dewi',
+    //             },
+    //         ],
+    //     },
+    // };
 
     const [comments, setComments] = useState([
         {
@@ -170,18 +172,6 @@ const ReportDetailsPage = ({ reportId, onBack }: ReportDetailsPageProps) => {
         },
     ]);
 
-    const getStatusColor = (status: string) => {
-        switch (status) {
-            case 'Selesai':
-                return 'bg-green-100 text-green-700';
-            case 'Dalam Progress':
-                return 'bg-yellow-100 text-yellow-700';
-            case 'Menunggu':
-                return 'bg-red-100 text-red-700';
-            default:
-                return 'bg-gray-100 text-gray-700';
-        }
-    };
     const handleReplySubmit = (commentId: string) => {
         if (!replyText.trim()) return;
         const newReply = {
@@ -210,7 +200,7 @@ const ReportDetailsPage = ({ reportId, onBack }: ReportDetailsPageProps) => {
     };
 
     return (
-        <div className="px-4 py-8 mx-auto space-y-6 max-w-7xl sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl space-y-6 px-4 py-8 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between">
                 <Button
                     variant="ghost"
@@ -232,9 +222,9 @@ const ReportDetailsPage = ({ reportId, onBack }: ReportDetailsPageProps) => {
                 <div className="space-y-6 lg:col-span-2">
                     <Card>
                         <CardContent className="p-6">
-                            <div className="flex flex-col items-start justify-between mb-6 md:flex-row">
+                            <div className="mb-6 flex flex-col items-start justify-between md:flex-row">
                                 <div className="flex-1">
-                                    <div className="flex flex-wrap gap-2 mb-3">
+                                    <div className="mb-3 flex flex-wrap gap-2">
                                         <Badge variant="outline">
                                             {report.category}
                                         </Badge>
@@ -246,7 +236,7 @@ const ReportDetailsPage = ({ reportId, onBack }: ReportDetailsPageProps) => {
                                             {report.status}
                                         </Badge>
                                         {report.hasMission && (
-                                            <Badge className="text-blue-700 bg-blue-100">
+                                            <Badge className="bg-blue-100 text-blue-700">
                                                 Ada Misi
                                             </Badge>
                                         )}
@@ -261,7 +251,7 @@ const ReportDetailsPage = ({ reportId, onBack }: ReportDetailsPageProps) => {
                                             <User size={16} className="mr-2" />
                                             <span>
                                                 Dilaporkan oleh:{' '}
-                                                {report.reporter}
+                                                {report.reporter?.name}
                                             </span>
                                         </div>
                                         <div className="flex items-center">
@@ -269,40 +259,78 @@ const ReportDetailsPage = ({ reportId, onBack }: ReportDetailsPageProps) => {
                                                 size={16}
                                                 className="mr-2"
                                             />
-                                            <span>{report.date}</span>
+                                            <span>{report.created_at}</span>
                                         </div>
+                                        <a
+                                            href={`https://www.google.com/maps?q=${report.latitude},${report.longitude}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="flex cursor-pointer items-start text-emerald-600 hover:underline md:col-span-2"
+                                        >
+                                            <LocateFixed
+                                                size={16}
+                                                className="mr-2 mt-0.5"
+                                            />
+                                            <span>
+                                                {report.latitude} -{' '}
+                                                {report.longitude}
+                                            </span>
+                                        </a>
+
                                         <div className="flex items-start md:col-span-2">
                                             <MapPin
                                                 size={16}
                                                 className="mr-2 mt-0.5"
                                             />
-                                            <span>{report.address}</span>
+                                            <span>
+                                                {report.district?.name} ,
+                                                {report.city?.name},{' '}
+                                                {report.province?.name},{' '}
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
-                                <div className="flex gap-2 mt-4 md:mt-0">
+                                <div className="mt-4 flex gap-2 md:mt-0">
                                     <Button variant="outline" size="sm">
                                         <Share2 size={16} className="mr-2" />
                                         Bagikan
                                     </Button>
                                 </div>
                             </div>
-                            {/* Image Gallery */}
-                            <div className="grid grid-cols-1 gap-4 mb-6 md:grid-cols-2">
-                                {report.images.map((image, index) => (
+                            <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2">
+                                {report.media?.map((mediaItem, index) => (
                                     <div
                                         key={index}
-                                        className="overflow-hidden rounded-lg aspect-video"
+                                        className="aspect-video overflow-hidden rounded-lg bg-black"
                                     >
-                                        <img
-                                            src={image}
-                                            alt={`Foto laporan ${index + 1}`}
-                                            className="object-cover w-full h-full transition-transform duration-300 hover:scale-105"
-                                        />
+                                        {mediaItem.media_type?.startsWith(
+                                            'video',
+                                        ) ? (
+                                            <video
+                                                controls
+                                                className="h-full w-full object-cover"
+                                                src={`/storage/${mediaItem.media_url}`}
+                                            />
+                                        ) : (
+                                            <img
+                                                src={`/storage/${mediaItem.media_url}`}
+                                                alt={`Media laporan ${index + 1}`}
+                                                className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
+                                            />
+                                        )}
                                     </div>
                                 ))}
                             </div>
 
+                            {/* Description */}
+                            <div className="mb-6">
+                                <h3 className="mb-3 text-lg font-semibold">
+                                    Lokasi Detail
+                                </h3>
+                                <p className="leading-relaxed text-gray-700">
+                                    {report.address}
+                                </p>
+                            </div>
                             {/* Description */}
                             <div className="mb-6">
                                 <h3 className="mb-3 text-lg font-semibold">
@@ -314,7 +342,7 @@ const ReportDetailsPage = ({ reportId, onBack }: ReportDetailsPageProps) => {
                             </div>
 
                             {/* Voting Section */}
-                            <div className="flex items-center gap-4 py-4 border-t border-gray-200">
+                            <div className="flex items-center gap-4 border-t border-gray-200 py-4">
                                 <Button
                                     variant={hasUpvoted ? 'default' : 'outline'}
                                     onClick={() => {
@@ -329,10 +357,11 @@ const ReportDetailsPage = ({ reportId, onBack }: ReportDetailsPageProps) => {
                                     }
                                 >
                                     <ThumbsUp size={16} className="mr-2" />
-                                    {report.upvotes + (hasUpvoted ? 1 : 0)}
+                                    {report.upvotes_count +
+                                        (hasUpvoted ? 1 : 0)}
                                 </Button>
 
-                                <Button
+                                {/* <Button
                                     variant={
                                         hasDownvoted ? 'destructive' : 'outline'
                                     }
@@ -343,7 +372,7 @@ const ReportDetailsPage = ({ reportId, onBack }: ReportDetailsPageProps) => {
                                 >
                                     <ThumbsDown size={16} className="mr-2" />
                                     {report.downvotes + (hasDownvoted ? 1 : 0)}
-                                </Button>
+                                </Button> */}
                             </div>
                         </CardContent>
                     </Card>
@@ -358,18 +387,18 @@ const ReportDetailsPage = ({ reportId, onBack }: ReportDetailsPageProps) => {
                             </CardHeader>
                             <CardContent>
                                 <h3 className="mb-4 text-xl font-semibold">
-                                    {report.mission.title}
+                                    {report.mission?.title}
                                 </h3>
 
-                                {report.mission.assignedTo === 'Volunteer' && (
+                                {report.mission?.assignedTo === 'Volunteer' && (
                                     <div className="mb-6">
-                                        <div className="grid grid-cols-1 gap-4 mb-4 md:grid-cols-2">
+                                        <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2">
                                             <div>
                                                 <span className="text-gray-600">
                                                     Ketua Tim:{' '}
                                                 </span>
                                                 <span className="font-medium">
-                                                    {report.mission.teamLeader}
+                                                    {report.mission?.teamLeader}
                                                 </span>
                                             </div>
                                             <div>
@@ -377,7 +406,7 @@ const ReportDetailsPage = ({ reportId, onBack }: ReportDetailsPageProps) => {
                                                     Anggota Bergabung:{' '}
                                                 </span>
                                                 <span className="font-medium">
-                                                    {report.mission.members}{' '}
+                                                    {report.mission?.members}{' '}
                                                     orang
                                                 </span>
                                             </div>
@@ -442,13 +471,13 @@ const ReportDetailsPage = ({ reportId, onBack }: ReportDetailsPageProps) => {
                                     </div>
                                 )}
                                 {/* Mission Documentation */}
-                                {report.mission.documentation && (
+                                {report.mission?.documentation && (
                                     <div>
                                         <h4 className="mb-3 font-semibold">
                                             Dokumentasi Misi
                                         </h4>
                                         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                                            {report.mission.documentation.map(
+                                            {report.mission?.documentation.map(
                                                 (doc, index) => (
                                                     <div
                                                         key={index}
@@ -457,7 +486,7 @@ const ReportDetailsPage = ({ reportId, onBack }: ReportDetailsPageProps) => {
                                                         <img
                                                             src={doc.image}
                                                             alt={doc.caption}
-                                                            className="object-cover w-full rounded-lg aspect-video"
+                                                            className="aspect-video w-full rounded-lg object-cover"
                                                         />
                                                         <p className="text-sm text-gray-700">
                                                             {doc.caption}
@@ -479,7 +508,7 @@ const ReportDetailsPage = ({ reportId, onBack }: ReportDetailsPageProps) => {
                     <Card className="bg-gradient-to-r from-emerald-50 to-green-50">
                         <CardContent className="p-6">
                             <div className="text-center">
-                                <Heart className="w-12 h-12 mx-auto mb-4 text-emerald-600" />
+                                <Heart className="mx-auto mb-4 h-12 w-12 text-emerald-600" />
                                 <h3 className="mb-2 text-xl font-semibold">
                                     Donasi untuk Penanganan
                                 </h3>
@@ -513,7 +542,7 @@ const ReportDetailsPage = ({ reportId, onBack }: ReportDetailsPageProps) => {
                                 {comments.map((comment) => (
                                     <div
                                         key={comment.id}
-                                        className="flex p-4 space-x-3 rounded-lg bg-gray-50"
+                                        className="flex space-x-3 rounded-lg bg-gray-50 p-4"
                                     >
                                         <Avatar>
                                             <AvatarImage src={comment.avatar} />
@@ -523,7 +552,7 @@ const ReportDetailsPage = ({ reportId, onBack }: ReportDetailsPageProps) => {
                                         </Avatar>
 
                                         <div className="flex-1">
-                                            <div className="flex items-center mb-1 space-x-2">
+                                            <div className="mb-1 flex items-center space-x-2">
                                                 <span className="font-medium">
                                                     {comment.user}
                                                 </span>
@@ -538,7 +567,7 @@ const ReportDetailsPage = ({ reportId, onBack }: ReportDetailsPageProps) => {
 
                                             {/* Media (Image / Video) */}
                                             {comment.media?.length > 0 && (
-                                                <div className="grid grid-cols-1 gap-4 mt-3 md:grid-cols-2">
+                                                <div className="mt-3 grid grid-cols-1 gap-4 md:grid-cols-2">
                                                     {comment.media.map(
                                                         (url, idx) => {
                                                             const isVideo =
@@ -558,7 +587,7 @@ const ReportDetailsPage = ({ reportId, onBack }: ReportDetailsPageProps) => {
                                                                     key={idx}
                                                                     src={url}
                                                                     alt={`Media ${idx + 1}`}
-                                                                    className="object-cover w-full rounded-lg"
+                                                                    className="w-full rounded-lg object-cover"
                                                                 />
                                                             );
                                                         },
@@ -569,7 +598,7 @@ const ReportDetailsPage = ({ reportId, onBack }: ReportDetailsPageProps) => {
                                             {/* Replies */}
                                             {comment.replies &&
                                                 comment.replies.length > 0 && (
-                                                    <div className="pl-4 mt-3 space-y-2 border-l-2 border-gray-200">
+                                                    <div className="mt-3 space-y-2 border-l-2 border-gray-200 pl-4">
                                                         {comment.replies.map(
                                                             (reply) => (
                                                                 <div
@@ -626,7 +655,7 @@ const ReportDetailsPage = ({ reportId, onBack }: ReportDetailsPageProps) => {
                                                             )
                                                         }
                                                     />
-                                                    <div className="flex justify-end mt-1">
+                                                    <div className="mt-1 flex justify-end">
                                                         <Button
                                                             size="sm"
                                                             onClick={() =>

@@ -1,38 +1,46 @@
-import CreateReportPage from '@/components/report/CreateReportPage';
 import Navbar from '@/components/Navbar';
 import NotificationSidebar from '@/components/NotificationSidebar';
-import { router as Inertia } from '@inertiajs/react';
+import CreateReportPage from '@/components/report/CreateReportPage';
+import { router as Inertia, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 
-const CreateReportPageRoute = () => {
-    // useNavigate dari react-router-dom tidak lagi diperlukan
-    // const navigate = useNavigate();
+interface Province {
+    id: number;
+    name: string;
+    cities: {
+        id: number;
+        name: string;
+        districts: {
+            id: number;
+            name: string;
+        }[];
+    }[];
+}
 
+const CreateReportPageRoute = () => {
     const [isNotificationOpen, setIsNotificationOpen] = useState(false);
 
-    // Fungsi navigasi akan menggunakan Inertia.visit
+    const { provinces } = usePage().props as { provinces: Province[] };
+
     const handleNavigate = (page: string) => {
-        // Sesuaikan dengan rute Laravel Anda, bisa pakai route() helper
         Inertia.visit(`/${page}`);
     };
 
     const handleBack = () => {
-        // Menggunakan Inertia.visit untuk kembali ke halaman daftar laporan
-        // Pastikan Anda memiliki rute '/reports' atau named route 'reports.index'
-        Inertia.visit(route('reports.index')); // Contoh dengan route helper
+        Inertia.visit(route('reports.index'));
     };
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-white">
             <Navbar
-                onNavigate={handleNavigate} // Teruskan fungsi navigasi Inertia
-                currentPage="reports" // Tetap 'reports' karena ini adalah bagian dari alur laporan
+                onNavigate={handleNavigate}
+                currentPage="reports"
                 onNotificationClick={() => setIsNotificationOpen(true)}
-                onProfileClick={() => Inertia.visit(route('dashboard'))} // Navigasi Inertia ke dashboard atau root
+                onProfileClick={() => Inertia.visit(route('dashboard'))}
             />
 
             <main className="pt-16">
-                <CreateReportPage onBack={handleBack} />
+                <CreateReportPage onBack={handleBack} provinces={provinces} />
             </main>
 
             <NotificationSidebar

@@ -2,6 +2,10 @@
 
 namespace App\Models;
 
+use App\Models\User;
+use App\Models\Province;
+use App\Models\City;
+
 use Illuminate\Database\Eloquent\Model;
 
 class Report extends Model
@@ -22,17 +26,23 @@ class Report extends Model
         return $this->belongsTo(User::class, 'reporter_id');
     }
 
-    public function verifiedByUser(){
+    public function verifiedByUser()
+    {
         return $this->belongsTo(User::class, 'verified_by_user_id');
     }
 
-    public function completedByUser(){
+    public function completedByUser()
+    {
         return $this->belongsTo(User::class, 'completed_by_user_id');
     }
 
     /**
      * Get the city where the report occurred.
      */
+    public function province()
+    {
+        return $this->belongsTo(Province::class);
+    }
     public function city()
     {
         return $this->belongsTo(City::class);

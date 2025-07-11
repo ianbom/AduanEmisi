@@ -1,6 +1,3 @@
-// Page.tsx
-
-// CompleteProfile.tsx
 import { router, useForm, usePage } from '@inertiajs/react';
 import axios from 'axios';
 import type React from 'react';
@@ -213,12 +210,12 @@ export default function CompleteProfile() {
     };
 
     return (
-        <div className="flex items-center justify-center min-h-screen p-4 bg-gradient-to-br from-green-50 to-emerald-100">
+        <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-green-50 to-emerald-100 p-4">
             <Card className="w-full max-w-2xl border-0 shadow-xl">
                 <CardHeader className="pb-8 text-center">
-                    <div className="flex items-center justify-center mb-4">
-                        <div className="p-3 bg-green-600 rounded-full">
-                            <Leaf className="w-8 h-8 text-white" />
+                    <div className="mb-4 flex items-center justify-center">
+                        <div className="rounded-full bg-green-600 p-3">
+                            <Leaf className="h-8 w-8 text-white" />
                         </div>
                         <h1 className="ml-3 text-3xl font-bold text-green-800">
                             EcoTrack
@@ -241,7 +238,7 @@ export default function CompleteProfile() {
                                 htmlFor="name"
                                 className="flex items-center text-sm font-medium text-gray-700"
                             >
-                                <UserIcon className="w-4 h-4 mr-2 text-green-600" />
+                                <UserIcon className="mr-2 h-4 w-4 text-green-600" />
                                 Nama Lengkap
                             </Label>
                             <Input
@@ -259,7 +256,7 @@ export default function CompleteProfile() {
                                 htmlFor="email"
                                 className="flex items-center text-sm font-medium text-gray-700"
                             >
-                                <Mail className="w-4 h-4 mr-2 text-green-600" />
+                                <Mail className="mr-2 h-4 w-4 text-green-600" />
                                 Email
                             </Label>
                             <Input
@@ -277,7 +274,7 @@ export default function CompleteProfile() {
                                 htmlFor="phone"
                                 className="flex items-center text-sm font-medium text-gray-700"
                             >
-                                <Phone className="w-4 h-4 mr-2 text-green-600" />
+                                <Phone className="mr-2 h-4 w-4 text-green-600" />
                                 Nomor Telepon
                             </Label>
                             <Input
@@ -303,7 +300,7 @@ export default function CompleteProfile() {
                                 htmlFor="province"
                                 className="flex items-center text-sm font-medium text-gray-700"
                             >
-                                <MapPin className="w-4 h-4 mr-2 text-green-600" />
+                                <MapPin className="mr-2 h-4 w-4 text-green-600" />
                                 Provinsi
                             </Label>
                             <Select
@@ -449,11 +446,11 @@ export default function CompleteProfile() {
                         <Button
                             type="submit"
                             disabled={processing}
-                            className="w-full py-3 text-lg font-medium text-white transition-colors duration-200 bg-green-600 hover:bg-green-700"
+                            className="w-full bg-green-600 py-3 text-lg font-medium text-white transition-colors duration-200 hover:bg-green-700"
                         >
                             {processing ? (
                                 <div className="flex items-center">
-                                    <Leaf className="w-4 h-4 mr-2 animate-spin" />
+                                    <Leaf className="mr-2 h-4 w-4 animate-spin" />
                                     Menyimpan...
                                 </div>
                             ) : (

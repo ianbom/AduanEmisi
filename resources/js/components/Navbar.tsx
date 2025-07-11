@@ -21,20 +21,20 @@ const Navbar = ({
     ];
 
     return (
-        <nav className="fixed top-0 left-0 right-0 z-50 border-b shadow-sm border-emerald-100 bg-white/95 backdrop-blur-md">
-            <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-                <div className="flex items-center justify-between h-16">
+        <nav className="fixed left-0 right-0 top-0 z-50 border-b border-emerald-100 bg-white/95 shadow-sm backdrop-blur-md">
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div className="flex h-16 items-center justify-between">
                     {/* Logo */}
                     <div
-                        className="flex items-center cursor-pointer group"
+                        className="group flex cursor-pointer items-center"
                         onClick={() => onNavigate('/homepage')}
                     >
-                        <div className="flex items-center justify-center w-10 h-10 mr-3 transition-shadow rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 group-hover:shadow-lg">
+                        <div className="mr-3 flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 transition-shadow group-hover:shadow-lg">
                             <span className="text-lg font-bold text-white">
                                 E
                             </span>
                         </div>
-                        <span className="text-2xl font-bold text-transparent bg-gradient-to-r from-emerald-600 to-emerald-800 bg-clip-text">
+                        <span className="bg-gradient-to-r from-emerald-600 to-emerald-800 bg-clip-text text-2xl font-bold text-transparent">
                             EcoTrack
                         </span>
                     </div>
@@ -61,10 +61,10 @@ const Navbar = ({
                         {/* Notification Icon */}
                         <button
                             onClick={onNotificationClick}
-                            className="relative p-2 text-gray-500 transition-colors rounded-lg hover:bg-emerald-50 hover:text-emerald-600"
+                            className="relative rounded-lg p-2 text-gray-500 transition-colors hover:bg-emerald-50 hover:text-emerald-600"
                         >
                             <Bell size={20} />
-                            <Badge className="absolute flex items-center justify-center w-5 h-5 p-0 text-xs text-white bg-red-500 -right-1 -top-1">
+                            <Badge className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center bg-red-500 p-0 text-xs text-white">
                                 3
                             </Badge>
                         </button>
@@ -72,7 +72,7 @@ const Navbar = ({
                         {/* Profile Photo */}
                         <button
                             onClick={onProfileClick}
-                            className="flex items-center justify-center w-10 h-10 text-white transition-shadow rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 hover:shadow-lg"
+                            className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 text-white transition-shadow hover:shadow-lg"
                         >
                             <User size={20} />
                         </button>

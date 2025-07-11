@@ -11,7 +11,7 @@ class ReportRequest extends FormRequest
      */
     public function authorize(): bool
     {
-         return auth()->check();
+        return auth()->check();
     }
 
     /**
@@ -20,6 +20,7 @@ class ReportRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'province_id' => 'required|exists:provinces,id',
             'city_id' => 'required|exists:cities,id',
             'district_id' => 'required|exists:districts,id',
             'title' => 'required|string|max:255',
@@ -29,7 +30,7 @@ class ReportRequest extends FormRequest
             'longitude' => 'nullable|numeric',
             'address' => 'nullable|string',
             'media' => 'nullable|array',
-            'media.*' => 'file|mimes:jpeg,png,jpg,gif,mp4,mov,avi|max:10240', // 10MB max
+            'media.*' => 'file|mimes:jpeg,png,jpg,gif,mp4,mov,avi|max:10240',
             'media_urls' => 'nullable|array',
             'media_urls.*' => 'required|url',
             'media_types' => 'nullable|array',
@@ -43,7 +44,7 @@ class ReportRequest extends FormRequest
     public function messages(): array
     {
         return [
-          'city_id.required' => 'Kota harus dipilih',
+            'city_id.required' => 'Kota harus dipilih',
             'city_id.exists' => 'Kota yang dipilih tidak valid',
             'district_id.required' => 'Kecamatan harus dipilih',
             'district_id.exists' => 'Kecamatan yang dipilih tidak valid',
