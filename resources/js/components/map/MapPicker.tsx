@@ -60,7 +60,7 @@ function MapAutoCenter({ location }: { location: Position }) {
 
 export default function MapPicker({
     onChange,
-    defaultPosition = [-7.2575, 112.7521], // Surabaya
+    defaultPosition = [-7.2575, 112.7521],
     location,
     disabled = false,
 }: MapPickerProps) {
@@ -88,7 +88,7 @@ export default function MapPicker({
                 center={[center.lat, center.lng]}
                 zoom={13}
                 scrollWheelZoom={!disabled}
-                className="h-full w-full"
+                style={{ height: '100%', width: '100%', zIndex: 0 }}
             >
                 <TileLayer
                     attribution='&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>'

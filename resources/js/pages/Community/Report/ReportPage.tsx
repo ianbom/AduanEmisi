@@ -1,33 +1,35 @@
-import CitizenLayout from '@/components/layouts/CitizenLayout';
+import CommunityLayout from '@/components/layouts/CitizenLayout';
 import ReportsPage from '@/components/report/ReportsPage';
 import { PageProps } from '@/types';
 import { Report } from '@/types/report';
 import { router as Inertia, usePage } from '@inertiajs/react';
 
-interface ReportsPageRouteProps {
+interface ReportPageRouteProps {
     reports: Report[];
     myReports: boolean;
     [key: string]: unknown;
 }
-const ReportsPageRoute = ({ myReports }: { myReports: boolean }) => {
-    const { props } = usePage<PageProps<ReportsPageRouteProps>>();
+const ReportPageRoute = ({ myReports }: { myReports: boolean }) => {
+    const { props } = usePage<PageProps<ReportPageRouteProps>>();
     const reports = props.reports?.data || [];
     const handleViewDetails = (id: number) => {
-        Inertia.visit(route('report.show', { id }));
+        Inertia.visit(route('community.report.show', { id }));
     };
     const handleCreateReport = () => {
-        Inertia.visit(route('create.report'));
+        Inertia.visit(route('community.create.report'));
     };
     return (
-        <CitizenLayout currentPage={myReports ? 'my-report' : 'report'}>
+        <CommunityLayout
+            currentPage={myReports ? 'community-my-report' : 'community-report'}
+        >
             <ReportsPage
                 myReports={myReports}
                 reports={reports}
                 onViewDetails={handleViewDetails}
                 onCreateReport={handleCreateReport}
             />
-        </CitizenLayout>
+        </CommunityLayout>
     );
 };
 
-export default ReportsPageRoute;
+export default ReportPageRoute;

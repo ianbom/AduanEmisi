@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { Report } from '@/types/report';
+import { formatFullDateTime } from '@/utils/formatDate';
 import { getStatusColor } from '@/utils/reportStatusColor';
 import {
     ArrowLeft,
@@ -13,6 +14,7 @@ import {
     MapPin,
     MessageCircle,
     Share2,
+    ThumbsDown,
     ThumbsUp,
     User,
 } from 'lucide-react';
@@ -20,12 +22,12 @@ import { useState } from 'react';
 import AttendanceFormModal from './AttendanceFormModal';
 import ConfirmVolunteerModal from './ConfirmVolunteerModal';
 import CommentUploadCard from './InputCommentReport';
-interface ReportDetailsPageProps {
+interface ReportDetailPageProps {
     report: Report;
     onBack: () => void;
 }
 
-const ReportDetailsPage = ({ report, onBack }: ReportDetailsPageProps) => {
+const ReportDetailPage = ({ report, onBack }: ReportDetailPageProps) => {
     const [hasUpvoted, setHasUpvoted] = useState(false);
     const [hasDownvoted, setHasDownvoted] = useState(false);
     const [replying, setReplying] = useState<string | null>(null);
@@ -55,38 +57,6 @@ const ReportDetailsPage = ({ report, onBack }: ReportDetailsPageProps) => {
         { id: 8, name: 'Aldino Erlangga' },
         { id: 9, name: 'M. Ainur Ramadhan' },
     ];
-    // const reportd = {
-    //     id: r,
-    //     title: 'Sampah Plastik di Pantai Kuta',
-    //     category: 'Pencemaran Laut',
-    //     reporter: 'Ahmad Wijaya',
-    //     date: '15 Januari 2024',
-    //     address: 'Pantai Kuta, Badung, Bali',
-    //     status: 'Dalam Progress',
-    //     description:
-    //         'Saya menemukan banyak sekali sampah plastik yang berserakan di sepanjang Pantai Kuta. Kondisi ini sangat mengkhawatirkan karena dapat membahayakan ekosistem laut dan mengganggu aktivitas wisata. Sampah-sampah ini tampaknya berasal dari aktivitas wisatawan dan juga terbawa arus laut.',
-    //     images: [
-    //         'https://images.unsplash.com/photo-1472396961693-142e6e269027?w=800',
-    //         'https://images.unsplash.com/photo-1482938289607-e9573fc25ebb?w=800',
-    //     ],
-    //     upvotes: 45,
-    //     downvotes: 3,
-    //     hasMission: true,
-    //     mission: {
-    //         title: 'Pembersihan Pantai Kuta',
-    //         assignedTo: 'Volunteer',
-    //         teamLeader: 'Budi Santoso',
-    //         members: 12,
-    //         documentation: [
-    //             {
-    //                 image: 'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?w=400',
-    //                 caption: 'Tim volunteer sedang mengumpulkan sampah',
-    //                 uploader: 'Sari Dewi',
-    //             },
-    //         ],
-    //     },
-    // };
-
     const [comments, setComments] = useState([
         {
             id: '1',
@@ -259,7 +229,11 @@ const ReportDetailsPage = ({ report, onBack }: ReportDetailsPageProps) => {
                                                 size={16}
                                                 className="mr-2"
                                             />
-                                            <span>{report.created_at}</span>
+                                            <span>
+                                                {formatFullDateTime(
+                                                    report.created_at,
+                                                )}
+                                            </span>
                                         </div>
                                         <a
                                             href={`https://www.google.com/maps?q=${report.latitude},${report.longitude}`}
@@ -360,8 +334,7 @@ const ReportDetailsPage = ({ report, onBack }: ReportDetailsPageProps) => {
                                     {report.upvotes_count +
                                         (hasUpvoted ? 1 : 0)}
                                 </Button>
-
-                                {/* <Button
+                                <Button
                                     variant={
                                         hasDownvoted ? 'destructive' : 'outline'
                                     }
@@ -371,8 +344,9 @@ const ReportDetailsPage = ({ report, onBack }: ReportDetailsPageProps) => {
                                     }}
                                 >
                                     <ThumbsDown size={16} className="mr-2" />
-                                    {report.downvotes + (hasDownvoted ? 1 : 0)}
-                                </Button> */}
+                                    {report.dislikes_count +
+                                        (hasDownvoted ? 1 : 0)}
+                                </Button>
                             </div>
                         </CardContent>
                     </Card>
@@ -683,4 +657,4 @@ const ReportDetailsPage = ({ report, onBack }: ReportDetailsPageProps) => {
     );
 };
 
-export default ReportDetailsPage;
+export default ReportDetailPage;

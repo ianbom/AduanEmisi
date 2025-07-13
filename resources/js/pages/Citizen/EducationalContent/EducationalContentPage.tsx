@@ -1,6 +1,6 @@
+import Navbar from '@/components/core/Navbar';
+import NotificationSidebar from '@/components/core/NotificationSidebar';
 import EducationalContentPage from '@/components/educational-content/EducationalContentPage';
-import Navbar from '@/components/Navbar';
-import NotificationSidebar from '@/components/NotificationSidebar';
 import { router as Inertia } from '@inertiajs/react';
 import { useState } from 'react';
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Citizen;
+namespace App\Http\Controllers\Community;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProfileRequest;
@@ -27,15 +27,16 @@ class ProfileController extends Controller
     }
     public function showProfile()
     {
-        $user = User::with('province', 'city', 'district')->find(Auth::id());
-        $myReports = Report::with(['reporter'])->where('reporter_id', $user->id)->get();
-        $myReportCount = Report::with(['reporter'])->where('reporter_id', $user->id)->count();
-        return Inertia::render('Citizen/Profile/ProfilePage', [
+        $user = User::with('province', 'city', 'district', 'community')->find(Auth::id());
+        $myReports = Report::where('reporter_id', $user->id)->get();
+        $myReportsCount = Report::where('reporter_id', $user->id)->count();
+        return Inertia::render('Community/Profile/ProfilePage', [
             'auth' => [
                 'user' => $user,
+
             ],
             'myReports' => $myReports,
-            'myReportsCount' => $myReportCount,
+            'myReportsCount' => $myReportsCount
         ]);
     }
 
@@ -58,7 +59,7 @@ class ProfileController extends Controller
         try {
             $this->profileService->updateProfile($data);
             return redirect()
-                ->route('profile.show')
+                ->route('community.profile.show')
                 ->with('success', 'Profile berhasil diperbarui');
         } catch (Throwable $th) {
             return back()

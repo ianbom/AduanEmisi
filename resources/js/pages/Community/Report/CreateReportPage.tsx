@@ -1,4 +1,4 @@
-import CitizenLayout from '@/components/layouts/CitizenLayout';
+import CommunityLayout from '@/components/layouts/CitizenLayout';
 import CreateReportPage from '@/components/report/CreateReportPage';
 import { PageProps } from '@/types';
 import { Province } from '@/types/area/interface';
@@ -11,12 +11,12 @@ const CreateReportPageRoute = () => {
     const { props } = usePage<PageProps<CreateReportPageRouteProps>>();
     const provinces = props.provinces || [];
     const handleBack = () => {
-        Inertia.visit(route('report'));
+        Inertia.visit(route('community.report'));
     };
     return (
-        <CitizenLayout currentPage="create-report">
+        <CommunityLayout currentPage="community-create-report">
             <CreateReportPage onBack={handleBack} provinces={provinces} />
-        </CitizenLayout>
+        </CommunityLayout>
     );
 };
 export default CreateReportPageRoute;

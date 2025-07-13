@@ -1,6 +1,6 @@
+import Navbar from '@/components/core/Navbar';
+import NotificationSidebar from '@/components/core/NotificationSidebar';
 import ContentDetailsPage from '@/components/educational-content/ContentDetailsPage';
-import Navbar from '@/components/Navbar';
-import NotificationSidebar from '@/components/NotificationSidebar';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 const ContentDetailsPageRoute = () => {

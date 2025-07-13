@@ -1,6 +1,7 @@
+('use client');
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import {
     Select,
@@ -9,94 +10,49 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { Eye, Filter, MapPin, Search } from 'lucide-react';
-import { useState } from 'react';
+import { City, District, Province } from '@/types/area/interface';
+import { getStatusColor } from '@/utils/reportStatusColor';
 
+import { Report } from '@/types/report';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+import {
+    Calendar,
+    Eye,
+    Filter,
+    MapPin,
+    Search,
+    TrendingUp,
+} from 'lucide-react';
+import { useState } from 'react';
+import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
 interface MapPageProps {
-    onViewReport: (id: string) => void;
+    reports: Report[];
+    provinces: Province[];
+    cities: City[];
+    districts: District[];
+    onViewReport: (id: number | string) => void;
 }
 
-const MapPage = ({ onViewReport }: MapPageProps) => {
-    const [selectedPin, setSelectedPin] = useState<string | null>(null);
+delete (L.Icon.Default.prototype as L.Icon.Default & { _getIconUrl?: unknown })
+    ._getIconUrl;
+L.Icon.Default.mergeOptions({
+    iconUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon.png',
+    iconRetinaUrl:
+        'https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon-2x.png',
+    shadowUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-shadow.png',
+});
+
+const MapPage = ({
+    reports,
+    provinces,
+    cities,
+    districts,
+    onViewReport,
+}: MapPageProps) => {
     const [showFilters, setShowFilters] = useState(false);
-
-    const reports = [
-        {
-            id: '1',
-            title: 'Sampah Plastik di Pantai Kuta',
-            location: 'Pantai Kuta, Bali',
-            status: 'Dalam Progress',
-            category: 'Pencemaran Laut',
-            coordinates: { lat: -8.7183, lng: 115.1686 },
-            color: 'yellow',
-        },
-        {
-            id: '2',
-            title: 'Deforestasi Ilegal di Hutan Lindung',
-            location: 'Bogor, Jawa Barat',
-            status: 'Menunggu',
-            category: 'Kerusakan Hutan',
-            coordinates: { lat: -6.5944, lng: 106.7892 },
-            color: 'red',
-        },
-        {
-            id: '3',
-            title: 'Pencemaran Sungai Citarum',
-            location: 'Bandung, Jawa Barat',
-            status: 'Selesai',
-            category: 'Pencemaran Air',
-            coordinates: { lat: -6.9175, lng: 107.6191 },
-            color: 'green',
-        },
-    ];
-
-    const legendItems = [
-        {
-            color: 'red',
-            status: 'Menunggu',
-            description: 'Laporan baru yang perlu ditindaklanjuti',
-        },
-        {
-            color: 'yellow',
-            status: 'Dalam Progress',
-            description: 'Sedang dalam proses penanganan',
-        },
-        {
-            color: 'green',
-            status: 'Selesai',
-            description: 'Masalah telah diselesaikan',
-        },
-    ];
-
-    const getStatusColor = (status: string) => {
-        switch (status) {
-            case 'Selesai':
-                return 'bg-green-100 text-green-700';
-            case 'Dalam Progress':
-                return 'bg-yellow-100 text-yellow-700';
-            case 'Menunggu':
-                return 'bg-red-100 text-red-700';
-            default:
-                return 'bg-gray-100 text-gray-700';
-        }
-    };
-
-    const getPinColor = (status: string) => {
-        switch (status) {
-            case 'Selesai':
-                return 'bg-green-500';
-            case 'Dalam Progress':
-                return 'bg-yellow-500';
-            case 'Menunggu':
-                return 'bg-red-500';
-            default:
-                return 'bg-gray-500';
-        }
-    };
-
     return (
         <div className="flex h-screen">
-            {/* Filter Sidebar */}
             <div
                 className={`w-80 border-r border-gray-200 bg-white shadow-lg transition-transform duration-300 ${
                     showFilters
@@ -105,13 +61,13 @@ const MapPage = ({ onViewReport }: MapPageProps) => {
                 } fixed z-30 h-full overflow-y-auto lg:relative`}
             >
                 <div className="p-6">
-                    <div className="mb-6 flex items-center justify-between">
+                    <div className="flex items-center justify-between mb-6">
                         <h2 className="flex items-center text-xl font-semibold text-gray-900">
                             <Filter
                                 size={20}
                                 className="mr-2 text-emerald-600"
                             />
-                            Filter & Legenda
+                            Filter
                         </h2>
                         <Button
                             variant="ghost"
@@ -122,19 +78,15 @@ const MapPage = ({ onViewReport }: MapPageProps) => {
                             ×
                         </Button>
                     </div>
-
-                    {/* Search */}
-                    <div className="mb-6">
+                    {/* <div className="mb-6">
                         <div className="relative">
-                            <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                            <Search className="absolute w-4 h-4 text-gray-400 left-3 top-3" />
                             <Input
                                 placeholder="Cari lokasi..."
                                 className="pl-10"
                             />
                         </div>
-                    </div>
-
-                    {/* Filters */}
+                    </div> */}
                     <div className="mb-8 space-y-4">
                         <div className="space-y-2">
                             <label className="text-sm font-medium text-gray-700">
@@ -192,19 +144,20 @@ const MapPage = ({ onViewReport }: MapPageProps) => {
                             </label>
                             <Select>
                                 <SelectTrigger>
-                                    <SelectValue placeholder="Semua provinsi" />
+                                    <SelectValue placeholder="Semua Provinsi" />
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="semua">
                                         Semua Provinsi
                                     </SelectItem>
-                                    <SelectItem value="bali">Bali</SelectItem>
-                                    <SelectItem value="jabar">
-                                        Jawa Barat
-                                    </SelectItem>
-                                    <SelectItem value="jakarta">
-                                        DKI Jakarta
-                                    </SelectItem>
+                                    {provinces.map((province) => (
+                                        <SelectItem
+                                            key={province.id}
+                                            value={province.id.toString()}
+                                        >
+                                            {province.name}
+                                        </SelectItem>
+                                    ))}
                                 </SelectContent>
                             </Select>
                         </div>
@@ -216,18 +169,20 @@ const MapPage = ({ onViewReport }: MapPageProps) => {
                                 </label>
                                 <Select>
                                     <SelectTrigger>
-                                        <SelectValue placeholder="Pilih kota" />
+                                        <SelectValue placeholder="Semua Kota" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="bandung">
-                                            Bandung
+                                        <SelectItem value="semua">
+                                            Semua Kota
                                         </SelectItem>
-                                        <SelectItem value="bogor">
-                                            Bogor
-                                        </SelectItem>
-                                        <SelectItem value="denpasar">
-                                            Denpasar
-                                        </SelectItem>
+                                        {cities.map((city) => (
+                                            <SelectItem
+                                                key={city.id}
+                                                value={city.id.toString()}
+                                            >
+                                                {city.name}
+                                            </SelectItem>
+                                        ))}
                                     </SelectContent>
                                 </Select>
                             </div>
@@ -238,18 +193,20 @@ const MapPage = ({ onViewReport }: MapPageProps) => {
                                 </label>
                                 <Select>
                                     <SelectTrigger>
-                                        <SelectValue placeholder="Pilih kecamatan" />
+                                        <SelectValue placeholder="Semua Kecamatan" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="kuta">
-                                            Kuta
+                                        <SelectItem value="semua">
+                                            Semua Kecamatan
                                         </SelectItem>
-                                        <SelectItem value="denpasar">
-                                            Denpasar
-                                        </SelectItem>
-                                        <SelectItem value="ubud">
-                                            Ubud
-                                        </SelectItem>
+                                        {districts.map((district) => (
+                                            <SelectItem
+                                                key={district.id}
+                                                value={district.id.toString()}
+                                            >
+                                                {district.name}
+                                            </SelectItem>
+                                        ))}
                                     </SelectContent>
                                 </Select>
                             </div>
@@ -264,191 +221,182 @@ const MapPage = ({ onViewReport }: MapPageProps) => {
                             </Button>
                         </div>
                     </div>
+                </div>
+            </div>
+            {/* Main Map Area */}
+            <div className="relative flex-1">
+                <MapContainer
+                    center={[-2.5489, 118.0149]}
+                    zoom={5}
+                    scrollWheelZoom={true}
+                    className="z-10 w-full h-full"
+                >
+                    <TileLayer
+                        attribution='&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>'
+                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    />
 
-                    {/* Legend */}
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="text-lg">Legenda</CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-3">
-                            {legendItems.map((item, index) => (
-                                <div
-                                    key={index}
-                                    className="flex items-start space-x-3"
-                                >
-                                    <div
-                                        className={`mt-0.5 h-4 w-4 rounded-full ${getPinColor(item.status)}`}
-                                    />
-                                    <div>
-                                        <div className="text-sm font-medium text-gray-900">
-                                            {item.status}
+                    {reports.map((report) => (
+                        <Marker
+                            key={report.id}
+                            position={[report.latitude, report.longitude]}
+                        >
+                            <Popup
+                                className="custom-popup"
+                                minWidth={280}
+                                maxWidth={320}
+                                closeButton={true}
+                                autoPan={true}
+                            >
+                                <div className="relative overflow-hidden bg-white rounded-lg shadow-lg">
+                                    <div className="relative h-32 bg-gradient-to-r from-emerald-500 to-teal-600">
+                                        {report.media?.[0] ? (
+                                            report.media[0].media_type?.startsWith(
+                                                'video',
+                                            ) ? (
+                                                <div className="relative w-full h-full bg-black">
+                                                    <video
+                                                        className="object-cover w-full h-full opacity-50"
+                                                        src={`/storage/${report.media[0].media_url}`}
+                                                        muted
+                                                        preload="metadata"
+                                                    />
+                                                    <div className="absolute inset-0 flex items-center justify-center">
+                                                        <div className="p-2 rounded-full bg-white/80">
+                                                            <svg
+                                                                xmlns="http://www.w3.org/2000/svg"
+                                                                className="w-6 h-6 text-black"
+                                                                fill="none"
+                                                                viewBox="0 0 24 24"
+                                                                stroke="currentColor"
+                                                            >
+                                                                <path
+                                                                    strokeLinecap="round"
+                                                                    strokeLinejoin="round"
+                                                                    strokeWidth={
+                                                                        2
+                                                                    }
+                                                                    d="M14.752 11.168l-5.197-3.03A1 1 0 008 9.03v5.94a1 1 0 001.555.832l5.197-3.03a1 1 0 000-1.664z"
+                                                                />
+                                                            </svg>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <img
+                                                    src={`/storage/${report.media[0].media_url}`}
+                                                    alt={report.title}
+                                                    className="object-cover w-full h-full"
+                                                />
+                                            )
+                                        ) : (
+                                            <div className="flex items-center justify-center h-full bg-gray-800">
+                                                <svg
+                                                    className="w-8 h-8 text-white/80"
+                                                    fill="none"
+                                                    stroke="currentColor"
+                                                    viewBox="0 0 24 24"
+                                                >
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        strokeWidth={2}
+                                                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                                                    />
+                                                </svg>
+                                            </div>
+                                        )}
+
+                                        <div className="absolute right-2 top-2">
+                                            <Badge
+                                                className={`${getStatusColor(report.status)} text-xs font-medium shadow-sm`}
+                                            >
+                                                {report.status}
+                                            </Badge>
                                         </div>
-                                        <div className="text-xs text-gray-600">
-                                            {item.description}
+
+                                        {report.hasMission && (
+                                            <div className="absolute left-2 top-2">
+                                                <Badge className="text-xs font-medium text-white bg-blue-500 shadow-sm">
+                                                    Ada Misi
+                                                </Badge>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    <div className="p-4">
+                                        <div className="mb-2">
+                                            <Badge
+                                                variant="outline"
+                                                className="text-xs font-medium text-gray-700 border-gray-200 bg-gray-50"
+                                            >
+                                                {report.category}
+                                            </Badge>
                                         </div>
+
+                                        <h3 className="mb-3 text-base font-semibold leading-tight text-gray-900 line-clamp-2">
+                                            {report.title}
+                                        </h3>
+
+                                        <div className="flex items-start mb-3 text-sm text-gray-600">
+                                            <MapPin
+                                                size={14}
+                                                className="mr-2 mt-0.5 flex-shrink-0 text-gray-400"
+                                            />
+                                            <span className="line-clamp-2">
+                                                {report.address}
+                                            </span>
+                                        </div>
+
+                                        <div className="flex items-center justify-between mb-4 text-xs text-gray-500">
+                                            <div className="flex items-center">
+                                                <Calendar
+                                                    size={12}
+                                                    className="mr-1"
+                                                />
+                                                <span>{report.created_at}</span>
+                                            </div>
+                                            <div className="flex items-center text-emerald-600">
+                                                <TrendingUp
+                                                    size={12}
+                                                    className="mr-1"
+                                                />
+                                                <span className="font-medium">
+                                                    {report.upvotes_count || 0}
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <Button
+                                            size="sm"
+                                            onClick={() =>
+                                                onViewReport(report.id)
+                                            }
+                                            className="w-full text-white transition-colors duration-200 bg-emerald-600 hover:bg-emerald-700"
+                                        >
+                                            <Eye size={14} className="mr-2" />
+                                            Lihat Detail
+                                        </Button>
                                     </div>
                                 </div>
-                            ))}
+                            </Popup>
+                        </Marker>
+                    ))}
+                </MapContainer>
+
+                <div className="absolute z-20 bottom-4 right-4">
+                    <Card className="shadow-lg bg-white/90 backdrop-blur-sm">
+                        <CardContent className="p-3 text-center">
+                            <div className="text-sm font-medium text-gray-900">
+                                {reports.length} Laporan Ditemukan
+                            </div>
+                            <div className="text-xs text-gray-600">
+                                Klik marker untuk lihat detail
+                            </div>
                         </CardContent>
                     </Card>
                 </div>
             </div>
-
-            {/* Main Map Area */}
-            <div className="relative flex-1">
-                {/* Mobile Filter Toggle */}
-                <Button
-                    className="absolute left-4 top-4 z-20 bg-white text-gray-700 shadow-lg hover:bg-gray-50 lg:hidden"
-                    onClick={() => setShowFilters(true)}
-                >
-                    <Filter size={16} className="mr-2" />
-                    Filter
-                </Button>
-
-                {/* Map Container */}
-                <div className="relative h-full overflow-hidden bg-gradient-to-br from-blue-50 to-green-50">
-                    {/* Indonesia Map Outline (Simplified) */}
-                    <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="relative flex h-full w-full max-w-4xl items-center justify-center">
-                            {/* Map Background */}
-                            <div className="relative h-3/4 w-full overflow-hidden rounded-lg bg-gradient-to-br from-emerald-100 to-blue-100 shadow-inner">
-                                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-
-                                {/* Indonesia Silhouette */}
-                                <div className="absolute inset-0 flex items-center justify-center">
-                                    <div className="select-none text-6xl font-bold text-emerald-200/30">
-                                        PETA INDONESIA
-                                    </div>
-                                </div>
-
-                                {/* Report Pins */}
-                                {reports.map((report) => (
-                                    <div key={report.id}>
-                                        {/* Pin */}
-                                        <div
-                                            className={`absolute h-6 w-6 ${getPinColor(report.status)} z-10 -translate-x-1/2 -translate-y-1/2 transform cursor-pointer rounded-full border-2 border-white shadow-lg transition-transform hover:scale-110`}
-                                            style={{
-                                                left: `${30 + Math.random() * 40}%`,
-                                                top: `${30 + Math.random() * 40}%`,
-                                            }}
-                                            onClick={() =>
-                                                setSelectedPin(
-                                                    selectedPin === report.id
-                                                        ? null
-                                                        : report.id,
-                                                )
-                                            }
-                                        >
-                                            <div className="absolute inset-0 animate-ping rounded-full bg-white/30" />
-                                        </div>
-
-                                        {/* Popup */}
-                                        {selectedPin === report.id && (
-                                            <div
-                                                className="absolute z-20 -translate-x-1/2 -translate-y-full transform"
-                                                style={{
-                                                    left: `${30 + Math.random() * 40}%`,
-                                                    top: `${25 + Math.random() * 40}%`,
-                                                }}
-                                            >
-                                                <Card className="w-80 border-0 shadow-xl">
-                                                    <CardContent className="p-4">
-                                                        <div className="mb-3 flex items-start justify-between">
-                                                            <Badge
-                                                                className={getStatusColor(
-                                                                    report.status,
-                                                                )}
-                                                            >
-                                                                {report.status}
-                                                            </Badge>
-                                                            <Button
-                                                                variant="ghost"
-                                                                size="sm"
-                                                                onClick={() =>
-                                                                    setSelectedPin(
-                                                                        null,
-                                                                    )
-                                                                }
-                                                            >
-                                                                ×
-                                                            </Button>
-                                                        </div>
-
-                                                        <h3 className="mb-2 line-clamp-2 font-semibold text-gray-900">
-                                                            {report.title}
-                                                        </h3>
-
-                                                        <div className="mb-3 flex items-center text-sm text-gray-600">
-                                                            <MapPin
-                                                                size={14}
-                                                                className="mr-1"
-                                                            />
-                                                            <span>
-                                                                {
-                                                                    report.location
-                                                                }
-                                                            </span>
-                                                        </div>
-
-                                                        <div className="mb-3">
-                                                            <Badge
-                                                                variant="outline"
-                                                                className="text-xs"
-                                                            >
-                                                                {
-                                                                    report.category
-                                                                }
-                                                            </Badge>
-                                                        </div>
-
-                                                        <Button
-                                                            size="sm"
-                                                            className="w-full bg-emerald-600 hover:bg-emerald-700"
-                                                            onClick={() =>
-                                                                onViewReport(
-                                                                    report.id,
-                                                                )
-                                                            }
-                                                        >
-                                                            <Eye
-                                                                size={14}
-                                                                className="mr-2"
-                                                            />
-                                                            Lihat Detail
-                                                        </Button>
-                                                    </CardContent>
-                                                </Card>
-                                            </div>
-                                        )}
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Map Info */}
-                    <div className="absolute bottom-4 right-4">
-                        <Card className="bg-white/90 backdrop-blur-sm">
-                            <CardContent className="p-3 text-center">
-                                <div className="text-sm font-medium text-gray-900">
-                                    {reports.length} Laporan Ditemukan
-                                </div>
-                                <div className="text-xs text-gray-600">
-                                    Klik pin untuk melihat detail
-                                </div>
-                            </CardContent>
-                        </Card>
-                    </div>
-                </div>
-            </div>
-
-            {/* Backdrop for mobile filter */}
-            {showFilters && (
-                <div
-                    className="fixed inset-0 z-20 bg-black/20 lg:hidden"
-                    onClick={() => setShowFilters(false)}
-                />
-            )}
         </div>
     );
 };
