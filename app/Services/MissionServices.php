@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Models\Mission;
+use App\Models\MissionDocumentation;
+use App\Models\MissionVolunteer;
 use App\Models\Report;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
@@ -25,6 +27,7 @@ class MissionServices extends Service
             $missionData = [
                 'report_id' => $data['report_id'] ?? null,
                 'creator_user_id' => Auth::id(),
+                'province_id' => $data['province_id'],
                 'city_id' => $data['city_id'],
                 'district_id' => $data['district_id'],
                 'title' => $data['title'],
@@ -37,9 +40,6 @@ class MissionServices extends Service
                 'assigned_to_type' => $data['assigned_to_type'] ?? null,
                 'assigned_volunteer_id' => $data['assigned_volunteer_id'] ?? null,
             ];
-
-            $report = Report::findOrFail($data['report_id']);
-            $report->update(['status' => 'verified']);
 
             $mission = Mission::create($missionData);
 
@@ -295,6 +295,56 @@ class MissionServices extends Service
     private function canDeleteMission(Mission $mission): bool
     {
         return $mission->creator_user_id === Auth::id();
+    }
+
+
+       public function updateMission(Mission $mission, array $data): Mission
+    {
+        DB::beginTransaction();
+
+        try {
+            // Handle completed_at field based on status
+            if ($data['status'] === 'completed' && !$mission->completed_at) {
+                $data['completed_at'] = now();
+            } elseif ($data['status'] !== 'completed') {
+                $data['completed_at'] = null;
+            }
+
+            // Clear assigned_volunteer_id if assigned_to_type is not 'volunteer'
+            if ($data['assigned_to_type'] !== 'volunteer') {
+                $data['assigned_volunteer_id'] = null;
+            }
+
+            $mission->update($data);
+
+            DB::commit();
+
+            return $mission->fresh();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    public function getMissionVolunteers($missionId){
+        $volunteers = MissionVolunteer::where('mission_id', $missionId)->get();
+        return $volunteers;
+    }
+
+    public function getMissionDocumentations($missionId){
+        $documentation = MissionDocumentation::where('mission_id', $missionId)->get();
+        return $documentation;
+    }
+
+    public function getVerifiedAndUniqueReport($missionId){
+        $usedReportIds = Mission::where('id', '!=', $missionId)->pluck('report_id'); // agar report_id sekarang tidak dikecualikan
+        $reports = Report::where('status', 'verified')
+        ->whereNotIn('id', $usedReportIds)
+        ->orderBy('title', 'asc')
+        ->get();
+
+        return $reports;
+
     }
 
 
