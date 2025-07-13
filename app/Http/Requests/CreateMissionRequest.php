@@ -29,6 +29,7 @@ class CreateMissionRequest extends FormRequest
                 // Validasi bahwa report_id belum memiliki mission lain
                 Rule::unique('missions', 'report_id')
             ],
+            'province_id' => 'required',
             'city_id' => 'required|exists:cities,id',
             'district_id' => 'required|exists:districts,id',
             'title' => 'required|string|max:255',

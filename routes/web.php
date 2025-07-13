@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\ContentController as AdmContentController;
 use App\Http\Controllers\Admin\MissionController as AdmMissionController;
 use App\Http\Controllers\Admin\ReportController as AdmReportController;
 use App\Http\Controllers\Citizen\ReportController as CtzReportController;
@@ -66,8 +67,15 @@ Route::post('/complete-profile', [CtzProfileController::class, 'updateCompletePr
 
 Route::prefix('admin')->as('admin.')->middleware(['auth'])->group(function () {
 
-    Route::resource('missions', AdmMissionController::class);
+    Route::resource('missions',AdmMissionController::class);
+    Route::put('missions/update/volunteer/{missionVolunteer}',[AdmMissionController::class, 'updateStatusVolunteer'])->name('update.volunteerStatus');
+
     Route::resource('reports', AdmReportController::class);
+    Route::put('reject-report/{report}', [AdmReportController::class, 'rejectReport'])->name('reports.reject');
+    Route::put('accept-report/{report}', [AdmReportController::class, 'acceptReport'])->name('reports.accept');
+
+    Route::resource('contents',AdmContentController::class);
+    Route::delete('content-media/{contentMedia}', [AdmContentController::class, 'deleteMedia'])->name('delete.contentMedia');
 });
 
 // Route::middleware('auth')->group(function () {
