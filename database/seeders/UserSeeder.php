@@ -15,6 +15,7 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
+
         // User::create([
         //     'name' => 'Ian',
         //     'email' => 'ianbom@gmail.com',
@@ -25,6 +26,7 @@ class UserSeeder extends Seeder
             'name' => 'komunitas',
             'email' => 'komunitas@gmail.com',
             'password' => Hash::make('ianbom123'),
+
         ]);
 
         Community::create([

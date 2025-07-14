@@ -26,7 +26,7 @@ class MissionController extends Controller
         $this->missionService = $missionService;
     }
 
-     public function store(CreateMissionRequest $request)
+    public function store(CreateMissionRequest $request)
     {
         $data = $request->validated();
         DB::beginTransaction();
@@ -42,8 +42,8 @@ class MissionController extends Controller
                 'report:id,title'
             ]);
             DB::commit();
-           return redirect()->route('admin.missions.index')->with('success', 'Misi berhasil dibuat');
 
+           return redirect()->route('admin.missions.index')->with('success', 'Misi berhasil dibuat');
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
@@ -56,15 +56,14 @@ class MissionController extends Controller
     public function index(Request $request)
     {
         try {
-        $filters = $this->missionService->buildFilter($request);
+            $filters = $this->missionService->buildFilter($request);
 
-        $missions = $this->missionService->getMissionByFilters($filters);
+            $missions = $this->missionService->getMissionByFilters($filters);
 
-        $cities = City::all();
-        $districts = District::all();
+            $cities = City::all();
+            $districts = District::all();
 
-        return view('admin.missions.index', ['missions' => $missions, 'cities' => $cities, 'districts' => $districts]);
-
+            return view('admin.missions.index', ['missions' => $missions, 'cities' => $cities, 'districts' => $districts]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,

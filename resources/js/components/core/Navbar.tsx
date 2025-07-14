@@ -15,7 +15,8 @@ const Navbar = ({
     onProfileClick,
 }: NavbarProps) => {
     const navItems = [
-        { id: 'report', label: 'Laporan', key: 'report' },
+        { id: 'report', label: 'Daftar Laporan', key: 'report' },
+        { id: 'my-report', label: 'Laporan Saya', key: 'my-report' },
         { id: 'map', label: 'Peta', key: 'map' },
         { id: 'education', label: 'Konten Edukasi', key: 'education' },
     ];
@@ -55,7 +56,6 @@ const Navbar = ({
                             </button>
                         ))}
                     </div>
-
                     {/* Right Side - Notifications & Profile */}
                     <div className="flex items-center space-x-4">
                         {/* Notification Icon */}

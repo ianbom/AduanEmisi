@@ -10,6 +10,7 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { Report } from '@/types/report';
+import { formatDateOnly } from '@/utils/formatDate';
 import { getStatusColor } from '@/utils/reportStatusColor';
 import { router as Inertia } from '@inertiajs/react';
 import {
@@ -19,7 +20,8 @@ import {
     MapPin,
     Plus,
     Search,
-    TrendingUp,
+    ThumbsDown,
+    ThumbsUp,
 } from 'lucide-react';
 import { useState } from 'react';
 interface ReportsPageProps {
@@ -205,158 +207,195 @@ const ReportsPage = ({
                             />
                         </div>
                     </div>
-                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
-                        {reports.map((report: Report) => (
-                            <Card
-                                key={report.id}
-                                className="group cursor-pointer border-0 shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
-                                onClick={() => onViewDetails(report.id)}
-                            >
-                                {/* <div className="relative overflow-hidden rounded-t-lg">
-                                    <img
-                                        src={`/storage/${report.media?.[0]?.media_url}`}
-                                        alt={report.title}
-                                        className="object-cover w-full h-48 transition-transform duration-300 group-hover:scale-105"
-                                    />
-                                    <div className="absolute right-3 top-3">
-                                        <Badge
-                                            className={getStatusColor(
-                                                report.status,
+                    {reports.length > 0 ? (
+                        <>
+                            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+                                {reports.map((report: Report) => (
+                                    <Card
+                                        key={report.id}
+                                        className="group cursor-pointer border-0 shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+                                        onClick={() => onViewDetails(report.id)}
+                                    >
+                                        <div className="relative overflow-hidden rounded-t-lg">
+                                            {report.media?.[0]?.media_type?.startsWith(
+                                                'video',
+                                            ) ? (
+                                                <div className="relative h-48 w-full bg-black">
+                                                    <video
+                                                        className="h-full w-full object-cover opacity-50"
+                                                        src={`/storage/${report.media[0].media_url}`}
+                                                        muted
+                                                        preload="metadata"
+                                                    />
+                                                    <div className="absolute inset-0 flex items-center justify-center">
+                                                        <div className="rounded-full bg-white/80 p-2">
+                                                            <svg
+                                                                xmlns="http://www.w3.org/2000/svg"
+                                                                className="h-6 w-6 text-black"
+                                                                fill="none"
+                                                                viewBox="0 0 24 24"
+                                                                stroke="currentColor"
+                                                            >
+                                                                <path
+                                                                    strokeLinecap="round"
+                                                                    strokeLinejoin="round"
+                                                                    strokeWidth={
+                                                                        2
+                                                                    }
+                                                                    d="M14.752 11.168l-5.197-3.03A1 1 0 008 9.03v5.94a1 1 0 001.555.832l5.197-3.03a1 1 0 000-1.664z"
+                                                                />
+                                                            </svg>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <img
+                                                    src={`/storage/${report.media?.[0]?.media_url}`}
+                                                    alt={report.title}
+                                                    className="h-48 w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                                />
                                             )}
-                                        >
-                                            {report.status}
-                                        </Badge>
-                                    </div>
-                                    {report.hasMission && (
-                                        <div className="absolute left-3 top-3">
-                                            <Badge className="text-blue-700 bg-blue-100">
-                                                Ada Misi
-                                            </Badge>
+
+                                            <div className="absolute right-3 top-3">
+                                                <Badge
+                                                    className={getStatusColor(
+                                                        report.status,
+                                                    )}
+                                                >
+                                                    {report.status}
+                                                </Badge>
+                                            </div>
+                                            {report.hasMission && (
+                                                <div className="absolute left-3 top-3">
+                                                    <Badge className="bg-blue-100 text-blue-700">
+                                                        Ada Misi
+                                                    </Badge>
+                                                </div>
+                                            )}
                                         </div>
-                                    )}
-                                </div> */}
-                                <div className="relative overflow-hidden rounded-t-lg">
-                                    {report.media?.[0]?.media_type?.startsWith(
-                                        'video',
-                                    ) ? (
-                                        <div className="relative h-48 w-full bg-black">
-                                            <video
-                                                className="h-full w-full object-cover opacity-50"
-                                                src={`/storage/${report.media[0].media_url}`}
-                                                muted
-                                                preload="metadata"
-                                            />
-                                            <div className="absolute inset-0 flex items-center justify-center">
-                                                <div className="rounded-full bg-white/80 p-2">
-                                                    <svg
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                        className="h-6 w-6 text-black"
-                                                        fill="none"
-                                                        viewBox="0 0 24 24"
-                                                        stroke="currentColor"
-                                                    >
-                                                        <path
-                                                            strokeLinecap="round"
-                                                            strokeLinejoin="round"
-                                                            strokeWidth={2}
-                                                            d="M14.752 11.168l-5.197-3.03A1 1 0 008 9.03v5.94a1 1 0 001.555.832l5.197-3.03a1 1 0 000-1.664z"
+
+                                        <CardContent className="p-4">
+                                            <div className="mb-2">
+                                                <Badge
+                                                    variant="outline"
+                                                    className="mb-2 text-xs"
+                                                >
+                                                    {report.category}
+                                                </Badge>
+                                            </div>
+
+                                            <h3 className="mb-2 line-clamp-2 font-semibold text-gray-900 transition-colors group-hover:text-emerald-600">
+                                                {report.title}
+                                            </h3>
+
+                                            <div className="mb-3 flex items-center text-sm text-gray-500">
+                                                <MapPin
+                                                    size={14}
+                                                    className="mr-1"
+                                                />
+                                                <span className="truncate">
+                                                    {report.district?.name} ,
+                                                    {report.city?.name},{' '}
+                                                    {report.province?.name}
+                                                    ,{' '}
+                                                </span>
+                                            </div>
+
+                                            <div className="mb-4 flex items-center justify-between">
+                                                <div className="flex items-center text-sm text-gray-500">
+                                                    <Calendar
+                                                        size={14}
+                                                        className="mr-1"
+                                                    />
+                                                    <span>
+                                                        {formatDateOnly(
+                                                            report.created_at,
+                                                        )}
+                                                    </span>
+                                                </div>
+                                                <div className="flex items-center justify-between gap-5">
+                                                    <div className="flex items-center text-sm font-medium text-emerald-600">
+                                                        <ThumbsUp
+                                                            size={14}
+                                                            className="mr-1"
                                                         />
-                                                    </svg>
+                                                        <span>
+                                                            {report.upvotes_count ||
+                                                                0}
+                                                        </span>
+                                                    </div>
+                                                    <div className="flex items-center text-sm font-medium text-emerald-600">
+                                                        <ThumbsDown
+                                                            size={14}
+                                                            className="mr-1"
+                                                        />
+                                                        <span>
+                                                            {report.upvotes_count ||
+                                                                0}
+                                                        </span>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    ) : (
-                                        <img
-                                            src={`/storage/${report.media?.[0]?.media_url}`}
-                                            alt={report.title}
-                                            className="h-48 w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                                        />
-                                    )}
 
-                                    <div className="absolute right-3 top-3">
-                                        <Badge
-                                            className={getStatusColor(
-                                                report.status,
-                                            )}
+                                            <Button
+                                                className="mt-auto w-full bg-amber-500 transition-colors duration-200 hover:bg-amber-700"
+                                                onClick={() =>
+                                                    Inertia.visit(
+                                                        `/report/${report.id}`,
+                                                    )
+                                                }
+                                            >
+                                                <Eye
+                                                    size={16}
+                                                    className="mr-2"
+                                                />
+                                                Lihat Detail
+                                            </Button>
+                                        </CardContent>
+                                    </Card>
+                                ))}
+                            </div>
+                            <div className="mt-8 text-center">
+                                <Button
+                                    variant="outline"
+                                    size="lg"
+                                    className="min-w-32"
+                                >
+                                    Muat Lebih Banyak
+                                </Button>
+                            </div>
+                        </>
+                    ) : (
+                        <div className="flex min-h-[400px] w-full items-center justify-center">
+                            <Card className="w-full p-8 text-center">
+                                <div className="mb-4 flex justify-center">
+                                    <div className="rounded-full bg-gray-100 p-4">
+                                        <svg
+                                            className="h-12 w-12 text-gray-400"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                            xmlns="http://www.w3.org/2000/svg"
                                         >
-                                            {report.status}
-                                        </Badge>
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth={2}
+                                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                                            />
+                                        </svg>
                                     </div>
-                                    {report.hasMission && (
-                                        <div className="absolute left-3 top-3">
-                                            <Badge className="bg-blue-100 text-blue-700">
-                                                Ada Misi
-                                            </Badge>
-                                        </div>
-                                    )}
                                 </div>
-
-                                <CardContent className="p-4">
-                                    <div className="mb-2">
-                                        <Badge
-                                            variant="outline"
-                                            className="mb-2 text-xs"
-                                        >
-                                            {report.category}
-                                        </Badge>
-                                    </div>
-
-                                    <h3 className="mb-2 line-clamp-2 font-semibold text-gray-900 transition-colors group-hover:text-emerald-600">
-                                        {report.title}
-                                    </h3>
-
-                                    <div className="mb-3 flex items-center text-sm text-gray-500">
-                                        <MapPin size={14} className="mr-1" />
-                                        <span className="truncate">
-                                            {report.district?.name} ,
-                                            {report.city?.name},{' '}
-                                            {report.province?.name},{' '}
-                                        </span>
-                                    </div>
-
-                                    <div className="mb-4 flex items-center justify-between">
-                                        <div className="flex items-center text-sm text-gray-500">
-                                            <Calendar
-                                                size={14}
-                                                className="mr-1"
-                                            />
-                                            <span>{report.created_at}</span>
-                                        </div>
-                                        <div className="flex items-center text-sm font-medium text-emerald-600">
-                                            <TrendingUp
-                                                size={14}
-                                                className="mr-1"
-                                            />
-                                            <span>
-                                                {report.upvotes_count || 0}
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    <Button
-                                        className="mt-auto w-full bg-amber-500 transition-colors duration-200 hover:bg-amber-700"
-                                        onClick={() =>
-                                            Inertia.visit(
-                                                `/report/${report.id}`,
-                                            )
-                                        }
-                                    >
-                                        <Eye size={16} className="mr-2" />
-                                        Lihat Detail
-                                    </Button>
-                                </CardContent>
+                                <h3 className="mb-2 text-lg font-semibold text-gray-900">
+                                    Laporan Belum Ada
+                                </h3>
+                                <p className="text-sm text-gray-500">
+                                    Belum ada laporan yang tersedia saat ini.
+                                    Silakan coba lagi nanti.
+                                </p>
                             </Card>
-                        ))}
-                    </div>
-                    <div className="mt-8 text-center">
-                        <Button
-                            variant="outline"
-                            size="lg"
-                            className="min-w-32"
-                        >
-                            Muat Lebih Banyak
-                        </Button>
-                    </div>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

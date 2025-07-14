@@ -12,7 +12,15 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { router as Inertia } from '@inertiajs/react';
 import axios from 'axios';
-import { ArrowLeft, Camera, FileVideo, MapPin, Upload, X } from 'lucide-react';
+import {
+    ArrowLeft,
+    Camera,
+    FileVideo,
+    Info,
+    MapPin,
+    Upload,
+    X,
+} from 'lucide-react';
 
 import { lazy, useState } from 'react';
 
@@ -285,12 +293,17 @@ const CreateReportPage = ({ provinces, onBack }: PageProps) => {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-8">
-                {/* Basic Information */}
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
                     <div className="space-y-6 lg:col-span-2">
                         <Card>
                             <CardHeader>
-                                <CardTitle>Informasi Dasar</CardTitle>
+                                <CardTitle className="flex items-center">
+                                    <Info
+                                        size={20}
+                                        className="mr-2 text-emerald-600"
+                                    />
+                                    Informasi Dasar
+                                </CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-6">
                                 <div className="space-y-2">
@@ -474,7 +487,8 @@ const CreateReportPage = ({ provinces, onBack }: PageProps) => {
                                 </CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-6">
-                                <div className="h-64 rounded-lg border-2 border-dashed border-gray-300 bg-gray-100">
+                                {/* <div className="h-64 bg-gray-100 border-2 border-gray-300 border-dashed rounded-lg"> */}
+                                <div className="h-64 overflow-hidden rounded-lg border-2 border-dashed border-gray-300 bg-gray-100">
                                     <MapPicker
                                         onChange={(pos) => setLocation(pos)}
                                         location={location}
@@ -645,8 +659,6 @@ const CreateReportPage = ({ provinces, onBack }: PageProps) => {
                         </Card>
                     </div>
                 </div>
-
-                {/* Action Buttons */}
                 <div className="flex flex-col justify-start gap-4 rounded-lg border border-gray-200 bg-white p-3 shadow-sm sm:flex-row">
                     <Button
                         type="button"

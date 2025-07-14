@@ -3,61 +3,44 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Link, usePage } from '@inertiajs/react';
-
+import { Report } from '@/types/report';
+import { User } from '@/types/user/interface';
+import { getRarityColor } from '@/utils/badgeRarityColor';
+import { formatFullDateTime } from '@/utils/formatDate';
+import { Link, router } from '@inertiajs/react';
 import {
     ArrowRight,
     Award,
+    Calendar,
+    Clock,
     FileText,
     Heart,
+    Mail,
     Map,
+    MapPin,
+    MapPinned,
+    Phone,
     Plus,
     Target,
     Trophy,
-    User,
 } from 'lucide-react';
 import { useState } from 'react';
-interface PageProps {
-    auth: {
-        user: {
-            id: number;
-            name: string;
-            email: string;
-            phone: string | null;
-            province_id: number | null;
-            city_id: number | null;
-            district_id: number | null;
-            address: string | null;
-            city: {
-                name: string;
-            };
-            district: {
-                name: string;
-            };
-            province: {
-                name: string;
-            };
-        };
-    };
+interface CitizenProfilePageProps {
+    user: User;
+    myReports: Report[];
+    myReportsCount: number;
 }
-const CitizenDashboardPage = () => {
-    const { auth } = usePage<PageProps>().props;
-
+const CitizenProfilePage = ({
+    user,
+    myReports,
+    myReportsCount,
+}: CitizenProfilePageProps) => {
     const [activeTab, setActiveTab] = useState('reports');
-
-    const userProfile = {
-        name: 'Ahmad Wijaya',
-        email: 'ahmad.wijaya@email.com',
-        phone: '+62 812-3456-7890',
-        address: 'Jakarta Selatan, DKI Jakarta, Kebayoran Baru',
-        bio: 'Pecinta lingkungan yang aktif melaporkan isu-isu lingkungan di Jakarta',
-        avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
-    };
 
     const stats = [
         {
             label: 'LAPORAN DIBUAT',
-            value: '12',
+            value: myReportsCount,
             icon: FileText,
             color: 'text-blue-600',
         },
@@ -68,8 +51,8 @@ const CitizenDashboardPage = () => {
             color: 'text-green-600',
         },
         {
-            label: 'POIN KONTRIBUSI',
-            value: '2,450',
+            label: 'KOLEKSI BADGE',
+            value: '20',
             icon: Trophy,
             color: 'text-purple-600',
         },
@@ -102,23 +85,6 @@ const CitizenDashboardPage = () => {
         },
     ];
 
-    const myReports = [
-        {
-            id: 1,
-            title: 'Pencemaran Air Sungai Ciliwung',
-            location: 'Jakarta Selatan',
-            status: 'On Progress',
-            date: '2024-01-15',
-        },
-        {
-            id: 2,
-            title: 'Penumpukan Sampah di Taman Kota',
-            location: 'Jakarta Selatan',
-            status: 'Completed',
-            date: '2024-01-10',
-        },
-    ];
-
     const myMissions = [
         {
             id: 1,
@@ -136,48 +102,98 @@ const CitizenDashboardPage = () => {
         },
     ];
 
-    const getRarityColor = (rarity: string) => {
-        switch (rarity) {
-            case 'Gold':
-                return 'border-yellow-400 bg-yellow-50';
-            case 'Silver':
-                return 'border-gray-400 bg-gray-50';
-            case 'Bronze':
-                return 'border-orange-400 bg-orange-50';
-            default:
-                return 'border-gray-200 bg-gray-50';
-        }
-    };
-
     return (
-        <div className="min-h-screen bg-gray-50">
-            <div className="px-4 py-8 mx-auto max-w-7xl sm:px-6 lg:px-8">
+        <div className="min-h-screen">
+            <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
                 {/* Profile Header */}
                 <Card className="mb-8">
                     <CardContent className="p-6">
                         <div className="flex flex-col items-start gap-6 md:flex-row md:items-center">
-                            <Avatar className="w-24 h-24">
+                            <Avatar className="h-24 w-24">
                                 <AvatarImage
-                                    src={userProfile.avatar}
-                                    alt={auth.user.name}
+                                    src={user?.profile_url}
+                                    alt={user?.name}
                                 />
-                                <AvatarFallback>
-                                    <User className="w-12 h-12" />
+                                <AvatarFallback className="bg-emerald-100 text-xl font-semibold text-emerald-700">
+                                    {user?.name?.charAt(0)?.toUpperCase() ||
+                                        'U'}
                                 </AvatarFallback>
                             </Avatar>
 
                             <div className="flex-1">
-                                <h1 className="mb-2 text-2xl font-bold text-gray-900">
-                                    {auth.user.name}
+                                <h1 className="mb-3 text-2xl font-bold text-gray-900">
+                                    {user?.name || 'User Name'}
                                 </h1>
-                                <div className="space-y-1 text-gray-600">
-                                    <p>{auth.user.email}</p>
-                                    <p>{auth.user.phone}</p>
 
+                                <div className="flex flex-col gap-4 md:flex-row md:gap-8">
+                                    <div className="space-y-2 text-gray-600 md:flex-1">
+                                        <div className="flex items-center gap-2">
+                                            <Mail
+                                                size={16}
+                                                className="text-gray-400"
+                                            />
+                                            <p>{user?.email}</p>
+                                        </div>
+
+                                        <div className="flex items-center gap-2">
+                                            <Phone
+                                                size={16}
+                                                className="text-gray-400"
+                                            />
+                                            <p>{user?.phone || '-'}</p>
+                                        </div>
+                                        <div className="flex items-start gap-2">
+                                            <MapPin
+                                                size={16}
+                                                className="mt-0.5 text-gray-400"
+                                            />
+                                            <p className="text-gray-700">
+                                                {
+                                                    (user?.district.name,
+                                                    user?.city.name,
+                                                    user?.province.name || '-')
+                                                }
+                                            </p>
+                                        </div>
+                                        <div className="flex items-start gap-2">
+                                            <MapPinned
+                                                size={16}
+                                                className="mt-0.5 text-gray-400"
+                                            />
+                                            <p className="text-gray-700">
+                                                {user?.address || '-'}
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-2 text-sm text-gray-500 md:flex-shrink-0">
+                                        <div className="flex items-center gap-2">
+                                            <Calendar
+                                                size={14}
+                                                className="text-gray-400"
+                                            />
+                                            <p>
+                                                Bergabung:{' '}
+                                                {formatFullDateTime(
+                                                    user?.created_at || '',
+                                                )}
+                                            </p>
+                                        </div>
+
+                                        <div className="flex items-center gap-2">
+                                            <Clock
+                                                size={14}
+                                                className="text-gray-400"
+                                            />
+                                            <p>
+                                                Diperbarui:{' '}
+                                                {formatFullDateTime(
+                                                    user?.updated_at || '',
+                                                )}
+                                            </p>
+                                        </div>
+                                    </div>
                                 </div>
-                                <p className="mt-3 text-gray-700">
-                                    {auth.user.address}
-                                </p>
                             </div>
                         </div>
                     </CardContent>
@@ -188,7 +204,7 @@ const CitizenDashboardPage = () => {
                     <h2 className="mb-4 text-xl font-semibold text-gray-900">
                         Kilas Balik Kontribusi Anda
                     </h2>
-                    <div className="grid gap-6 mb-6 md:grid-cols-3">
+                    <div className="mb-6 grid gap-6 md:grid-cols-3">
                         {stats.map((stat, index) => (
                             <Card
                                 key={index}
@@ -199,19 +215,53 @@ const CitizenDashboardPage = () => {
                                         className={`h-8 w-8 ${stat.color} mx-auto mb-3`}
                                     />
                                     <div className="mb-1 text-3xl font-bold text-gray-900">
-                                        {stat.value}
+                                        {stat.label === 'LAPORAN DIBUAT' &&
+                                        myReportsCount === 0
+                                            ? '-'
+                                            : stat.value}
                                     </div>
                                     <div className="text-sm text-gray-600">
                                         {stat.label}
                                     </div>
-                                    <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        className="mt-2 text-xs"
-                                    >
-                                        Lihat semua{' '}
-                                        <ArrowRight className="w-3 h-3 ml-1" />
-                                    </Button>
+
+                                    {stat.label === 'LAPORAN DIBUAT' ? (
+                                        myReportsCount === 0 ? (
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                className="mt-2 text-xs"
+                                                onClick={() =>
+                                                    router.visit(
+                                                        '/report-create',
+                                                    )
+                                                }
+                                            >
+                                                Buat Sekarang
+                                                <ArrowRight className="ml-1 h-3 w-3" />
+                                            </Button>
+                                        ) : (
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                className="mt-2 text-xs"
+                                                onClick={() =>
+                                                    router.visit('/report')
+                                                }
+                                            >
+                                                Lihat Semua
+                                                <ArrowRight className="ml-1 h-3 w-3" />
+                                            </Button>
+                                        )
+                                    ) : (
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            className="mt-2 text-xs"
+                                        >
+                                            Lihat Semua
+                                            <ArrowRight className="ml-1 h-3 w-3" />
+                                        </Button>
+                                    )}
                                 </CardContent>
                             </Card>
                         ))}
@@ -220,9 +270,9 @@ const CitizenDashboardPage = () => {
                     {/* Quick Actions */}
                     <div className="grid gap-4 md:grid-cols-2">
                         <Link href="/report-create">
-                            <Card className="h-full transition-shadow cursor-pointer hover:shadow-lg">
+                            <Card className="h-full cursor-pointer transition-shadow hover:shadow-lg">
                                 <CardContent className="p-6 text-center">
-                                    <Plus className="w-12 h-12 mx-auto mb-3 text-green-600" />
+                                    <Plus className="mx-auto mb-3 h-12 w-12 text-green-600" />
                                     <h3 className="mb-2 text-lg font-semibold text-gray-900">
                                         LAPORKAN ISU BARU
                                     </h3>
@@ -235,9 +285,9 @@ const CitizenDashboardPage = () => {
                         </Link>
 
                         <Link href="/map">
-                            <Card className="h-full transition-shadow cursor-pointer hover:shadow-lg">
+                            <Card className="h-full cursor-pointer transition-shadow hover:shadow-lg">
                                 <CardContent className="p-6 text-center">
-                                    <Map className="w-12 h-12 mx-auto mb-3 text-blue-600" />
+                                    <Map className="mx-auto mb-3 h-12 w-12 text-blue-600" />
                                     <h3 className="mb-2 text-lg font-semibold text-gray-900">
                                         LIHAT PETA LAPORAN
                                     </h3>
@@ -278,43 +328,58 @@ const CitizenDashboardPage = () => {
 
                             <TabsContent value="reports" className="mt-6">
                                 <div className="space-y-4">
-                                    {myReports.map((report) => (
-                                        <Card key={report.id}>
-                                            <CardContent className="p-4">
-                                                <div className="flex items-start justify-between">
-                                                    <div>
-                                                        <h3 className="font-semibold text-gray-900">
-                                                            {report.title}
-                                                        </h3>
-                                                        <p className="text-sm text-gray-600">
-                                                            {report.location}
-                                                        </p>
-                                                        <p className="mt-1 text-xs text-gray-500">
-                                                            {report.date}
-                                                        </p>
+                                    {myReports?.length > 0 ? (
+                                        myReports.map((report) => (
+                                            <Card key={report.id}>
+                                                <CardContent className="p-4">
+                                                    <div className="flex items-start justify-between">
+                                                        <div>
+                                                            <h3 className="font-semibold text-gray-900">
+                                                                {report.title}
+                                                            </h3>
+                                                            <p className="text-sm text-gray-600">
+                                                                {report.address}
+                                                            </p>
+                                                            <p className="mt-1 text-xs text-gray-500">
+                                                                {formatFullDateTime(
+                                                                    report.created_at,
+                                                                )}
+                                                            </p>
+                                                        </div>
+                                                        <div className="flex items-center gap-3">
+                                                            <Badge
+                                                                variant={
+                                                                    report.status ===
+                                                                    'Completed'
+                                                                        ? 'default'
+                                                                        : 'secondary'
+                                                                }
+                                                            >
+                                                                {report.status}
+                                                            </Badge>
+                                                            <Link
+                                                                href={`/report/${report.id}`}
+                                                            >
+                                                                <Button
+                                                                    variant="outline"
+                                                                    size="sm"
+                                                                >
+                                                                    Lihat Detail
+                                                                </Button>
+                                                            </Link>
+                                                        </div>
                                                     </div>
-                                                    <div className="flex items-center gap-3">
-                                                        <Badge
-                                                            variant={
-                                                                report.status ===
-                                                                'Completed'
-                                                                    ? 'default'
-                                                                    : 'secondary'
-                                                            }
-                                                        >
-                                                            {report.status}
-                                                        </Badge>
-                                                        <Button
-                                                            variant="outline"
-                                                            size="sm"
-                                                        >
-                                                            Lihat Detail
-                                                        </Button>
-                                                    </div>
-                                                </div>
-                                            </CardContent>
-                                        </Card>
-                                    ))}
+                                                </CardContent>
+                                            </Card>
+                                        ))
+                                    ) : (
+                                        <div className="py-8 text-center">
+                                            <FileText className="mx-auto mb-4 h-12 w-12 text-gray-400" />
+                                            <p className="text-gray-600">
+                                                Belum ada riwayat laporan
+                                            </p>
+                                        </div>
+                                    )}
                                 </div>
                             </TabsContent>
 
@@ -363,7 +428,7 @@ const CitizenDashboardPage = () => {
 
                             <TabsContent value="donations" className="mt-6">
                                 <div className="py-8 text-center">
-                                    <Heart className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+                                    <Heart className="mx-auto mb-4 h-12 w-12 text-gray-400" />
                                     <p className="text-gray-600">
                                         Belum ada riwayat donasi
                                     </p>
@@ -372,7 +437,7 @@ const CitizenDashboardPage = () => {
 
                             <TabsContent value="certificates" className="mt-6">
                                 <div className="py-8 text-center">
-                                    <Award className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+                                    <Award className="mx-auto mb-4 h-12 w-12 text-gray-400" />
                                     <p className="text-gray-600">
                                         Belum ada sertifikat yang diterima
                                     </p>
@@ -419,4 +484,4 @@ const CitizenDashboardPage = () => {
     );
 };
 
-export default CitizenDashboardPage;
+export default CitizenProfilePage;

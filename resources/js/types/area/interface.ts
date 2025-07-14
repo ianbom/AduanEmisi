@@ -14,5 +14,9 @@ export interface City {
 export interface Province {
     id: number;
     name: string;
-    cities?: City[];
+    cities: {
+        id: number;
+        name: string;
+        districts: { id: number; name: string }[];
+    }[];
 }

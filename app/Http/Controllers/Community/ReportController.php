@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Http\Controllers\Citizen;
+namespace App\Http\Controllers\Community;
 
 use App\Http\Controllers\Controller;
+
 use App\Http\Requests\ProfileRequest;
 use App\Http\Requests\ReportRequest;
 use App\Http\Requests\UpdateReportRequest;
@@ -32,7 +33,7 @@ class ReportController extends Controller
     {
         $provinces = Province::with('cities.districts')->get();
 
-        return Inertia::render('Citizen/Report/CreateReportPage', [
+        return Inertia::render('Community/Report/CreateReportPage', [
             'provinces' => $provinces
         ]);
     }
@@ -90,7 +91,7 @@ class ReportController extends Controller
         $perPage = request()->get('per_page', 15);
         $reports = $this->reportService->getReports($filters, $perPage);
 
-        return Inertia::render('Citizen/Report/ReportsPage', [
+        return Inertia::render('Community/Report/ReportPage', [
             'reports' => $reports,
             'myReports' => true
 
@@ -102,7 +103,7 @@ class ReportController extends Controller
         $perPage = request()->get('per_page', 15);
         $reports = $this->reportService->getReports($filters, $perPage);
 
-        return Inertia::render('Citizen/Report/ReportsPage', [
+        return Inertia::render('Community/Report/ReportPage', [
             'reports' => $reports,
             'myReports' => false,
         ]);
@@ -138,7 +139,7 @@ class ReportController extends Controller
                     'message' => 'Laporan tidak ditemukan'
                 ], 404);
             }
-            return Inertia::render('Citizen/Report/ReportDetailPage', [
+            return Inertia::render('Community/Report/ReportDetailPage', [
                 'report' => $report
             ]);
         } catch (Exception $e) {
