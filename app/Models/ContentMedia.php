@@ -12,7 +12,7 @@ class ContentMedia extends Model
 
     protected $table = 'content_media';
 
-    protected $fillable = [
+    protected $guarded = [
         'id'
     ];
 

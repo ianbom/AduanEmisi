@@ -13,9 +13,9 @@
                 Kembali
             </a>
             @if($report->status !== 'completed')
-            <a href="{{ route('admin.reports.edit', $report->id) }}" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors">
+            {{-- <a href="{{ route('admin.reports.edit', $report->id) }}" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors">
                 Edit Status
-            </a>
+            </a> --}}
             @endif
         </div>
     </div>
@@ -130,7 +130,7 @@
             @endif
 
             <!-- Create Mission Form -->
-            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            {{-- <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <div class="flex items-center justify-between mb-6">
                     <h2 class="text-lg font-semibold text-gray-900">Buat Misi Berdasarkan Laporan</h2>
                     <button id="toggleMissionForm" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-colors">
@@ -245,7 +245,7 @@
                         </div>
                     </form>
                 </div>
-            </div>
+            </div> --}}
         </div>
 
         <!-- Sidebar -->

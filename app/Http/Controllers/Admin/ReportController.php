@@ -40,18 +40,36 @@ class ReportController extends Controller
     }
 
     public function acceptReport(Report $report, Request $request){
-
         $user = Auth::user();
         DB::beginTransaction();
         try {
             $assignedType = $request->input('assigned_type', 'community');
+            $report = $this->reportService->updateStatus($report->id, 'verified',
+            $user->id, null, $assignedType);
 
-            $report = $this->reportService->updateStatus($report->id, 'verified', $user->id, null, $assignedType);
-
+            DB::commit();
+             return redirect()->back()->with('success', 'Aduan berhasil diverifikasi');
         } catch (\Throwable $th) {
-            //throw $th;
+            DB::rollBack();
+            return response()->json(['err' => $th->getMessage()]);
         }
 
+    }
+
+     public function rejectReport(Report $report, Request $request){
+        $user = Auth::user();
+        DB::beginTransaction();
+        try {
+            $assignedType = $request->input('assigned_type', 'community');
+            $report = $this->reportService->updateStatus($report->id, 'rejected',
+            $user->id, null, $assignedType);
+
+            DB::commit();
+            return redirect()->back()->with('success', 'Aduan berhasil ditolak');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return response()->json(['err' => $th->getMessage()]);
+        }
 
     }
 
