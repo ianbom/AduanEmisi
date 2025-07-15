@@ -20,7 +20,7 @@ const ReportPageRoute = ({ myReports }: { myReports: boolean }) => {
     };
     return (
         <CommunityLayout
-            currentPage={myReports ? 'community-my-report' : 'community-report'}
+            currentPage={myReports ? 'community/my-report' : 'community/report'}
         >
             <ReportsPage
                 myReports={myReports}

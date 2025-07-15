@@ -1,4 +1,3 @@
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -9,57 +8,32 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { Report } from '@/types/report';
+import { Mission } from '@/types/report/mission';
 import { formatDateOnly } from '@/utils/formatDate';
 import { getStatusColor } from '@/utils/reportStatusColor';
 import { router as Inertia } from '@inertiajs/react';
-import {
-    Calendar,
-    Eye,
-    Filter,
-    MapPin,
-    Plus,
-    Search,
-    ThumbsDown,
-    ThumbsUp,
-} from 'lucide-react';
+import { Calendar, Eye, Filter, MapPin, Search } from 'lucide-react';
 import { useState } from 'react';
-interface ReportsPageProps {
-    reports: Report[];
-    myReports: boolean;
+import { Badge } from '../ui/badge';
+interface MissionPageProps {
+    missions: Mission[];
     onViewDetails: (id: number) => void;
-    onCreateReport: () => void;
 }
-const ReportsPage = ({
-    reports,
-    myReports,
-    onViewDetails,
-    onCreateReport,
-}: ReportsPageProps) => {
+const MissionPage = ({ missions, onViewDetails }: MissionPageProps) => {
     const [sortBy, setSortBy] = useState('newest');
     return (
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
             <div className="mb-8 flex flex-col items-start justify-between md:flex-row md:items-center">
                 <div>
                     <h1 className="mb-2 text-3xl font-bold text-gray-900">
-                        {myReports ? 'Laporan Saya' : 'Daftar Laporan'}
+                        Daftar Misi
                     </h1>
                     <p className="text-gray-600">
-                        {myReports
-                            ? 'Laporan yang dibuat oleh Anda'
-                            : 'Temukan Laporan dan bergabung dalam aksi penyelamatan lingkungan'}
+                        Temukan Misi dan jadilah bagian dalam aksi penyelamatan
+                        lingkungan
                     </p>
                 </div>
-                <Button
-                    onClick={onCreateReport}
-                    className="mt-4 bg-emerald-700 text-white hover:bg-emerald-800 md:mt-0"
-                    size="lg"
-                >
-                    <Plus size={20} className="mr-2" />
-                    Buat Laporan Baru
-                </Button>
             </div>
-
             <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
                 {/* Filter Sidebar */}
                 <div className="lg:col-span-1">
@@ -207,23 +181,25 @@ const ReportsPage = ({
                             />
                         </div>
                     </div>
-                    {reports.length > 0 ? (
+                    {missions.length > 0 ? (
                         <>
                             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
-                                {reports.map((report: Report) => (
+                                {missions.map((mission: Mission) => (
                                     <Card
-                                        key={report.id}
+                                        key={mission.id}
                                         className="group cursor-pointer border-0 shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
-                                        onClick={() => onViewDetails(report.id)}
+                                        onClick={() =>
+                                            onViewDetails(mission.report?.id)
+                                        }
                                     >
                                         <div className="relative overflow-hidden rounded-t-lg">
-                                            {report.media?.[0]?.media_type?.startsWith(
+                                            {mission.report.media?.[0]?.media_type?.startsWith(
                                                 'video',
                                             ) ? (
                                                 <div className="relative h-48 w-full bg-black">
                                                     <video
                                                         className="h-full w-full object-cover opacity-50"
-                                                        src={`/storage/${report.media[0].media_url}`}
+                                                        src={`/storage/${mission.report.media[0].media_url}`}
                                                         muted
                                                         preload="metadata"
                                                     />
@@ -250,8 +226,8 @@ const ReportsPage = ({
                                                 </div>
                                             ) : (
                                                 <img
-                                                    src={`/storage/${report.media?.[0]?.media_url}`}
-                                                    alt={report.title}
+                                                    src={`/storage/${mission.report.media?.[0]?.media_url}`}
+                                                    alt={mission.title}
                                                     className="h-48 w-full object-cover transition-transform duration-300 group-hover:scale-105"
                                                 />
                                             )}
@@ -259,44 +235,44 @@ const ReportsPage = ({
                                             <div className="absolute right-3 top-3">
                                                 <Badge
                                                     className={getStatusColor(
-                                                        report.status,
+                                                        mission.status,
                                                     )}
                                                 >
-                                                    {report.status}
+                                                    {mission.status}
                                                 </Badge>
                                             </div>
-                                            {report.mission && (
-                                                <div className="absolute left-3 top-3">
-                                                    <Badge className="bg-blue-100 text-blue-700">
-                                                        Ada Misi
-                                                    </Badge>
-                                                </div>
-                                            )}
                                         </div>
 
                                         <CardContent className="p-4">
-                                            <div className="mb-2">
-                                                <Badge
-                                                    variant="outline"
-                                                    className="mb-2 text-xs"
-                                                >
-                                                    {report.category}
-                                                </Badge>
-                                            </div>
-
                                             <h3 className="mb-2 line-clamp-2 font-semibold text-gray-900 transition-colors group-hover:text-emerald-600">
-                                                {report.title}
+                                                {mission.title}
                                             </h3>
-
+                                            <p className="mb-3 line-clamp-2 text-sm text-gray-600">
+                                                {mission.description}
+                                            </p>
+                                            <div className="mb-3 flex items-center justify-between text-xs text-gray-500">
+                                                <span>
+                                                    Oleh:{' '}
+                                                    {mission.creator?.name}
+                                                </span>
+                                                {/* <span>
+                                            {content.duration &&
+                                                ${content.duration}}
+                                            {content.readTime &&
+                                                ${content.readTime}}
+                                            {content.pages &&
+                                                ${content.pages} halaman}
+                                        </span> */}
+                                            </div>
                                             <div className="mb-3 flex items-center text-sm text-gray-500">
                                                 <MapPin
                                                     size={14}
                                                     className="mr-1"
                                                 />
                                                 <span className="truncate">
-                                                    {report.district?.name},{' '}
-                                                    {report.city?.name},{' '}
-                                                    {report.province?.name}
+                                                    {mission.district?.name},{' '}
+                                                    {mission.city?.name},{' '}
+                                                    {mission.province?.name}
                                                 </span>
                                             </div>
 
@@ -308,31 +284,9 @@ const ReportsPage = ({
                                                     />
                                                     <span>
                                                         {formatDateOnly(
-                                                            report.created_at,
+                                                            mission.created_at,
                                                         )}
                                                     </span>
-                                                </div>
-                                                <div className="flex items-center justify-between gap-5">
-                                                    <div className="flex items-center text-sm font-medium text-emerald-600">
-                                                        <ThumbsUp
-                                                            size={14}
-                                                            className="mr-1"
-                                                        />
-                                                        <span>
-                                                            {report.upvotes_count ||
-                                                                0}
-                                                        </span>
-                                                    </div>
-                                                    <div className="flex items-center text-sm font-medium text-emerald-600">
-                                                        <ThumbsDown
-                                                            size={14}
-                                                            className="mr-1"
-                                                        />
-                                                        <span>
-                                                            {report.upvotes_count ||
-                                                                0}
-                                                        </span>
-                                                    </div>
                                                 </div>
                                             </div>
 
@@ -340,7 +294,7 @@ const ReportsPage = ({
                                                 className="mt-auto w-full bg-amber-500 transition-colors duration-200 hover:bg-amber-700"
                                                 onClick={() =>
                                                     Inertia.visit(
-                                                        `/report/${report.id}`,
+                                                        `/report/${mission.id}`,
                                                     )
                                                 }
                                             >
@@ -386,11 +340,11 @@ const ReportsPage = ({
                                     </div>
                                 </div>
                                 <h3 className="mb-2 text-lg font-semibold text-gray-900">
-                                    Laporan Belum Tersedia
+                                    Konten Edukasi Belum Tersedia
                                 </h3>
                                 <p className="text-sm text-gray-500">
-                                    Belum ada laporan yang tersedia saat ini.
-                                    Coba buat laporan baru.
+                                    Belum ada konten edukasi yang tersedia saat
+                                    ini. Coba lagi nanti.
                                 </p>
                             </Card>
                         </div>
@@ -401,4 +355,4 @@ const ReportsPage = ({
     );
 };
 
-export default ReportsPage;
+export default MissionPage;

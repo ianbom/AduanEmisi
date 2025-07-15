@@ -50,6 +50,31 @@ class ProfileController extends Controller
             ]
         ]);
     }
+    public function editProfile()
+    {
+        $user = Auth::user();
+        $provinces = Province::with('cities.districts')->get();
+        return Inertia::render('Citizen/Profile/EditProfilePage', [
+            'provinces' => $provinces,
+            'auth' => [
+                'user' => $user
+            ]
+        ]);
+    }
+    public function updateProfile(ProfileRequest $request)
+    {
+        $data = $request->validated();
+        try {
+            $this->profileService->updateProfile($data);
+            return redirect()
+                ->route('profile.show')
+                ->with('success', 'Profile berhasil diperbarui');
+        } catch (Throwable $th) {
+            return back()
+                ->withErrors(['error' => 'Gagal memperbarui profile. ' . $th->getMessage()])
+                ->withInput();
+        }
+    }
 
     public function updateCompleteProfile(ProfileRequest $request)
     {

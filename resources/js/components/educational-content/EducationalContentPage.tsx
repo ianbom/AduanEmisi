@@ -2,6 +2,9 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { getTypeColor, getTypeIcon } from '@/utils/educationColor';
+import { router as Inertia } from '@inertiajs/react';
+
 import {
     Select,
     SelectContent,
@@ -9,86 +12,21 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { Download, FileText, Filter, Image, Play, Search } from 'lucide-react';
+import { Content } from '@/types/content';
+import { formatDateOnly } from '@/utils/formatDate';
+import { Calendar, Eye, Filter, Play, Search } from 'lucide-react';
 import { useState } from 'react';
-
 interface EducationalContentPageProps {
-    onViewContent: (id: string) => void;
+    contents: Content[];
+
+    onViewDetails: (id: number) => void;
 }
 
 const EducationalContentPage = ({
-    onViewContent,
+    onViewDetails,
+    contents,
 }: EducationalContentPageProps) => {
     const [sortBy, setSortBy] = useState('newest');
-
-    const contents = [
-        {
-            id: '1',
-            title: 'Cara Mengelola Sampah Rumah Tangga',
-            type: 'Video',
-            topic: 'Pengelolaan Sampah',
-            description:
-                'Pelajari cara efektif mengelola sampah rumah tangga untuk mengurangi dampak lingkungan.',
-            thumbnail:
-                'https://images.unsplash.com/photo-1472396961693-142e6e269027?w=400',
-            author: 'Dr. Sari Lestari',
-            duration: '12 menit',
-            views: 1250,
-        },
-        {
-            id: '2',
-            title: 'Panduan Konservasi Air di Rumah',
-            type: 'Artikel',
-            topic: 'Konservasi Air',
-            description:
-                'Tips praktis menghemat air dan menjaga kualitas air bersih di rumah.',
-            thumbnail:
-                'https://images.unsplash.com/photo-1482938289607-e9573fc25ebb?w=400',
-            author: 'Prof. Ahmad Hidayat',
-            readTime: '8 menit',
-            views: 890,
-        },
-        {
-            id: '3',
-            title: 'Ekosistem Hutan Indonesia',
-            type: 'Modul PDF',
-            topic: 'Biodiversitas',
-            description:
-                'Modul pembelajaran tentang keanekaragaman hayati hutan Indonesia.',
-            thumbnail:
-                'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?w=400',
-            author: 'Tim Peneliti LIPI',
-            pages: 45,
-            downloads: 567,
-        },
-    ];
-
-    const getTypeIcon = (type: string) => {
-        switch (type) {
-            case 'Video':
-                return <Play size={16} className="text-red-600" />;
-            case 'Artikel':
-                return <FileText size={16} className="text-blue-600" />;
-            case 'Modul PDF':
-                return <Download size={16} className="text-green-600" />;
-            default:
-                return <Image size={16} className="text-gray-600" />;
-        }
-    };
-
-    const getTypeColor = (type: string) => {
-        switch (type) {
-            case 'Video':
-                return 'bg-red-100 text-red-700';
-            case 'Artikel':
-                return 'bg-blue-100 text-blue-700';
-            case 'Modul PDF':
-                return 'bg-green-100 text-green-700';
-            default:
-                return 'bg-gray-100 text-gray-700';
-        }
-    };
-
     return (
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
             {/* Header */}
@@ -171,57 +109,6 @@ const EducationalContentPage = ({
                                     </SelectContent>
                                 </Select>
                             </div>
-
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium text-gray-700">
-                                    Provinsi
-                                </label>
-                                <Select>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Pilih provinsi" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="semua">
-                                            Semua Provinsi
-                                        </SelectItem>
-                                        <SelectItem value="bali">
-                                            Bali
-                                        </SelectItem>
-                                        <SelectItem value="jabar">
-                                            Jawa Barat
-                                        </SelectItem>
-                                        <SelectItem value="jakarta">
-                                            DKI Jakarta
-                                        </SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium text-gray-700">
-                                    Kota
-                                </label>
-                                <Select>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Pilih kota" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="semua">
-                                            Semua Kota
-                                        </SelectItem>
-                                        <SelectItem value="bandung">
-                                            Bandung
-                                        </SelectItem>
-                                        <SelectItem value="bogor">
-                                            Bogor
-                                        </SelectItem>
-                                        <SelectItem value="jakarta-pusat">
-                                            Jakarta Pusat
-                                        </SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-
                             <div className="space-y-2 pt-4">
                                 <Button className="w-full bg-emerald-600 hover:bg-emerald-700">
                                     Terapkan Filter
@@ -265,107 +152,185 @@ const EducationalContentPage = ({
                             />
                         </div>
                     </div>
-
-                    {/* Content Grid */}
-                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
-                        {contents.map((content) => (
-                            <Card
-                                key={content.id}
-                                className="group cursor-pointer border-0 shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
-                                onClick={() => onViewContent(content.id)}
-                            >
-                                <div className="relative overflow-hidden rounded-t-lg">
-                                    <img
-                                        src={content.thumbnail}
-                                        alt={content.title}
-                                        className="h-48 w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                                    />
-                                    <div className="absolute right-3 top-3">
-                                        <Badge
-                                            className={getTypeColor(
-                                                content.type,
-                                            )}
-                                        >
-                                            <div className="flex items-center gap-1">
-                                                {getTypeIcon(content.type)}
-                                                {content.type}
-                                            </div>
-                                        </Badge>
-                                    </div>
-                                    {content.type === 'Video' && (
-                                        <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 transition-opacity group-hover:opacity-100">
-                                            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white/90">
-                                                <Play
-                                                    size={24}
-                                                    className="ml-1 text-emerald-600"
+                    {contents.length > 0 ? (
+                        <>
+                            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+                                {contents.map((content: Content) => (
+                                    <Card
+                                        key={content.id}
+                                        className="group cursor-pointer border-0 shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+                                        onClick={() =>
+                                            onViewDetails(content.id)
+                                        }
+                                    >
+                                        <div className="relative overflow-hidden rounded-t-lg">
+                                            {content.media?.[0]?.media_type?.startsWith(
+                                                'video',
+                                            ) ? (
+                                                <div className="relative h-48 w-full bg-black">
+                                                    <video
+                                                        className="h-full w-full object-cover opacity-50"
+                                                        src={`/contents/${content.media[0].media_url}`}
+                                                        muted
+                                                        preload="metadata"
+                                                    />
+                                                    <div className="absolute inset-0 flex items-center justify-center">
+                                                        <div className="rounded-full bg-white/80 p-2">
+                                                            <svg
+                                                                xmlns="http://www.w3.org/2000/svg"
+                                                                className="h-6 w-6 text-black"
+                                                                fill="none"
+                                                                viewBox="0 0 24 24"
+                                                                stroke="currentColor"
+                                                            >
+                                                                <path
+                                                                    strokeLinecap="round"
+                                                                    strokeLinejoin="round"
+                                                                    strokeWidth={
+                                                                        2
+                                                                    }
+                                                                    d="M14.752 11.168l-5.197-3.03A1 1 0 008 9.03v5.94a1 1 0 001.555.832l5.197-3.03a1 1 0 000-1.664z"
+                                                                />
+                                                            </svg>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <img
+                                                    src={`/contents/${content.media?.[0]?.media_url}`}
+                                                    alt={content.title}
+                                                    className="h-48 w-full object-cover transition-transform duration-300 group-hover:scale-105"
                                                 />
+                                            )}
+                                            <div className="absolute right-3 top-3">
+                                                <Badge
+                                                    className={getTypeColor(
+                                                        content.content_type,
+                                                    )}
+                                                >
+                                                    <div className="flex items-center gap-1">
+                                                        {getTypeIcon(
+                                                            content.content_type,
+                                                        )}
+                                                        {content.content_type}
+                                                    </div>
+                                                </Badge>
                                             </div>
+                                            {content.content_type ===
+                                                'Video' && (
+                                                <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 transition-opacity group-hover:opacity-100">
+                                                    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white/90">
+                                                        <Play
+                                                            size={24}
+                                                            className="ml-1 text-emerald-600"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            )}
                                         </div>
-                                    )}
-                                </div>
 
-                                <CardContent className="p-4">
-                                    <div className="mb-2">
-                                        <Badge
-                                            variant="outline"
-                                            className="mb-2 text-xs"
-                                        >
-                                            {content.topic}
-                                        </Badge>
-                                    </div>
+                                        <CardContent className="p-4">
+                                            <div className="mb-2">
+                                                <Badge
+                                                    variant="outline"
+                                                    className="mb-2 text-xs"
+                                                >
+                                                    {content.content_type}
+                                                </Badge>
+                                            </div>
 
-                                    <h3 className="mb-2 line-clamp-2 font-semibold text-gray-900 transition-colors group-hover:text-emerald-600">
-                                        {content.title}
-                                    </h3>
-
-                                    <p className="mb-3 line-clamp-2 text-sm text-gray-600">
-                                        {content.description}
-                                    </p>
-
-                                    <div className="mb-3 flex items-center justify-between text-xs text-gray-500">
-                                        <span>Oleh: {content.author}</span>
-                                        <span>
+                                            <h3 className="mb-2 line-clamp-2 font-semibold text-gray-900 transition-colors group-hover:text-emerald-600">
+                                                {content.title}
+                                            </h3>
+                                            <p className="mb-3 line-clamp-2 text-sm text-gray-600">
+                                                {content.body}
+                                            </p>
+                                            <div className="mb-3 flex items-center justify-between text-xs text-gray-500">
+                                                <span>
+                                                    Oleh: {content.author?.name}
+                                                </span>
+                                                {/* <span>
                                             {content.duration &&
-                                                `${content.duration}`}
+                                                ${content.duration}}
                                             {content.readTime &&
-                                                `${content.readTime}`}
+                                                ${content.readTime}}
                                             {content.pages &&
-                                                `${content.pages} halaman`}
-                                        </span>
-                                    </div>
+                                                ${content.pages} halaman}
+                                        </span> */}
+                                            </div>
+                                            <div className="mb-4 flex items-center justify-between">
+                                                <div className="flex items-center text-sm text-gray-500">
+                                                    <Calendar
+                                                        size={14}
+                                                        className="mr-1"
+                                                    />
+                                                    <span>
+                                                        {formatDateOnly(
+                                                            content.created_at,
+                                                        )}
+                                                    </span>
+                                                </div>
+                                            </div>
 
-                                    <div className="flex items-center justify-between">
-                                        <span className="text-sm text-gray-500">
-                                            {content.views} views
-                                            {content.downloads &&
-                                                ` • ${content.downloads} downloads`}
-                                        </span>
-                                        <Button
-                                            size="sm"
-                                            className="bg-emerald-600 text-xs hover:bg-emerald-700"
+                                            <Button
+                                                className="mt-auto w-full bg-amber-500 transition-colors duration-200 hover:bg-amber-700"
+                                                onClick={() =>
+                                                    Inertia.visit(
+                                                        `/content/${content.id}`,
+                                                    )
+                                                }
+                                            >
+                                                <Eye
+                                                    size={16}
+                                                    className="mr-2"
+                                                />
+                                                Lihat Detail
+                                            </Button>
+                                        </CardContent>
+                                    </Card>
+                                ))}
+                            </div>
+                            <div className="mt-8 text-center">
+                                <Button
+                                    variant="outline"
+                                    size="lg"
+                                    className="min-w-32"
+                                >
+                                    Muat Lebih Banyak
+                                </Button>
+                            </div>
+                        </>
+                    ) : (
+                        <div className="flex w-full items-center justify-center">
+                            <Card className="w-full px-8 py-32 text-center">
+                                <div className="mb-4 flex justify-center">
+                                    <div className="rounded-full bg-gray-100 p-4">
+                                        <svg
+                                            className="h-12 w-12 text-gray-400"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                            xmlns="http://www.w3.org/2000/svg"
                                         >
-                                            {content.type === 'Video'
-                                                ? 'Tonton'
-                                                : content.type === 'Modul PDF'
-                                                  ? 'Unduh'
-                                                  : 'Baca'}
-                                        </Button>
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth={2}
+                                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                                            />
+                                        </svg>
                                     </div>
-                                </CardContent>
+                                </div>
+                                <h3 className="mb-2 text-lg font-semibold text-gray-900">
+                                    Konten Edukasi Belum Tersedia
+                                </h3>
+                                <p className="text-sm text-gray-500">
+                                    Belum ada konten edukasi yang tersedia saat
+                                    ini. Coba lagi nanti.
+                                </p>
                             </Card>
-                        ))}
-                    </div>
-
-                    {/* Load More */}
-                    <div className="mt-8 text-center">
-                        <Button
-                            variant="outline"
-                            size="lg"
-                            className="min-w-32"
-                        >
-                            Muat Lebih Banyak
-                        </Button>
-                    </div>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

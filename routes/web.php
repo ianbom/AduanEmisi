@@ -6,6 +6,8 @@ use App\Http\Controllers\Admin\ReportController as AdmReportController;
 use App\Http\Controllers\Citizen\ReportController as CtzReportController;
 use App\Http\Controllers\Citizen\ProfileController as CtzProfileController;
 use App\Http\Controllers\Citizen\MapController as CtzMapController;
+use App\Http\Controllers\Citizen\ContentController as CtzContentController;
+use App\Http\Controllers\Citizen\MissionController as CtzMissionController;
 use App\Http\Controllers\Community\ReportController as ComReportController;
 use App\Http\Controllers\Community\ProfileController as ComProfileController;
 use App\Http\Controllers\Community\MapController as ComMapController;
@@ -40,6 +42,8 @@ Route::prefix('')->middleware(['auth'])->group(function () {
 
     // Route untuk keperluan yang berkaitan dengan Profil
     Route::get('/profile', [CtzProfileController::class, 'showProfile'])->name('profile.show');
+    Route::get('/edit-profile', [CtzProfileController::class, 'editProfile'])->name('profile.edit');
+    Route::get('/update-profile', [CtzProfileController::class, 'editProfile'])->name('profile.edit');
 
     // Route untuk keperluan yang berkaitan dengan Laporan
     Route::get('/report', [CtzReportController::class, 'viewAllReportsPage'])->name('report');
@@ -48,13 +52,17 @@ Route::prefix('')->middleware(['auth'])->group(function () {
     Route::get('/report-create', [CtzReportController::class, 'create'])->name('create.report');
     Route::post('/reports', [CtzReportController::class, 'store'])->name('reports.store');
 
+    // Route untuk keperluan yang berkaitan dengan misi
+    Route::get('/mission', [CtzMissionController::class, 'index'])->name('mission');
+    Route::post('/join-missions/{id}', [CtzMissionController::class, 'join'])->name('mission.join');
+
     // Route untuk keperluan yang berkaitan dengan Peta
     Route::get('/map', [CtzMapController::class, 'indexMap'])->name('map.index');
 
     // Route untuk keperluan yang berkaitan dengan Konten Edukasi
-    Route::get('/education', function () {
-        return Inertia::render('Citizen/EducationalContent/EducationalContentPage');
-    })->name('education');
+    Route::get('/education', [CtzContentController::class, 'index'])->name('content.index');
+    Route::get('/education/{id}', [CtzContentController::class, 'show'])->name('content.show');
+
     Route::get('/education-detail/1', function () {
         return Inertia::render('Citizen/EducationalContent/EducationalContentDetailsPage');
     })->name('education-detail');
@@ -82,14 +90,14 @@ Route::prefix('community')->as('community.')->middleware(['auth'])->group(functi
 
 
 Route::prefix('admin')->as('admin.')->middleware(['auth'])->group(function () {
-    Route::resource('missions',AdmMissionController::class);
-    Route::put('missions/update/volunteer/{missionVolunteer}',[AdmMissionController::class, 'updateStatusVolunteer'])->name('update.volunteerStatus');
+    Route::resource('missions', AdmMissionController::class);
+    Route::put('missions/update/volunteer/{missionVolunteer}', [AdmMissionController::class, 'updateStatusVolunteer'])->name('update.volunteerStatus');
 
     Route::resource('reports', AdmReportController::class);
     Route::put('reject-report/{report}', [AdmReportController::class, 'rejectReport'])->name('reports.reject');
     Route::put('accept-report/{report}', [AdmReportController::class, 'acceptReport'])->name('reports.accept');
 
-    Route::resource('contents',AdmContentController::class);
+    Route::resource('contents', AdmContentController::class);
     Route::delete('content-media/{contentMedia}', [AdmContentController::class, 'deleteMedia'])->name('delete.contentMedia');
 });
 

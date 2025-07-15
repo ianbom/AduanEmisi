@@ -50,11 +50,13 @@ class MissionServices extends Service
     public function getMissions(array $filters = [], int $perPage = 10)
     {
         $query = Mission::with([
-            'creator:id,name,email',
-            'city:id,name',
-            'district:id,name',
-            'assignedVolunteer:id,name,email',
-            'report:id,title'
+            'report',
+            'province',
+            'city',
+            'district',
+            'creator',
+            'assignedVolunteer',
+            'volunteers',
         ]);
 
         // Apply filters
@@ -86,7 +88,7 @@ class MissionServices extends Service
         if (!empty($filters['search'])) {
             $query->where(function ($q) use ($filters) {
                 $q->where('title', 'like', '%' . $filters['search'] . '%')
-                  ->orWhere('description', 'like', '%' . $filters['search'] . '%');
+                    ->orWhere('description', 'like', '%' . $filters['search'] . '%');
             });
         }
 
@@ -102,10 +104,10 @@ class MissionServices extends Service
         return $query->orderBy('created_at', 'desc')->paginate($perPage);
     }
 
-     public function getMissionByFilters(array $filters = []) : Collection
+    public function getMissionByFilters(array $filters = []): Collection
     {
         $allowedFilters = [
-          'missions.city_id' => 'value',
+            'missions.city_id' => 'value',
             'missions.district_id' => 'value',
             'missions.status' => 'value',
             'missions.assigned_to_type' => 'value',
@@ -116,72 +118,73 @@ class MissionServices extends Service
         ];
 
         $selectColumns = [
-           'missions.*',
+            'missions.*',
 
         ];
 
         $query = Mission::select($selectColumns)
-        ->join('districts', 'missions.district_id' , '=', 'districts.id')
-        // ->join('kota', 'users.id_kota' , '=', 'kota.id_kota')
-        ->join('cities', 'missions.city_id' , '=', 'cities.id')
+            ->join('districts', 'missions.district_id', '=', 'districts.id')
+            // ->join('kota', 'users.id_kota' , '=', 'kota.id_kota')
+            ->join('cities', 'missions.city_id', '=', 'cities.id')
             ->orderBy('missions.id', 'desc');
 
         $query = $this->applyFilters($query, $filters, $allowedFilters);
 
         $query->with([
-            'city', 'district'
+            'city',
+            'district'
         ]);
 
         return $query->get();
     }
 
-        public function buildFilter($request)
+    public function buildFilter($request)
     {
-    $filters = [];
+        $filters = [];
 
-    // Filter berdasarkan nilai (value) & pencarian (like)
-    if ($request->filled('status')) {
-        $filters['missions.status'] = $request->input('status');
-    }
-    if ($request->filled('city_id')) {
-        $filters['missions.city_id'] = $request->input('city_id');
-    }
-    if ($request->filled('district_id')) {
-        $filters['missions.district_id'] = $request->input('district_id');
-    }
-    if ($request->filled('assigned_to_type')) {
-        $filters['missions.assigned_to_type'] = $request->input('assigned_to_type');
-    }
-    if ($request->filled('search')) {
-        // 'search' dari request akan memfilter kolom 'address'
-        $filters['missions.address'] = $request->input('search');
-    }
+        // Filter berdasarkan nilai (value) & pencarian (like)
+        if ($request->filled('status')) {
+            $filters['missions.status'] = $request->input('status');
+        }
+        if ($request->filled('city_id')) {
+            $filters['missions.city_id'] = $request->input('city_id');
+        }
+        if ($request->filled('district_id')) {
+            $filters['missions.district_id'] = $request->input('district_id');
+        }
+        if ($request->filled('assigned_to_type')) {
+            $filters['missions.assigned_to_type'] = $request->input('assigned_to_type');
+        }
+        if ($request->filled('search')) {
+            // 'search' dari request akan memfilter kolom 'address'
+            $filters['missions.address'] = $request->input('search');
+        }
 
-    // Filter berdasarkan rentang tanggal (date range)
-    if ($request->filled('date_from') && $request->filled('date_to')) {
-        $filters['missions.scheduled_date'] = [
-            'start' => $request->input('date_from'),
-            'end'   => $request->input('date_to')
-        ];
-    }
+        // Filter berdasarkan rentang tanggal (date range)
+        if ($request->filled('date_from') && $request->filled('date_to')) {
+            $filters['missions.scheduled_date'] = [
+                'start' => $request->input('date_from'),
+                'end'   => $request->input('date_to')
+            ];
+        }
 
-    // Menambahkan filter tanggal lain yang ada di allowedFilters
-    if ($request->filled('created_from') && $request->filled('created_to')) {
-        $filters['missions.created_at'] = [
-            'start' => $request->input('created_from'),
-            'end'   => $request->input('created_to')
-        ];
-    }
+        // Menambahkan filter tanggal lain yang ada di allowedFilters
+        if ($request->filled('created_from') && $request->filled('created_to')) {
+            $filters['missions.created_at'] = [
+                'start' => $request->input('created_from'),
+                'end'   => $request->input('created_to')
+            ];
+        }
 
-    if ($request->filled('completed_from') && $request->filled('completed_to')) {
-        $filters['missions.completed_at'] = [
-            'start' => $request->input('completed_from'),
-            'end'   => $request->input('completed_to')
-        ];
-    }
+        if ($request->filled('completed_from') && $request->filled('completed_to')) {
+            $filters['missions.completed_at'] = [
+                'start' => $request->input('completed_from'),
+                'end'   => $request->input('completed_to')
+            ];
+        }
 
-    return $filters;
-}
+        return $filters;
+    }
 
     public function updateMissionStatus(int $missionId, string $status): Mission
     {
@@ -278,9 +281,9 @@ class MissionServices extends Service
             'district:id,name',
             'report:id,title'
         ])
-        ->where('assigned_volunteer_id', Auth::id())
-        ->orderBy('created_at', 'desc')
-        ->paginate($perPage);
+            ->where('assigned_volunteer_id', Auth::id())
+            ->orderBy('created_at', 'desc')
+            ->paginate($perPage);
     }
 
 
@@ -288,7 +291,7 @@ class MissionServices extends Service
     {
         $userId = Auth::id();
         return $mission->creator_user_id === $userId ||
-               $mission->assigned_volunteer_id === $userId;
+            $mission->assigned_volunteer_id === $userId;
     }
 
 
@@ -298,7 +301,7 @@ class MissionServices extends Service
     }
 
 
-       public function updateMission(Mission $mission, array $data): Mission
+    public function updateMission(Mission $mission, array $data): Mission
     {
         DB::beginTransaction();
 
@@ -326,27 +329,26 @@ class MissionServices extends Service
         }
     }
 
-    public function getMissionVolunteers($missionId){
+    public function getMissionVolunteers($missionId)
+    {
         $volunteers = MissionVolunteer::where('mission_id', $missionId)->get();
         return $volunteers;
     }
 
-    public function getMissionDocumentations($missionId){
+    public function getMissionDocumentations($missionId)
+    {
         $documentation = MissionDocumentation::where('mission_id', $missionId)->get();
         return $documentation;
     }
 
-    public function getVerifiedAndUniqueReport($missionId){
+    public function getVerifiedAndUniqueReport($missionId)
+    {
         $usedReportIds = Mission::where('id', '!=', $missionId)->pluck('report_id'); // agar report_id sekarang tidak dikecualikan
         $reports = Report::where('status', 'verified')
-        ->whereNotIn('id', $usedReportIds)
-        ->orderBy('title', 'asc')
-        ->get();
+            ->whereNotIn('id', $usedReportIds)
+            ->orderBy('title', 'asc')
+            ->get();
 
         return $reports;
-
     }
-
-
-
 }

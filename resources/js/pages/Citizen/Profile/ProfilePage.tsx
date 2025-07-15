@@ -12,7 +12,7 @@ interface ProfilePageRouteProps {
 }
 const ProfilePageRoute = () => {
     const { props } = usePage<PageProps<ProfilePageRouteProps>>();
-    const user = props.auth?.user;
+    const user = props.auth?.user ?? null;
     const myReports = props.myReports;
     const myReportsCount = props.myReportsCount;
 

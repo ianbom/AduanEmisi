@@ -26,7 +26,7 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 interface CitizenProfilePageProps {
-    user: User;
+    user: User | null;
     myReports: Report[];
     myReportsCount: number;
 }

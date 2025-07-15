@@ -138,8 +138,21 @@ class ReportController extends Controller
                     'message' => 'Laporan tidak ditemukan'
                 ], 404);
             }
+            $mission = $report->mission;
+
+
+            $myParticipation = null;
+            if ($mission) {
+                $myParticipation = $mission->volunteers
+                    ->firstWhere('id', Auth::id());
+            }
+            // dd($myParticipation);
+            $confirmedLeader = $report->mission ? $report->mission->confirmedLeader() : null;
+
             return Inertia::render('Citizen/Report/ReportDetailPage', [
-                'report' => $report
+                'report' => $report,
+                'myParticipation' => $myParticipation,
+                'confirmedLeader' => $confirmedLeader
             ]);
         } catch (Exception $e) {
             return response()->json([
