@@ -106,7 +106,20 @@ class ReportService extends Service
 
     public function getReportById(int $id): ?Report
     {
-        return Report::with(['reporter', 'province', 'city', 'district', 'verifiedByUser', 'completedByUser', 'media'])
+        return Report::with([
+            'reporter',
+            'province',
+            'city',
+            'district',
+            'verifiedByUser',
+            'completedByUser',
+            'media',
+            'mission.creator',
+            'mission.volunteers',
+            'mission.documentation',
+            'mission.documentation.uploader',
+
+        ])
             ->find($id);
     }
 

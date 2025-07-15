@@ -5,6 +5,7 @@ export interface User {
     phone: string | null;
     province_id: number | null;
     city_id: number | null;
+    role: string | null;
     district_id: number | null;
     address: string | null;
     city: {

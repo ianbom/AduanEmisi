@@ -51,13 +51,13 @@ const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
     const getIcon = (type: string) => {
         switch (type) {
             case 'report':
-                return <AlertCircle className="w-5 h-5 text-blue-500" />;
+                return <AlertCircle className="h-5 w-5 text-blue-500" />;
             case 'mission':
-                return <CheckCircle className="w-5 h-5 text-green-500" />;
+                return <CheckCircle className="h-5 w-5 text-green-500" />;
             case 'badge':
-                return <Heart className="w-5 h-5 text-purple-500" />;
+                return <Heart className="h-5 w-5 text-purple-500" />;
             default:
-                return <Info className="w-5 h-5 text-gray-500" />;
+                return <Info className="h-5 w-5 text-gray-500" />;
         }
     };
 
@@ -72,20 +72,20 @@ const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
             />
 
             {/* Sidebar */}
-            <div className="fixed top-0 right-0 z-50 h-full transition-transform duration-300 ease-in-out transform bg-white shadow-xl w-80">
+            <div className="fixed right-0 top-0 z-50 h-full w-80 transform bg-white shadow-xl transition-transform duration-300 ease-in-out">
                 {/* Header */}
-                <div className="flex items-center justify-between p-4 border-b border-gray-200">
+                <div className="flex items-center justify-between border-b border-gray-200 p-4">
                     <h2 className="text-lg font-semibold text-gray-900">
                         Notifikasi Anda
                     </h2>
                     <Button variant="ghost" size="sm" onClick={onClose}>
-                        <X className="w-5 h-5" />
+                        <X className="h-5 w-5" />
                     </Button>
                 </div>
 
                 {/* Notifications List */}
                 <ScrollArea className="h-[calc(100vh-8rem)] flex-1">
-                    <div className="p-4 space-y-3">
+                    <div className="space-y-3 p-4">
                         {notifications.map((notification) => (
                             <div
                                 key={notification.id}
@@ -97,7 +97,7 @@ const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
                             >
                                 <div className="flex items-start space-x-3">
                                     {getIcon(notification.type)}
-                                    <div className="flex-1 min-w-0">
+                                    <div className="min-w-0 flex-1">
                                         <h3 className="text-sm font-medium text-gray-900">
                                             {notification.title}
                                         </h3>
@@ -111,7 +111,7 @@ const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
                                             <Button
                                                 variant="ghost"
                                                 size="sm"
-                                                className="h-auto p-0 mt-2 text-xs"
+                                                className="mt-2 h-auto p-0 text-xs"
                                             >
                                                 Tandai Sudah Dibaca
                                             </Button>
@@ -124,7 +124,7 @@ const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
                 </ScrollArea>
 
                 {/* Footer */}
-                <div className="p-4 border-t border-gray-200">
+                <div className="border-t border-gray-200 p-4">
                     <Button variant="outline" className="w-full">
                         Lihat Semua Notifikasi
                     </Button>

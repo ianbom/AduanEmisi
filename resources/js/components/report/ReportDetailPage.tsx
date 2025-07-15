@@ -4,8 +4,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { Report } from '@/types/report';
+import { User } from '@/types/user/interface';
 import { formatFullDateTime } from '@/utils/formatDate';
 import { getStatusColor } from '@/utils/reportStatusColor';
+import { router as Inertia } from '@inertiajs/react';
 import {
     ArrowLeft,
     Calendar,
@@ -16,7 +18,7 @@ import {
     Share2,
     ThumbsDown,
     ThumbsUp,
-    User,
+    User as UserIcon,
 } from 'lucide-react';
 import { useState } from 'react';
 import AttendanceFormModal from './AttendanceFormModal';
@@ -24,10 +26,31 @@ import ConfirmVolunteerModal from './ConfirmVolunteerModal';
 import CommentUploadCard from './InputCommentReport';
 interface ReportDetailPageProps {
     report: Report;
+    myParticipation:
+        | (User & {
+              pivot: {
+                  is_leader: boolean;
+                  participation_status:
+                      | 'pending'
+                      | 'confirmed'
+                      | 'cancelled'
+                      | 'attended';
+                  certificate_url: string | null;
+                  awarded_at: string | null;
+              };
+          })
+        | null;
+    confirmedLeader: User | null;
+
     onBack: () => void;
 }
 
-const ReportDetailPage = ({ report, onBack }: ReportDetailPageProps) => {
+const ReportDetailPage = ({
+    report,
+    onBack,
+    myParticipation,
+    confirmedLeader,
+}: ReportDetailPageProps) => {
     const [hasUpvoted, setHasUpvoted] = useState(false);
     const [hasDownvoted, setHasDownvoted] = useState(false);
     const [replying, setReplying] = useState<string | null>(null);
@@ -37,6 +60,8 @@ const ReportDetailPage = ({ report, onBack }: ReportDetailPageProps) => {
     const [selectedRole, setSelectedRole] = useState<'ketua' | 'anggota'>(
         'anggota',
     );
+    console.log('myParticipation:', myParticipation);
+
     const handleOpenModalRegister = (role: 'ketua' | 'anggota') => {
         setSelectedRole(role);
         setModalOpenRegister(true);
@@ -44,8 +69,24 @@ const ReportDetailPage = ({ report, onBack }: ReportDetailPageProps) => {
 
     const handleConfirmRegister = () => {
         setModalOpenRegister(false);
-        console.log(`Mendaftar sebagai ${selectedRole}`);
+        const isLeader = selectedRole === 'ketua';
+        Inertia.post(
+            `/join-missions/${report.mission?.id}`,
+            {
+                is_leader: isLeader,
+            },
+            {
+                onSuccess: () => {
+                    console.log('Berhasil mendaftar');
+                    console.log('myParticipation:', myParticipation);
+                },
+                onError: (errors) => {
+                    console.error(errors);
+                },
+            },
+        );
     };
+
     const dummyMembers = [
         { id: 1, name: 'Argya Dwi Ferdinand Putra' },
         { id: 2, name: 'Aprilia Dwi Crsityana' },
@@ -205,7 +246,7 @@ const ReportDetailPage = ({ report, onBack }: ReportDetailPageProps) => {
                                         >
                                             {report.status}
                                         </Badge>
-                                        {report.hasMission && (
+                                        {report.mission && (
                                             <Badge className="bg-blue-100 text-blue-700">
                                                 Ada Misi
                                             </Badge>
@@ -218,7 +259,10 @@ const ReportDetailPage = ({ report, onBack }: ReportDetailPageProps) => {
 
                                     <div className="grid grid-cols-1 gap-4 text-sm text-gray-600 md:grid-cols-2">
                                         <div className="flex items-center">
-                                            <User size={16} className="mr-2" />
+                                            <UserIcon
+                                                size={16}
+                                                className="mr-2"
+                                            />
                                             <span>
                                                 Dilaporkan oleh:{' '}
                                                 {report.reporter?.name}
@@ -352,7 +396,7 @@ const ReportDetailPage = ({ report, onBack }: ReportDetailPageProps) => {
                     </Card>
 
                     {/* Mission Section */}
-                    {report.hasMission && (
+                    {report.mission && (
                         <Card>
                             <CardHeader>
                                 <CardTitle className="text-emerald-700">
@@ -360,19 +404,71 @@ const ReportDetailPage = ({ report, onBack }: ReportDetailPageProps) => {
                                 </CardTitle>
                             </CardHeader>
                             <CardContent>
-                                <h3 className="mb-4 text-xl font-semibold">
+                                <div className="mb-3 flex flex-wrap gap-2">
+                                    <Badge variant="outline">
+                                        {report.mission?.status}
+                                    </Badge>
+                                </div>
+                                <h1 className="mb-4 text-3xl font-bold text-gray-900">
                                     {report.mission?.title}
-                                </h3>
-
-                                {report.mission?.assignedTo === 'Volunteer' && (
+                                </h1>
+                                <div className="grid grid-cols-1 gap-4 text-sm text-gray-600 md:grid-cols-2">
+                                    <div className="flex items-center">
+                                        <UserIcon size={16} className="mr-2" />
+                                        <span>
+                                            Misi dibuat oleh:{' '}
+                                            {report.mission?.creator?.name}
+                                        </span>
+                                    </div>
+                                    <div className="flex items-start md:col-span-2">
+                                        <Calendar
+                                            size={16}
+                                            className="mr-2 mt-0.5"
+                                        />
+                                        <span>
+                                            Misi dibuat:{' '}
+                                            {formatFullDateTime(
+                                                report.mission?.created_at,
+                                            )}
+                                        </span>
+                                    </div>
+                                    <div className="flex items-start md:col-span-2">
+                                        <Calendar
+                                            size={16}
+                                            className="mr-2 mt-0.5"
+                                        />
+                                        <span>
+                                            Misi terjadwal:{' '}
+                                            {formatFullDateTime(
+                                                report.mission?.scheduled_date,
+                                            )}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div className="my-6">
+                                    <h3 className="mb-3 text-lg font-semibold">
+                                        Deskripsi Misi
+                                    </h3>
+                                    <p className="leading-relaxed text-gray-700">
+                                        {report.mission.description}
+                                    </p>
+                                </div>
+                                {report.mission?.volunteers && (
                                     <div className="mb-6">
                                         <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2">
                                             <div>
                                                 <span className="text-gray-600">
                                                     Ketua Tim:{' '}
+                                                    {confirmedLeader
+                                                        ? confirmedLeader.name
+                                                        : 'Belum ada'}
                                                 </span>
                                                 <span className="font-medium">
-                                                    {report.mission?.teamLeader}
+                                                    {
+                                                        report.mission
+                                                            ?.volunteers
+                                                            ?.is_leader
+                                                    }
                                                 </span>
                                             </div>
                                             <div>
@@ -380,33 +476,56 @@ const ReportDetailPage = ({ report, onBack }: ReportDetailPageProps) => {
                                                     Anggota Bergabung:{' '}
                                                 </span>
                                                 <span className="font-medium">
-                                                    {report.mission?.members}{' '}
+                                                    {report.mission?.volunteers
+                                                        ?.is_leader ==
+                                                        false}{' '}
                                                     orang
                                                 </span>
                                             </div>
                                         </div>
                                         {/* <div className="flex gap-3"> */}
                                         <div className="flex flex-col gap-3 sm:flex-row">
-                                            <Button
-                                                className="bg-emerald-600 hover:bg-emerald-700"
-                                                onClick={() =>
-                                                    handleOpenModalRegister(
-                                                        'ketua',
+                                            {myParticipation == null && (
+                                                <>
+                                                    <Button
+                                                        onClick={() =>
+                                                            handleOpenModalRegister(
+                                                                'ketua',
+                                                            )
+                                                        }
+                                                    >
+                                                        Ikut sebagai Ketua Tim
+                                                    </Button>
+                                                    <Button
+                                                        variant="outline"
+                                                        onClick={() =>
+                                                            handleOpenModalRegister(
+                                                                'anggota',
+                                                            )
+                                                        }
+                                                    >
+                                                        Ikut sebagai Anggota
+                                                    </Button>
+                                                </>
+                                            )}
+
+                                            {myParticipation && (
+                                                <p className="mt-2 text-sm text-gray-600">
+                                                    Kamu sudah mendaftar sebagai{' '}
+                                                    <strong>
+                                                        {myParticipation.pivot
+                                                            .is_leader
+                                                            ? 'Ketua'
+                                                            : 'Anggota'}{' '}
+                                                    </strong>
+                                                    (
+                                                    {
+                                                        myParticipation.pivot
+                                                            .participation_status
+                                                    }
                                                     )
-                                                }
-                                            >
-                                                Ikut sebagai Ketua Tim
-                                            </Button>
-                                            <Button
-                                                variant="outline"
-                                                onClick={() =>
-                                                    handleOpenModalRegister(
-                                                        'anggota',
-                                                    )
-                                                }
-                                            >
-                                                Ikut sebagai Anggota
-                                            </Button>
+                                                </p>
+                                            )}
 
                                             <ConfirmVolunteerModal
                                                 open={modalOpenRegister}
@@ -447,9 +566,9 @@ const ReportDetailPage = ({ report, onBack }: ReportDetailPageProps) => {
                                 {/* Mission Documentation */}
                                 {report.mission?.documentation && (
                                     <div>
-                                        <h4 className="mb-3 font-semibold">
+                                        <h3 className="mb-3 text-lg font-semibold">
                                             Dokumentasi Misi
-                                        </h4>
+                                        </h3>
                                         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                             {report.mission?.documentation.map(
                                                 (doc, index) => (
@@ -458,15 +577,20 @@ const ReportDetailPage = ({ report, onBack }: ReportDetailPageProps) => {
                                                         className="space-y-2"
                                                     >
                                                         <img
-                                                            src={doc.image}
-                                                            alt={doc.caption}
+                                                            src={doc.media_type}
+                                                            alt={doc.content}
                                                             className="aspect-video w-full rounded-lg object-cover"
                                                         />
                                                         <p className="text-sm text-gray-700">
-                                                            {doc.caption}
+                                                            {doc.content}
                                                         </p>
                                                         <p className="text-xs text-gray-500">
-                                                            Oleh: {doc.uploader}
+                                                            {doc.uploader.name}
+                                                        </p>
+                                                        <p className="text-xs text-gray-500">
+                                                            {formatFullDateTime(
+                                                                doc.created_at,
+                                                            )}
                                                         </p>
                                                     </div>
                                                 ),

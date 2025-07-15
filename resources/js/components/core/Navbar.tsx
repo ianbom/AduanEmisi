@@ -1,31 +1,29 @@
-import { Badge } from '@/components/ui/badge';
-import { Bell, User } from 'lucide-react';
-
+import { NavItems, NavUser } from '@/types/navbar/interface';
+import { User } from '@/types/user/interface';
+import { Bell } from 'lucide-react';
+import { Badge } from '../ui/badge';
+import ProfileMenuDropdown from './ProfileDropdown';
 interface NavbarProps {
+    navItems: NavItems[];
     onNavigate: (page: string) => void;
     currentPage: string;
     onNotificationClick: () => void;
-    onProfileClick: () => void;
+    user?: NavUser;
+    profileMenuContent: React.ReactNode;
 }
 
 const Navbar = ({
+    navItems,
     onNavigate,
     currentPage,
     onNotificationClick,
-    onProfileClick,
+    profileMenuContent,
+    user,
 }: NavbarProps) => {
-    const navItems = [
-        { id: 'report', label: 'Daftar Laporan', key: 'report' },
-        { id: 'my-report', label: 'Laporan Saya', key: 'my-report' },
-        { id: 'map', label: 'Peta', key: 'map' },
-        { id: 'education', label: 'Konten Edukasi', key: 'education' },
-    ];
-
     return (
         <nav className="fixed left-0 right-0 top-0 z-50 border-b border-emerald-100 bg-white/95 shadow-sm backdrop-blur-md">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <div className="flex h-16 items-center justify-between">
-                    {/* Logo */}
                     <div
                         className="group flex cursor-pointer items-center"
                         onClick={() => onNavigate('/homepage')}
@@ -39,8 +37,6 @@ const Navbar = ({
                             EcoTrack
                         </span>
                     </div>
-
-                    {/* Navigation Links */}
                     <div className="hidden space-x-1 md:flex">
                         {navItems.map((item) => (
                             <button
@@ -56,9 +52,7 @@ const Navbar = ({
                             </button>
                         ))}
                     </div>
-                    {/* Right Side - Notifications & Profile */}
                     <div className="flex items-center space-x-4">
-                        {/* Notification Icon */}
                         <button
                             onClick={onNotificationClick}
                             className="relative rounded-lg p-2 text-gray-500 transition-colors hover:bg-emerald-50 hover:text-emerald-600"
@@ -68,14 +62,10 @@ const Navbar = ({
                                 3
                             </Badge>
                         </button>
-
-                        {/* Profile Photo */}
-                        <button
-                            onClick={onProfileClick}
-                            className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 text-white transition-shadow hover:shadow-lg"
-                        >
-                            <User size={20} />
-                        </button>
+                        <ProfileMenuDropdown
+                            user={user as User}
+                            menuItems={profileMenuContent}
+                        />
                     </div>
                 </div>
             </div>

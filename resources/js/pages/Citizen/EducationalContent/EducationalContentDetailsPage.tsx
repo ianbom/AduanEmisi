@@ -1,37 +1,22 @@
-import Navbar from '@/components/core/Navbar';
-import NotificationSidebar from '@/components/core/NotificationSidebar';
 import ContentDetailsPage from '@/components/educational-content/ContentDetailsPage';
-import { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import CitizenLayout from '@/components/layouts/CitizenLayout';
+import { PageProps } from '@/types';
+import { Content } from '@/types/content';
+import { router as Inertia, usePage } from '@inertiajs/react';
+interface ContentDetailsPageRouteProps {
+    content: Content;
+    [key: string]: unknown;
+}
 const ContentDetailsPageRoute = () => {
-    // const navigate = useNavigate();
-    const { id } = useParams<{ id: string }>();
-    const [isNotificationOpen, setIsNotificationOpen] = useState(false);
-
-    // const handleNavigate = (page: string) => {
-    //     navigate(`/${page}`);
-    // };
-
-    // const handleBack = () => {
-    //     navigate('/education');
-    // };
-
+    const { props } = usePage<PageProps<ContentDetailsPageRouteProps>>();
+    const content = props.content;
+    const handleBack = () => {
+        Inertia.visit(route('report'));
+    };
     return (
-        <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-white">
-            <Navbar
-                onNavigate={() => {}}
-                currentPage="education"
-                onNotificationClick={() => setIsNotificationOpen(true)}
-                onProfileClick={() => {}}
-            />
-            <main className="pt-16">
-                <ContentDetailsPage contentId={id || '1'} onBack={() => {}} />
-            </main>
-            <NotificationSidebar
-                isOpen={isNotificationOpen}
-                onClose={() => setIsNotificationOpen(false)}
-            />
-        </div>
+        <CitizenLayout currentPage="education">
+            <ContentDetailsPage content={content} onBack={handleBack} />
+        </CitizenLayout>
     );
 };
 

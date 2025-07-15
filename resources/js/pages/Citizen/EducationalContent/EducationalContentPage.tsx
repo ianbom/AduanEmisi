@@ -1,42 +1,27 @@
-import Navbar from '@/components/core/Navbar';
-import NotificationSidebar from '@/components/core/NotificationSidebar';
 import EducationalContentPage from '@/components/educational-content/EducationalContentPage';
-import { router as Inertia } from '@inertiajs/react';
-import { useState } from 'react';
-
+import CitizenLayout from '@/components/layouts/CitizenLayout';
+import { PageProps } from '@/types';
+import { Content } from '@/types/content';
+import { router as Inertia, usePage } from '@inertiajs/react';
+interface EducationalContentPageRouteProps {
+    contents: Content[];
+    [key: string]: unknown;
+}
 const EducationalContentPageRoute = () => {
-    // useNavigate dari react-router-dom tidak lagi diperlukan
-    // const navigate = useNavigate();
+    const { props } = usePage<PageProps<EducationalContentPageRouteProps>>();
+    const contents = props.contents?.data || [];
 
-    const [isNotificationOpen, setIsNotificationOpen] = useState(false);
-
-    const handleNavigate = (page: string) => {
-        Inertia.visit(`/${page}`);
-    };
-
-    const handleViewContent = (id: string) => {
-        // Asumsikan ada rute 'content.show' di Laravel yang menerima ID konten
-        Inertia.visit(route('content.show', { content: id }));
+    const handleViewDetails = (id: number) => {
+        Inertia.visit(route('content.show', { id }));
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-white">
-            <Navbar
-                onNavigate={handleNavigate} // Teruskan fungsi navigasi Inertia
-                currentPage="education"
-                onNotificationClick={() => setIsNotificationOpen(true)}
-                onProfileClick={() => Inertia.visit(route('dashboard'))} // Navigasi Inertia ke dashboard atau root
+        <CitizenLayout currentPage="education">
+            <EducationalContentPage
+                contents={contents}
+                onViewDetails={handleViewDetails}
             />
-
-            <main className="pt-16">
-                <EducationalContentPage onViewContent={handleViewContent} />
-            </main>
-
-            <NotificationSidebar
-                isOpen={isNotificationOpen}
-                onClose={() => setIsNotificationOpen(false)}
-            />
-        </div>
+        </CitizenLayout>
     );
 };
 
