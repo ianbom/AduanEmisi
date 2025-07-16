@@ -26,6 +26,7 @@ class UpdateMissionRequest extends FormRequest
             'report_id' => ['nullable', 'exists:reports,id'],
             'province_id' => ['nullable', 'exists:provinces,id'],
             'city_id' => ['required', 'exists:cities,id'],
+            'thumbnail_url' => 'nullable',
             'district_id' => ['required', 'exists:districts,id'],
             'title' => ['nullable', 'string', 'max:255'],
             'description' => ['nullable', 'string'],

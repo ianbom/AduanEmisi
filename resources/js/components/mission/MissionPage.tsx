@@ -226,7 +226,7 @@ const MissionPage = ({ missions, onViewDetails }: MissionPageProps) => {
                                                 </div>
                                             ) : (
                                                 <img
-                                                    src={`/storage/${mission.report.media?.[0]?.media_url}`}
+                                                    src={`/storage/${mission.thumbnail_url}`}
                                                     alt={mission.title}
                                                     className="h-48 w-full object-cover transition-transform duration-300 group-hover:scale-105"
                                                 />

@@ -30,6 +30,7 @@ class CreateMissionRequest extends FormRequest
                 Rule::unique('missions', 'report_id')
             ],
             'province_id' => 'required',
+            'thumbnail_url' => 'required',
             'city_id' => 'required|exists:cities,id',
             'district_id' => 'required|exists:districts,id',
             'title' => 'required|string|max:255',
