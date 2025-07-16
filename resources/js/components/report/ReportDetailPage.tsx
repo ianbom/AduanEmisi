@@ -7,10 +7,11 @@ import { Report } from '@/types/report';
 import { User } from '@/types/user/interface';
 import { formatFullDateTime } from '@/utils/formatDate';
 import { getStatusColor } from '@/utils/reportStatusColor';
-import { router as Inertia } from '@inertiajs/react';
+import { router as Inertia, useForm } from '@inertiajs/react';
 import {
     ArrowLeft,
     Calendar,
+    CornerUpLeft,
     Heart,
     LocateFixed,
     MapPin,
@@ -24,6 +25,7 @@ import { useState } from 'react';
 import AttendanceFormModal from './AttendanceFormModal';
 import ConfirmVolunteerModal from './ConfirmVolunteerModal';
 import CommentUploadCard from './InputCommentReport';
+import { Comment } from '@/types/report/comment';
 interface ReportDetailPageProps {
     report: Report;
     myParticipation:
@@ -41,7 +43,7 @@ interface ReportDetailPageProps {
           })
         | null;
     confirmedLeader: User | null;
-
+    comments: Comment[];
     onBack: () => void;
 }
 
@@ -50,22 +52,31 @@ const ReportDetailPage = ({
     onBack,
     myParticipation,
     confirmedLeader,
+    comments,
+
+
 }: ReportDetailPageProps) => {
     const [hasUpvoted, setHasUpvoted] = useState(false);
     const [hasDownvoted, setHasDownvoted] = useState(false);
-    const [replying, setReplying] = useState<string | null>(null);
-    const [replyText, setReplyText] = useState<string>('');
+    const [replying, setReplying] = useState<string | number | null>(null);
+        const { data: replyData, setData: setReplyData, post: postReply, processing: processingReply, errors: replyErrors, reset: resetReply } = useForm({
+        comment: '',
+        report_id: report.id,
+        reply_id: null as string | number | null,
+    });
     const [openModalAttendance, setOpenModalAttendance] = useState(false);
     const [modalOpenRegister, setModalOpenRegister] = useState(false);
     const [selectedRole, setSelectedRole] = useState<'ketua' | 'anggota'>(
         'anggota',
     );
     console.log('myParticipation:', myParticipation);
-
+     console.log('ini komen', comments);
     const handleOpenModalRegister = (role: 'ketua' | 'anggota') => {
         setSelectedRole(role);
         setModalOpenRegister(true);
     };
+
+
 
     const handleConfirmRegister = () => {
         setModalOpenRegister(false);
@@ -98,116 +109,108 @@ const ReportDetailPage = ({
         { id: 8, name: 'Aldino Erlangga' },
         { id: 9, name: 'M. Ainur Ramadhan' },
     ];
-    const [comments, setComments] = useState([
-        {
-            id: '1',
-            user: 'Maria Santos',
-            avatar: '/api/placeholder/40/40',
-            date: '16 Januari 2024',
-            content: 'Kondisinya parah banget di lokasi ini.',
-            media: [
-                'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?w=600',
-                'https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-            ],
-            replies: [
-                {
-                    id: '1-1',
-                    user: 'Admin',
-                    date: '17 Januari 2024',
-                    content:
-                        'Terima kasih infonya, Maria. Akan kami tindak lanjuti.',
-                },
-                {
-                    id: '1-2',
-                    user: 'Andi Rahman',
-                    date: '17 Januari 2024',
-                    content: 'Saya juga lihat kondisi ini kemarin malam.',
-                },
-            ],
-        },
-        {
-            id: '2',
-            user: 'Rizki Pratama',
-            avatar: '/api/placeholder/40/40',
-            date: '16 Januari 2024',
-            content: 'Setuju, perlu penanganan cepat!',
-            media: [],
-            replies: [
-                {
-                    id: '2-1',
-                    user: 'Ayu Lestari',
-                    date: '17 Januari 2024',
-                    content: 'Betul banget, Rizki. Terlalu lama dibiarkan.',
-                },
-            ],
-        },
-        {
-            id: '3',
-            user: 'Ayu Lestari',
-            avatar: '/api/placeholder/40/40',
-            date: '17 Januari 2024',
-            content: 'Saya lewat sini tadi pagi, situasinya masih sama.',
-            media: [
-                'https://images.unsplash.com/photo-1584395630827-860eee694d7b?w=800',
-            ],
-            replies: [],
-        },
-        {
-            id: '4',
-            user: 'Bagus Wijaya',
-            avatar: '/api/placeholder/40/40',
-            date: '18 Januari 2024',
-            content: 'Ini video dari warga sekitar.',
-            media: [
-                'https://storage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
-            ],
-            replies: [
-                {
-                    id: '4-1',
-                    user: 'Admin',
-                    date: '18 Januari 2024',
-                    content: 'Videonya sangat membantu, terima kasih Bagus!',
-                },
-            ],
-        },
-        {
-            id: '5',
-            user: 'Siti Nurhaliza',
-            avatar: '/api/placeholder/40/40',
-            date: '18 Januari 2024',
-            content: 'Sudah saya laporkan ke pihak berwenang.',
-            media: [
-                'https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=700',
-            ],
-            replies: [],
-        },
-    ]);
+    // const [comments, setComments] = useState([
+    //     {
+    //         id: '1',
+    //         user: 'Maria Santos',
+    //         avatar: '/api/placeholder/40/40',
+    //         date: '16 Januari 2024',
+    //         content: 'Kondisinya parah banget di lokasi ini.',
+    //         media: [
+    //             'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?w=600',
+    //             'https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+    //         ],
+    //         replies: [
+    //             {
+    //                 id: '1-1',
+    //                 user: 'Admin',
+    //                 date: '17 Januari 2024',
+    //                 content:
+    //                     'Terima kasih infonya, Maria. Akan kami tindak lanjuti.',
+    //             },
+    //             {
+    //                 id: '1-2',
+    //                 user: 'Andi Rahman',
+    //                 date: '17 Januari 2024',
+    //                 content: 'Saya juga lihat kondisi ini kemarin malam.',
+    //             },
+    //         ],
+    //     },
+    //     {
+    //         id: '2',
+    //         user: 'Rizki Pratama',
+    //         avatar: '/api/placeholder/40/40',
+    //         date: '16 Januari 2024',
+    //         content: 'Setuju, perlu penanganan cepat!',
+    //         media: [],
+    //         replies: [
+    //             {
+    //                 id: '2-1',
+    //                 user: 'Ayu Lestari',
+    //                 date: '17 Januari 2024',
+    //                 content: 'Betul banget, Rizki. Terlalu lama dibiarkan.',
+    //             },
+    //         ],
+    //     },
+    //     {
+    //         id: '3',
+    //         user: 'Ayu Lestari',
+    //         avatar: '/api/placeholder/40/40',
+    //         date: '17 Januari 2024',
+    //         content: 'Saya lewat sini tadi pagi, situasinya masih sama.',
+    //         media: [
+    //             'https://images.unsplash.com/photo-1584395630827-860eee694d7b?w=800',
+    //         ],
+    //         replies: [],
+    //     },
+    //     {
+    //         id: '4',
+    //         user: 'Bagus Wijaya',
+    //         avatar: '/api/placeholder/40/40',
+    //         date: '18 Januari 2024',
+    //         content: 'Ini video dari warga sekitar.',
+    //         media: [
+    //             'https://storage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
+    //         ],
+    //         replies: [
+    //             {
+    //                 id: '4-1',
+    //                 user: 'Admin',
+    //                 date: '18 Januari 2024',
+    //                 content: 'Videonya sangat membantu, terima kasih Bagus!',
+    //             },
+    //         ],
+    //     },
+    //     {
+    //         id: '5',
+    //         user: 'Siti Nurhaliza',
+    //         avatar: '/api/placeholder/40/40',
+    //         date: '18 Januari 2024',
+    //         content: 'Sudah saya laporkan ke pihak berwenang.',
+    //         media: [
+    //             'https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=700',
+    //         ],
+    //         replies: [],
+    //     },
+    // ]);
 
-    const handleReplySubmit = (commentId: string) => {
-        if (!replyText.trim()) return;
-        const newReply = {
-            id: `${commentId}-${Date.now()}`,
-            user: 'Kamu',
-            date: new Date().toLocaleDateString('id-ID', {
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric',
-            }),
-            content: replyText,
-        };
+const handleReplySubmit = () => {
+    // `replyData` sudah berisi `reply_id` yang benar
+    postReply(route('comments.store'), {
+        onSuccess: () => {
+            resetReply('comment', 'reply_id'); // Reset form
+            setReplying(null); // Tutup form balasan
+        },
+        preserveScroll: true,
+    });
+};
 
-        setComments((prev) =>
-            prev.map((comment) =>
-                comment.id === commentId
-                    ? {
-                          ...comment,
-                          replies: [...(comment.replies || []), newReply],
-                      }
-                    : comment,
-            ),
-        );
-        setReplyText('');
-        setReplying(null);
+       const formatCommentDate = (dateString: string) => {
+        try {
+            return formatFullDateTime(dateString);
+        } catch (error) {
+            return dateString;
+        }
     };
 
     return (
@@ -643,127 +646,114 @@ const ReportDetailPage = ({
                                         className="flex space-x-3 rounded-lg bg-gray-50 p-4"
                                     >
                                         <Avatar>
-                                            <AvatarImage src={comment.avatar} />
+                                            <AvatarImage src={comment.user.profile_url} />
                                             <AvatarFallback>
-                                                {comment.user[0]}
+                                                {comment.user.name[0]}
                                             </AvatarFallback>
                                         </Avatar>
 
                                         <div className="flex-1">
                                             <div className="mb-1 flex items-center space-x-2">
                                                 <span className="font-medium">
-                                                    {comment.user}
+                                                    {comment.user.name}
                                                 </span>
                                                 <span className="text-sm text-gray-500">
-                                                    {comment.date}
+                                                    {formatCommentDate(comment.created_at)}
                                                 </span>
                                             </div>
 
                                             <p className="text-gray-700">
-                                                {comment.content}
+                                                {comment.comment}
                                             </p>
 
-                                            {/* Media (Image / Video) */}
-                                            {comment.media?.length > 0 && (
-                                                <div className="mt-3 grid grid-cols-1 gap-4 md:grid-cols-2">
-                                                    {comment.media.map(
-                                                        (url, idx) => {
-                                                            const isVideo =
-                                                                url.match(
-                                                                    /\.(mp4|webm|ogg)$/i,
-                                                                );
-                                                            return isVideo ? (
-                                                                <video
-                                                                    key={idx}
-                                                                    src={url}
-                                                                    controls
-                                                                    preload="metadata"
-                                                                    className="w-full rounded-lg"
-                                                                />
-                                                            ) : (
-                                                                <img
-                                                                    key={idx}
-                                                                    src={url}
-                                                                    alt={`Media ${idx + 1}`}
-                                                                    className="w-full rounded-lg object-cover"
-                                                                />
-                                                            );
-                                                        },
+                                             {/* Media */}
+                                            {comment.media_url && (
+                                                <div className="mt-3">
+                                                    {/* PERBAIKAN: Tidak perlu .map(), langsung tampilkan satu media */}
+                                                    {comment.media_type === 'video' ? (
+                                                        <video
+                                                            src={`/storage/${comment.media_url}`}
+                                                            controls
+                                                            preload="metadata"
+                                                            className="aspect-video w-full max-w-sm rounded-lg border"
+                                                        />
+                                                    ) : (
+                                                        <img
+                                                            src={`/storage/${comment.media_url}`}
+                                                            alt={`Media untuk komentar`}
+                                                            className="max-h-72 w-auto rounded-lg border object-cover"
+                                                        />
                                                     )}
                                                 </div>
                                             )}
 
-                                            {/* Replies */}
-                                            {comment.replies &&
-                                                comment.replies.length > 0 && (
-                                                    <div className="mt-3 space-y-2 border-l-2 border-gray-200 pl-4">
-                                                        {comment.replies.map(
-                                                            (reply) => (
-                                                                <div
-                                                                    key={
-                                                                        reply.id
-                                                                    }
-                                                                >
-                                                                    <div className="flex items-center space-x-2 text-sm text-gray-600">
-                                                                        <span className="font-medium">
-                                                                            {
-                                                                                reply.user
-                                                                            }
-                                                                        </span>
-                                                                        <span className="text-xs text-gray-500">
-                                                                            {
-                                                                                reply.date
-                                                                            }
-                                                                        </span>
-                                                                    </div>
-                                                                    <p className="text-sm text-gray-700">
-                                                                        {
-                                                                            reply.content
-                                                                        }
-                                                                    </p>
-                                                                </div>
-                                                            ),
-                                                        )}
+                                        {/* Replies */}
+                                           {comment.replies && comment.replies.length > 0 && (
+                                            <div className="mt-4 space-y-3 border-l-2 border-gray-200 pl-5">
+                                                {comment.replies.map((reply) => (
+                                                    <div key={reply.id} className="flex space-x-3">
+                                                        <Avatar className="h-8 w-8">
+                                                            <AvatarImage src={reply.user.profile_url} />
+                                                            <AvatarFallback>{reply.user.name[0]}</AvatarFallback>
+                                                        </Avatar>
+                                                        <div className="flex-1">
+                                                            <div className="flex items-center space-x-2 text-sm">
+                                                                <span className="font-semibold text-gray-800">
+                                                                    {reply.user.name}
+                                                                </span>
+                                                                <span className="text-xs text-gray-500">
+                                                                    {formatCommentDate(reply.created_at)}
+                                                                </span>
+                                                            </div>
+                                                            <p className="text-sm text-gray-700">
+                                                                {reply.comment}
+                                                            </p>
+                                                        </div>
                                                     </div>
-                                                )}
+                                                ))}
+                                            </div>
+                                        )}
 
                                             {/* Reply Button & Form */}
-                                            <button
-                                                onClick={() =>
-                                                    setReplying(
-                                                        replying === comment.id
-                                                            ? null
-                                                            : comment.id,
-                                                    )
-                                                }
-                                                className="mt-2 text-sm text-emerald-600 hover:underline"
+                                           <button
+                                                type="button"
+                                                onClick={() => {
+                                                    if (replying === comment.id) {
+                                                        setReplying(null);
+                                                    } else {
+
+                                                        setReplying(comment.id);
+                                                        setReplyData({
+                                                            ...replyData,
+                                                            reply_id: comment.id,
+                                                            comment: '',
+                                                        });
+                                                    }
+                                                }}
+                                                className="group mt-2 inline-flex items-center ..."
                                             >
+                                                <CornerUpLeft className="h-3.5 w-3.5 text-gray-400 group-hover:text-gray-500" />
                                                 Balas
                                             </button>
 
                                             {replying === comment.id && (
                                                 <div className="mt-2">
-                                                    <Textarea
+                                                   <Textarea
                                                         rows={2}
-                                                        placeholder="Tulis balasan..."
-                                                        value={replyText}
-                                                        onChange={(e) =>
-                                                            setReplyText(
-                                                                e.target.value,
-                                                            )
-                                                        }
+                                                        placeholder={`Balas komentar ${comment.user.name}...`}
+
+                                                        value={replyData.comment}
+
+                                                        onChange={(e) => setReplyData('comment', e.target.value)}
                                                     />
                                                     <div className="mt-1 flex justify-end">
                                                         <Button
                                                             size="sm"
-                                                            onClick={() =>
-                                                                handleReplySubmit(
-                                                                    comment.id,
-                                                                )
-                                                            }
+                                                            onClick={handleReplySubmit} // Panggil fungsi tanpa argumen
+                                                            disabled={processingReply}
                                                             className="bg-emerald-600 hover:bg-emerald-700"
                                                         >
-                                                            Kirim Balasan
+                                                            {processingReply ? 'Mengirim...' : 'Kirim Balasan'}
                                                         </Button>
                                                     </div>
                                                 </div>
@@ -774,7 +764,7 @@ const ReportDetailPage = ({
                             </div>
                         </CardContent>
                     </Card>
-                    <CommentUploadCard />
+                    <CommentUploadCard reportId={report.id}/>
                 </div>
             </div>
         </div>

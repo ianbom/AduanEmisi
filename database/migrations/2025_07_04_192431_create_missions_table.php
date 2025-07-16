@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreignId('city_id')->constrained('cities')->onDelete('cascade');
             $table->foreignId('district_id')->constrained('districts')->onDelete('cascade');
             $table->string('title')->nullable();
+            $table->string('thumbnail_url')->nullable();
             $table->text('description')->nullable();
             $table->float('latitude')->nullable();
             $table->float('longitude')->nullable();

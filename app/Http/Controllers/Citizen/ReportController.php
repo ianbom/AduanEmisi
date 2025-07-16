@@ -16,6 +16,8 @@ use Illuminate\Support\Facades\Log;
 use App\Models\Province;
 use App\Models\City;
 use App\Models\District;
+use App\Models\Report;
+use App\Services\CommentService;
 use Throwable;
 use Inertia\Inertia;
 
@@ -23,10 +25,12 @@ class ReportController extends Controller
 {
 
     protected $reportService;
+    protected $commentService;
 
-    public function __construct(ReportService $reportService)
+    public function __construct(ReportService $reportService, CommentService $commentService)
     {
         $this->reportService = $reportService;
+        $this->commentService = $commentService;
     }
     public function create()
     {
@@ -140,7 +144,6 @@ class ReportController extends Controller
             }
             $mission = $report->mission;
 
-
             $myParticipation = null;
             if ($mission) {
                 $myParticipation = $mission->volunteers
@@ -149,10 +152,15 @@ class ReportController extends Controller
             // dd($myParticipation);
             $confirmedLeader = $report->mission ? $report->mission->confirmedLeader() : null;
 
+            $comments = $this->commentService->getCommentsByReport($id);
+
+            // return response()->json($comments);
+
             return Inertia::render('Citizen/Report/ReportDetailPage', [
                 'report' => $report,
                 'myParticipation' => $myParticipation,
-                'confirmedLeader' => $confirmedLeader
+                'confirmedLeader' => $confirmedLeader,
+                'comments' => $comments
             ]);
         } catch (Exception $e) {
             return response()->json([
@@ -338,4 +346,8 @@ class ReportController extends Controller
             ], 500);
         }
     }
+
+
+
+
 }

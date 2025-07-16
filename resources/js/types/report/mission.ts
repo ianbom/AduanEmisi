@@ -5,6 +5,7 @@ export interface Mission {
     id: number;
     report_id: number;
     report: Report;
+    thumbnail_url: string;
     assignedVolunteer?: User;
     creator?: {
         name: string;

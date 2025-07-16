@@ -8,7 +8,7 @@
             <p class="text-gray-600 mt-2">Lengkapi form di bawah untuk membuat misi baru</p>
         </div>
 
-        <form action="{{ route('admin.missions.store') }}" method="POST" id="missionForm">
+        <form action="{{ route('admin.missions.store') }}" method="POST" id="missionForm" enctype="multipart/form-data">
             @csrf
 
             <!-- Report Selection -->
@@ -64,6 +64,41 @@
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
+
+                 <!-- Image Upload Field -->
+            <div class="mb-6">
+                <label for="thumbnail_url" class="block text-sm font-medium text-gray-700 mb-2">
+                   Thumbnail
+                </label>
+                <div class="flex items-center justify-center w-full">
+                    <label for="thumbnail_url" class="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors @error('thumbnail_url') border-red-500 @enderror">
+                        <div class="flex flex-col items-center justify-center pt-5 pb-6" id="upload-placeholder">
+                            <svg class="w-8 h-8 mb-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
+                            </svg>
+                            <p class="mb-2 text-sm text-gray-500">
+                                <span class="font-semibold">Klik untuk upload</span> atau drag and drop
+                            </p>
+                            <p class="text-xs text-gray-500">PNG, JPG, GIF, SVG (MAX. 2MB)</p>
+                        </div>
+                        <div class="hidden" id="image-preview">
+                            <img id="preview-img" class="max-w-full max-h-48 rounded-lg" alt="Preview">
+                            <p class="mt-2 text-sm text-gray-600 text-center" id="file-name"></p>
+                        </div>
+                        <input
+                            id="thumbnail_url"
+                            name="thumbnail_url"
+                            type="file"
+                            class="hidden"
+                            accept="image/*"
+                            onchange="previewImage(this)"
+                        />
+                    </label>
+                </div>
+                @error('thumbnail_url')
+                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+            </div>
 
                 <!-- Scheduled Date -->
                 <div>
@@ -210,6 +245,53 @@ document.addEventListener('DOMContentLoaded', function() {
     // If there's an old value, trigger change event
     if (reportSelect.value) {
         reportSelect.dispatchEvent(new Event('change'));
+    }
+});
+
+
+function previewImage(input) {
+    const file = input.files[0];
+    const placeholder = document.getElementById('upload-placeholder');
+    const preview = document.getElementById('image-preview');
+    const previewImg = document.getElementById('preview-img');
+    const fileName = document.getElementById('file-name');
+
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            previewImg.src = e.target.result;
+            fileName.textContent = file.name;
+            placeholder.classList.add('hidden');
+            preview.classList.remove('hidden');
+        }
+        reader.readAsDataURL(file);
+    } else {
+        placeholder.classList.remove('hidden');
+        preview.classList.add('hidden');
+    }
+}
+
+// Drag and drop functionality
+const uploadArea = document.querySelector('label[for="thumbnail_url"]');
+const fileInput = document.getElementById('thumbnail_url');
+
+uploadArea.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    uploadArea.classList.add('border-blue-500', 'bg-blue-50');
+});
+
+uploadArea.addEventListener('dragleave', () => {
+    uploadArea.classList.remove('border-blue-500', 'bg-blue-50');
+});
+
+uploadArea.addEventListener('drop', (e) => {
+    e.preventDefault();
+    uploadArea.classList.remove('border-blue-500', 'bg-blue-50');
+
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+        fileInput.files = files;
+        previewImage(fileInput);
     }
 });
 </script>

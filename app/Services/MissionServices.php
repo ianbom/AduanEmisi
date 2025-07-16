@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\UploadedFile;
 
 class MissionServices extends Service
 {
@@ -23,6 +24,18 @@ class MissionServices extends Service
 
     public function createMission(array $data): Mission
     {
+
+    if (isset($data['thumbnail_url'])) {
+
+            // PERBAIKAN 2: Kondisi sekarang aman, hanya berjalan jika ada file yang di-upload
+            $file = $data['thumbnail_url'];
+            $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $filePath = $file->storeAs('missions', $fileName, 'public');
+
+            // Timpa nilai di array $data dengan path file yang sudah string
+            $data['thumbnail_url'] = $filePath;
+        }
+
         return DB::transaction(function () use ($data) {
             $missionData = [
                 'report_id' => $data['report_id'] ?? null,
@@ -30,6 +43,7 @@ class MissionServices extends Service
                 'province_id' => $data['province_id'],
                 'city_id' => $data['city_id'],
                 'district_id' => $data['district_id'],
+                'thumbnail_url' => $data['thumbnail_url'] ?? null,
                 'title' => $data['title'],
                 'description' => $data['description'],
                 'latitude' => $data['latitude'] ?? null,
@@ -306,7 +320,15 @@ class MissionServices extends Service
         DB::beginTransaction();
 
         try {
-            // Handle completed_at field based on status
+
+        if (isset($data['thumbnail_url']) && $data['thumbnail_url']) {
+            $fileName = time() . '_' . uniqid() . '.' . $data['thumbnail_url']->getClientOriginalExtension();
+            $filePath = $data['thumbnail_url']->storeAs('missions', $fileName, 'public');
+            $data['thumbnail_url'] = $filePath;
+        } else {
+           $data['thumbnail_url'] = $mission->icon_url;
+        }
+
             if ($data['status'] === 'completed' && !$mission->completed_at) {
                 $data['completed_at'] = now();
             } elseif ($data['status'] !== 'completed') {
@@ -314,9 +336,9 @@ class MissionServices extends Service
             }
 
             // Clear assigned_volunteer_id if assigned_to_type is not 'volunteer'
-            if ($data['assigned_to_type'] !== 'volunteer') {
-                $data['assigned_volunteer_id'] = null;
-            }
+            // if ($data['assigned_to_type'] !== 'volunteer') {
+            //     $data['assigned_volunteer_id'] = null;
+            // }
 
             $mission->update($data);
 

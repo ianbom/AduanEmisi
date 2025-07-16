@@ -81,12 +81,12 @@ class CommentService
             ->get();
     }
 
-    public function getCommentsByReport(int $reportId, int $perPage = 10)
+    public function getCommentsByReport(int $reportId)
     {
-        return Comment::with(['user:id,name,email', 'replies.user:id,name,email'])
+        return Comment::with('user', 'replies', 'replies.user')
             ->where('report_id', $reportId)
-            ->whereNull('reply_id') // Only parent comments
-            ->orderBy('created_at', 'desc')
-            ->paginate($perPage);
+            ->whereNull('reply_id')
+            ->orderBy('created_at', 'asc')
+            ->get();
     }
 }
