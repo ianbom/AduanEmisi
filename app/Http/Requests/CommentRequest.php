@@ -24,7 +24,7 @@ class CommentRequest extends FormRequest
         return [
             'reply_id' => 'nullable|exists:comments,id',
             'report_id' => 'required|exists:reports,id',
-            'comment' => 'required_without:media|string|max:1000',
+            'comment' => 'nullable|required_without:media|string|max:1000',
             'media' => 'nullable|file|mimes:jpeg,png,jpg,gif,mp4,mov,avi|max:10240', // 10MB
             'media_type' => 'nullable|in:image,video',
         ];

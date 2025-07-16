@@ -1,5 +1,6 @@
 import CitizenLayout from '@/components/layouts/CitizenLayout';
 import ReportDetailPage from '@/components/report/ReportDetailPage';
+import { Comment } from '@/types/report/comment';
 import { PageProps } from '@/types';
 import { Report } from '@/types/report';
 import { User } from '@/types/user/interface';
@@ -21,6 +22,7 @@ interface ReportDetailPageRouteProps {
           })
         | null;
     confirmedLeader: User | null;
+    comments: Comment[];
     [key: string]: unknown;
 }
 const ReportDetailPageRoute = () => {
@@ -28,6 +30,8 @@ const ReportDetailPageRoute = () => {
     const report = props.report;
     const myParticipation = props.myParticipation;
     const confirmedLeader = props.confirmedLeader;
+    const comments = props.comments;
+
 
     const handleBack = () => {
         Inertia.visit(route('report'));
@@ -37,8 +41,10 @@ const ReportDetailPageRoute = () => {
             <ReportDetailPage
                 report={report}
                 onBack={handleBack}
+                comments={comments}
                 confirmedLeader={confirmedLeader}
                 myParticipation={myParticipation}
+
             />
         </CitizenLayout>
     );

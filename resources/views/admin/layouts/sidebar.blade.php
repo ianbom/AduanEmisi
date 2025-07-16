@@ -168,19 +168,19 @@
             </ul>
           </li>
           <li>
-            <div class="text-xs/6 font-semibold text-gray-400">Your teams</div>
+            <div class="text-xs/6 font-semibold text-gray-400">Sertifikat dan Badges</div>
             <ul role="list" class="-mx-2 mt-2 space-y-1">
               <li>
                 <!-- Current: "bg-gray-50 text-indigo-600", Default: "text-gray-700 hover:text-indigo-600 hover:bg-gray-50" -->
                 <a href="#" class="group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold text-gray-700 hover:bg-gray-50 hover:text-indigo-600">
                   <span class="flex size-6 shrink-0 items-center justify-center rounded-lg border border-gray-200 bg-white text-[0.625rem] font-medium text-gray-400 group-hover:border-indigo-600 group-hover:text-indigo-600">H</span>
-                  <span class="truncate">Heroicons</span>
+                  <span class="truncate">Sertifikat</span>
                 </a>
               </li>
               <li>
                 <a href="#" class="group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold text-gray-700 hover:bg-gray-50 hover:text-indigo-600">
                   <span class="flex size-6 shrink-0 items-center justify-center rounded-lg border border-gray-200 bg-white text-[0.625rem] font-medium text-gray-400 group-hover:border-indigo-600 group-hover:text-indigo-600">T</span>
-                  <span class="truncate">Tailwind Labs</span>
+                  <span class="truncate">Badges</span>
                 </a>
               </li>
               <li>

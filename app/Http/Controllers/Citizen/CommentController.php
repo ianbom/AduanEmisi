@@ -18,30 +18,16 @@ class CommentController extends Controller
 
     public function store(CommentRequest $request)
     {
+
         $data = $request->validated();
+        
         try {
             $comment = $this->commentService->createComment($data);
 
             // Load relationships for response
             $comment->load(['user:id,name,email']);
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Komentar berhasil dibuat',
-                'data' => [
-                    'comment' => [
-                        'id' => $comment->id,
-                        'reply_id' => $comment->reply_id,
-                        'user' => $comment->user,
-                        'report_id' => $comment->report_id,
-                        'comment' => $comment->comment,
-                        'media_url' => $comment->media_url,
-                        'media_type' => $comment->media_type,
-                        'created_at' => $comment->created_at->format('Y-m-d H:i:s'),
-                        'updated_at' => $comment->updated_at->format('Y-m-d H:i:s'),
-                    ]
-                ]
-            ], 201);
+           return redirect()->back()->with('success', 'Komentar berhasil ditambahkan');
 
         } catch (\Exception $e) {
             return response()->json([
