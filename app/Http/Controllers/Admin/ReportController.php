@@ -26,6 +26,7 @@ class ReportController extends Controller
         $filters = $this->reportService->buildFilter($request);
         $reports = $this->reportService->getReportByFilter($filters);
 
+        
         $cities = City::orderBy('name', 'asc')->get();
         $districts = District::orderBy('name', 'asc')->get();
 
