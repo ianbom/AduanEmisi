@@ -28,13 +28,15 @@ const Navbar = ({
                         className="group flex cursor-pointer items-center"
                         onClick={() => onNavigate('/homepage')}
                     >
-                        <div className="mr-3 flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 transition-shadow group-hover:shadow-lg">
-                            <span className="text-lg font-bold text-white">
-                                E
-                            </span>
+                        <div className="mr-3 flex h-10 w-10 items-center justify-center rounded-xl">
+                            <img
+                                src="/assets/images/LogoSobatBumi.png"
+                                alt="Logo Sobat Bumi"
+                                className="h-10 w-10"
+                            />
                         </div>
                         <span className="bg-gradient-to-r from-emerald-600 to-emerald-800 bg-clip-text text-2xl font-bold text-transparent">
-                            EcoTrack
+                            SobatBumi
                         </span>
                     </div>
                     <div className="hidden space-x-1 md:flex">

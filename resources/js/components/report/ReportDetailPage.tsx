@@ -4,10 +4,12 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { Report } from '@/types/report';
+import { Comment } from '@/types/report/comment';
 import { User } from '@/types/user/interface';
 import { formatFullDateTime } from '@/utils/formatDate';
 import { getStatusColor } from '@/utils/reportStatusColor';
 import { router as Inertia, useForm } from '@inertiajs/react';
+import axios from 'axios';
 import {
     ArrowLeft,
     Calendar,
@@ -22,10 +24,14 @@ import {
     User as UserIcon,
 } from 'lucide-react';
 import { useState } from 'react';
-import AttendanceFormModal from './AttendanceFormModal';
-import ConfirmVolunteerModal from './ConfirmVolunteerModal';
+import { toast } from 'sonner';
+import ImageWithPopup from '../core/ImageWithPopup';
+import AttendanceFormModal from '../mission/AttendanceFormModal';
+import CancelVolunteerModal from '../mission/CancelVolunteerModal';
+import ConfirmVolunteerModal from '../mission/ConfirmVolunteerModal';
+import UploadDocumentationModal from '../mission/UploadDocumentationModal';
 import CommentUploadCard from './InputCommentReport';
-import { Comment } from '@/types/report/comment';
+
 interface ReportDetailPageProps {
     report: Report;
     myParticipation:
@@ -44,6 +50,10 @@ interface ReportDetailPageProps {
         | null;
     confirmedLeader: User | null;
     comments: Comment[];
+    volunteers: User[];
+    volunteerCounts: number;
+    your_vote: 'upvote' | 'dislike' | null;
+
     onBack: () => void;
 }
 
@@ -53,30 +63,88 @@ const ReportDetailPage = ({
     myParticipation,
     confirmedLeader,
     comments,
-
-
+    volunteers,
+    volunteerCounts,
+    your_vote,
 }: ReportDetailPageProps) => {
-    const [hasUpvoted, setHasUpvoted] = useState(false);
-    const [hasDownvoted, setHasDownvoted] = useState(false);
+    const [hasUpvoted, setHasUpvoted] = useState(your_vote === 'upvote');
+    const [hasDownvoted, setHasDownvoted] = useState(your_vote === 'dislike');
+    const [reportState, setReport] = useState(report);
     const [replying, setReplying] = useState<string | number | null>(null);
-        const { data: replyData, setData: setReplyData, post: postReply, processing: processingReply, errors: replyErrors, reset: resetReply } = useForm({
+    const {
+        data: replyData,
+        setData: setReplyData,
+        post: postReply,
+        processing: processingReply,
+        errors: replyErrors,
+        reset: resetReply,
+    } = useForm({
         comment: '',
         report_id: report.id,
         reply_id: null as string | number | null,
     });
+
     const [openModalAttendance, setOpenModalAttendance] = useState(false);
+    const [openCancelModal, setOpenCancelModal] = useState(false);
+    const [openUploadModal, setOpenUploadModal] = useState(false);
     const [modalOpenRegister, setModalOpenRegister] = useState(false);
     const [selectedRole, setSelectedRole] = useState<'ketua' | 'anggota'>(
         'anggota',
     );
+
     console.log('myParticipation:', myParticipation);
-     console.log('ini komen', comments);
+    console.log('ini komen', comments);
     const handleOpenModalRegister = (role: 'ketua' | 'anggota') => {
         setSelectedRole(role);
         setModalOpenRegister(true);
     };
+    const groupedDocs = report.mission?.documentation.reduce(
+        (acc, doc) => {
+            if (!acc[doc.content]) acc[doc.content] = [];
+            acc[doc.content].push(doc);
+            return acc;
+        },
+        {} as Record<string, typeof report.mission.documentation>,
+    );
+    const handleCancel = () => {
+        Inertia.delete(route('volunteer.cancel', report.mission?.id), {
+            preserveScroll: true,
+            onSuccess: () => {
+                toast.success('Pendaftaran berhasil dibatalkan');
+                setOpenCancelModal(false);
+            },
+            onError: () => {
+                toast.error('Gagal membatalkan pendaftaran');
+            },
+        });
+    };
 
+    const handleVote = async (type: 'upvote' | 'dislike') => {
+        console.log('Handle Vote Triggered:', type);
 
+        try {
+            const response = await axios.post(`/reports/${report.id}/vote`, {
+                vote_type: type,
+            });
+
+            const { upvotes_count, dislikes_count, your_vote } = response.data;
+            console.log('Vote response:', response.data);
+            console.log('Type:', type);
+            console.log('New your_vote:', your_vote);
+
+            setReport((prev) => ({
+                ...prev,
+                upvotes_count,
+                dislikes_count,
+            }));
+
+            setHasUpvoted(your_vote === 'upvote');
+            setHasDownvoted(your_vote === 'dislike');
+        } catch (err) {
+            console.error(err);
+            alert('Vote gagal');
+        }
+    };
 
     const handleConfirmRegister = () => {
         setModalOpenRegister(false);
@@ -98,114 +166,18 @@ const ReportDetailPage = ({
         );
     };
 
-    const dummyMembers = [
-        { id: 1, name: 'Argya Dwi Ferdinand Putra' },
-        { id: 2, name: 'Aprilia Dwi Crsityana' },
-        { id: 3, name: 'Bayu Hadi Leksana' },
-        { id: 4, name: 'Yudhistira Surya Ristyanto' },
-        { id: 5, name: 'Achmad Dwiki Nomansyah' },
-        { id: 6, name: 'Aaron Febrian Prakoso' },
-        { id: 7, name: 'Mirza Ramadhani Hanasaputra' },
-        { id: 8, name: 'Aldino Erlangga' },
-        { id: 9, name: 'M. Ainur Ramadhan' },
-    ];
-    // const [comments, setComments] = useState([
-    //     {
-    //         id: '1',
-    //         user: 'Maria Santos',
-    //         avatar: '/api/placeholder/40/40',
-    //         date: '16 Januari 2024',
-    //         content: 'Kondisinya parah banget di lokasi ini.',
-    //         media: [
-    //             'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?w=600',
-    //             'https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-    //         ],
-    //         replies: [
-    //             {
-    //                 id: '1-1',
-    //                 user: 'Admin',
-    //                 date: '17 Januari 2024',
-    //                 content:
-    //                     'Terima kasih infonya, Maria. Akan kami tindak lanjuti.',
-    //             },
-    //             {
-    //                 id: '1-2',
-    //                 user: 'Andi Rahman',
-    //                 date: '17 Januari 2024',
-    //                 content: 'Saya juga lihat kondisi ini kemarin malam.',
-    //             },
-    //         ],
-    //     },
-    //     {
-    //         id: '2',
-    //         user: 'Rizki Pratama',
-    //         avatar: '/api/placeholder/40/40',
-    //         date: '16 Januari 2024',
-    //         content: 'Setuju, perlu penanganan cepat!',
-    //         media: [],
-    //         replies: [
-    //             {
-    //                 id: '2-1',
-    //                 user: 'Ayu Lestari',
-    //                 date: '17 Januari 2024',
-    //                 content: 'Betul banget, Rizki. Terlalu lama dibiarkan.',
-    //             },
-    //         ],
-    //     },
-    //     {
-    //         id: '3',
-    //         user: 'Ayu Lestari',
-    //         avatar: '/api/placeholder/40/40',
-    //         date: '17 Januari 2024',
-    //         content: 'Saya lewat sini tadi pagi, situasinya masih sama.',
-    //         media: [
-    //             'https://images.unsplash.com/photo-1584395630827-860eee694d7b?w=800',
-    //         ],
-    //         replies: [],
-    //     },
-    //     {
-    //         id: '4',
-    //         user: 'Bagus Wijaya',
-    //         avatar: '/api/placeholder/40/40',
-    //         date: '18 Januari 2024',
-    //         content: 'Ini video dari warga sekitar.',
-    //         media: [
-    //             'https://storage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
-    //         ],
-    //         replies: [
-    //             {
-    //                 id: '4-1',
-    //                 user: 'Admin',
-    //                 date: '18 Januari 2024',
-    //                 content: 'Videonya sangat membantu, terima kasih Bagus!',
-    //             },
-    //         ],
-    //     },
-    //     {
-    //         id: '5',
-    //         user: 'Siti Nurhaliza',
-    //         avatar: '/api/placeholder/40/40',
-    //         date: '18 Januari 2024',
-    //         content: 'Sudah saya laporkan ke pihak berwenang.',
-    //         media: [
-    //             'https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=700',
-    //         ],
-    //         replies: [],
-    //     },
-    // ]);
+    const handleReplySubmit = () => {
+        // `replyData` sudah berisi `reply_id` yang benar
+        postReply(route('comments.store'), {
+            onSuccess: () => {
+                resetReply('comment', 'reply_id'); // Reset form
+                setReplying(null); // Tutup form balasan
+            },
+            preserveScroll: true,
+        });
+    };
 
-const handleReplySubmit = () => {
-    // `replyData` sudah berisi `reply_id` yang benar
-    postReply(route('comments.store'), {
-        onSuccess: () => {
-            resetReply('comment', 'reply_id'); // Reset form
-            setReplying(null); // Tutup form balasan
-        },
-        preserveScroll: true,
-    });
-};
-
-       const formatCommentDate = (dateString: string) => {
+    const formatCommentDate = (dateString: string) => {
         try {
             return formatFullDateTime(dateString);
         } catch (error) {
@@ -329,14 +301,13 @@ const handleReplySubmit = () => {
                                         ) ? (
                                             <video
                                                 controls
-                                                className="h-full w-full object-cover"
+                                                className="h-full w-full object-contain"
                                                 src={`/storage/${mediaItem.media_url}`}
                                             />
                                         ) : (
-                                            <img
+                                            <ImageWithPopup
                                                 src={`/storage/${mediaItem.media_url}`}
                                                 alt={`Media laporan ${index + 1}`}
-                                                className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
                                             />
                                         )}
                                     </div>
@@ -364,36 +335,31 @@ const handleReplySubmit = () => {
 
                             {/* Voting Section */}
                             <div className="flex items-center gap-4 border-t border-gray-200 py-4">
-                                <Button
-                                    variant={hasUpvoted ? 'default' : 'outline'}
-                                    onClick={() => {
-                                        setHasUpvoted(!hasUpvoted);
-                                        if (hasDownvoted)
-                                            setHasDownvoted(false);
-                                    }}
-                                    className={
+                                {/* Tombol Upvote */}
+                                <button
+                                    onClick={() => handleVote('upvote')}
+                                    className={`flex items-center rounded-md border px-3 py-2 transition-colors ${
                                         hasUpvoted
-                                            ? 'bg-emerald-600 hover:bg-emerald-700'
-                                            : ''
-                                    }
+                                            ? 'border-emerald-600 bg-emerald-600 text-white hover:bg-emerald-700'
+                                            : 'border-gray-300 text-gray-600 hover:bg-gray-100'
+                                    } `}
                                 >
                                     <ThumbsUp size={16} className="mr-2" />
-                                    {report.upvotes_count +
-                                        (hasUpvoted ? 1 : 0)}
-                                </Button>
-                                <Button
-                                    variant={
-                                        hasDownvoted ? 'destructive' : 'outline'
-                                    }
-                                    onClick={() => {
-                                        setHasDownvoted(!hasDownvoted);
-                                        if (hasUpvoted) setHasUpvoted(false);
-                                    }}
+                                    {reportState.upvotes_count}
+                                </button>
+
+                                {/* Tombol Downvote */}
+                                <button
+                                    onClick={() => handleVote('dislike')}
+                                    className={`flex items-center rounded-md border px-3 py-2 transition-colors ${
+                                        hasDownvoted
+                                            ? 'border-red-600 bg-red-600 text-white hover:bg-red-700'
+                                            : 'border-gray-300 text-gray-600 hover:bg-gray-100'
+                                    } `}
                                 >
                                     <ThumbsDown size={16} className="mr-2" />
-                                    {report.dislikes_count +
-                                        (hasDownvoted ? 1 : 0)}
-                                </Button>
+                                    {reportState.dislikes_count}
+                                </button>
                             </div>
                         </CardContent>
                     </Card>
@@ -477,6 +443,7 @@ const handleReplySubmit = () => {
                                             <div>
                                                 <span className="text-gray-600">
                                                     Anggota Bergabung:{' '}
+                                                    {volunteerCounts || 0}
                                                 </span>
                                                 <span className="font-medium">
                                                     {report.mission?.volunteers
@@ -486,7 +453,6 @@ const handleReplySubmit = () => {
                                                 </span>
                                             </div>
                                         </div>
-                                        {/* <div className="flex gap-3"> */}
                                         <div className="flex flex-col gap-3 sm:flex-row">
                                             {myParticipation == null && (
                                                 <>
@@ -541,29 +507,76 @@ const handleReplySubmit = () => {
                                                 role={selectedRole}
                                             />
                                             <>
+                                                {myParticipation &&
+                                                    [
+                                                        'pending',
+                                                        'confirmed',
+                                                    ].includes(
+                                                        myParticipation.pivot
+                                                            .participation_status,
+                                                    ) && (
+                                                        <>
+                                                            <Button
+                                                                onClick={() =>
+                                                                    setOpenCancelModal(
+                                                                        true,
+                                                                    )
+                                                                }
+                                                                variant="destructive"
+                                                            >
+                                                                Batal Daftar
+                                                            </Button>
+
+                                                            <CancelVolunteerModal
+                                                                open={
+                                                                    openCancelModal
+                                                                }
+                                                                onClose={() =>
+                                                                    setOpenCancelModal(
+                                                                        false,
+                                                                    )
+                                                                }
+                                                                onConfirm={
+                                                                    handleCancel
+                                                                }
+                                                                is_leader={
+                                                                    myParticipation
+                                                                        .pivot
+                                                                        .is_leader
+                                                                }
+                                                            />
+                                                        </>
+                                                    )}
+                                            </>
+                                        </div>
+                                        {myParticipation &&
+                                            myParticipation.pivot
+                                                .participation_status !==
+                                                'cancelled' &&
+                                            myParticipation.pivot.is_leader && (
                                                 <Button
                                                     onClick={() =>
                                                         setOpenModalAttendance(
                                                             true,
                                                         )
                                                     }
-                                                    className="bg-sky-600 hover:bg-sky-700"
+                                                    className="my-2 bg-sky-600 hover:bg-sky-700"
                                                 >
                                                     Presensi Kehadiran
                                                 </Button>
-
-                                                <AttendanceFormModal
-                                                    open={openModalAttendance}
-                                                    onClose={() =>
-                                                        setOpenModalAttendance(
-                                                            false,
-                                                        )
-                                                    }
-                                                    teamLeader="Ian Ale Hansyah"
-                                                    members={dummyMembers}
-                                                />
-                                            </>
-                                        </div>
+                                            )}
+                                        <AttendanceFormModal
+                                            open={openModalAttendance}
+                                            onClose={() =>
+                                                setOpenModalAttendance(false)
+                                            }
+                                            missionId={report.mission?.id}
+                                            teamLeader={
+                                                confirmedLeader?.name ??
+                                                'Belum ditentukan'
+                                            }
+                                            members={volunteers}
+                                        />
                                     </div>
                                 )}
                                 {/* Mission Documentation */}
@@ -572,32 +585,101 @@ const handleReplySubmit = () => {
                                         <h3 className="mb-3 text-lg font-semibold">
                                             Dokumentasi Misi
                                         </h3>
-                                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                                            {report.mission?.documentation.map(
-                                                (doc, index) => (
-                                                    <div
-                                                        key={index}
-                                                        className="space-y-2"
+                                        {myParticipation &&
+                                            myParticipation.pivot.is_leader &&
+                                            ['confirmed', 'attended'].includes(
+                                                myParticipation.pivot
+                                                    .participation_status,
+                                            ) && (
+                                                <>
+                                                    <Button
+                                                        onClick={() =>
+                                                            setOpenUploadModal(
+                                                                true,
+                                                            )
+                                                        }
                                                     >
-                                                        <img
-                                                            src={doc.media_type}
-                                                            alt={doc.content}
-                                                            className="aspect-video w-full rounded-lg object-cover"
-                                                        />
-                                                        <p className="text-sm text-gray-700">
-                                                            {doc.content}
-                                                        </p>
-                                                        <p className="text-xs text-gray-500">
-                                                            {doc.uploader.name}
-                                                        </p>
-                                                        <p className="text-xs text-gray-500">
-                                                            {formatFullDateTime(
-                                                                doc.created_at,
-                                                            )}
-                                                        </p>
-                                                    </div>
-                                                ),
+                                                        Upload Dokumentasi
+                                                    </Button>
+                                                    <UploadDocumentationModal
+                                                        open={openUploadModal}
+                                                        onClose={() =>
+                                                            setOpenUploadModal(
+                                                                false,
+                                                            )
+                                                        }
+                                                        missionId={
+                                                            report.mission?.id
+                                                        }
+                                                    />
+                                                </>
                                             )}
+
+                                        <div className="my-4 grid grid-cols-1 gap-4 md:grid-cols-1">
+                                            {groupedDocs &&
+                                                Object.entries(groupedDocs).map(
+                                                    (
+                                                        [content, docs],
+                                                        index,
+                                                    ) => (
+                                                        <div
+                                                            key={index}
+                                                            className="rounded-md border border-gray-300 p-4"
+                                                        >
+                                                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                                                                {docs.map(
+                                                                    (
+                                                                        doc,
+                                                                        idx,
+                                                                    ) => (
+                                                                        <div
+                                                                            key={
+                                                                                idx
+                                                                            }
+                                                                            className="space-y-2"
+                                                                        >
+                                                                            {doc.media_type ===
+                                                                            'video' ? (
+                                                                                <video
+                                                                                    src={`/storage/${doc.media_url}`}
+                                                                                    controls
+                                                                                    preload="metadata"
+                                                                                    className="aspect-video w-full max-w-sm rounded-lg border"
+                                                                                />
+                                                                            ) : (
+                                                                                <ImageWithPopup
+                                                                                    src={`/storage/${doc.media_url}`}
+                                                                                    alt={`Media laporan ${idx + 1}`}
+                                                                                />
+                                                                            )}
+                                                                        </div>
+                                                                    ),
+                                                                )}
+                                                            </div>
+                                                            <p className="text-md mt-2 font-semibold text-gray-700">
+                                                                Keterangan
+                                                                Dokumentasi:
+                                                            </p>
+                                                            <p className="text-sm text-gray-700">
+                                                                {content}
+                                                            </p>
+                                                            <p className="text-xs text-gray-500">
+                                                                Oleh:{' '}
+                                                                {
+                                                                    docs[0]
+                                                                        .uploader
+                                                                        .name
+                                                                }
+                                                            </p>
+                                                            <p className="text-xs text-gray-500">
+                                                                {formatFullDateTime(
+                                                                    docs[0]
+                                                                        .created_at,
+                                                                )}
+                                                            </p>
+                                                        </div>
+                                                    ),
+                                                )}
                                         </div>
                                     </div>
                                 )}
@@ -646,7 +728,9 @@ const handleReplySubmit = () => {
                                         className="flex space-x-3 rounded-lg bg-gray-50 p-4"
                                     >
                                         <Avatar>
-                                            <AvatarImage src={comment.user.profile_url} />
+                                            <AvatarImage
+                                                src={comment.user.profile_url}
+                                            />
                                             <AvatarFallback>
                                                 {comment.user.name[0]}
                                             </AvatarFallback>
@@ -658,7 +742,9 @@ const handleReplySubmit = () => {
                                                     {comment.user.name}
                                                 </span>
                                                 <span className="text-sm text-gray-500">
-                                                    {formatCommentDate(comment.created_at)}
+                                                    {formatCommentDate(
+                                                        comment.created_at,
+                                                    )}
                                                 </span>
                                             </div>
 
@@ -666,11 +752,11 @@ const handleReplySubmit = () => {
                                                 {comment.comment}
                                             </p>
 
-                                             {/* Media */}
+                                            {/* Media */}
                                             {comment.media_url && (
                                                 <div className="mt-3">
-                                                    {/* PERBAIKAN: Tidak perlu .map(), langsung tampilkan satu media */}
-                                                    {comment.media_type === 'video' ? (
+                                                    {comment.media_type ===
+                                                    'video' ? (
                                                         <video
                                                             src={`/storage/${comment.media_url}`}
                                                             controls
@@ -687,45 +773,75 @@ const handleReplySubmit = () => {
                                                 </div>
                                             )}
 
-                                        {/* Replies */}
-                                           {comment.replies && comment.replies.length > 0 && (
-                                            <div className="mt-4 space-y-3 border-l-2 border-gray-200 pl-5">
-                                                {comment.replies.map((reply) => (
-                                                    <div key={reply.id} className="flex space-x-3">
-                                                        <Avatar className="h-8 w-8">
-                                                            <AvatarImage src={reply.user.profile_url} />
-                                                            <AvatarFallback>{reply.user.name[0]}</AvatarFallback>
-                                                        </Avatar>
-                                                        <div className="flex-1">
-                                                            <div className="flex items-center space-x-2 text-sm">
-                                                                <span className="font-semibold text-gray-800">
-                                                                    {reply.user.name}
-                                                                </span>
-                                                                <span className="text-xs text-gray-500">
-                                                                    {formatCommentDate(reply.created_at)}
-                                                                </span>
-                                                            </div>
-                                                            <p className="text-sm text-gray-700">
-                                                                {reply.comment}
-                                                            </p>
-                                                        </div>
+                                            {/* Replies */}
+                                            {comment.replies &&
+                                                comment.replies.length > 0 && (
+                                                    <div className="mt-4 space-y-3 border-l-2 border-gray-200 pl-5">
+                                                        {comment.replies.map(
+                                                            (reply) => (
+                                                                <div
+                                                                    key={
+                                                                        reply.id
+                                                                    }
+                                                                    className="flex space-x-3"
+                                                                >
+                                                                    <Avatar className="h-8 w-8">
+                                                                        <AvatarImage
+                                                                            src={
+                                                                                reply
+                                                                                    .user
+                                                                                    .profile_url
+                                                                            }
+                                                                        />
+                                                                        <AvatarFallback>
+                                                                            {
+                                                                                reply
+                                                                                    .user
+                                                                                    .name[0]
+                                                                            }
+                                                                        </AvatarFallback>
+                                                                    </Avatar>
+                                                                    <div className="flex-1">
+                                                                        <div className="flex items-center space-x-2 text-sm">
+                                                                            <span className="font-semibold text-gray-800">
+                                                                                {
+                                                                                    reply
+                                                                                        .user
+                                                                                        .name
+                                                                                }
+                                                                            </span>
+                                                                            <span className="text-xs text-gray-500">
+                                                                                {formatCommentDate(
+                                                                                    reply.created_at,
+                                                                                )}
+                                                                            </span>
+                                                                        </div>
+                                                                        <p className="text-sm text-gray-700">
+                                                                            {
+                                                                                reply.comment
+                                                                            }
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+                                                            ),
+                                                        )}
                                                     </div>
-                                                ))}
-                                            </div>
-                                        )}
+                                                )}
 
                                             {/* Reply Button & Form */}
-                                           <button
+                                            <button
                                                 type="button"
                                                 onClick={() => {
-                                                    if (replying === comment.id) {
+                                                    if (
+                                                        replying === comment.id
+                                                    ) {
                                                         setReplying(null);
                                                     } else {
-
                                                         setReplying(comment.id);
                                                         setReplyData({
                                                             ...replyData,
-                                                            reply_id: comment.id,
+                                                            reply_id:
+                                                                comment.id,
                                                             comment: '',
                                                         });
                                                     }
@@ -738,22 +854,33 @@ const handleReplySubmit = () => {
 
                                             {replying === comment.id && (
                                                 <div className="mt-2">
-                                                   <Textarea
+                                                    <Textarea
                                                         rows={2}
                                                         placeholder={`Balas komentar ${comment.user.name}...`}
-
-                                                        value={replyData.comment}
-
-                                                        onChange={(e) => setReplyData('comment', e.target.value)}
+                                                        value={
+                                                            replyData.comment
+                                                        }
+                                                        onChange={(e) =>
+                                                            setReplyData(
+                                                                'comment',
+                                                                e.target.value,
+                                                            )
+                                                        }
                                                     />
                                                     <div className="mt-1 flex justify-end">
                                                         <Button
                                                             size="sm"
-                                                            onClick={handleReplySubmit} // Panggil fungsi tanpa argumen
-                                                            disabled={processingReply}
+                                                            onClick={
+                                                                handleReplySubmit
+                                                            } // Panggil fungsi tanpa argumen
+                                                            disabled={
+                                                                processingReply
+                                                            }
                                                             className="bg-emerald-600 hover:bg-emerald-700"
                                                         >
-                                                            {processingReply ? 'Mengirim...' : 'Kirim Balasan'}
+                                                            {processingReply
+                                                                ? 'Mengirim...'
+                                                                : 'Kirim Balasan'}
                                                         </Button>
                                                     </div>
                                                 </div>
@@ -764,7 +891,7 @@ const handleReplySubmit = () => {
                             </div>
                         </CardContent>
                     </Card>
-                    <CommentUploadCard reportId={report.id}/>
+                    <CommentUploadCard reportId={report.id} />
                 </div>
             </div>
         </div>
