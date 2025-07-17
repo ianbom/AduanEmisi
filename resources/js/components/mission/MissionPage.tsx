@@ -340,11 +340,11 @@ const MissionPage = ({ missions, onViewDetails }: MissionPageProps) => {
                                     </div>
                                 </div>
                                 <h3 className="mb-2 text-lg font-semibold text-gray-900">
-                                    Konten Edukasi Belum Tersedia
+                                    Misi Belum Tersedia
                                 </h3>
                                 <p className="text-sm text-gray-500">
-                                    Belum ada konten edukasi yang tersedia saat
-                                    ini. Coba lagi nanti.
+                                    Belum ada misi yang tersedia saat ini. Coba
+                                    lagi nanti.
                                 </p>
                             </Card>
                         </div>

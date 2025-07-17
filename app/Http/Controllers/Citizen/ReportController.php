@@ -20,6 +20,7 @@ use App\Models\Report;
 use App\Services\CommentService;
 use Throwable;
 use Inertia\Inertia;
+use Illuminate\Validation\Rule;
 
 class ReportController extends Controller
 {
@@ -149,18 +150,31 @@ class ReportController extends Controller
                 $myParticipation = $mission->volunteers
                     ->firstWhere('id', Auth::id());
             }
-            // dd($myParticipation);
             $confirmedLeader = $report->mission ? $report->mission->confirmedLeader() : null;
 
             $comments = $this->commentService->getCommentsByReport($id);
+            $volunteers = $report->mission
+                ? $report->mission->volunteers->filter(function ($volunteer) {
+                    return !$volunteer->pivot->is_leader &&
+                        in_array($volunteer->pivot->participation_status, ['confirmed', 'attended']);
+                })->map(function ($volunteer) {
+                    return [
+                        'id' => $volunteer->id,
+                        'name' => $volunteer->name,
+                        'status' => $volunteer->pivot->participation_status,
+                    ];
+                })->values()
+                : collect();
 
-            // return response()->json($comments);
-
+            $volunteerCounts = $volunteers->count();
             return Inertia::render('Citizen/Report/ReportDetailPage', [
                 'report' => $report,
+                'your_vote' => $report->votes()->where('user_id', Auth::id())->first()?->vote_type,
                 'myParticipation' => $myParticipation,
                 'confirmedLeader' => $confirmedLeader,
-                'comments' => $comments
+                'comments' => $comments,
+                'volunteers' => $volunteers,
+                'volunteerCounts' => $volunteerCounts
             ]);
         } catch (Exception $e) {
             return response()->json([
@@ -197,15 +211,12 @@ class ReportController extends Controller
     public function update(UpdateReportRequest $request, int $id)
     {
         try {
-            // Debug log
             Log::info('Update method called', [
                 'user_id' => Auth::id(),
                 'report_id' => $id,
                 'request_data' => $request->all(),
                 'validated_data' => $request->validated()
             ]);
-
-            // Cek apakah user sudah login
             if (!Auth::check()) {
                 Log::warning('User not authenticated in update method');
                 return response()->json([
@@ -248,7 +259,6 @@ class ReportController extends Controller
     public function updateMedia(Request $request, int $id)
     {
         try {
-            // Validasi request untuk media
             $request->validate([
                 'media' => 'sometimes|array',
                 'media.*' => 'file|mimes:jpg,jpeg,png,gif,webp,mp4,mov,avi,mkv,wmv|max:10240', // 10MB max
@@ -346,8 +356,58 @@ class ReportController extends Controller
             ], 500);
         }
     }
+    public function vote(Request $request, Report $report)
+    {
+        $type = $request->input('vote_type'); // pastikan ini vote_type
+        \Log::info('Vote type masuk:', ['type' => $type]);
+        $user = Auth::user();
+
+        if (!$user) {
+            return response()->json(['message' => 'Unauthenticated'], 401);
+        }
+
+        // Cari apakah user sudah pernah vote
+        $existingVote = $report->votes()->where('user_id', $user->id)->first();
+
+        if ($existingVote) {
+            \Log::info('Existing vote vs new:', [
+                'existing' => $existingVote->vote_type,
+                'new' => $type,
+            ]);
+
+            if ($existingVote->vote_type === $type) {
+                $existingVote->delete(); // toggle: batal vote
+            } else {
+                $existingVote->update(['vote_type' => $type]); // ganti vote
+                \Log::info('Updated vote now is:', ['after_update' => $existingVote->vote_type]);
+            }
+        } else {
+            $report->votes()->create([
+                'user_id' => $user->id,
+                'vote_type' => $type,
+            ]);
+        }
+
+        // Hitung ulang jumlah vote
+        $upvotes = $report->votes()->where('vote_type', 'upvote')->count();
+        $dislikes = $report->votes()->where('vote_type', 'dislike')->count();
+
+        // Update ke kolom di tabel reports
+        $report->update([
+            'upvotes_count' => $upvotes,
+            'dislikes_count' => $dislikes,
+        ]);
+        $latestVote = $report->votes()->where('user_id', $user->id)->first();
+        \Log::info('After update or insert, vote is now:', ['vote_type' => $latestVote?->vote_type]);
 
 
+        // Ambil vote terbaru user
+        $yourVote = $report->votes()->where('user_id', $user->id)->first()?->vote_type;
 
-
+        return response()->json([
+            'upvotes_count' => $upvotes,
+            'dislikes_count' => $dislikes,
+            'your_vote' => $yourVote,
+        ]);
+    }
 }

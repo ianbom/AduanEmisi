@@ -12,6 +12,7 @@ use App\Models\Province;
 use App\Models\Mission;
 use App\Models\MissionVolunteer;
 use Illuminate\Support\Facades\Auth;
+use App\Models\MissionDocumentation;
 
 class MissionController extends Controller
 {
@@ -63,5 +64,86 @@ class MissionController extends Controller
         ]);
 
         return back()->with('success', 'Pendaftaran berhasil. Tunggu verifikasi admin.');
+    }
+    public function attendance(Request $request)
+    {
+        $request->validate([
+            'user_ids' => 'required|array',
+            'user_ids.*' => 'integer|exists:users,id',
+            'mission_id' => 'required|integer|exists:missions,id',
+        ]);
+        MissionVolunteer::where('mission_id', $request->mission_id)
+            ->whereIn('user_id', $request->user_ids)
+            ->update(['participation_status' => 'attended']);
+        MissionVolunteer::where('mission_id', $request->mission_id)
+            ->where('is_leader', true)
+            ->update(['participation_status' => 'attended']);
+
+        return response()->json(['message' => 'Presensi berhasil disimpan']);
+    }
+    public function attend(Request $request)
+    {
+        $request->validate([
+            'user_ids' => 'required|array',
+            'user_ids.*' => 'integer|exists:users,id',
+            'mission_id' => 'required|integer|exists:missions,id',
+        ]);
+        MissionVolunteer::where('mission_id', $request->mission_id)
+            ->where('is_leader', false)
+            ->update(['participation_status' => 'confirmed']);
+        MissionVolunteer::where('mission_id', $request->mission_id)
+            ->whereIn('user_id', $request->user_ids)
+            ->where('is_leader', false)
+            ->update(['participation_status' => 'attended']);
+
+        MissionVolunteer::where('mission_id', $request->mission_id)
+            ->where('is_leader', true)
+            ->update(['participation_status' => 'attended']);
+
+        return response()->json(['message' => 'Presensi berhasil diperbarui']);
+    }
+    public function cancel(Mission $mission)
+    {
+        $user = Auth::user();
+
+        $isPending = $mission->volunteers()
+            ->where('user_id', $user->id)
+            ->whereIn('participation_status', ['pending', 'confirmed'])
+            ->exists();
+
+        if (! $isPending) {
+            return back()->withErrors(['message' => 'Tidak bisa membatalkan pendaftaran yang sudah diproses.']);
+        }
+
+        // Ganti status menjadi 'cancelled' alih-alih menghapus relasi
+        $mission->volunteers()->updateExistingPivot($user->id, [
+            'participation_status' => 'cancelled',
+        ]);
+
+        return back()->with('success', 'Pendaftaran berhasil dibatalkan.');
+    }
+    public function uploadDocumentation(Request $request)
+    {
+        $user = Auth::user();
+
+        $request->validate([
+            'media.*' => 'required|file|mimes:jpeg,png,jpg,gif,mp4,mov,avi,wmv|max:10240', // 10MB untuk video
+            'mission_id' => 'required|exists:missions,id',
+            'content' => 'nullable|string|max:1000',
+        ]);
+        foreach ($request->file('media') as $file) {
+            $path = $file->store('mission-documentations/media', 'public');
+            $mimeType = $file->getMimeType();
+            $mediaType = str_starts_with($mimeType, 'video/') ? 'video' : 'image';
+            MissionDocumentation::create([
+                'mission_id' => $request->mission_id,
+                'uploader_user_id' => $user->id,
+                'media_url' => $path,
+                'media_type' => $mediaType,
+                'content' => $request->content,
+            ]);
+        }
+
+        return response()->json(['message' => 'Upload berhasil']);
     }
 }

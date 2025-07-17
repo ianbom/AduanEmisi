@@ -11,9 +11,10 @@ class ReportVote extends Model
     use HasFactory;
 
     protected $table = 'report_votes';
+    protected $fillable = ['user_id', 'vote_type', 'report_id'];
 
     protected $guarded = [
-      'id'
+        'id'
     ];
 
     /**
