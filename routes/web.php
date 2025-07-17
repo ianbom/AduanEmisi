@@ -16,6 +16,7 @@ use App\Http\Controllers\Community\ReportController as ComReportController;
 use App\Http\Controllers\Community\ProfileController as ComProfileController;
 use App\Http\Controllers\Community\MapController as ComMapController;
 use App\Http\Controllers\ProfileController;
+use App\Models\Report;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -58,11 +59,17 @@ Route::prefix('')->middleware(['auth'])->group(function () {
     Route::get('/report-create', [CtzReportController::class, 'create'])->name('create.report');
     Route::post('/reports', [CtzReportController::class, 'store'])->name('reports.store');
 
-     Route::post('comments/store', [CtzCommentController::class, 'store'])->name('comments.store');
+    Route::post('/reports/{report}/vote', [CtzReportController::class, 'vote'])->name('report.vote');
+
+
+    Route::post('comments/store', [CtzCommentController::class, 'store'])->name('comments.store');
 
     // Route untuk keperluan yang berkaitan dengan misi
     Route::get('/mission', [CtzMissionController::class, 'index'])->name('mission');
     Route::post('/join-missions/{id}', [CtzMissionController::class, 'join'])->name('mission.join');
+    Route::post('/attendance-members', [CtzMissionController::class, 'attend'])->name('attendance.store');
+    Route::delete('/volunteers/{mission}', [CtzMissionController::class, 'cancel'])->name('volunteer.cancel');
+    Route::post('/mission/media-documentation/upload', [CtzMissionController::class, 'uploadDocumentation'])->name('mission.documentation.upload');
 
     // Route untuk keperluan yang berkaitan dengan Peta
     Route::get('/map', [CtzMapController::class, 'indexMap'])->name('map.index');

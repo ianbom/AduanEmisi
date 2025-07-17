@@ -23,4 +23,5 @@ export interface User {
     community?: {
         name: string;
     };
+    status: string;
 }

@@ -329,7 +329,7 @@ const ReportsPage = ({
                                                             className="mr-1"
                                                         />
                                                         <span>
-                                                            {report.upvotes_count ||
+                                                            {report.dislikes_count ||
                                                                 0}
                                                         </span>
                                                     </div>
