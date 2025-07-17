@@ -1,280 +1,140 @@
-
-    <header class="bg-white">
-        <nav class="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
-            <div class="flex lg:flex-1">
-                <a href="#" class="-m-1.5 p-1.5">
-                    <span class="sr-only">Your Company</span>
-                    <img class="h-8 w-auto" src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600" alt="" />
-                </a>
-            </div>
-            <div class="flex lg:hidden">
-                <button type="button" id="mobile-menu-toggle" class="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700">
-                    <span class="sr-only">Open main menu</span>
-                    <svg class="size-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-                    </svg>
-                </button>
-            </div>
-            <div class="hidden lg:flex lg:gap-x-12">
-                <div class="relative">
-                    <button type="button" id="product-menu-toggle" class="flex items-center gap-x-1 text-sm/6 font-semibold text-gray-900" aria-expanded="false">
-                        Product
-                        <svg class="size-5 flex-none text-gray-400 transition-transform duration-200" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
-                            <path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
-                        </svg>
-                    </button>
-
-                    <!-- Product flyout menu -->
-                    <div id="product-menu" class="absolute left-1/2 z-10 mt-3 w-screen max-w-md -translate-x-1/2 overflow-hidden rounded-3xl bg-white shadow-lg ring-1 ring-gray-900/5 opacity-0 translate-y-1 transition-all duration-200 ease-out pointer-events-none">
-                        <div class="p-4">
-                            <div class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm/6 hover:bg-gray-50">
-                                <div class="flex size-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
-                                    <svg class="size-6 text-gray-600 group-hover:text-indigo-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 1 0 7.5 7.5h-7.5V6Z" />
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0 0 13.5 3v7.5Z" />
-                                    </svg>
-                                </div>
-                                <div class="flex-auto">
-                                    <a href="#" class="block font-semibold text-gray-900">
-                                        Analytics
-                                        <span class="absolute inset-0"></span>
-                                    </a>
-                                    <p class="mt-1 text-gray-600">Get a better understanding of your traffic</p>
-                                </div>
-                            </div>
-                            <div class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm/6 hover:bg-gray-50">
-                                <div class="flex size-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
-                                    <svg class="size-6 text-gray-600 group-hover:text-indigo-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.042 21.672 13.684 16.6m0 0-2.51 2.225.569-9.47 5.227 7.917-3.286-.672ZM12 2.25V4.5m5.834.166-1.591 1.591M20.25 10.5H18M7.757 14.743l-1.59 1.59M6 10.5H3.75m4.007-4.243-1.59-1.59" />
-                                    </svg>
-                                </div>
-                                <div class="flex-auto">
-                                    <a href="#" class="block font-semibold text-gray-900">
-                                        Engagement
-                                        <span class="absolute inset-0"></span>
-                                    </a>
-                                    <p class="mt-1 text-gray-600">Speak directly to your customers</p>
-                                </div>
-                            </div>
-                            <div class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm/6 hover:bg-gray-50">
-                                <div class="flex size-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
-                                    <svg class="size-6 text-gray-600 group-hover:text-indigo-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M7.864 4.243A7.5 7.5 0 0 1 19.5 10.5c0 2.92-.556 5.709-1.568 8.268M5.742 6.364A7.465 7.465 0 0 0 4.5 10.5a7.464 7.464 0 0 1-1.15 3.993m1.989 3.559A11.209 11.209 0 0 0 8.25 10.5a3.75 3.75 0 1 1 7.5 0c0 .527-.021 1.049-.064 1.565M12 10.5a14.94 14.94 0 0 1-3.6 9.75m6.633-4.596a18.666 18.666 0 0 1-2.485 5.33" />
-                                    </svg>
-                                </div>
-                                <div class="flex-auto">
-                                    <a href="#" class="block font-semibold text-gray-900">
-                                        Security
-                                        <span class="absolute inset-0"></span>
-                                    </a>
-                                    <p class="mt-1 text-gray-600">Your customers' data will be safe and secure</p>
-                                </div>
-                            </div>
-                            <div class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm/6 hover:bg-gray-50">
-                                <div class="flex size-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
-                                    <svg class="size-6 text-gray-600 group-hover:text-indigo-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 16.875h3.375m0 0h3.375m-3.375 0V13.5m0 3.375v3.375M6 10.5h2.25a2.25 2.25 0 0 0 2.25-2.25V6a2.25 2.25 0 0 0-2.25-2.25H6A2.25 2.25 0 0 0 3.75 6v2.25A2.25 2.25 0 0 0 6 10.5Zm0 9.75h2.25A2.25 2.25 0 0 0 10.5 18v-2.25a2.25 2.25 0 0 0-2.25-2.25H6a2.25 2.25 0 0 0-2.25 2.25V18A2.25 2.25 0 0 0 6 20.25Zm9.75-9.75H18a2.25 2.25 0 0 0 2.25-2.25V6A2.25 2.25 0 0 0 18 3.75h-2.25A2.25 2.25 0 0 0 13.5 6v2.25a2.25 2.25 0 0 0 2.25 2.25Z" />
-                                    </svg>
-                                </div>
-                                <div class="flex-auto">
-                                    <a href="#" class="block font-semibold text-gray-900">
-                                        Integrations
-                                        <span class="absolute inset-0"></span>
-                                    </a>
-                                    <p class="mt-1 text-gray-600">Connect with third-party tools</p>
-                                </div>
-                            </div>
-                            <div class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm/6 hover:bg-gray-50">
-                                <div class="flex size-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
-                                    <svg class="size-6 text-gray-600 group-hover:text-indigo-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
-                                    </svg>
-                                </div>
-                                <div class="flex-auto">
-                                    <a href="#" class="block font-semibold text-gray-900">
-                                        Automations
-                                        <span class="absolute inset-0"></span>
-                                    </a>
-                                    <p class="mt-1 text-gray-600">Build strategic funnels that will convert</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-2 divide-x divide-gray-900/5 bg-gray-50">
-                            <a href="#" class="flex items-center justify-center gap-x-2.5 p-3 text-sm/6 font-semibold text-gray-900 hover:bg-gray-100">
-                                <svg class="size-5 flex-none text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
-                                    <path fill-rule="evenodd" d="M2 10a8 8 0 1 1 16 0 8 8 0 0 1-16 0Zm6.39-2.908a.75.75 0 0 1 .766.027l3.5 2.25a.75.75 0 0 1 0 1.262l-3.5 2.25A.75.75 0 0 1 8 12.25v-4.5a.75.75 0 0 1 .39-.658Z" clip-rule="evenodd" />
-                                </svg>
-                                Watch demo
-                            </a>
-                            <a href="#" class="flex items-center justify-center gap-x-2.5 p-3 text-sm/6 font-semibold text-gray-900 hover:bg-gray-100">
-                                <svg class="size-5 flex-none text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
-                                    <path fill-rule="evenodd" d="M2 3.5A1.5 1.5 0 0 1 3.5 2h1.148a1.5 1.5 0 0 1 1.465 1.175l.716 3.223a1.5 1.5 0 0 1-1.052 1.767l-.933.267c-.41.117-.643.555-.48.95a11.542 11.542 0 0 0 6.254 6.254c.395.163.833-.07.95-.48l.267-.933a1.5 1.5 0 0 1 1.767-1.052l3.223.716A1.5 1.5 0 0 1 18 15.352V16.5a1.5 1.5 0 0 1-1.5 1.5H15c-1.149 0-2.263-.15-3.326-.43A13.022 13.022 0 0 1 2.43 8.326 13.019 13.019 0 0 1 2 5V3.5Z" clip-rule="evenodd" />
-                                </svg>
-                                Contact sales
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <a href="#" class="text-sm/6 font-semibold text-gray-900">Features</a>
-                <a href="#" class="text-sm/6 font-semibold text-gray-900">Marketplace</a>
-                <a href="#" class="text-sm/6 font-semibold text-gray-900">Company</a>
-            </div>
-            <div class="hidden lg:flex lg:flex-1 lg:justify-end">
-                <a href="#" class="text-sm/6 font-semibold text-gray-900">Log in <span aria-hidden="true">&rarr;</span></a>
-            </div>
-        </nav>
-
-        <!-- Mobile menu -->
-        <div id="mobile-menu" class="lg:hidden fixed inset-0 z-50 hidden" role="dialog" aria-modal="true">
-            <!-- Background backdrop -->
-            <div class="fixed inset-0 bg-black bg-opacity-25" id="mobile-menu-backdrop"></div>
-            <div class="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white p-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
-                <div class="flex items-center justify-between">
-                    <a href="#" class="-m-1.5 p-1.5">
-                        <span class="sr-only">Your Company</span>
-                        <img class="h-8 w-auto" src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600" alt="" />
-                    </a>
-                    <button type="button" id="mobile-menu-close" class="-m-2.5 rounded-md p-2.5 text-gray-700">
-                        <span class="sr-only">Close menu</span>
-                        <svg class="size-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-                        </svg>
-                    </button>
-                </div>
-                <div class="mt-6 flow-root">
-                    <div class="-my-6 divide-y divide-gray-500/10">
-                        <div class="space-y-2 py-6">
-                            <div class="-mx-3">
-                                <button type="button" id="mobile-product-toggle" class="flex w-full items-center justify-between rounded-lg py-2 pr-3.5 pl-3 text-base/7 font-semibold text-gray-900 hover:bg-gray-50" aria-controls="mobile-products" aria-expanded="false">
-                                    Product
-                                    <svg class="size-5 flex-none transition-transform duration-200" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
-                                        <path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
-                                    </svg>
-                                </button>
-                                <!-- Mobile Product sub-menu -->
-                                <div class="mt-2 space-y-2 hidden" id="mobile-products">
-                                    <a href="#" class="block rounded-lg py-2 pr-3 pl-6 text-sm/7 font-semibold text-gray-900 hover:bg-gray-50">Analytics</a>
-                                    <a href="#" class="block rounded-lg py-2 pr-3 pl-6 text-sm/7 font-semibold text-gray-900 hover:bg-gray-50">Engagement</a>
-                                    <a href="#" class="block rounded-lg py-2 pr-3 pl-6 text-sm/7 font-semibold text-gray-900 hover:bg-gray-50">Security</a>
-                                    <a href="#" class="block rounded-lg py-2 pr-3 pl-6 text-sm/7 font-semibold text-gray-900 hover:bg-gray-50">Integrations</a>
-                                    <a href="#" class="block rounded-lg py-2 pr-3 pl-6 text-sm/7 font-semibold text-gray-900 hover:bg-gray-50">Automations</a>
-                                    <a href="#" class="block rounded-lg py-2 pr-3 pl-6 text-sm/7 font-semibold text-gray-900 hover:bg-gray-50">Watch demo</a>
-                                    <a href="#" class="block rounded-lg py-2 pr-3 pl-6 text-sm/7 font-semibold text-gray-900 hover:bg-gray-50">Contact sales</a>
-                                </div>
-                            </div>
-                            <a href="#" class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">Features</a>
-                            <a href="#" class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">Marketplace</a>
-                            <a href="#" class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">Company</a>
-                        </div>
-                        <div class="py-6">
-                            <a href="#" class="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">Log in</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
+<header class="bg-white shadow-sm">
+    <nav class="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
+        <div class="flex lg:flex-1">
+            <a href="#" class="-m-1.5 p-1.5">
+                <span class="sr-only">Your Company</span>
+                <img class="h-8 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600" alt="" />
+            </a>
         </div>
-    </header>
+        <div class="flex lg:hidden">
+            <button type="button" id="mobile-menu-toggle" class="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700">
+                <span class="sr-only">Open main menu</span>
+                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                </svg>
+            </button>
+        </div>
+        <div class="hidden lg:flex lg:flex-1 lg:justify-end">
+            @auth
+                <div class="relative">
+                    <div class="flex items-center space-x-3">
+                        <!-- User Name -->
+                        <div class="text-sm text-gray-700">
+                            <span class="font-medium">{{ Auth::user()->name }}</span>
+                        </div>
+                        <!-- User Menu Button -->
+                        <button type="button" class="flex items-center space-x-2 rounded-full bg-white p-1 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 hover:bg-gray-50 transition-colors duration-200" id="user-menu-button" aria-expanded="false" aria-haspopup="true">
+                            <img class="h-8 w-8 rounded-full object-cover border-2 border-gray-200" src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=4f46e5&color=ffffff&size=128" alt="User avatar">
+                            <!-- Dropdown Arrow -->
+                            <svg class="h-4 w-4 text-gray-400 transition-transform duration-200" id="dropdown-arrow" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                    </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Desktop Product Menu
-            const productToggle = document.getElementById('product-menu-toggle');
-            const productMenu = document.getElementById('product-menu');
-            const productIcon = productToggle.querySelector('svg');
+                    <!-- Dropdown menu -->
+                    <div id="user-menu" class="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-lg bg-white py-2 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none transition-all duration-200 transform opacity-0 scale-95 pointer-events-none" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabindex="-1">
+                        <!-- User Info Header -->
+                        <div class="px-4 py-3 border-b border-gray-100">
+                            <p class="text-sm font-medium text-gray-900">{{ Auth::user()->name }}</p>
+                            <p class="text-sm text-gray-500">{{ Auth::user()->email }}</p>
+                        </div>
 
-            let isProductOpen = false;
+                        <!-- Menu Items -->
+                        <div class="py-1">
+                            <a href="#" class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors duration-150" role="menuitem" tabindex="-1" id="user-menu-item-0">
+                                <svg class="mr-3 h-4 w-4 text-gray-400 group-hover:text-gray-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                </svg>
+                                Your Profile
+                            </a>
+                            <a href="#" class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors duration-150" role="menuitem" tabindex="-1" id="user-menu-item-1">
+                                <svg class="mr-3 h-4 w-4 text-gray-400 group-hover:text-gray-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.343 3.94c.09-.542.56-.94 1.11-.94h1.093c.55 0 1.02.398 1.11.94l.149.894c.07.424.384.764.78.93.398.164.855.142 1.205-.108l.737-.527a1.125 1.125 0 011.45.12l.773.774c.39.389.44 1.002.12 1.45l-.527.737c-.25.35-.272.806-.107 1.204.165.397.505.71.93.78l.893.15c.543.09.94.56.94 1.109v1.094c0 .55-.397 1.02-.94 1.11l-.893.149c-.425.07-.765.383-.93.78-.165.398-.143.854.107 1.204l.527.738c.32.447.269 1.06-.12 1.45l-.774.773a1.125 1.125 0 01-1.449.12l-.738-.527c-.35-.25-.806-.272-1.203-.107-.397.165-.71.505-.781.929l-.149.894c-.09.542-.56.94-1.11.94h-1.094c-.55 0-1.019-.398-1.11-.94l-.148-.894c-.071-.424-.384-.764-.781-.93-.398-.164-.854-.142-1.204.108l-.738.527c-.447.32-1.06.269-1.45-.12l-.773-.774a1.125 1.125 0 01-.12-1.45l.527-.737c.25-.35.273-.806.108-1.204-.165-.397-.505-.71-.93-.78l-.894-.15c-.542-.09-.94-.56-.94-1.109v-1.094c0-.55.398-1.02.94-1.11l.894-.149c.424-.07.765-.383.93-.78.165-.398.143-.854-.107-1.204l-.527-.738a1.125 1.125 0 01.12-1.45l.773-.773a1.125 1.125 0 011.45-.12l.737.527c.35.25.807.272 1.204.107.397-.165.71-.505.78-.929l.15-.894z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                                Settings
+                            </a>
+                        </div>
 
-            function toggleProductMenu() {
-                isProductOpen = !isProductOpen;
+                        <!-- Divider -->
+                        <div class="border-t border-gray-100 my-1"></div>
 
-                if (isProductOpen) {
-                    productMenu.classList.remove('opacity-0', 'translate-y-1', 'pointer-events-none');
-                    productMenu.classList.add('opacity-100', 'translate-y-0');
-                    productIcon.style.transform = 'rotate(180deg)';
-                    productToggle.setAttribute('aria-expanded', 'true');
-                } else {
-                    productMenu.classList.remove('opacity-100', 'translate-y-0');
-                    productMenu.classList.add('opacity-0', 'translate-y-1', 'pointer-events-none');
-                    productIcon.style.transform = 'rotate(0deg)';
-                    productToggle.setAttribute('aria-expanded', 'false');
-                }
-            }
+                        <!-- Sign Out -->
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="group flex items-center w-full px-4 py-2 text-sm text-red-700 hover:bg-red-50 hover:text-red-900 transition-colors duration-150" role="menuitem" tabindex="-1" id="user-menu-item-2">
+                                <svg class="mr-3 h-4 w-4 text-red-400 group-hover:text-red-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
+                                </svg>
+                                Sign out
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            @else
+                <a href="{{ route('login') }}" class="text-sm font-semibold leading-6 text-gray-900 hover:text-indigo-600 transition-colors duration-200">Log in <span aria-hidden="true">&rarr;</span></a>
+            @endauth
+        </div>
+    </nav>
 
-            productToggle.addEventListener('click', function(e) {
-                e.stopPropagation();
-                toggleProductMenu();
-            });
 
-            // Close product menu when clicking outside
-            document.addEventListener('click', function(e) {
-                if (!productToggle.contains(e.target) && !productMenu.contains(e.target)) {
-                    if (isProductOpen) {
-                        toggleProductMenu();
-                    }
-                }
-            });
+</header>
 
-            // Close product menu when pressing Escape
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape' && isProductOpen) {
-                    toggleProductMenu();
-                }
-            });
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // --- Mobile Menu Toggle ---
+    const mobileToggle = document.getElementById('mobile-menu-toggle');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const mobileClose = document.getElementById('mobile-menu-close');
+    const mobileBackdrop = document.getElementById('mobile-menu-backdrop');
 
-            // Mobile Menu
-            const mobileToggle = document.getElementById('mobile-menu-toggle');
-            const mobileMenu = document.getElementById('mobile-menu');
-            const mobileClose = document.getElementById('mobile-menu-close');
-            const mobileBackdrop = document.getElementById('mobile-menu-backdrop');
-            const mobileProductToggle = document.getElementById('mobile-product-toggle');
-            const mobileProducts = document.getElementById('mobile-products');
-            const mobileProductIcon = mobileProductToggle.querySelector('svg');
+    if (mobileToggle && mobileMenu && mobileClose && mobileBackdrop) {
+        const toggleMobileMenu = () => mobileMenu.classList.toggle('hidden');
+        mobileToggle.addEventListener('click', toggleMobileMenu);
+        mobileClose.addEventListener('click', toggleMobileMenu);
+        mobileBackdrop.addEventListener('click', toggleMobileMenu);
+    }
 
-            let isMobileMenuOpen = false;
-            let isMobileProductOpen = false;
+    // --- User Profile Dropdown (Desktop) ---
+    const userMenuButton = document.getElementById('user-menu-button');
+    const userMenu = document.getElementById('user-menu');
+    const dropdownArrow = document.getElementById('dropdown-arrow');
 
-            function toggleMobileMenu() {
-                isMobileMenuOpen = !isMobileMenuOpen;
+    if (userMenuButton && userMenu && dropdownArrow) {
+        userMenuButton.addEventListener('click', function (event) {
+            event.stopPropagation();
+            const isExpanded = userMenuButton.getAttribute('aria-expanded') === 'true';
+            userMenuButton.setAttribute('aria-expanded', !isExpanded);
 
-                if (isMobileMenuOpen) {
-                    mobileMenu.classList.remove('hidden');
-                    document.body.style.overflow = 'hidden';
-                } else {
-                    mobileMenu.classList.add('hidden');
-                    document.body.style.overflow = '';
-                    // Reset mobile product menu when closing main menu
-                    if (isMobileProductOpen) {
-                        toggleMobileProduct();
-                    }
-                }
-            }
+            // Toggle dropdown visibility
+            userMenu.classList.toggle('opacity-0');
+            userMenu.classList.toggle('scale-95');
+            userMenu.classList.toggle('pointer-events-none');
 
-            function toggleMobileProduct() {
-                isMobileProductOpen = !isMobileProductOpen;
-
-                if (isMobileProductOpen) {
-                    mobileProducts.classList.remove('hidden');
-                    mobileProductIcon.style.transform = 'rotate(180deg)';
-                    mobileProductToggle.setAttribute('aria-expanded', 'true');
-                } else {
-                    mobileProducts.classList.add('hidden');
-                    mobileProductIcon.style.transform = 'rotate(0deg)';
-                    mobileProductToggle.setAttribute('aria-expanded', 'false');
-                }
-            }
-
-            mobileToggle.addEventListener('click', toggleMobileMenu);
-            mobileClose.addEventListener('click', toggleMobileMenu);
-            mobileBackdrop.addEventListener('click', toggleMobileMenu);
-            mobileProductToggle.addEventListener('click', toggleMobileProduct);
-
-            // Close mobile menu when pressing Escape
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape' && isMobileMenuOpen) {
-                    toggleMobileMenu();
-                }
-            });
+            // Animate arrow
+            dropdownArrow.style.transform = isExpanded ? 'rotate(0deg)' : 'rotate(180deg)';
         });
-    </script>
 
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!userMenuButton.contains(event.target) && !userMenu.contains(event.target)) {
+                if (userMenuButton.getAttribute('aria-expanded') === 'true') {
+                    userMenuButton.setAttribute('aria-expanded', 'false');
+                    userMenu.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+                    dropdownArrow.style.transform = 'rotate(0deg)';
+                }
+            }
+        });
+
+        // Close dropdown with Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && userMenuButton.getAttribute('aria-expanded') === 'true') {
+                userMenuButton.setAttribute('aria-expanded', 'false');
+                userMenu.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+                dropdownArrow.style.transform = 'rotate(0deg)';
+            }
+        });
+    }
+});
+</script>

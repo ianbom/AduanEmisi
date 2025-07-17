@@ -4,7 +4,9 @@ use App\Http\Controllers\Admin\BadgeController as AdmBadgeController;
 use App\Http\Controllers\Admin\ContentController as AdmContentController;
 use App\Http\Controllers\Admin\MissionController as AdmMissionController;
 use App\Http\Controllers\Admin\ReportController as AdmReportController;
+use App\Http\Controllers\Admin\UserController as AdmUserController;
 use App\Http\Controllers\Citizen\CommentController as CtzCommentController;
+use App\Http\Controllers\Citizen\NotificationController;
 use App\Http\Controllers\Citizen\ReportController as CtzReportController;
 use App\Http\Controllers\Citizen\ProfileController as CtzProfileController;
 use App\Http\Controllers\Citizen\MapController as CtzMapController;
@@ -41,6 +43,8 @@ Route::prefix('')->middleware(['auth'])->group(function () {
     Route::get('/homepage', function () {
         return Inertia::render('Citizen/HomePage');
     })->name('homepage');
+
+    Route::put('/read-notification/{id}', [NotificationController::class, 'readNotification'])->name('notification.read');
 
     // Route untuk keperluan yang berkaitan dengan Profil
     Route::get('/profile', [CtzProfileController::class, 'showProfile'])->name('profile.show');
@@ -105,6 +109,8 @@ Route::prefix('admin')->as('admin.')->middleware(['auth'])->group(function () {
     Route::delete('content-media/{contentMedia}', [AdmContentController::class, 'deleteMedia'])->name('delete.contentMedia');
 
     Route::resource('badges', AdmBadgeController::class);
+
+    Route::resource('users', AdmUserController::class);
 });
 
 
