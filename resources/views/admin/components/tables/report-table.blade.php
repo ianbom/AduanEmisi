@@ -88,24 +88,13 @@
                                     <div class="flex items-center space-x-3">
 
                                         {{-- PERBAIKAN: Tambahkan class 'open-modal-btn' dan data-* atribut --}}
-                                    <button type="button"
-                                            class="open-modal-btn inline-flex items-center border border-transparent text-sm font-medium rounded-md"
-                                            data-report-id="{{ $report->id }}"
-                                            data-accept-url="{{ route('admin.reports.accept', $report->id) }}"
-                                            data-reject-url="{{ route('admin.reports.reject', $report->id) }}">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                        </svg>
-
-                                    </button>
 
                                         <a href="{{ route('admin.reports.edit', $report->id) }}"
-                                           class="text-green-600 hover:text-green-800 transition-colors duration-150">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                                            </svg>
+                                           title="Lihat Detail"
+                                           class="text-blue-600 hover:text-blue-800 transition-colors duration-150">
+                                            Lihat Detail
                                         </a>
-                                        <form action="{{ route('admin.reports.destroy', $report->id) }}" method="POST" class="inline">
+                                        {{-- <form action="{{ route('admin.reports.destroy', $report->id) }}" method="POST" class="inline">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit"
@@ -115,7 +104,7 @@
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                                                 </svg>
                                             </button>
-                                        </form>
+                                        </form> --}}
                                     </div>
                                 </td>
                             </tr>
