@@ -9,6 +9,9 @@
             <p class="text-sm text-gray-600 mt-1">Dilaporkan pada {{ $report->created_at->format('d M Y, H:i') }}</p>
         </div>
         <div class="flex space-x-2">
+            <a href="{{ route('report.show', $report->id) }}" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-colors">
+                Lihat Detail
+            </a>
             <a href="{{ route('admin.reports.index') }}" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors">
                 Kembali
             </a>
@@ -324,7 +327,7 @@
             </div>
 
             <!-- Staff Information -->
-            @if($report->verified_by_user_id || $report->completed_by_user_id)
+            {{-- @if($report->verified_by_user_id || $report->completed_by_user_id)
             <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <h2 class="text-lg font-semibold text-gray-900 mb-4">Staff</h2>
 
@@ -344,7 +347,61 @@
                     @endif
                 </div>
             </div>
+            @endif --}}
+
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Tindakan Admin</h2>
+
+            {{-- Tampilkan tombol hanya jika status laporan masih 'pending' --}}
+            @if($report->status === 'pending')
+                <div class="space-y-3">
+                    <!-- Form untuk Menyetujui/Verifikasi Laporan -->
+                    <form action="{{ route('admin.reports.accept', $report->id) }}" method="POST">
+                        @csrf
+                        @method('PUT')
+                        <button type="submit" class="w-full inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                            </svg>
+                            Setujui & Verifikasi Laporan
+                        </button>
+                    </form>
+
+                    <!-- Form untuk Menolak Laporan -->
+                    <form action="{{ route('admin.reports.reject', $report->id) }}" method="POST">
+                        @csrf
+                        @method('PUT')
+                        <button type="submit"
+                                onclick="return confirm('Apakah Anda yakin ingin menolak laporan ini?')"
+                                class="w-full inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                            </svg>
+                            Tolak Laporan
+                        </button>
+                    </form>
+                </div>
+            @else
+                {{-- Jika status bukan 'pending', tampilkan info staff yang memproses --}}
+                <p class="text-sm text-gray-500 italic">Tindakan untuk laporan ini sudah diproses.</p>
+                <div class="mt-4 space-y-4">
+                    @if($report->verifiedByUser)
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Diverifikasi oleh</label>
+                        <p class="text-gray-900">{{ $report->verifiedByUser->name }}</p>
+                    </div>
+                    @endif
+
+                    @if($report->completedByUser)
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Diselesaikan oleh</label>
+                        <p class="text-gray-900">{{ $report->completedByUser->name }}</p>
+                    </div>
+                    @endif
+                </div>
             @endif
+        </div>
+
         </div>
     </div>
 </div>

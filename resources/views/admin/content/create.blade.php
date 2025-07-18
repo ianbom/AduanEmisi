@@ -46,9 +46,9 @@
                                 name="content_type"
                                 class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('content_type') border-red-500 @enderror">
                             <option value="">Pilih tipe konten</option>
-                            <option value="article" {{ old('content_type') == 'article' ? 'selected' : '' }}>Artikel</option>
-                            <option value="news" {{ old('content_type') == 'news' ? 'selected' : '' }}>Berita</option>
-                            <option value="guide" {{ old('content_type') == 'guide' ? 'selected' : '' }}>Panduan</option>
+                            <option value="artikel" {{ old('content_type') == 'artikel' ? 'selected' : '' }}>Artikel</option>
+                            <option value="video" {{ old('content_type') == 'video' ? 'selected' : '' }}>Video</option>
+                            <option value="modul" {{ old('content_type') == 'modul' ? 'selected' : '' }}>Modul</option>
                         </select>
                         @error('content_type')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>

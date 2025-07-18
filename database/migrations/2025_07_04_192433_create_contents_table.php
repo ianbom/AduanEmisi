@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('author_user_id')->constrained('users')->onDelete('cascade');
             $table->string('title');
             $table->text('body');
-            $table->string('content_type')->nullable(); // Misal: 'article', 'news', 'guide'
+            $table->enum('content_type', ['video', 'modul', 'artikel'])->nullable(); // Misal: 'article', 'news', 'guide'
             $table->timestamps();
         });
     }
