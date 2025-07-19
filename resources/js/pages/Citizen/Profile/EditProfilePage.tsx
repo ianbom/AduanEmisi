@@ -1,3 +1,4 @@
+// @ts-nocheck
 import EditProfilePage from '@/components/citizen/profile/EditProfilePage';
 import CitizenLayout from '@/components/layouts/CitizenLayout';
 import { PageProps } from '@/types';

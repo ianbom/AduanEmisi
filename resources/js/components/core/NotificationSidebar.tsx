@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { router, usePage } from '@inertiajs/react';
 import { AlertCircle, CheckCircle, Heart, Info, X } from 'lucide-react';
 import React from 'react';

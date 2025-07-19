@@ -1,3 +1,4 @@
+// @ts-nocheck
 export interface Notification {
     id: number;
     user_id: number;

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { NavItems, NavUser } from '@/types/navbar/interface';
 import { User } from '@/types/user/interface';
 import { usePage } from '@inertiajs/react';

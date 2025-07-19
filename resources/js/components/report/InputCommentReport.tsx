@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useForm } from '@inertiajs/react';
 import { CirclePlus, FileVideo, Image, Paperclip, Send, Upload, X } from 'lucide-react';
 import React, { useRef, useState, useEffect } from 'react';

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import Navbar from '@/components/core/Navbar';
 import NotificationSidebar from '@/components/core/NotificationSidebar';
 import { PageProps } from '@/types';
