@@ -125,7 +125,7 @@ class ReportService extends Service
 
     public function getReports(array $filters = [], int $perPage = 15)
     {
-        $query = Report::with(['reporter', 'city', 'district', 'media', 'province']);
+        $query = Report::with(['reporter', 'city', 'district', 'media', 'province', 'mission']);
 
         // Filter by status
         if (isset($filters['status'])) {

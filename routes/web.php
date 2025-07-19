@@ -46,7 +46,7 @@ Route::prefix('')->middleware(['auth'])->group(function () {
     // Route untuk keperluan yang berkaitan dengan Profil
     Route::get('/profile', [CtzProfileController::class, 'showProfile'])->name('profile.show');
     Route::get('/edit-profile', [CtzProfileController::class, 'editProfile'])->name('profile.edit');
-    Route::get('/update-profile', [CtzProfileController::class, 'editProfile'])->name('profile.edit');
+    Route::post('/update-profile', [CtzProfileController::class, 'updateProfile'])->name('profile.update');
 
     // Route untuk keperluan yang berkaitan dengan Laporan
     Route::get('/report', [CtzReportController::class, 'viewAllReportsPage'])->name('report');
@@ -62,6 +62,8 @@ Route::prefix('')->middleware(['auth'])->group(function () {
 
     // Route untuk keperluan yang berkaitan dengan misi
     Route::get('/mission', [CtzMissionController::class, 'index'])->name('mission');
+    Route::get('/my-mission', [CtzMissionController::class, 'myMissions'])->name('my-mission');
+
     Route::post('/join-missions/{id}', [CtzMissionController::class, 'join'])->name('mission.join');
     Route::post('/attendance-members', [CtzMissionController::class, 'attend'])->name('attendance.store');
     Route::delete('/volunteers/{mission}', [CtzMissionController::class, 'cancel'])->name('volunteer.cancel');
@@ -73,10 +75,6 @@ Route::prefix('')->middleware(['auth'])->group(function () {
     // Route untuk keperluan yang berkaitan dengan Konten Edukasi
     Route::get('/education', [CtzContentController::class, 'index'])->name('content.index');
     Route::get('/education/{id}', [CtzContentController::class, 'show'])->name('content.show');
-
-    Route::get('/education-detail/1', function () {
-        return Inertia::render('Citizen/EducationalContent/EducationalContentDetailsPage');
-    })->name('education-detail');
 });
 
 

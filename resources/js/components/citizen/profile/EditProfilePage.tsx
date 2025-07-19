@@ -14,7 +14,6 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { router as Inertia } from '@inertiajs/react';
-import axios from 'axios';
 import {
     ArrowLeft,
     Camera,
@@ -72,9 +71,7 @@ const EditProfilePage = ({ provinces, onBack, auth }: PageProps) => {
                 city_id: '',
                 district_id: '',
             }));
-        }
-        // kalau kota berubah, kosongkan district
-        else if (field === 'city_id') {
+        } else if (field === 'city_id') {
             setFormData((prev) => ({
                 ...prev,
                 city_id: value,
@@ -88,14 +85,13 @@ const EditProfilePage = ({ provinces, onBack, auth }: PageProps) => {
     const handleFileUpload = (files: FileList | null) => {
         if (files) {
             const newFiles = Array.from(files).filter((file) => {
-                // Validasi ukuran file (max 10MB)
                 if (file.size > 10 * 1024 * 1024) {
                     alert(`File ${file.name} terlalu besar. Maksimal 10MB.`);
                     return false;
                 }
                 return true;
             });
-            setUploadedFiles((prev) => [...prev, ...newFiles]);
+            setUploadedFiles(newFiles);
         }
     };
 
@@ -125,13 +121,7 @@ const EditProfilePage = ({ provinces, onBack, auth }: PageProps) => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-
-        if (!validateForm()) {
-            return;
-        }
-
-        setIsSubmitting(true);
-
+        if (!validateForm()) return;
         const data = new FormData();
         data.append('name', formData.name);
         data.append('phone', formData.phone);
@@ -140,77 +130,33 @@ const EditProfilePage = ({ provinces, onBack, auth }: PageProps) => {
         data.append('city_id', formData.city_id);
         data.append('district_id', formData.district_id);
 
-        uploadedFiles.forEach((file) => {
-            data.append('media[]', file);
-        });
+        if (uploadedFiles.length > 0) {
+            data.append('profile_url', uploadedFiles[0]);
+        }
+        // 🔍 DEBUG START
+        console.log('Uploaded file:', uploadedFiles[0]);
+        console.log('FormData entries:');
+        for (const pair of data.entries()) {
+            console.log(`${pair[0]}:`, pair[1]);
+        }
+        // 🔍 DEBUG END
+        setIsSubmitting(true);
 
         try {
-            const response = await axios.post('/reports', data, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
+            await Inertia.post('/update-profile', data, {
+                forceFormData: true,
+                onSuccess: () => {
+                    alert('Berhasil update!');
+                    Inertia.visit('/profile');
                 },
             });
-
-            console.log('Report submitted:', response.data);
-            alert('Laporan berhasil dikirim!');
-
-            // Reset form
-            setFormData({
-                province_id: String(auth.user.province_id ?? ''),
-                city_id: String(auth.user.city_id ?? ''),
-                district_id: String(auth.user.district_id ?? ''),
-                address: auth.user.address ?? '',
-                phone: auth.user.phone ?? '',
-                name: auth.user.name ?? '',
-            });
-
-            setUploadedFiles([]);
-
-            // Redirect ke halaman laporan
-            Inertia.visit('/profile');
         } catch (error: any) {
-            console.error('Error submitting report:', error);
-
-            if (error.response) {
-                const { status, data } = error.response;
-
-                if (status === 422) {
-                    // Error validasi
-                    const errors = data.errors || {};
-                    const errorMessages = Object.values(errors).flat();
-                    alert('Validasi gagal:\n' + errorMessages.join('\n'));
-                } else if (status === 401) {
-                    // Belum login
-                    alert('Anda belum login. Silakan login terlebih dahulu.');
-                    // Redirect ke login jika perlu
-                    // window.location.href = '/login';
-                } else if (status === 413) {
-                    // File terlalu besar
-                    alert(
-                        'File yang diunggah terlalu besar. Maksimal 10MB per file.',
-                    );
-                } else if (status === 500) {
-                    // Server error
-                    alert(
-                        'Terjadi kesalahan pada server. Silakan coba lagi nanti.',
-                    );
-                } else {
-                    // Error lain
-                    alert(
-                        'Terjadi kesalahan: ' +
-                            (data.message || 'Unknown error'),
-                    );
-                }
-            } else if (error.request) {
-                // Network error
-                alert(
-                    'Tidak dapat terhubung ke server. Periksa koneksi internet Anda.',
-                );
+            console.error(error);
+            if (error.response?.status === 422) {
+                const errors = error.response.data.errors;
+                alert(Object.values(errors).flat().join('\n'));
             } else {
-                // Error lainnya
-                alert(
-                    'Terjadi kesalahan yang tidak terduga. Silakan coba lagi.',
-                );
+                alert('Terjadi kesalahan. Silakan coba lagi.');
             }
         } finally {
             setIsSubmitting(false);
@@ -242,9 +188,7 @@ const EditProfilePage = ({ provinces, onBack, auth }: PageProps) => {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-8">
-                {/* Bagian Atas: Info Pengguna (Kiri) dan Foto Profil (Kanan) */}
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                    {/* Info Pengguna - Kiri */}
                     <div className="flex flex-col space-y-6">
                         <Card className="flex h-full flex-col">
                             <CardHeader>
@@ -554,7 +498,7 @@ const EditProfilePage = ({ provinces, onBack, auth }: PageProps) => {
                         size="lg"
                         disabled={isSubmitting}
                     >
-                        {isSubmitting ? 'Mengirim...' : 'Kirim Laporan'}
+                        {isSubmitting ? 'Mengirim...' : 'Update'}
                     </Button>
                 </div>
             </form>

@@ -261,7 +261,7 @@ class ReportController extends Controller
         try {
             $request->validate([
                 'media' => 'sometimes|array',
-                'media.*' => 'file|mimes:jpg,jpeg,png,gif,webp,mp4,mov,avi,mkv,wmv|max:10240', // 10MB max
+                'media.*' => 'file|mimes:jpg,jpeg,png,gif,webp,mp4,mov,avi,mkv,wmv|max:10240',
                 'media_urls' => 'sometimes|array',
                 'media_urls.*' => 'url',
                 'media_types' => 'sometimes|array',
@@ -315,7 +315,6 @@ class ReportController extends Controller
             $data = $request->only(['mission_id']);
             $isLeader = false;
             $missionVolunteer = $this->reportService->registerAsVolunteer($data, $isLeader);
-
             DB::commit();
             return response()->json([
                 'status' => 'success',
@@ -388,11 +387,11 @@ class ReportController extends Controller
             ]);
         }
 
-        // Hitung ulang jumlah vote
+
         $upvotes = $report->votes()->where('vote_type', 'upvote')->count();
         $dislikes = $report->votes()->where('vote_type', 'dislike')->count();
 
-        // Update ke kolom di tabel reports
+
         $report->update([
             'upvotes_count' => $upvotes,
             'dislikes_count' => $dislikes,
@@ -400,8 +399,6 @@ class ReportController extends Controller
         $latestVote = $report->votes()->where('user_id', $user->id)->first();
         \Log::info('After update or insert, vote is now:', ['vote_type' => $latestVote?->vote_type]);
 
-
-        // Ambil vote terbaru user
         $yourVote = $report->votes()->where('user_id', $user->id)->first()?->vote_type;
 
         return response()->json([

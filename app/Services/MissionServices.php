@@ -9,6 +9,7 @@ use App\Models\Report;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\UploadedFile;
 
@@ -25,7 +26,7 @@ class MissionServices extends Service
     public function createMission(array $data): Mission
     {
 
-    if (isset($data['thumbnail_url'])) {
+        if (isset($data['thumbnail_url'])) {
 
             // PERBAIKAN 2: Kondisi sekarang aman, hanya berjalan jika ada file yang di-upload
             $file = $data['thumbnail_url'];
@@ -117,6 +118,68 @@ class MissionServices extends Service
 
         return $query->orderBy('created_at', 'desc')->paginate($perPage);
     }
+
+    public function getMissionsJoined(User $user, array $filters = [], int $perPage = 10)
+    {
+        $query = $user->volunteeredMissions()
+            ->with([
+                'report',
+                'province',
+                'city',
+                'district',
+                'creator',
+                'assignedVolunteer',
+                'volunteers'
+            ]);
+
+        // Filter dari pivot table
+        if (!empty($filters['participation_status'])) {
+            $query->wherePivot('participation_status', $filters['participation_status']);
+        }
+
+        // Filter dari kolom misi
+        if (!empty($filters['status'])) {
+            $query->where('status', $filters['status']);
+        }
+
+        if (!empty($filters['city_id'])) {
+            $query->where('city_id', $filters['city_id']);
+        }
+
+        if (!empty($filters['district_id'])) {
+            $query->where('district_id', $filters['district_id']);
+        }
+
+        if (!empty($filters['assigned_to_type'])) {
+            $query->where('assigned_to_type', $filters['assigned_to_type']);
+        }
+
+        if (!empty($filters['creator_user_id'])) {
+            $query->where('creator_user_id', $filters['creator_user_id']);
+        }
+
+        if (!empty($filters['assigned_volunteer_id'])) {
+            $query->where('assigned_volunteer_id', $filters['assigned_volunteer_id']);
+        }
+
+        if (!empty($filters['search'])) {
+            $query->where(function ($q) use ($filters) {
+                $q->where('title', 'like', '%' . $filters['search'] . '%')
+                    ->orWhere('description', 'like', '%' . $filters['search'] . '%');
+            });
+        }
+
+        if (!empty($filters['date_from'])) {
+            $query->whereDate('missions.created_at', '>=', $filters['date_from']);
+        }
+
+        if (!empty($filters['date_to'])) {
+            $query->whereDate('missions.created_at', '<=', $filters['date_to']);
+        }
+
+        return $query->orderBy('missions.created_at', 'desc')->paginate($perPage);
+    }
+
 
     public function getMissionByFilters(array $filters = []): Collection
     {
@@ -321,13 +384,13 @@ class MissionServices extends Service
 
         try {
 
-        if (isset($data['thumbnail_url']) && $data['thumbnail_url']) {
-            $fileName = time() . '_' . uniqid() . '.' . $data['thumbnail_url']->getClientOriginalExtension();
-            $filePath = $data['thumbnail_url']->storeAs('missions', $fileName, 'public');
-            $data['thumbnail_url'] = $filePath;
-        } else {
-           $data['thumbnail_url'] = $mission->icon_url;
-        }
+            if (isset($data['thumbnail_url']) && $data['thumbnail_url']) {
+                $fileName = time() . '_' . uniqid() . '.' . $data['thumbnail_url']->getClientOriginalExtension();
+                $filePath = $data['thumbnail_url']->storeAs('missions', $fileName, 'public');
+                $data['thumbnail_url'] = $filePath;
+            } else {
+                $data['thumbnail_url'] = $mission->icon_url;
+            }
 
             if ($data['status'] === 'completed' && !$mission->completed_at) {
                 $data['completed_at'] = now();

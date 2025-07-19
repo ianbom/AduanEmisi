@@ -18,6 +18,18 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+        'phone',
+        'address',
+        'profile_url',
+        'province_id',
+        'city_id',
+        'district_id',
+    ];
+
     protected $guarded = [
         'id'
     ];
@@ -154,8 +166,8 @@ class User extends Authenticatable
     public function volunteeredMissions()
     {
         return $this->belongsToMany(Mission::class, 'mission_volunteers')
-                    ->withPivot('participation_status', 'is_leader', 'certificate_url', 'awarded_at')
-                    ->withTimestamps();
+            ->withPivot('participation_status', 'is_leader', 'certificate_url', 'awarded_at')
+            ->withTimestamps();
     }
 
     /**

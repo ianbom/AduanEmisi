@@ -13,7 +13,6 @@ import axios from 'axios';
 import {
     ArrowLeft,
     Calendar,
-    CornerUpLeft,
     Heart,
     LocateFixed,
     MapPin,
@@ -76,14 +75,34 @@ const ReportDetailPage = ({
         setData: setReplyData,
         post: postReply,
         processing: processingReply,
-        errors: replyErrors,
+        // errors: replyErrors,
         reset: resetReply,
     } = useForm({
         comment: '',
         report_id: report.id,
         reply_id: null as string | number | null,
     });
-
+    const [showAll, setShowAll] = useState(false);
+    const INITIAL_COMMENTS_COUNT = 4;
+    const [showAllDocs, setShowAllDocs] = useState(false);
+    const INITIAL_DOCS_COUNT = 3;
+    const groupedDocs = report.mission?.documentation.reduce(
+        (acc, doc) => {
+            if (!acc[doc.content]) acc[doc.content] = [];
+            acc[doc.content].push(doc);
+            return acc;
+        },
+        {} as Record<string, typeof report.mission.documentation>,
+    );
+    const docEntries = Object.entries(groupedDocs || {});
+    const displayedDocs = showAllDocs
+        ? docEntries
+        : docEntries.slice(0, INITIAL_DOCS_COUNT);
+    const hasMoreDocs = docEntries.length > INITIAL_DOCS_COUNT;
+    const displayedComments = showAll
+        ? comments
+        : comments.slice(0, INITIAL_COMMENTS_COUNT);
+    const hasMoreComments = comments.length > INITIAL_COMMENTS_COUNT;
     const [openModalAttendance, setOpenModalAttendance] = useState(false);
     const [openCancelModal, setOpenCancelModal] = useState(false);
     const [openUploadModal, setOpenUploadModal] = useState(false);
@@ -98,14 +117,7 @@ const ReportDetailPage = ({
         setSelectedRole(role);
         setModalOpenRegister(true);
     };
-    const groupedDocs = report.mission?.documentation.reduce(
-        (acc, doc) => {
-            if (!acc[doc.content]) acc[doc.content] = [];
-            acc[doc.content].push(doc);
-            return acc;
-        },
-        {} as Record<string, typeof report.mission.documentation>,
-    );
+
     const handleCancel = () => {
         Inertia.delete(route('volunteer.cancel', report.mission?.id), {
             preserveScroll: true,
@@ -290,6 +302,9 @@ const ReportDetailPage = ({
                                     </Button>
                                 </div>
                             </div>
+                            <h3 className="mb-3 text-lg font-semibold">
+                                Media Pendukung
+                            </h3>
                             <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2">
                                 {report.media?.map((mediaItem, index) => (
                                     <div
@@ -614,19 +629,21 @@ const ReportDetailPage = ({
                                                     />
                                                 </>
                                             )}
-
-                                        <div className="my-4 grid grid-cols-1 gap-4 md:grid-cols-1">
-                                            {groupedDocs &&
-                                                Object.entries(groupedDocs).map(
+                                        <div className="space-y-6">
+                                            <div
+                                                className={`space-y-6 ${showAllDocs ? 'max-h-96 overflow-y-auto pr-2' : ''}`}
+                                            >
+                                                {displayedDocs.map(
                                                     (
                                                         [content, docs],
                                                         index,
                                                     ) => (
                                                         <div
                                                             key={index}
-                                                            className="rounded-md border border-gray-300 p-4"
+                                                            className="my-2 rounded-xl border border-gray-300 bg-white p-6 shadow-sm transition-shadow duration-200 hover:shadow-md"
                                                         >
-                                                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                                                            {/* Media Grid */}
+                                                            <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                                                                 {docs.map(
                                                                     (
                                                                         doc,
@@ -640,46 +657,179 @@ const ReportDetailPage = ({
                                                                         >
                                                                             {doc.media_type ===
                                                                             'video' ? (
-                                                                                <video
-                                                                                    src={`/storage/${doc.media_url}`}
-                                                                                    controls
-                                                                                    preload="metadata"
-                                                                                    className="aspect-video w-full max-w-sm rounded-lg border"
-                                                                                />
+                                                                                <div className="group relative">
+                                                                                    <video
+                                                                                        src={`/storage/${doc.media_url}`}
+                                                                                        controls
+                                                                                        preload="metadata"
+                                                                                        className="aspect-video w-full rounded-lg border border-gray-200 shadow-sm"
+                                                                                    />
+                                                                                    <div className="absolute right-2 top-2 rounded bg-black bg-opacity-50 px-2 py-1 text-xs text-white">
+                                                                                        Video
+                                                                                    </div>
+                                                                                </div>
                                                                             ) : (
-                                                                                <ImageWithPopup
-                                                                                    src={`/storage/${doc.media_url}`}
-                                                                                    alt={`Media laporan ${idx + 1}`}
-                                                                                />
+                                                                                <div className="group relative">
+                                                                                    <div className="mx-auto w-full max-w-[200px]">
+                                                                                        <ImageWithPopup
+                                                                                            src={`/storage/${doc.media_url}`}
+                                                                                            alt={`Media dokumentasi ${idx + 1}`}
+                                                                                            className="h-auto w-full rounded-lg border border-gray-200 object-cover shadow-sm transition-shadow duration-200 hover:shadow-md"
+                                                                                        />
+                                                                                    </div>
+                                                                                    <div className="absolute right-2 top-2 rounded bg-black bg-opacity-50 px-2 py-1 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100">
+                                                                                        {idx +
+                                                                                            1}
+
+                                                                                        /
+                                                                                        {
+                                                                                            docs.length
+                                                                                        }
+                                                                                    </div>
+                                                                                </div>
                                                                             )}
                                                                         </div>
                                                                     ),
                                                                 )}
                                                             </div>
-                                                            <p className="text-md mt-2 font-semibold text-gray-700">
-                                                                Keterangan
-                                                                Dokumentasi:
-                                                            </p>
-                                                            <p className="text-sm text-gray-700">
-                                                                {content}
-                                                            </p>
-                                                            <p className="text-xs text-gray-500">
-                                                                Oleh:{' '}
-                                                                {
-                                                                    docs[0]
-                                                                        .uploader
-                                                                        .name
-                                                                }
-                                                            </p>
-                                                            <p className="text-xs text-gray-500">
-                                                                {formatFullDateTime(
-                                                                    docs[0]
-                                                                        .created_at,
-                                                                )}
-                                                            </p>
+
+                                                            {/* Documentation Details */}
+                                                            <div className="space-y-3">
+                                                                <div className="flex items-start space-x-2">
+                                                                    <div className="flex-1">
+                                                                        <h4 className="mb-2 text-sm font-semibold text-gray-800">
+                                                                            Keterangan
+                                                                            Dokumentasi
+                                                                        </h4>
+                                                                        <p className="text-sm leading-relaxed text-gray-700">
+                                                                            {
+                                                                                content
+                                                                            }
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+
+                                                                {/* Metadata */}
+                                                                <div className="flex items-center justify-between border-t border-gray-100 pt-3">
+                                                                    <div className="flex items-center space-x-4">
+                                                                        <div className="flex items-center space-x-2">
+                                                                            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-100">
+                                                                                <span className="text-xs font-medium text-emerald-700">
+                                                                                    {
+                                                                                        docs[0]
+                                                                                            .uploader
+                                                                                            .name[0]
+                                                                                    }
+                                                                                </span>
+                                                                            </div>
+                                                                            <span className="text-sm font-medium text-gray-700">
+                                                                                {
+                                                                                    docs[0]
+                                                                                        .uploader
+                                                                                        .name
+                                                                                }
+                                                                            </span>
+                                                                        </div>
+                                                                        <div className="flex items-center space-x-1 text-xs text-gray-500">
+                                                                            <svg
+                                                                                className="h-3 w-3"
+                                                                                fill="none"
+                                                                                stroke="currentColor"
+                                                                                viewBox="0 0 24 24"
+                                                                            >
+                                                                                <path
+                                                                                    strokeLinecap="round"
+                                                                                    strokeLinejoin="round"
+                                                                                    strokeWidth={
+                                                                                        2
+                                                                                    }
+                                                                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                                                                                />
+                                                                            </svg>
+                                                                            <span>
+                                                                                {formatFullDateTime(
+                                                                                    docs[0]
+                                                                                        .created_at,
+                                                                                )}
+                                                                            </span>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div className="flex items-center space-x-2">
+                                                                        <span className="rounded-full bg-gray-50 px-2 py-1 text-xs text-gray-500">
+                                                                            {
+                                                                                docs.length
+                                                                            }{' '}
+                                                                            file
+                                                                            {docs.length >
+                                                                            1
+                                                                                ? 's'
+                                                                                : ''}
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     ),
                                                 )}
+                                            </div>
+
+                                            {/* Show more/less button */}
+                                            {hasMoreDocs && (
+                                                <div className="flex justify-center border-t border-gray-100 pt-4">
+                                                    <button
+                                                        onClick={() =>
+                                                            setShowAllDocs(
+                                                                !showAllDocs,
+                                                            )
+                                                        }
+                                                        className="inline-flex items-center rounded-lg px-4 py-2 text-sm font-medium text-emerald-600 transition-colors duration-200 hover:bg-emerald-50 hover:text-emerald-700"
+                                                    >
+                                                        {showAllDocs ? (
+                                                            <>
+                                                                <svg
+                                                                    className="mr-2 h-4 w-4"
+                                                                    fill="none"
+                                                                    stroke="currentColor"
+                                                                    viewBox="0 0 24 24"
+                                                                >
+                                                                    <path
+                                                                        strokeLinecap="round"
+                                                                        strokeLinejoin="round"
+                                                                        strokeWidth={
+                                                                            2
+                                                                        }
+                                                                        d="M5 15l7-7 7 7"
+                                                                    />
+                                                                </svg>
+                                                                Lihat Sedikit
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                <svg
+                                                                    className="mr-2 h-4 w-4"
+                                                                    fill="none"
+                                                                    stroke="currentColor"
+                                                                    viewBox="0 0 24 24"
+                                                                >
+                                                                    <path
+                                                                        strokeLinecap="round"
+                                                                        strokeLinejoin="round"
+                                                                        strokeWidth={
+                                                                            2
+                                                                        }
+                                                                        d="M19 9l-7 7-7-7"
+                                                                    />
+                                                                </svg>
+                                                                Lihat Semua (
+                                                                {
+                                                                    docEntries.length
+                                                                }{' '}
+                                                                dokumentasi)
+                                                            </>
+                                                        )}
+                                                    </button>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 )}
@@ -722,172 +872,269 @@ const ReportDetailPage = ({
                         <CardContent>
                             {/* Comments List */}
                             <div className="space-y-4">
-                                {comments.map((comment) => (
-                                    <div
-                                        key={comment.id}
-                                        className="flex space-x-3 rounded-lg bg-gray-50 p-4"
-                                    >
-                                        <Avatar>
-                                            <AvatarImage
-                                                src={comment.user.profile_url}
-                                            />
-                                            <AvatarFallback>
-                                                {comment.user.name[0]}
-                                            </AvatarFallback>
-                                        </Avatar>
+                                <div
+                                    className={`space-y-4 ${showAll ? 'max-h-96 overflow-y-auto pr-2' : ''}`}
+                                >
+                                    {displayedComments.map((comment) => (
+                                        <div
+                                            key={comment.id}
+                                            className="rounded-xl border border-gray-100 bg-white p-6 shadow-sm transition-shadow duration-200 hover:shadow-md"
+                                        >
+                                            <div className="flex space-x-4">
+                                                <Avatar className="h-10 w-10 ring-2 ring-gray-100">
+                                                    <AvatarImage
+                                                        src={
+                                                            comment.user
+                                                                .profile_url
+                                                        }
+                                                        className="object-cover"
+                                                    />
+                                                    <AvatarFallback className="bg-emerald-100 font-semibold text-emerald-700">
+                                                        {comment.user.name[0]}
+                                                    </AvatarFallback>
+                                                </Avatar>
 
-                                        <div className="flex-1">
-                                            <div className="mb-1 flex items-center space-x-2">
-                                                <span className="font-medium">
-                                                    {comment.user.name}
-                                                </span>
-                                                <span className="text-sm text-gray-500">
-                                                    {formatCommentDate(
-                                                        comment.created_at,
+                                                <div className="min-w-0 flex-1">
+                                                    {/* User info */}
+                                                    <div className="mb-3 flex items-center space-x-3">
+                                                        <span className="font-semibold text-gray-900">
+                                                            {comment.user.name}
+                                                        </span>
+                                                        <span className="rounded-full bg-gray-50 px-2 py-1 text-xs text-gray-500">
+                                                            {formatCommentDate(
+                                                                comment.created_at,
+                                                            )}
+                                                        </span>
+                                                    </div>
+
+                                                    {/* Comment text */}
+                                                    <p className="mb-4 leading-relaxed text-gray-700">
+                                                        {comment.comment}
+                                                    </p>
+
+                                                    {/* Media */}
+                                                    {comment.media_url && (
+                                                        <div className="mb-4">
+                                                            {comment.media_type ===
+                                                            'video' ? (
+                                                                <video
+                                                                    src={`/storage/${comment.media_url}`}
+                                                                    controls
+                                                                    preload="metadata"
+                                                                    className="aspect-video w-full max-w-md rounded-lg border border-gray-200 shadow-sm"
+                                                                />
+                                                            ) : (
+                                                                <img
+                                                                    src={`/storage/${comment.media_url}`}
+                                                                    alt={`Media untuk komentar`}
+                                                                    className="max-h-64 w-auto rounded-lg border border-gray-200 object-cover shadow-sm"
+                                                                />
+                                                            )}
+                                                        </div>
                                                     )}
-                                                </span>
-                                            </div>
 
-                                            <p className="text-gray-700">
-                                                {comment.comment}
-                                            </p>
+                                                    {/* Replies */}
+                                                    {comment.replies &&
+                                                        comment.replies.length >
+                                                            0 && (
+                                                            <div className="ml-2 mt-4 space-y-3 border-l-2 border-emerald-100 pl-4">
+                                                                {comment.replies.map(
+                                                                    (reply) => (
+                                                                        <div
+                                                                            key={
+                                                                                reply.id
+                                                                            }
+                                                                            className="flex space-x-3 rounded-lg bg-gray-50 p-3"
+                                                                        >
+                                                                            <Avatar className="h-7 w-7 ring-1 ring-gray-200">
+                                                                                <AvatarImage
+                                                                                    src={
+                                                                                        reply
+                                                                                            .user
+                                                                                            .profile_url
+                                                                                    }
+                                                                                    className="object-cover"
+                                                                                />
+                                                                                <AvatarFallback className="bg-emerald-50 text-xs font-medium text-emerald-600">
+                                                                                    {
+                                                                                        reply
+                                                                                            .user
+                                                                                            .name[0]
+                                                                                    }
+                                                                                </AvatarFallback>
+                                                                            </Avatar>
+                                                                            <div className="min-w-0 flex-1">
+                                                                                <div className="mb-1 flex items-center space-x-2">
+                                                                                    <span className="text-sm font-medium text-gray-900">
+                                                                                        {
+                                                                                            reply
+                                                                                                .user
+                                                                                                .name
+                                                                                        }
+                                                                                    </span>
+                                                                                    <span className="text-xs text-gray-500">
+                                                                                        {formatCommentDate(
+                                                                                            reply.created_at,
+                                                                                        )}
+                                                                                    </span>
+                                                                                </div>
+                                                                                <p className="text-sm leading-relaxed text-gray-700">
+                                                                                    {
+                                                                                        reply.comment
+                                                                                    }
+                                                                                </p>
+                                                                            </div>
+                                                                        </div>
+                                                                    ),
+                                                                )}
+                                                            </div>
+                                                        )}
 
-                                            {/* Media */}
-                                            {comment.media_url && (
-                                                <div className="mt-3">
-                                                    {comment.media_type ===
-                                                    'video' ? (
-                                                        <video
-                                                            src={`/storage/${comment.media_url}`}
-                                                            controls
-                                                            preload="metadata"
-                                                            className="aspect-video w-full max-w-sm rounded-lg border"
-                                                        />
-                                                    ) : (
-                                                        <img
-                                                            src={`/storage/${comment.media_url}`}
-                                                            alt={`Media untuk komentar`}
-                                                            className="max-h-72 w-auto rounded-lg border object-cover"
-                                                        />
-                                                    )}
-                                                </div>
-                                            )}
-
-                                            {/* Replies */}
-                                            {comment.replies &&
-                                                comment.replies.length > 0 && (
-                                                    <div className="mt-4 space-y-3 border-l-2 border-gray-200 pl-5">
-                                                        {comment.replies.map(
-                                                            (reply) => (
-                                                                <div
-                                                                    key={
-                                                                        reply.id
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => {
+                                                            if (
+                                                                replying ===
+                                                                comment.id
+                                                            ) {
+                                                                setReplying(
+                                                                    null,
+                                                                );
+                                                            } else {
+                                                                setReplying(
+                                                                    comment.id,
+                                                                );
+                                                                setReplyData({
+                                                                    ...replyData,
+                                                                    reply_id:
+                                                                        comment.id,
+                                                                    comment: '',
+                                                                });
+                                                            }
+                                                        }}
+                                                        className="group mt-3 inline-flex items-center text-sm font-medium text-emerald-600 transition-colors duration-200 hover:text-emerald-700"
+                                                    >
+                                                        <svg
+                                                            className="mr-1 h-4 w-4"
+                                                            fill="none"
+                                                            stroke="currentColor"
+                                                            viewBox="0 0 24 24"
+                                                        >
+                                                            <path
+                                                                strokeLinecap="round"
+                                                                strokeLinejoin="round"
+                                                                strokeWidth={2}
+                                                                d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"
+                                                            />
+                                                        </svg>
+                                                        Balas
+                                                    </button>
+                                                    {replying ===
+                                                        comment.id && (
+                                                        <div className="mt-4 rounded-lg border border-gray-200 bg-gray-50 p-4">
+                                                            <Textarea
+                                                                rows={3}
+                                                                placeholder={`Balas komentar ${comment.user.name}...`}
+                                                                value={
+                                                                    replyData.comment
+                                                                }
+                                                                onChange={(e) =>
+                                                                    setReplyData(
+                                                                        'comment',
+                                                                        e.target
+                                                                            .value,
+                                                                    )
+                                                                }
+                                                                className="resize-none border-gray-300 focus:border-emerald-500 focus:ring-emerald-500"
+                                                            />
+                                                            <div className="mt-3 flex justify-end space-x-2">
+                                                                <Button
+                                                                    size="sm"
+                                                                    variant="outline"
+                                                                    onClick={() =>
+                                                                        setReplying(
+                                                                            null,
+                                                                        )
                                                                     }
-                                                                    className="flex space-x-3"
+                                                                    className="text-gray-600 hover:text-gray-700"
                                                                 >
-                                                                    <Avatar className="h-8 w-8">
-                                                                        <AvatarImage
-                                                                            src={
-                                                                                reply
-                                                                                    .user
-                                                                                    .profile_url
-                                                                            }
-                                                                        />
-                                                                        <AvatarFallback>
-                                                                            {
-                                                                                reply
-                                                                                    .user
-                                                                                    .name[0]
-                                                                            }
-                                                                        </AvatarFallback>
-                                                                    </Avatar>
-                                                                    <div className="flex-1">
-                                                                        <div className="flex items-center space-x-2 text-sm">
-                                                                            <span className="font-semibold text-gray-800">
-                                                                                {
-                                                                                    reply
-                                                                                        .user
-                                                                                        .name
-                                                                                }
-                                                                            </span>
-                                                                            <span className="text-xs text-gray-500">
-                                                                                {formatCommentDate(
-                                                                                    reply.created_at,
-                                                                                )}
+                                                                    Batal
+                                                                </Button>
+                                                                <Button
+                                                                    size="sm"
+                                                                    onClick={
+                                                                        handleReplySubmit
+                                                                    }
+                                                                    disabled={
+                                                                        processingReply ||
+                                                                        !replyData.comment.trim()
+                                                                    }
+                                                                    className="bg-emerald-600 text-white shadow-sm hover:bg-emerald-700"
+                                                                >
+                                                                    {processingReply ? (
+                                                                        <div className="flex items-center space-x-2">
+                                                                            <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+                                                                            <span>
+                                                                                Mengirim...
                                                                             </span>
                                                                         </div>
-                                                                        <p className="text-sm text-gray-700">
-                                                                            {
-                                                                                reply.comment
-                                                                            }
-                                                                        </p>
-                                                                    </div>
-                                                                </div>
-                                                            ),
-                                                        )}
-                                                    </div>
-                                                )}
-
-                                            {/* Reply Button & Form */}
-                                            <button
-                                                type="button"
-                                                onClick={() => {
-                                                    if (
-                                                        replying === comment.id
-                                                    ) {
-                                                        setReplying(null);
-                                                    } else {
-                                                        setReplying(comment.id);
-                                                        setReplyData({
-                                                            ...replyData,
-                                                            reply_id:
-                                                                comment.id,
-                                                            comment: '',
-                                                        });
-                                                    }
-                                                }}
-                                                className="group mt-2 inline-flex items-center ..."
-                                            >
-                                                <CornerUpLeft className="h-3.5 w-3.5 text-gray-400 group-hover:text-gray-500" />
-                                                Balas
-                                            </button>
-
-                                            {replying === comment.id && (
-                                                <div className="mt-2">
-                                                    <Textarea
-                                                        rows={2}
-                                                        placeholder={`Balas komentar ${comment.user.name}...`}
-                                                        value={
-                                                            replyData.comment
-                                                        }
-                                                        onChange={(e) =>
-                                                            setReplyData(
-                                                                'comment',
-                                                                e.target.value,
-                                                            )
-                                                        }
-                                                    />
-                                                    <div className="mt-1 flex justify-end">
-                                                        <Button
-                                                            size="sm"
-                                                            onClick={
-                                                                handleReplySubmit
-                                                            } // Panggil fungsi tanpa argumen
-                                                            disabled={
-                                                                processingReply
-                                                            }
-                                                            className="bg-emerald-600 hover:bg-emerald-700"
-                                                        >
-                                                            {processingReply
-                                                                ? 'Mengirim...'
-                                                                : 'Kirim Balasan'}
-                                                        </Button>
-                                                    </div>
+                                                                    ) : (
+                                                                        'Kirim Balasan'
+                                                                    )}
+                                                                </Button>
+                                                            </div>
+                                                        </div>
+                                                    )}
                                                 </div>
-                                            )}
+                                            </div>
                                         </div>
+                                    ))}
+                                </div>
+                                {hasMoreComments && (
+                                    <div className="flex justify-center border-t border-gray-100 pt-4">
+                                        <button
+                                            onClick={() => setShowAll(!showAll)}
+                                            className="inline-flex items-center rounded-lg px-4 py-2 text-sm font-medium text-emerald-600 transition-colors duration-200 hover:bg-emerald-50 hover:text-emerald-700"
+                                        >
+                                            {showAll ? (
+                                                <>
+                                                    <svg
+                                                        className="mr-2 h-4 w-4"
+                                                        fill="none"
+                                                        stroke="currentColor"
+                                                        viewBox="0 0 24 24"
+                                                    >
+                                                        <path
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                            strokeWidth={2}
+                                                            d="M5 15l7-7 7 7"
+                                                        />
+                                                    </svg>
+                                                    Lihat Sedikit
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <svg
+                                                        className="mr-2 h-4 w-4"
+                                                        fill="none"
+                                                        stroke="currentColor"
+                                                        viewBox="0 0 24 24"
+                                                    >
+                                                        <path
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                            strokeWidth={2}
+                                                            d="M19 9l-7 7-7-7"
+                                                        />
+                                                    </svg>
+                                                    Lihat Semua (
+                                                    {comments.length} komentar)
+                                                </>
+                                            )}
+                                        </button>
                                     </div>
-                                ))}
+                                )}
                             </div>
                         </CardContent>
                     </Card>
