@@ -285,32 +285,412 @@
     "file": "assets/marker-icon-hN30_KVU.png",
     "src": "node_modules/leaflet/dist/images/marker-icon.png"
   },
+  "resources/js/Pages/Auth/Login.tsx": {
+    "file": "assets/Login-D5ZW77L7.js",
+    "name": "Login",
+    "src": "resources/js/Pages/Auth/Login.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.tsx",
+      "_login-form-CdwkB3ES.js",
+      "_card-BBmrTWXU.js",
+      "_input-sdXClQRc.js",
+      "_label-BDwX46Ze.js",
+      "_index-Cm3cBoio.js"
+    ]
+  },
+  "resources/js/Pages/Auth/Register.tsx": {
+    "file": "assets/Register-CpETrZvb.js",
+    "name": "Register",
+    "src": "resources/js/Pages/Auth/Register.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.tsx",
+      "_card-BBmrTWXU.js",
+      "_input-sdXClQRc.js",
+      "_label-BDwX46Ze.js",
+      "_index-Cm3cBoio.js"
+    ]
+  },
+  "resources/js/Pages/Citizen/CompleteProfile.tsx": {
+    "file": "assets/CompleteProfile-Dt2oDLGS.js",
+    "name": "CompleteProfile",
+    "src": "resources/js/Pages/Citizen/CompleteProfile.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.tsx"
+    ]
+  },
+  "resources/js/Pages/Citizen/EducationalContent/EducationalContentDetailsPage.tsx": {
+    "file": "assets/EducationalContentDetailsPage-AxpCP1MA.js",
+    "name": "EducationalContentDetailsPage",
+    "src": "resources/js/Pages/Citizen/EducationalContent/EducationalContentDetailsPage.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.tsx",
+      "_CitizenLayout-CMNJ2BA9.js",
+      "_card-BBmrTWXU.js",
+      "_formatDate-DdkzSpcV.js",
+      "_arrow-left-Bs2ABTHx.js",
+      "_calendar-BV9l0Mbb.js",
+      "_share-2-Bm08Wm5U.js",
+      "_play-BEvZ05Wx.js",
+      "_file-text-DNWXWrmL.js",
+      "_index-Cm3cBoio.js"
+    ]
+  },
+  "resources/js/Pages/Citizen/EducationalContent/EducationalContentPage.tsx": {
+    "file": "assets/EducationalContentPage-BCoobXo8.js",
+    "name": "EducationalContentPage",
+    "src": "resources/js/Pages/Citizen/EducationalContent/EducationalContentPage.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.tsx",
+      "_CitizenLayout-CMNJ2BA9.js",
+      "_card-BBmrTWXU.js",
+      "_input-sdXClQRc.js",
+      "_image-C6Ms-eg6.js",
+      "_play-BEvZ05Wx.js",
+      "_file-text-DNWXWrmL.js",
+      "_select-CCZS_z3t.js",
+      "_formatDate-DdkzSpcV.js",
+      "_filter-_Oe6nhd3.js",
+      "_search-C7dda83S.js",
+      "_calendar-BV9l0Mbb.js",
+      "_index-Cm3cBoio.js",
+      "_index-CIsbbVlV.js"
+    ]
+  },
+  "resources/js/Pages/Citizen/HomePage.tsx": {
+    "file": "assets/HomePage-Ds8jYUjH.js",
+    "name": "HomePage",
+    "src": "resources/js/Pages/Citizen/HomePage.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.tsx",
+      "_card-BBmrTWXU.js",
+      "_plus-B8v3l2CZ.js",
+      "_map-Cyc2hX8T.js",
+      "_file-text-DNWXWrmL.js",
+      "_image-C6Ms-eg6.js"
+    ]
+  },
+  "resources/js/Pages/Citizen/Map/MapPage.tsx": {
+    "file": "assets/MapPage-C_7EnfDe.js",
+    "name": "MapPage",
+    "src": "resources/js/Pages/Citizen/Map/MapPage.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.tsx",
+      "_CitizenLayout-CMNJ2BA9.js",
+      "_MapPage-C-UNjLib.js",
+      "_card-BBmrTWXU.js",
+      "_index-Cm3cBoio.js",
+      "_file-text-DNWXWrmL.js",
+      "_select-CCZS_z3t.js",
+      "_index-CIsbbVlV.js",
+      "_reportStatusColor-7aXPgF-z.js",
+      "_TileLayer-tGd8h-1l.js",
+      "_filter-_Oe6nhd3.js",
+      "_map-pin-LoYpawZ8.js",
+      "_calendar-BV9l0Mbb.js"
+    ]
+  },
+  "resources/js/Pages/Citizen/Mission/MissionPage.tsx": {
+    "file": "assets/MissionPage-Fk3-vlHr.js",
+    "name": "MissionPage",
+    "src": "resources/js/Pages/Citizen/Mission/MissionPage.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.tsx",
+      "_CitizenLayout-CMNJ2BA9.js",
+      "_card-BBmrTWXU.js",
+      "_input-sdXClQRc.js",
+      "_select-CCZS_z3t.js",
+      "_formatDate-DdkzSpcV.js",
+      "_reportStatusColor-7aXPgF-z.js",
+      "_filter-_Oe6nhd3.js",
+      "_search-C7dda83S.js",
+      "_map-pin-LoYpawZ8.js",
+      "_calendar-BV9l0Mbb.js",
+      "_index-Cm3cBoio.js",
+      "_file-text-DNWXWrmL.js",
+      "_index-CIsbbVlV.js"
+    ]
+  },
+  "resources/js/Pages/Citizen/NotFound.tsx": {
+    "file": "assets/NotFound-DeWXe-Kr.js",
+    "name": "NotFound",
+    "src": "resources/js/Pages/Citizen/NotFound.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.tsx"
+    ]
+  },
+  "resources/js/Pages/Citizen/Profile/EditProfilePage.tsx": {
+    "file": "assets/EditProfilePage-BWOgHkjL.js",
+    "name": "EditProfilePage",
+    "src": "resources/js/Pages/Citizen/Profile/EditProfilePage.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.tsx",
+      "_card-BBmrTWXU.js",
+      "_input-sdXClQRc.js",
+      "_label-BDwX46Ze.js",
+      "_select-CCZS_z3t.js",
+      "_textarea-DbymCI5F.js",
+      "_arrow-left-Bs2ABTHx.js",
+      "_CitizenLayout-CMNJ2BA9.js",
+      "_map-pin-LoYpawZ8.js",
+      "_camera-wZGpEHCr.js",
+      "_index-Cm3cBoio.js",
+      "_index-CIsbbVlV.js",
+      "_file-text-DNWXWrmL.js"
+    ]
+  },
+  "resources/js/Pages/Citizen/Profile/ProfilePage.tsx": {
+    "file": "assets/ProfilePage-D9OpDN_w.js",
+    "name": "ProfilePage",
+    "src": "resources/js/Pages/Citizen/Profile/ProfilePage.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.tsx",
+      "_CitizenLayout-CMNJ2BA9.js",
+      "_card-BBmrTWXU.js",
+      "_badgeRarityColor-DCvJoSMa.js",
+      "_formatDate-DdkzSpcV.js",
+      "_map-pin-LoYpawZ8.js",
+      "_calendar-BV9l0Mbb.js",
+      "_file-text-DNWXWrmL.js",
+      "_map-Cyc2hX8T.js",
+      "_plus-B8v3l2CZ.js",
+      "_index-Cm3cBoio.js"
+    ]
+  },
+  "resources/js/Pages/Citizen/Report/CreateReportPage.tsx": {
+    "file": "assets/CreateReportPage-BzgX_O2S.js",
+    "name": "CreateReportPage",
+    "src": "resources/js/Pages/Citizen/Report/CreateReportPage.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.tsx",
+      "_CitizenLayout-CMNJ2BA9.js",
+      "_CreateReportPage-Cm1HmmcJ.js",
+      "_card-BBmrTWXU.js",
+      "_index-Cm3cBoio.js",
+      "_file-text-DNWXWrmL.js",
+      "_input-sdXClQRc.js",
+      "_label-BDwX46Ze.js",
+      "_select-CCZS_z3t.js",
+      "_index-CIsbbVlV.js",
+      "_textarea-DbymCI5F.js",
+      "_arrow-left-Bs2ABTHx.js",
+      "_camera-wZGpEHCr.js",
+      "_map-pin-LoYpawZ8.js"
+    ]
+  },
+  "resources/js/Pages/Citizen/Report/ReportDetailPage.tsx": {
+    "file": "assets/ReportDetailPage-BkCiJCcQ.js",
+    "name": "ReportDetailPage",
+    "src": "resources/js/Pages/Citizen/Report/ReportDetailPage.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.tsx",
+      "_CitizenLayout-CMNJ2BA9.js",
+      "_ReportDetailPage-ng5zczZr.js",
+      "_card-BBmrTWXU.js",
+      "_index-Cm3cBoio.js",
+      "_file-text-DNWXWrmL.js",
+      "_textarea-DbymCI5F.js",
+      "_formatDate-DdkzSpcV.js",
+      "_reportStatusColor-7aXPgF-z.js",
+      "_index-CIsbbVlV.js",
+      "_input-sdXClQRc.js",
+      "_label-BDwX46Ze.js",
+      "_arrow-left-Bs2ABTHx.js",
+      "_calendar-BV9l0Mbb.js",
+      "_map-pin-LoYpawZ8.js",
+      "_share-2-Bm08Wm5U.js",
+      "_thumbs-up-ByrrwGze.js"
+    ]
+  },
+  "resources/js/Pages/Citizen/Report/ReportsPage.tsx": {
+    "file": "assets/ReportsPage-_gNzdRZi.js",
+    "name": "ReportsPage",
+    "src": "resources/js/Pages/Citizen/Report/ReportsPage.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.tsx",
+      "_CitizenLayout-CMNJ2BA9.js",
+      "_ReportsPage-D0PxDD9A.js",
+      "_card-BBmrTWXU.js",
+      "_index-Cm3cBoio.js",
+      "_file-text-DNWXWrmL.js",
+      "_input-sdXClQRc.js",
+      "_select-CCZS_z3t.js",
+      "_index-CIsbbVlV.js",
+      "_formatDate-DdkzSpcV.js",
+      "_reportStatusColor-7aXPgF-z.js",
+      "_plus-B8v3l2CZ.js",
+      "_filter-_Oe6nhd3.js",
+      "_search-C7dda83S.js",
+      "_map-pin-LoYpawZ8.js",
+      "_calendar-BV9l0Mbb.js",
+      "_thumbs-up-ByrrwGze.js"
+    ]
+  },
+  "resources/js/Pages/Community/Map/MapPage.tsx": {
+    "file": "assets/MapPage-DaUCKqel.js",
+    "name": "MapPage",
+    "src": "resources/js/Pages/Community/Map/MapPage.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.tsx",
+      "_CitizenLayout-CMNJ2BA9.js",
+      "_MapPage-C-UNjLib.js",
+      "_card-BBmrTWXU.js",
+      "_index-Cm3cBoio.js",
+      "_file-text-DNWXWrmL.js",
+      "_select-CCZS_z3t.js",
+      "_index-CIsbbVlV.js",
+      "_reportStatusColor-7aXPgF-z.js",
+      "_TileLayer-tGd8h-1l.js",
+      "_filter-_Oe6nhd3.js",
+      "_map-pin-LoYpawZ8.js",
+      "_calendar-BV9l0Mbb.js"
+    ]
+  },
+  "resources/js/Pages/Community/Profile/ProfilePage.tsx": {
+    "file": "assets/ProfilePage-DxbswaI-.js",
+    "name": "ProfilePage",
+    "src": "resources/js/Pages/Community/Profile/ProfilePage.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.tsx",
+      "_CitizenLayout-CMNJ2BA9.js",
+      "_card-BBmrTWXU.js",
+      "_badgeRarityColor-DCvJoSMa.js",
+      "_formatDate-DdkzSpcV.js",
+      "_map-pin-LoYpawZ8.js",
+      "_calendar-BV9l0Mbb.js",
+      "_file-text-DNWXWrmL.js",
+      "_map-Cyc2hX8T.js",
+      "_plus-B8v3l2CZ.js",
+      "_index-Cm3cBoio.js"
+    ]
+  },
+  "resources/js/Pages/Community/Report/CreateReportPage.tsx": {
+    "file": "assets/CreateReportPage-Oo7_lyu7.js",
+    "name": "CreateReportPage",
+    "src": "resources/js/Pages/Community/Report/CreateReportPage.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.tsx",
+      "_CitizenLayout-CMNJ2BA9.js",
+      "_CreateReportPage-Cm1HmmcJ.js",
+      "_card-BBmrTWXU.js",
+      "_index-Cm3cBoio.js",
+      "_file-text-DNWXWrmL.js",
+      "_input-sdXClQRc.js",
+      "_label-BDwX46Ze.js",
+      "_select-CCZS_z3t.js",
+      "_index-CIsbbVlV.js",
+      "_textarea-DbymCI5F.js",
+      "_arrow-left-Bs2ABTHx.js",
+      "_camera-wZGpEHCr.js",
+      "_map-pin-LoYpawZ8.js"
+    ]
+  },
+  "resources/js/Pages/Community/Report/ReportDetailPage.tsx": {
+    "file": "assets/ReportDetailPage-C7FPpMmc.js",
+    "name": "ReportDetailPage",
+    "src": "resources/js/Pages/Community/Report/ReportDetailPage.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.tsx",
+      "_CitizenLayout-CMNJ2BA9.js",
+      "_ReportDetailPage-ng5zczZr.js",
+      "_card-BBmrTWXU.js",
+      "_index-Cm3cBoio.js",
+      "_file-text-DNWXWrmL.js",
+      "_textarea-DbymCI5F.js",
+      "_formatDate-DdkzSpcV.js",
+      "_reportStatusColor-7aXPgF-z.js",
+      "_index-CIsbbVlV.js",
+      "_input-sdXClQRc.js",
+      "_label-BDwX46Ze.js",
+      "_arrow-left-Bs2ABTHx.js",
+      "_calendar-BV9l0Mbb.js",
+      "_map-pin-LoYpawZ8.js",
+      "_share-2-Bm08Wm5U.js",
+      "_thumbs-up-ByrrwGze.js"
+    ]
+  },
+  "resources/js/Pages/Community/Report/ReportPage.tsx": {
+    "file": "assets/ReportPage-BoPCRdX9.js",
+    "name": "ReportPage",
+    "src": "resources/js/Pages/Community/Report/ReportPage.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.tsx",
+      "_CitizenLayout-CMNJ2BA9.js",
+      "_ReportsPage-D0PxDD9A.js",
+      "_card-BBmrTWXU.js",
+      "_index-Cm3cBoio.js",
+      "_file-text-DNWXWrmL.js",
+      "_input-sdXClQRc.js",
+      "_select-CCZS_z3t.js",
+      "_index-CIsbbVlV.js",
+      "_formatDate-DdkzSpcV.js",
+      "_reportStatusColor-7aXPgF-z.js",
+      "_plus-B8v3l2CZ.js",
+      "_filter-_Oe6nhd3.js",
+      "_search-C7dda83S.js",
+      "_map-pin-LoYpawZ8.js",
+      "_calendar-BV9l0Mbb.js",
+      "_thumbs-up-ByrrwGze.js"
+    ]
+  },
+  "resources/js/Pages/login.tsx": {
+    "file": "assets/login-CeliFA9-.js",
+    "name": "login",
+    "src": "resources/js/Pages/login.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.tsx",
+      "_login-form-CdwkB3ES.js",
+      "_card-BBmrTWXU.js",
+      "_input-sdXClQRc.js",
+      "_label-BDwX46Ze.js",
+      "_index-Cm3cBoio.js"
+    ]
+  },
   "resources/js/app.tsx": {
     "file": "assets/app-ATs5ISiJ.js",
     "name": "app",
     "src": "resources/js/app.tsx",
     "isEntry": true,
     "dynamicImports": [
-      "resources/js/pages/Auth/Login.tsx",
-      "resources/js/pages/Auth/Register.tsx",
-      "resources/js/pages/Citizen/CompleteProfile.tsx",
-      "resources/js/pages/Citizen/EducationalContent/EducationalContentDetailsPage.tsx",
-      "resources/js/pages/Citizen/EducationalContent/EducationalContentPage.tsx",
-      "resources/js/pages/Citizen/HomePage.tsx",
-      "resources/js/pages/Citizen/Map/MapPage.tsx",
-      "resources/js/pages/Citizen/Mission/MissionPage.tsx",
-      "resources/js/pages/Citizen/NotFound.tsx",
-      "resources/js/pages/Citizen/Profile/EditProfilePage.tsx",
-      "resources/js/pages/Citizen/Profile/ProfilePage.tsx",
-      "resources/js/pages/Citizen/Report/CreateReportPage.tsx",
-      "resources/js/pages/Citizen/Report/ReportDetailPage.tsx",
-      "resources/js/pages/Citizen/Report/ReportsPage.tsx",
-      "resources/js/pages/Community/Map/MapPage.tsx",
-      "resources/js/pages/Community/Profile/ProfilePage.tsx",
-      "resources/js/pages/Community/Report/CreateReportPage.tsx",
-      "resources/js/pages/Community/Report/ReportDetailPage.tsx",
-      "resources/js/pages/Community/Report/ReportPage.tsx",
-      "resources/js/pages/login.tsx"
+      "resources/js/Pages/Auth/Login.tsx",
+      "resources/js/Pages/Auth/Register.tsx",
+      "resources/js/Pages/Citizen/CompleteProfile.tsx",
+      "resources/js/Pages/Citizen/EducationalContent/EducationalContentDetailsPage.tsx",
+      "resources/js/Pages/Citizen/EducationalContent/EducationalContentPage.tsx",
+      "resources/js/Pages/Citizen/HomePage.tsx",
+      "resources/js/Pages/Citizen/Map/MapPage.tsx",
+      "resources/js/Pages/Citizen/Mission/MissionPage.tsx",
+      "resources/js/Pages/Citizen/NotFound.tsx",
+      "resources/js/Pages/Citizen/Profile/EditProfilePage.tsx",
+      "resources/js/Pages/Citizen/Profile/ProfilePage.tsx",
+      "resources/js/Pages/Citizen/Report/CreateReportPage.tsx",
+      "resources/js/Pages/Citizen/Report/ReportDetailPage.tsx",
+      "resources/js/Pages/Citizen/Report/ReportsPage.tsx",
+      "resources/js/Pages/Community/Map/MapPage.tsx",
+      "resources/js/Pages/Community/Profile/ProfilePage.tsx",
+      "resources/js/Pages/Community/Report/CreateReportPage.tsx",
+      "resources/js/Pages/Community/Report/ReportDetailPage.tsx",
+      "resources/js/Pages/Community/Report/ReportPage.tsx",
+      "resources/js/Pages/login.tsx"
     ],
     "css": [
       "assets/app-B6oikUJA.css"
@@ -331,386 +711,6 @@
       "_TileLayer-tGd8h-1l.js",
       "_index-Cm3cBoio.js",
       "_card-BBmrTWXU.js"
-    ]
-  },
-  "resources/js/pages/Auth/Login.tsx": {
-    "file": "assets/Login-D5ZW77L7.js",
-    "name": "Login",
-    "src": "resources/js/pages/Auth/Login.tsx",
-    "isDynamicEntry": true,
-    "imports": [
-      "resources/js/app.tsx",
-      "_login-form-CdwkB3ES.js",
-      "_card-BBmrTWXU.js",
-      "_input-sdXClQRc.js",
-      "_label-BDwX46Ze.js",
-      "_index-Cm3cBoio.js"
-    ]
-  },
-  "resources/js/pages/Auth/Register.tsx": {
-    "file": "assets/Register-CpETrZvb.js",
-    "name": "Register",
-    "src": "resources/js/pages/Auth/Register.tsx",
-    "isDynamicEntry": true,
-    "imports": [
-      "resources/js/app.tsx",
-      "_card-BBmrTWXU.js",
-      "_input-sdXClQRc.js",
-      "_label-BDwX46Ze.js",
-      "_index-Cm3cBoio.js"
-    ]
-  },
-  "resources/js/pages/Citizen/CompleteProfile.tsx": {
-    "file": "assets/CompleteProfile-Dt2oDLGS.js",
-    "name": "CompleteProfile",
-    "src": "resources/js/pages/Citizen/CompleteProfile.tsx",
-    "isDynamicEntry": true,
-    "imports": [
-      "resources/js/app.tsx"
-    ]
-  },
-  "resources/js/pages/Citizen/EducationalContent/EducationalContentDetailsPage.tsx": {
-    "file": "assets/EducationalContentDetailsPage-AxpCP1MA.js",
-    "name": "EducationalContentDetailsPage",
-    "src": "resources/js/pages/Citizen/EducationalContent/EducationalContentDetailsPage.tsx",
-    "isDynamicEntry": true,
-    "imports": [
-      "resources/js/app.tsx",
-      "_CitizenLayout-CMNJ2BA9.js",
-      "_card-BBmrTWXU.js",
-      "_formatDate-DdkzSpcV.js",
-      "_arrow-left-Bs2ABTHx.js",
-      "_calendar-BV9l0Mbb.js",
-      "_share-2-Bm08Wm5U.js",
-      "_play-BEvZ05Wx.js",
-      "_file-text-DNWXWrmL.js",
-      "_index-Cm3cBoio.js"
-    ]
-  },
-  "resources/js/pages/Citizen/EducationalContent/EducationalContentPage.tsx": {
-    "file": "assets/EducationalContentPage-BCoobXo8.js",
-    "name": "EducationalContentPage",
-    "src": "resources/js/pages/Citizen/EducationalContent/EducationalContentPage.tsx",
-    "isDynamicEntry": true,
-    "imports": [
-      "resources/js/app.tsx",
-      "_CitizenLayout-CMNJ2BA9.js",
-      "_card-BBmrTWXU.js",
-      "_input-sdXClQRc.js",
-      "_image-C6Ms-eg6.js",
-      "_play-BEvZ05Wx.js",
-      "_file-text-DNWXWrmL.js",
-      "_select-CCZS_z3t.js",
-      "_formatDate-DdkzSpcV.js",
-      "_filter-_Oe6nhd3.js",
-      "_search-C7dda83S.js",
-      "_calendar-BV9l0Mbb.js",
-      "_index-Cm3cBoio.js",
-      "_index-CIsbbVlV.js"
-    ]
-  },
-  "resources/js/pages/Citizen/HomePage.tsx": {
-    "file": "assets/HomePage-Ds8jYUjH.js",
-    "name": "HomePage",
-    "src": "resources/js/pages/Citizen/HomePage.tsx",
-    "isDynamicEntry": true,
-    "imports": [
-      "resources/js/app.tsx",
-      "_card-BBmrTWXU.js",
-      "_plus-B8v3l2CZ.js",
-      "_map-Cyc2hX8T.js",
-      "_file-text-DNWXWrmL.js",
-      "_image-C6Ms-eg6.js"
-    ]
-  },
-  "resources/js/pages/Citizen/Map/MapPage.tsx": {
-    "file": "assets/MapPage-C_7EnfDe.js",
-    "name": "MapPage",
-    "src": "resources/js/pages/Citizen/Map/MapPage.tsx",
-    "isDynamicEntry": true,
-    "imports": [
-      "resources/js/app.tsx",
-      "_CitizenLayout-CMNJ2BA9.js",
-      "_MapPage-C-UNjLib.js",
-      "_card-BBmrTWXU.js",
-      "_index-Cm3cBoio.js",
-      "_file-text-DNWXWrmL.js",
-      "_select-CCZS_z3t.js",
-      "_index-CIsbbVlV.js",
-      "_reportStatusColor-7aXPgF-z.js",
-      "_TileLayer-tGd8h-1l.js",
-      "_filter-_Oe6nhd3.js",
-      "_map-pin-LoYpawZ8.js",
-      "_calendar-BV9l0Mbb.js"
-    ]
-  },
-  "resources/js/pages/Citizen/Mission/MissionPage.tsx": {
-    "file": "assets/MissionPage-Fk3-vlHr.js",
-    "name": "MissionPage",
-    "src": "resources/js/pages/Citizen/Mission/MissionPage.tsx",
-    "isDynamicEntry": true,
-    "imports": [
-      "resources/js/app.tsx",
-      "_CitizenLayout-CMNJ2BA9.js",
-      "_card-BBmrTWXU.js",
-      "_input-sdXClQRc.js",
-      "_select-CCZS_z3t.js",
-      "_formatDate-DdkzSpcV.js",
-      "_reportStatusColor-7aXPgF-z.js",
-      "_filter-_Oe6nhd3.js",
-      "_search-C7dda83S.js",
-      "_map-pin-LoYpawZ8.js",
-      "_calendar-BV9l0Mbb.js",
-      "_index-Cm3cBoio.js",
-      "_file-text-DNWXWrmL.js",
-      "_index-CIsbbVlV.js"
-    ]
-  },
-  "resources/js/pages/Citizen/NotFound.tsx": {
-    "file": "assets/NotFound-DeWXe-Kr.js",
-    "name": "NotFound",
-    "src": "resources/js/pages/Citizen/NotFound.tsx",
-    "isDynamicEntry": true,
-    "imports": [
-      "resources/js/app.tsx"
-    ]
-  },
-  "resources/js/pages/Citizen/Profile/EditProfilePage.tsx": {
-    "file": "assets/EditProfilePage-BWOgHkjL.js",
-    "name": "EditProfilePage",
-    "src": "resources/js/pages/Citizen/Profile/EditProfilePage.tsx",
-    "isDynamicEntry": true,
-    "imports": [
-      "resources/js/app.tsx",
-      "_card-BBmrTWXU.js",
-      "_input-sdXClQRc.js",
-      "_label-BDwX46Ze.js",
-      "_select-CCZS_z3t.js",
-      "_textarea-DbymCI5F.js",
-      "_arrow-left-Bs2ABTHx.js",
-      "_CitizenLayout-CMNJ2BA9.js",
-      "_map-pin-LoYpawZ8.js",
-      "_camera-wZGpEHCr.js",
-      "_index-Cm3cBoio.js",
-      "_index-CIsbbVlV.js",
-      "_file-text-DNWXWrmL.js"
-    ]
-  },
-  "resources/js/pages/Citizen/Profile/ProfilePage.tsx": {
-    "file": "assets/ProfilePage-D9OpDN_w.js",
-    "name": "ProfilePage",
-    "src": "resources/js/pages/Citizen/Profile/ProfilePage.tsx",
-    "isDynamicEntry": true,
-    "imports": [
-      "resources/js/app.tsx",
-      "_CitizenLayout-CMNJ2BA9.js",
-      "_card-BBmrTWXU.js",
-      "_badgeRarityColor-DCvJoSMa.js",
-      "_formatDate-DdkzSpcV.js",
-      "_map-pin-LoYpawZ8.js",
-      "_calendar-BV9l0Mbb.js",
-      "_file-text-DNWXWrmL.js",
-      "_map-Cyc2hX8T.js",
-      "_plus-B8v3l2CZ.js",
-      "_index-Cm3cBoio.js"
-    ]
-  },
-  "resources/js/pages/Citizen/Report/CreateReportPage.tsx": {
-    "file": "assets/CreateReportPage-BzgX_O2S.js",
-    "name": "CreateReportPage",
-    "src": "resources/js/pages/Citizen/Report/CreateReportPage.tsx",
-    "isDynamicEntry": true,
-    "imports": [
-      "resources/js/app.tsx",
-      "_CitizenLayout-CMNJ2BA9.js",
-      "_CreateReportPage-Cm1HmmcJ.js",
-      "_card-BBmrTWXU.js",
-      "_index-Cm3cBoio.js",
-      "_file-text-DNWXWrmL.js",
-      "_input-sdXClQRc.js",
-      "_label-BDwX46Ze.js",
-      "_select-CCZS_z3t.js",
-      "_index-CIsbbVlV.js",
-      "_textarea-DbymCI5F.js",
-      "_arrow-left-Bs2ABTHx.js",
-      "_camera-wZGpEHCr.js",
-      "_map-pin-LoYpawZ8.js"
-    ]
-  },
-  "resources/js/pages/Citizen/Report/ReportDetailPage.tsx": {
-    "file": "assets/ReportDetailPage-BkCiJCcQ.js",
-    "name": "ReportDetailPage",
-    "src": "resources/js/pages/Citizen/Report/ReportDetailPage.tsx",
-    "isDynamicEntry": true,
-    "imports": [
-      "resources/js/app.tsx",
-      "_CitizenLayout-CMNJ2BA9.js",
-      "_ReportDetailPage-ng5zczZr.js",
-      "_card-BBmrTWXU.js",
-      "_index-Cm3cBoio.js",
-      "_file-text-DNWXWrmL.js",
-      "_textarea-DbymCI5F.js",
-      "_formatDate-DdkzSpcV.js",
-      "_reportStatusColor-7aXPgF-z.js",
-      "_index-CIsbbVlV.js",
-      "_input-sdXClQRc.js",
-      "_label-BDwX46Ze.js",
-      "_arrow-left-Bs2ABTHx.js",
-      "_calendar-BV9l0Mbb.js",
-      "_map-pin-LoYpawZ8.js",
-      "_share-2-Bm08Wm5U.js",
-      "_thumbs-up-ByrrwGze.js"
-    ]
-  },
-  "resources/js/pages/Citizen/Report/ReportsPage.tsx": {
-    "file": "assets/ReportsPage-_gNzdRZi.js",
-    "name": "ReportsPage",
-    "src": "resources/js/pages/Citizen/Report/ReportsPage.tsx",
-    "isDynamicEntry": true,
-    "imports": [
-      "resources/js/app.tsx",
-      "_CitizenLayout-CMNJ2BA9.js",
-      "_ReportsPage-D0PxDD9A.js",
-      "_card-BBmrTWXU.js",
-      "_index-Cm3cBoio.js",
-      "_file-text-DNWXWrmL.js",
-      "_input-sdXClQRc.js",
-      "_select-CCZS_z3t.js",
-      "_index-CIsbbVlV.js",
-      "_formatDate-DdkzSpcV.js",
-      "_reportStatusColor-7aXPgF-z.js",
-      "_plus-B8v3l2CZ.js",
-      "_filter-_Oe6nhd3.js",
-      "_search-C7dda83S.js",
-      "_map-pin-LoYpawZ8.js",
-      "_calendar-BV9l0Mbb.js",
-      "_thumbs-up-ByrrwGze.js"
-    ]
-  },
-  "resources/js/pages/Community/Map/MapPage.tsx": {
-    "file": "assets/MapPage-DaUCKqel.js",
-    "name": "MapPage",
-    "src": "resources/js/pages/Community/Map/MapPage.tsx",
-    "isDynamicEntry": true,
-    "imports": [
-      "resources/js/app.tsx",
-      "_CitizenLayout-CMNJ2BA9.js",
-      "_MapPage-C-UNjLib.js",
-      "_card-BBmrTWXU.js",
-      "_index-Cm3cBoio.js",
-      "_file-text-DNWXWrmL.js",
-      "_select-CCZS_z3t.js",
-      "_index-CIsbbVlV.js",
-      "_reportStatusColor-7aXPgF-z.js",
-      "_TileLayer-tGd8h-1l.js",
-      "_filter-_Oe6nhd3.js",
-      "_map-pin-LoYpawZ8.js",
-      "_calendar-BV9l0Mbb.js"
-    ]
-  },
-  "resources/js/pages/Community/Profile/ProfilePage.tsx": {
-    "file": "assets/ProfilePage-DxbswaI-.js",
-    "name": "ProfilePage",
-    "src": "resources/js/pages/Community/Profile/ProfilePage.tsx",
-    "isDynamicEntry": true,
-    "imports": [
-      "resources/js/app.tsx",
-      "_CitizenLayout-CMNJ2BA9.js",
-      "_card-BBmrTWXU.js",
-      "_badgeRarityColor-DCvJoSMa.js",
-      "_formatDate-DdkzSpcV.js",
-      "_map-pin-LoYpawZ8.js",
-      "_calendar-BV9l0Mbb.js",
-      "_file-text-DNWXWrmL.js",
-      "_map-Cyc2hX8T.js",
-      "_plus-B8v3l2CZ.js",
-      "_index-Cm3cBoio.js"
-    ]
-  },
-  "resources/js/pages/Community/Report/CreateReportPage.tsx": {
-    "file": "assets/CreateReportPage-Oo7_lyu7.js",
-    "name": "CreateReportPage",
-    "src": "resources/js/pages/Community/Report/CreateReportPage.tsx",
-    "isDynamicEntry": true,
-    "imports": [
-      "resources/js/app.tsx",
-      "_CitizenLayout-CMNJ2BA9.js",
-      "_CreateReportPage-Cm1HmmcJ.js",
-      "_card-BBmrTWXU.js",
-      "_index-Cm3cBoio.js",
-      "_file-text-DNWXWrmL.js",
-      "_input-sdXClQRc.js",
-      "_label-BDwX46Ze.js",
-      "_select-CCZS_z3t.js",
-      "_index-CIsbbVlV.js",
-      "_textarea-DbymCI5F.js",
-      "_arrow-left-Bs2ABTHx.js",
-      "_camera-wZGpEHCr.js",
-      "_map-pin-LoYpawZ8.js"
-    ]
-  },
-  "resources/js/pages/Community/Report/ReportDetailPage.tsx": {
-    "file": "assets/ReportDetailPage-C7FPpMmc.js",
-    "name": "ReportDetailPage",
-    "src": "resources/js/pages/Community/Report/ReportDetailPage.tsx",
-    "isDynamicEntry": true,
-    "imports": [
-      "resources/js/app.tsx",
-      "_CitizenLayout-CMNJ2BA9.js",
-      "_ReportDetailPage-ng5zczZr.js",
-      "_card-BBmrTWXU.js",
-      "_index-Cm3cBoio.js",
-      "_file-text-DNWXWrmL.js",
-      "_textarea-DbymCI5F.js",
-      "_formatDate-DdkzSpcV.js",
-      "_reportStatusColor-7aXPgF-z.js",
-      "_index-CIsbbVlV.js",
-      "_input-sdXClQRc.js",
-      "_label-BDwX46Ze.js",
-      "_arrow-left-Bs2ABTHx.js",
-      "_calendar-BV9l0Mbb.js",
-      "_map-pin-LoYpawZ8.js",
-      "_share-2-Bm08Wm5U.js",
-      "_thumbs-up-ByrrwGze.js"
-    ]
-  },
-  "resources/js/pages/Community/Report/ReportPage.tsx": {
-    "file": "assets/ReportPage-BoPCRdX9.js",
-    "name": "ReportPage",
-    "src": "resources/js/pages/Community/Report/ReportPage.tsx",
-    "isDynamicEntry": true,
-    "imports": [
-      "resources/js/app.tsx",
-      "_CitizenLayout-CMNJ2BA9.js",
-      "_ReportsPage-D0PxDD9A.js",
-      "_card-BBmrTWXU.js",
-      "_index-Cm3cBoio.js",
-      "_file-text-DNWXWrmL.js",
-      "_input-sdXClQRc.js",
-      "_select-CCZS_z3t.js",
-      "_index-CIsbbVlV.js",
-      "_formatDate-DdkzSpcV.js",
-      "_reportStatusColor-7aXPgF-z.js",
-      "_plus-B8v3l2CZ.js",
-      "_filter-_Oe6nhd3.js",
-      "_search-C7dda83S.js",
-      "_map-pin-LoYpawZ8.js",
-      "_calendar-BV9l0Mbb.js",
-      "_thumbs-up-ByrrwGze.js"
-    ]
-  },
-  "resources/js/pages/login.tsx": {
-    "file": "assets/login-CeliFA9-.js",
-    "name": "login",
-    "src": "resources/js/pages/login.tsx",
-    "isDynamicEntry": true,
-    "imports": [
-      "resources/js/app.tsx",
-      "_login-form-CdwkB3ES.js",
-      "_card-BBmrTWXU.js",
-      "_input-sdXClQRc.js",
-      "_label-BDwX46Ze.js",
-      "_index-Cm3cBoio.js"
     ]
   }
 }

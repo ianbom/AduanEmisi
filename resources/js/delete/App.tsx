@@ -4,15 +4,15 @@ import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import ContentDetailsPage from './pages/ContentDetailsPage';
-import CreateReportPage from './pages/CreateReportPage';
-import EducationalContentPage from './pages/EducationalContentPage';
-import HomePage from './pages/HomePage';
-import Index from './pages/Index';
-import MapPage from './pages/MapPage';
-import NotFound from './pages/NotFound';
-import ReportDetailsPage from './pages/ReportDetailsPage';
-import ReportsPage from './pages/ReportsPage';
+import ContentDetailsPage from './Pages/ContentDetailsPage';
+import CreateReportPage from './Pages/CreateReportPage';
+import EducationalContentPage from './Pages/EducationalContentPage';
+import HomePage from './Pages/HomePage';
+import Index from './Pages/Index';
+import MapPage from './Pages/MapPage';
+import NotFound from './Pages/NotFound';
+import ReportDetailsPage from './Pages/ReportDetailsPage';
+import ReportsPage from './Pages/ReportsPage';
 
 const queryClient = new QueryClient();
 
