@@ -20,7 +20,7 @@
                     @csrf
                     @method('PUT')
 
-                    <div class="grid gap-4 mb-4 grid-cols-1">
+                    {{-- <div class="grid gap-4 mb-4 grid-cols-1">
                         <div>
                             <label for="assigned_type" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tugaskan ke</label>
                             <select id="assigned_type" name="assigned_type" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
@@ -32,7 +32,7 @@
                             <label for="notes" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Catatan (Opsional)</label>
                             <textarea id="notes" name="notes" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Tambahkan catatan jika perlu..."></textarea>
                         </div>
-                    </div>
+                    </div> --}}
 
                     <div class="flex items-center space-x-4 border-t pt-4 mt-4">
                         <button type="submit" id="acceptBtn"

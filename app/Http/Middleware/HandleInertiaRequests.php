@@ -2,7 +2,9 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Notification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -34,6 +36,27 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
+             'notifications' => function () {
+                if (Auth::check()) {
+                    $userId = Auth::id();
+                    $notifications = Notification::where('user_id', $userId)
+                        ->get();
+
+                    $unreadCount = Notification::where('user_id', $userId)
+                        ->where('is_read', false)
+                        ->count();
+
+                    return [
+                        'unread_count' => $unreadCount,
+                        'notifications' => $notifications,
+                    ];
+                }
+
+                return [
+                    'unread_count' => 0,
+                    'latest' => [],
+                ];
+            },
         ];
     }
 }

@@ -10,8 +10,8 @@
         <div class="mb-8">
             <div class="flex items-center justify-between">
                 <div>
-                    <h1 class="text-3xl font-bold text-gray-900 mb-2">Manajemen Misi</h1>
-                    <p class="text-gray-600 text-lg">Kelola dan pantau semua misi yang tersedia</p>
+                    <h1 class="text-3xl font-bold text-gray-900 mb-2">Manajemen User</h1>
+                    <p class="text-gray-600 text-lg">Kelola dan pantau semua user yang terdaftar</p>
                 </div>
                 <div class="hidden md:flex items-center space-x-4">
                     <div class="bg-white px-4 py-2 rounded-lg shadow-sm">
@@ -30,40 +30,12 @@
                 <div class="flex items-center">
                     <div class="p-3 bg-blue-100 rounded-lg">
                         <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
                         </svg>
                     </div>
                     <div class="ml-4">
-                        <p class="text-sm font-medium text-gray-600">Total Misi</p>
-                        <p class="text-2xl font-bold text-gray-900">{{ $missions->count() }}</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-                <div class="flex items-center">
-                    <div class="p-3 bg-yellow-100 rounded-lg">
-                        <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                    </div>
-                    <div class="ml-4">
-                        <p class="text-sm font-medium text-gray-600">Pending</p>
-                        <p class="text-2xl font-bold text-gray-900">{{ $missions->where('status', 'pending')->count() }}</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-                <div class="flex items-center">
-                    <div class="p-3 bg-blue-100 rounded-lg">
-                        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                        </svg>
-                    </div>
-                    <div class="ml-4">
-                        <p class="text-sm font-medium text-gray-600">In Progress</p>
-                        <p class="text-2xl font-bold text-gray-900">{{ $missions->where('status', 'in_progress')->count() }}</p>
+                        <p class="text-sm font-medium text-gray-600">Total User</p>
+                        <p class="text-2xl font-bold text-gray-900">{{ $users->count() }}</p>
                     </div>
                 </div>
             </div>
@@ -72,12 +44,40 @@
                 <div class="flex items-center">
                     <div class="p-3 bg-green-100 rounded-lg">
                         <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                         </svg>
                     </div>
                     <div class="ml-4">
-                        <p class="text-sm font-medium text-gray-600">Completed</p>
-                        <p class="text-2xl font-bold text-gray-900">{{ $missions->where('status', 'completed')->count() }}</p>
+                        <p class="text-sm font-medium text-gray-600">Admin</p>
+                        <p class="text-2xl font-bold text-gray-900">{{ $users->where('role', 'admin')->count() }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                <div class="flex items-center">
+                    <div class="p-3 bg-purple-100 rounded-lg">
+                        <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                        </svg>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600">Manager</p>
+                        <p class="text-2xl font-bold text-gray-900">{{ $users->where('role', 'manager')->count() }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                <div class="flex items-center">
+                    <div class="p-3 bg-yellow-100 rounded-lg">
+                        <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                        </svg>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600">User</p>
+                        <p class="text-2xl font-bold text-gray-900">{{ $users->where('role', 'user')->count() }}</p>
                     </div>
                 </div>
             </div>
@@ -87,7 +87,7 @@
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 mb-8">
             <div class="p-6 border-b border-gray-100">
                 <div class="flex items-center justify-between">
-                    <h2 class="text-xl font-semibold text-gray-800">Filter Misi</h2>
+                    <h2 class="text-xl font-semibold text-gray-800">Filter User</h2>
                     <button type="button" id="toggleFilters" class="text-blue-600 hover:text-blue-800 font-medium">
                         <span class="hidden md:inline">Sembunyikan Filter</span>
                         <svg class="w-5 h-5 md:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -98,18 +98,32 @@
             </div>
 
             <div id="filterForm" class="p-6">
-                <form method="GET" action="{{ route('admin.missions.index') }}" class="space-y-6">
+                <form method="GET" action="{{ route('admin.users.index') }}" class="space-y-6">
                     <!-- Row 1 -->
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <!-- Status Filter -->
+                        <!-- Role Filter -->
                         <div class="space-y-2">
-                            <label for="status" class="block text-sm font-semibold text-gray-700">Status</label>
-                            <select name="status" id="status" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
-                                <option value="">Semua Status</option>
-                                <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
-                                <option value="in_progress" {{ request('status') == 'in_progress' ? 'selected' : '' }}>In Progress</option>
-                                <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Completed</option>
-                                <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+                            <label for="role" class="block text-sm font-semibold text-gray-700">Role</label>
+                            <select name="role" id="role" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
+                                <option value="">Semua Role</option>
+                                <option value="admin" {{ request('role') == 'admin' ? 'selected' : '' }}>Admin</option>
+                                <option value="manager" {{ request('role') == 'manager' ? 'selected' : '' }}>Manager</option>
+                                <option value="user" {{ request('role') == 'user' ? 'selected' : '' }}>User</option>
+                            </select>
+                        </div>
+
+                        <!-- Province Filter -->
+                        <div class="space-y-2">
+                            <label for="province_id" class="block text-sm font-semibold text-gray-700">Provinsi</label>
+                            <select name="province_id" id="province_id" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
+                                <option value="">Semua Provinsi</option>
+                                @if(isset($provinces))
+                                    @foreach($provinces as $province)
+                                        <option value="{{ $province->id }}" {{ request('province_id') == $province->id ? 'selected' : '' }}>
+                                            {{ $province->name }}
+                                        </option>
+                                    @endforeach
+                                @endif
                             </select>
                         </div>
 
@@ -127,7 +141,10 @@
                                 @endif
                             </select>
                         </div>
+                    </div>
 
+                    <!-- Row 2 -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <!-- District Filter -->
                         <div class="space-y-2">
                             <label for="district_id" class="block text-sm font-semibold text-gray-700">Kecamatan</label>
@@ -142,27 +159,13 @@
                                 @endif
                             </select>
                         </div>
-                    </div>
-
-                    <!-- Row 2 -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <!-- Assigned To Type Filter -->
-                        <div class="space-y-2">
-                            <label for="assigned_to_type" class="block text-sm font-semibold text-gray-700">Tipe Penugasan</label>
-                            <select name="assigned_to_type" id="assigned_to_type" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
-                                <option value="">Semua Tipe</option>
-                                <option value="user" {{ request('assigned_to_type') == 'user' ? 'selected' : '' }}>User</option>
-                                <option value="team" {{ request('assigned_to_type') == 'team' ? 'selected' : '' }}>Team</option>
-                                <option value="admin" {{ request('assigned_to_type') == 'admin' ? 'selected' : '' }}>Admin</option>
-                            </select>
-                        </div>
 
                         <!-- Search Filter -->
                         <div class="space-y-2">
-                            <label for="search" class="block text-sm font-semibold text-gray-700">Cari Alamat</label>
+                            <label for="search" class="block text-sm font-semibold text-gray-700">Cari Nama</label>
                             <div class="relative">
                                 <input type="text" name="search" id="search" value="{{ request('search') }}"
-                                       placeholder="Cari berdasarkan alamat..."
+                                       placeholder="Cari berdasarkan nama user..."
                                        class="w-full px-4 py-3 pl-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                     <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -172,23 +175,9 @@
                             </div>
                         </div>
 
-                        <!-- Date Range Filter -->
-                        <div class="space-y-2">
-                            <label class="block text-sm font-semibold text-gray-700">Tanggal Terjadwal</label>
-                            <div class="flex space-x-3">
-                                <input type="date" name="date_from" value="{{ request('date_from') }}"
-                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
-                                <input type="date" name="date_to" value="{{ request('date_to') }}"
-                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Row 3 - Additional Date Filters -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Created Date Range -->
                         <div class="space-y-2">
-                            <label class="block text-sm font-semibold text-gray-700">Tanggal Dibuat</label>
+                            <label class="block text-sm font-semibold text-gray-700">Tanggal Mendaftar</label>
                             <div class="flex space-x-3">
                                 <input type="date" name="created_from" value="{{ request('created_from') }}"
                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
@@ -196,22 +185,11 @@
                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
                             </div>
                         </div>
-
-                        <!-- Completed Date Range -->
-                        <div class="space-y-2">
-                            <label class="block text-sm font-semibold text-gray-700">Tanggal Selesai</label>
-                            <div class="flex space-x-3">
-                                <input type="date" name="completed_from" value="{{ request('completed_from') }}"
-                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
-                                <input type="date" name="completed_to" value="{{ request('completed_to') }}"
-                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
-                            </div>
-                        </div>
                     </div>
 
                     <!-- Action Buttons -->
                     <div class="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4 pt-6 border-t border-gray-100">
-                        <a href="{{ route('admin.missions.index') }}"
+                        <a href="{{ route('admin.users.index') }}"
                            class="px-6 py-3 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-all duration-200 font-medium text-center">
                             <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
@@ -226,51 +204,44 @@
                             Terapkan Filter
                         </button>
 
-                        <a href="{{ route('admin.missions.create') }}"
+                        <a href="{{ route('admin.users.create') }}"
                            class="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-200 font-medium inline-flex items-center">
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M12 20h9" />
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M16.5 3a2.121 2.121 0 113 3L7 18.5 3 21l2.5-4L16.5 3z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                             </svg>
-                            Buat Misi
+                            Tambah User
                         </a>
-
-
                     </div>
                 </form>
             </div>
         </div>
 
-
-        <!-- Missions Table -->
-
+        <!-- Users Table -->
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
             <div class="overflow-x-auto">
-                <table id="missionsTable" class="min-w-full divide-y divide-gray-200">
+                <table id="usersTable" class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                                 ID
                             </th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                Judul
+                                Nama
                             </th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                Kota/Kecamatan
+                                Email
                             </th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                Status
+                                Role
                             </th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                Tipe Penugasan
+                                Provinsi/Kota
                             </th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                Tanggal Terjadwal
+                                Kecamatan
                             </th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                Tanggal Dibuat
+                                Tanggal Mendaftar
                             </th>
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                                 Aksi
@@ -278,82 +249,80 @@
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
-                        @foreach($missions as $mission)
+                        @foreach($users as $user)
                             <tr class="hover:bg-gray-50 transition-colors duration-150">
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
-                                    <span class="bg-gray-100 px-2 py-1 rounded-lg">#{{ $mission->id }}</span>
+                                    <span class="bg-gray-100 px-2 py-1 rounded-lg">#{{ $user->id }}</span>
                                 </td>
                                 <td class="px-6 py-4 text-sm text-gray-700">
-                                    <div class="max-w-xs">
-                                        <p class="truncate font-medium">{{ $mission->title ?? '-' }}</p>
+                                    <div class="flex items-center">
+                                        <div class="flex-shrink-0 h-10 w-10">
+                                            <img class="h-10 w-10 rounded-full object-cover"
+                                                 src="{{ $user->profile_photo_url ?? 'https://ui-avatars.com/api/?name='.urlencode($user->name).'&color=7F9CF5&background=EBF4FF' }}"
+                                                 alt="{{ $user->name }}">
+                                        </div>
+                                        <div class="ml-4">
+                                            <div class="text-sm font-medium text-gray-900">{{ $user->name }}</div>
+                                            <div class="text-sm text-gray-500">{{ $user->phone ?? '-' }}</div>
+                                        </div>
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                                    <div class="space-y-1">
-                                        <div class="font-semibold text-gray-900">{{ $mission->city->name ?? '-' }}</div>
-                                        <div class="text-gray-500 text-xs">{{ $mission->district->name ?? '-' }}</div>
-                                    </div>
+                                    {{ $user->email }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     @php
-                                        $statusColors = [
-                                            'pending' => 'bg-yellow-100 text-yellow-800 border-yellow-200',
-                                            'in_progress' => 'bg-blue-100 text-blue-800 border-blue-200',
-                                            'completed' => 'bg-green-100 text-green-800 border-green-200',
-                                            'cancelled' => 'bg-red-100 text-red-800 border-red-200'
-                                        ];
-                                        $statusLabels = [
-                                            'pending' => 'Pending',
-                                            'in_progress' => 'In Progress',
-                                            'completed' => 'Completed',
-                                            'cancelled' => 'Cancelled'
+                                        $roleColors = [
+                                            'admin' => 'bg-red-100 text-red-800 border-red-200',
+                                            'manager' => 'bg-purple-100 text-purple-800 border-purple-200',
+                                            'user' => 'bg-blue-100 text-blue-800 border-blue-200'
                                         ];
                                     @endphp
-                                    <span class="inline-flex items-center px-3 py-1 text-xs font-semibold rounded-full border {{ $statusColors[$mission->status] ?? 'bg-gray-100 text-gray-800 border-gray-200' }}">
-                                        {{ $statusLabels[$mission->status] ?? ucfirst($mission->status) }}
+                                    <span class="inline-flex items-center px-3 py-1 text-xs font-semibold rounded-full border {{ $roleColors[$user->role] ?? 'bg-gray-100 text-gray-800 border-gray-200' }}">
+                                        {{ ucfirst($user->role) }}
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                                    <span class="bg-gray-100 px-2 py-1 rounded-lg text-xs font-medium">
-                                        {{ ucfirst($mission->assigned_to_type ?? '-') }}
-                                    </span>
+                                    <div class="space-y-1">
+                                        <div class="font-semibold text-gray-900">{{ $user->province->name ?? '-' }}</div>
+                                        <div class="text-gray-500 text-xs">{{ $user->city->name ?? '-' }}</div>
+                                    </div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                                    {{ $mission->scheduled_date ? \Carbon\Carbon::parse($mission->scheduled_date)->format('d M Y') : '-' }}
+                                    {{ $user->district->name ?? '-' }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                                    {{ $mission->created_at ? $mission->created_at->format('d M Y') : '-' }}
+                                    {{ $user->created_at ? $user->created_at->format('d M Y') : '-' }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                     <div class="flex items-center space-x-3">
-                                        <a href="{{ route('report.show', $mission->report_id) }}"
+                                        <a href="{{ route('admin.users.show', $user->id) }}"
                                            class="text-blue-600 hover:text-blue-800 transition-colors duration-150">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                                             </svg>
                                         </a>
-                                        <a href="{{ route('admin.missions.edit', $mission->id) }}"
+                                        <a href="{{ route('admin.users.edit', $user->id) }}"
                                            class="text-green-600 hover:text-green-800 transition-colors duration-150">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                                             </svg>
                                         </a>
-                                        {{-- <form action="{{ route('admin.missions.destroy', $mission->id) }}" method="POST" class="inline">
+                                        <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" class="inline">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit"
                                                     class="text-red-600 hover:text-red-800 transition-colors duration-150"
-                                                    onclick="return confirm('Apakah Anda yakin ingin menghapus misi ini?')">
+                                                    onclick="return confirm('Apakah Anda yakin ingin menghapus user ini?')">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                                                 </svg>
                                             </button>
-                                        </form> --}}
+                                        </form>
                                     </div>
                                 </td>
                             </tr>
-
                         @endforeach
                     </tbody>
                 </table>
@@ -363,12 +332,21 @@
 </div>
 @endsection
 
-
 @push('scripts')
 <script>
     $(document).ready(function() {
         // Initialize DataTable
-        $('#missionsTable').DataTable({
+        $('#usersTable').DataTable({
+            responsive: true,
+            language: {
+                search: "Cari:",
+                lengthMenu: "Tampilkan _MENU_ data per halaman",
+                zeroRecords: "Tidak ada data yang ditemukan",
+                info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+                infoEmpty: "Menampilkan 0 sampai 0 dari 0 data",
+                infoFiltered: "(disaring dari _MAX_ total data)",
+
+            }
         });
 
         // Toggle filter functionality
@@ -387,7 +365,7 @@
 
         // Auto-hide filters on mobile if no active filters
         if (window.innerWidth < 768) {
-            const hasActiveFilters = {{ request()->hasAny(['status', 'city_id', 'district_id', 'assigned_to_type', 'search', 'date_from', 'date_to', 'created_from', 'created_to', 'completed_from', 'completed_to']) ? 'true' : 'false' }};
+            const hasActiveFilters = {{ request()->hasAny(['role', 'province_id', 'city_id', 'district_id', 'search', 'created_from', 'created_to']) ? 'true' : 'false' }};
 
             if (!hasActiveFilters) {
                 $('#filterForm').hide();
@@ -417,7 +395,7 @@
         });
 
         // Smooth hover animations for table rows
-        $('#missionsTable tbody tr').hover(
+        $('#usersTable tbody tr').hover(
             function() {
                 $(this).addClass('transform scale-[1.01] transition-transform duration-150');
             },
@@ -425,12 +403,6 @@
                 $(this).removeClass('transform scale-[1.01] transition-transform duration-150');
             }
         );
-
-
     });
 </script>
 @endpush
-
-
-
-

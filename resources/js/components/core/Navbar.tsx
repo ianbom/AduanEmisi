@@ -1,8 +1,11 @@
 import { NavItems, NavUser } from '@/types/navbar/interface';
 import { User } from '@/types/user/interface';
+import { usePage } from '@inertiajs/react';
 import { Bell } from 'lucide-react';
 import { Badge } from '../ui/badge';
 import ProfileMenuDropdown from './ProfileDropdown';
+import { PageProps } from '@/types';
+
 interface NavbarProps {
     navItems: NavItems[];
     onNavigate: (page: string) => void;
@@ -20,6 +23,10 @@ const Navbar = ({
     profileMenuContent,
     user,
 }: NavbarProps) => {
+    // Ambil data notifikasi dari shared props Inertia
+    const { notifications } = usePage<PageProps>().props;
+    const unreadCount = notifications?.unread_count || 0;
+
     return (
         <nav className="fixed left-0 right-0 top-0 z-50 border-b border-emerald-100 bg-white/95 shadow-sm backdrop-blur-md">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -60,9 +67,11 @@ const Navbar = ({
                             className="relative rounded-lg p-2 text-gray-500 transition-colors hover:bg-emerald-50 hover:text-emerald-600"
                         >
                             <Bell size={20} />
-                            <Badge className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center bg-red-500 p-0 text-xs text-white">
-                                3
-                            </Badge>
+                            {unreadCount > 0 && (
+                                <Badge className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center bg-red-500 p-0 text-xs text-white">
+                                    {unreadCount > 99 ? '99+' : unreadCount}
+                                </Badge>
+                            )}
                         </button>
                         <ProfileMenuDropdown
                             user={user as User}
