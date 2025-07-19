@@ -25,7 +25,7 @@ class UpdateContentRequest extends FormRequest
           return [
             'title' => 'nullable|string|max:255',
             'body' => 'nullable|string',
-            'content_type' => 'nullable|string|in:article,news,guide',
+            'content_type' => 'nullable|string',
             'media' => 'nullable|array',
             'media.*' => 'file|mimes:jpeg,png,jpg,gif,mp4,mov,avi|max:10240',
             'media_urls' => 'nullable|array',
