@@ -285,6 +285,11 @@
     "file": "assets/marker-icon-hN30_KVU.png",
     "src": "node_modules/leaflet/dist/images/marker-icon.png"
   },
+  "resources/css/app.css": {
+    "file": "assets/app-BueFmI2C.css",
+    "src": "resources/css/app.css",
+    "isEntry": true
+  },
   "resources/js/Pages/Auth/Login.tsx": {
     "file": "assets/Login-D5ZW77L7.js",
     "name": "Login",
