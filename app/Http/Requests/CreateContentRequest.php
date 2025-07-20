@@ -26,7 +26,7 @@ class CreateContentRequest extends FormRequest
             'body' => 'required|string',
             'content_type' => 'nullable|string',
             'media' => 'nullable|array',
-            'media.*' => 'file|mimes:jpeg,png,jpg,gif,mp4,mov,avi|max:10240',
+            'media.*' => 'file|mimes:jpeg,png,jpg,gif,mp4,mov,avi,pdf|max:10240',
             'media_urls' => 'nullable|array',
             'media_urls.*' => 'nullable|url',
             'media_types' => 'nullable|array',

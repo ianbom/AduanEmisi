@@ -24,7 +24,7 @@ return new class extends Migration
             $table->float('latitude')->nullable();
             $table->float('longitude')->nullable();
             $table->text('address')->nullable();
-            $table->enum('status', ['open', 'on-progress', 'completed', 'cancelled'])->default('open');
+            $table->enum('status', ['open', 'on-progress', 'completed', 'cancelled', 'under-authority'])->default('open');
             $table->timestamp('scheduled_date')->nullable();
             $table->timestamp('completed_at')->nullable();
             $table->enum('assigned_to_type', ['community', 'volunteer'])->nullable();

@@ -74,8 +74,6 @@
                         </p>
                     </div>
 
-
-
                     <!-- Media Upload -->
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">
@@ -86,7 +84,7 @@
                                    id="mediaInput"
                                    name="media[]"
                                    multiple
-                                   accept="image/jpeg,image/png,image/jpg,image/gif,image/svg+xml,image/webp,video/mp4,video/mov,video/avi,video/mkv,video/wmv"
+                                   accept="image/jpeg,image/png,image/jpg,image/gif,image/svg+xml,image/webp,video/mp4,video/mov,video/avi,video/mkv,video/wmv,application/pdf"
                                    class="hidden"
                                    onchange="handleFileSelect(this)">
                             <div class="cursor-pointer" onclick="document.getElementById('mediaInput').click()">
@@ -96,6 +94,7 @@
                                 <p class="text-gray-600 mb-2">Klik untuk upload atau drag & drop file baru</p>
                                 <p class="text-sm text-gray-500">Gambar: JPG, PNG, GIF, SVG, WebP (max 10MB)</p>
                                 <p class="text-sm text-gray-500">Video: MP4, MOV, AVI, MKV, WMV (max 10MB)</p>
+                                <p class="text-sm text-gray-500">Dokumen: PDF (max 10MB)</p>
                             </div>
                         </div>
 
@@ -150,7 +149,6 @@
 
             @if($content->media && $content->media->count() > 0)
             <div class="p-6 space-y-6">
-
                 <label class="block text-sm font-medium text-gray-700 mb-2">
                     Media Saat Ini
                 </label>
@@ -160,35 +158,46 @@
                         @csrf
                         @method('DELETE')
 
-                    <div class="relative bg-gray-100 rounded-lg p-4 border hover:shadow-md transition-shadow" data-media-id="{{ $media->id }}">
-                        @if($media->media_type === 'image')
-                        <div class="relative">
-                            <img src="{{ Storage::url($media->media_url) }}" class="w-full h-24 object-cover rounded mb-2" alt="Media">
-                            <div class="absolute top-1 left-1 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded">
-                                IMG
+                        <div class="relative bg-gray-100 rounded-lg p-4 border hover:shadow-md transition-shadow" data-media-id="{{ $media->id }}">
+                            @if($media->media_type === 'image')
+                            <div class="relative">
+                                <img src="{{ Storage::url($media->media_url) }}" class="w-full h-24 object-cover rounded mb-2" alt="Media">
+                                <div class="absolute top-1 left-1 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded">
+                                    IMG
+                                </div>
                             </div>
+                            @elseif($media->media_type === 'video')
+                            <div class="relative">
+                                <div class="w-full h-24 bg-gray-200 rounded flex items-center justify-center mb-2">
+                                    <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                                    </svg>
+                                </div>
+                                <div class="absolute top-1 left-1 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded">
+                                    VID
+                                </div>
+                            </div>
+                            @elseif($media->media_type === 'document')
+                            <div class="relative">
+                                <div class="w-full h-24 bg-red-100 rounded flex items-center justify-center mb-2">
+                                    <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                    </svg>
+                                </div>
+                                <div class="absolute top-1 left-1 bg-red-500 text-white text-xs px-2 py-1 rounded">
+                                    PDF
+                                </div>
+                            </div>
+                            @endif
+                            <p class="text-sm text-gray-600 truncate font-medium">{{ basename($media->media_url) }}</p>
+                            <p class="text-xs text-gray-500">{{ ucfirst($media->media_type) }}</p>
+                            <button type="submit"
+                                    class="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600 transition-colors"
+                                    onclick="return confirm('Apakah Anda yakin ingin menghapus ini?');">
+                                ×
+                            </button>
                         </div>
-                        @else
-                        <div class="relative">
-                            <div class="w-full h-24 bg-gray-200 rounded flex items-center justify-center mb-2">
-                                <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
-                                </svg>
-                            </div>
-                            <div class="absolute top-1 left-1 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded">
-                                VID
-                            </div>
-                        </div>
-                        @endif
-                        <p class="text-sm text-gray-600 truncate font-medium">{{ basename($media->media_url) }}</p>
-                        <p class="text-xs text-gray-500">{{ ucfirst($media->media_type) }}</p>
-                        <button type="submit"
-                                class="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600 transition-colors"
-                                onclick="return confirm('Apakah Anda yakin ingin menghapus ini?');">
-                            ×
-                        </button>
-                         </form>
-                    </div>
+                    </form>
                     @endforeach
                 </div>
                 <!-- Hidden input untuk media yang akan dihapus -->
@@ -208,6 +217,7 @@ let deletedMediaIds = [];
 const maxFileSize = 10 * 1024 * 1024; // 10MB
 const allowedImageTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/svg+xml', 'image/webp'];
 const allowedVideoTypes = ['video/mp4', 'video/mov', 'video/avi', 'video/mkv', 'video/wmv'];
+const allowedDocumentTypes = ['application/pdf'];
 
 // Store original values for reset functionality
 const originalValues = {
@@ -285,6 +295,17 @@ function resetForm() {
     }
 }
 
+function getFileType(file) {
+    if (allowedImageTypes.includes(file.type)) {
+        return 'image';
+    } else if (allowedVideoTypes.includes(file.type)) {
+        return 'video';
+    } else if (allowedDocumentTypes.includes(file.type)) {
+        return 'document';
+    }
+    return 'unknown';
+}
+
 function handleFileSelect(input) {
     const files = Array.from(input.files);
     const filePreview = document.getElementById('filePreview');
@@ -313,7 +334,7 @@ function handleFileSelect(input) {
         const fileItem = document.createElement('div');
         fileItem.className = 'relative bg-gray-100 rounded-lg p-4 border hover:shadow-md transition-shadow';
 
-        const fileType = file.type.startsWith('image/') ? 'image' : 'video';
+        const fileType = getFileType(file);
 
         if (fileType === 'image') {
             const reader = new FileReader();
@@ -335,12 +356,32 @@ function handleFileSelect(input) {
                 updateProgress(processedFiles, totalFiles);
             };
             reader.readAsDataURL(file);
-        } else {
+        } else if (fileType === 'video') {
             fileItem.innerHTML = `
                 <div class="relative">
                     <div class="w-full h-24 bg-gray-200 rounded flex items-center justify-center mb-2">
                         <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                        </svg>
+                    </div>
+                    <div class="absolute top-1 left-1 bg-green-500 text-white text-xs px-2 py-1 rounded">
+                        NEW
+                    </div>
+                </div>
+                <p class="text-sm text-gray-600 truncate font-medium">${file.name}</p>
+                <p class="text-xs text-gray-500">${formatFileSize(file.size)}</p>
+                <button type="button" onclick="removeFile(${index})" class="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600 transition-colors">
+                    ×
+                </button>
+            `;
+            processedFiles++;
+            updateProgress(processedFiles, totalFiles);
+        } else if (fileType === 'document') {
+            fileItem.innerHTML = `
+                <div class="relative">
+                    <div class="w-full h-24 bg-red-100 rounded flex items-center justify-center mb-2">
+                        <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                         </svg>
                     </div>
                     <div class="absolute top-1 left-1 bg-green-500 text-white text-xs px-2 py-1 rounded">
@@ -373,8 +414,9 @@ function validateFile(file) {
     // Check file type
     const isValidImage = allowedImageTypes.includes(file.type);
     const isValidVideo = allowedVideoTypes.includes(file.type);
+    const isValidDocument = allowedDocumentTypes.includes(file.type);
 
-    if (!isValidImage && !isValidVideo) {
+    if (!isValidImage && !isValidVideo && !isValidDocument) {
         showError(`File "${file.name}" format tidak didukung.`);
         return false;
     }
@@ -432,7 +474,7 @@ function refreshPreview() {
         const fileItem = document.createElement('div');
         fileItem.className = 'relative bg-gray-100 rounded-lg p-4 border hover:shadow-md transition-shadow';
 
-        const fileType = file.type.startsWith('image/') ? 'image' : 'video';
+        const fileType = getFileType(file);
 
         if (fileType === 'image') {
             const reader = new FileReader();
@@ -452,7 +494,7 @@ function refreshPreview() {
                 `;
             };
             reader.readAsDataURL(file);
-        } else {
+        } else if (fileType === 'video') {
             fileItem.innerHTML = `
                 <div class="relative">
                     <div class="w-full h-24 bg-gray-200 rounded flex items-center justify-center mb-2">
@@ -470,128 +512,185 @@ function refreshPreview() {
                     ×
                 </button>
             `;
+        } else if (fileType === 'document') {
+           fileItem.innerHTML = `
+                        <div class="relative">
+                            <div class="flex items-center justify-center w-full h-24 mb-2 bg-red-100 rounded">
+                                <svg class="w-8 h-8 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path>
+                                </svg>
+                            </div>
+                            <div class="absolute px-2 py-1 text-xs text-white bg-red-600 rounded top-1 left-1">
+                                PDF
+                            </div>
+                        </div>
+                        <p class="text-sm font-medium text-gray-600 truncate" title="${file.name}">${file.name}</p>
+                        <p class="text-xs text-gray-500">${formatFileSize(file.size)}</p>
+                        <button type="button" onclick="removeFile(${newIndex})" class="absolute flex items-center justify-center w-6 h-6 text-xs text-white transition-colors bg-red-500 rounded-full top-2 right-2 hover:bg-red-600">
+                            ×
+                        </button>
+                    `;
+                }
+                   filePreview.appendChild(fileItem);
+            });
         }
 
-        filePreview.appendChild(fileItem);
-    });
-}
+        function updateFileInput() {
+            const input = document.getElementById('mediaInput');
+            const dt = new DataTransfer();
 
-function updateFileInput() {
-    const input = document.getElementById('mediaInput');
-    const dt = new DataTransfer();
+            selectedFiles.forEach(file => {
+                dt.items.add(file);
+            });
 
-    selectedFiles.forEach(file => {
-        dt.items.add(file);
-    });
+            input.files = dt.files;
+        }
 
-    input.files = dt.files;
-}
-
-function formatFileSize(bytes) {
+        function formatFileSize(bytes) {
     if (bytes === 0) return '0 Bytes';
-
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+
+function updateFileInput() {
+    const dataTransfer = new DataTransfer();
+    selectedFiles.forEach(file => dataTransfer.items.add(file));
+    document.getElementById('mediaInput').files = dataTransfer.files;
 }
 
 // Drag and drop functionality
 const dropZone = document.getElementById('dropZone');
 
-dropZone.addEventListener('dragover', (e) => {
+['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+    dropZone.addEventListener(eventName, preventDefaults, false);
+});
+
+function preventDefaults(e) {
     e.preventDefault();
+    e.stopPropagation();
+}
+
+['dragenter', 'dragover'].forEach(eventName => {
+    dropZone.addEventListener(eventName, highlight, false);
+});
+
+['dragleave', 'drop'].forEach(eventName => {
+    dropZone.addEventListener(eventName, unhighlight, false);
+});
+
+function highlight() {
     dropZone.classList.add('border-blue-400', 'bg-blue-50');
-});
+}
 
-dropZone.addEventListener('dragleave', (e) => {
-    e.preventDefault();
+function unhighlight() {
     dropZone.classList.remove('border-blue-400', 'bg-blue-50');
-});
+}
 
-dropZone.addEventListener('drop', (e) => {
-    e.preventDefault();
-    dropZone.classList.remove('border-blue-400', 'bg-blue-50');
+dropZone.addEventListener('drop', handleDrop, false);
 
-    const files = Array.from(e.dataTransfer.files);
-    const input = document.getElementById('mediaInput');
+function handleDrop(e) {
+    const dt = e.dataTransfer;
+    const files = dt.files;
+    document.getElementById('mediaInput').files = files;
+    handleFileSelect(document.getElementById('mediaInput'));
+}
 
-    const dt = new DataTransfer();
-    files.forEach(file => {
-        dt.items.add(file);
-    });
-
-    input.files = dt.files;
-    handleFileSelect(input);
-});
-
-// Form submission handling
+// Form submission handler
 document.getElementById('contentForm').addEventListener('submit', function(e) {
     const submitBtn = document.getElementById('submitBtn');
     const submitText = document.getElementById('submitText');
     const submitLoader = document.getElementById('submitLoader');
 
-    // Disable button and show loading
+    // Show loading state
     submitBtn.disabled = true;
-    submitText.textContent = 'Memperbarui...';
+    submitText.textContent = 'Menyimpan...';
     submitLoader.classList.remove('hidden');
 
-    // Validate required fields
+    // Validate form
     const title = document.getElementById('title').value.trim();
     const body = document.getElementById('body').value.trim();
 
-    if (!title || !body) {
+    if (!title || title.length === 0) {
         e.preventDefault();
+        showNotification('Judul konten wajib diisi', 'error');
         submitBtn.disabled = false;
         submitText.textContent = 'Update Konten';
         submitLoader.classList.add('hidden');
-        showError('Judul dan konten wajib diisi!');
         return;
     }
 
-    // If validation passes, let the form submit normally
-});
-
-// Check for unsaved changes
-let hasUnsavedChanges = false;
-
-function checkForChanges() {
-    const currentTitle = document.getElementById('title').value;
-    const currentBody = document.getElementById('body').value;
-    const currentContentType = document.getElementById('content_type').value;
-
-    hasUnsavedChanges = (
-        currentTitle !== originalValues.title ||
-        currentBody !== originalValues.body ||
-        currentContentType !== originalValues.content_type ||
-        selectedFiles.length > 0 ||
-        deletedMediaIds.length > 0
-    );
-}
-
-// Add change listeners
-document.getElementById('title').addEventListener('input', checkForChanges);
-document.getElementById('body').addEventListener('input', checkForChanges);
-document.getElementById('content_type').addEventListener('change', checkForChanges);
-
-// Warn before leaving page with unsaved changes
-window.addEventListener('beforeunload', function(e) {
-    if (hasUnsavedChanges) {
+    if (!body || body.length === 0) {
         e.preventDefault();
-        e.returnValue = '';
-        return '';
+        showNotification('Konten wajib diisi', 'error');
+        submitBtn.disabled = false;
+        submitText.textContent = 'Update Konten';
+        submitLoader.classList.add('hidden');
+        return;
     }
+
+    // If everything is OK, form will submit normally
 });
 
 // Initialize character counters on page load
 document.addEventListener('DOMContentLoaded', function() {
-    const titleInput = document.getElementById('title');
-    const bodyInput = document.getElementById('body');
+    // Title counter
+    const title = document.getElementById('title').value;
+    document.getElementById('titleCount').textContent = title.length;
 
-    // Update character counters
-    document.getElementById('titleCount').textContent = titleInput.value.length;
-    document.getElementById('bodyCount').textContent = bodyInput.value.length.toLocaleString();
+    // Body counter
+    const body = document.getElementById('body').value;
+    document.getElementById('bodyCount').textContent = body.length.toLocaleString();
+
+    // Set up existing media removal
+    document.querySelectorAll('#existingMedia button[type="submit"]').forEach(button => {
+        button.addEventListener('click', function(e) {
+            if (!confirm('Apakah Anda yakin ingin menghapus media ini?')) {
+                e.preventDefault();
+            }
+        });
+    });
 });
+
+// Initialize drop zone
+document.addEventListener('DOMContentLoaded', function() {
+    const dropZone = document.getElementById('dropZone');
+
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, preventDefaults, false);
+        document.body.addEventListener(eventName, preventDefaults, false);
+    });
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dropZone.addEventListener(eventName, highlight, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, unhighlight, false);
+    });
+
+    dropZone.addEventListener('drop', handleDrop, false);
+});
+
+function preventDefaults(e) {
+    e.preventDefault();
+    e.stopPropagation();
+}
+
+function highlight() {
+    dropZone.classList.add('border-blue-400', 'bg-blue-50');
+}
+
+function unhighlight() {
+    dropZone.classList.remove('border-blue-400', 'bg-blue-50');
+}
+
+function handleDrop(e) {
+    const dt = e.dataTransfer;
+    const files = dt.files;
+    document.getElementById('mediaInput').files = files;
+    handleFileSelect(document.getElementById('mediaInput'));
+}
 </script>
 @endpush

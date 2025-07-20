@@ -25,7 +25,7 @@ return new class extends Migration
             $table->float('latitude')->nullable();
             $table->float('longitude')->nullable();
             $table->text('address')->nullable();
-            $table->enum('status', ['pending', 'verified', 'on-progress', 'rejected', 'completed'])->default('pending');
+            $table->enum('status', ['pending', 'verified', 'on-progress', 'rejected', 'completed', 'under-authority'])->default('pending');
             $table->integer('upvotes_count')->default(0);
             $table->integer('dislikes_count')->default(0);
             $table->timestamp('verified_at')->nullable();

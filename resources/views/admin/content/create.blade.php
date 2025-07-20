@@ -9,7 +9,7 @@
             <p class="text-gray-600">Buat konten baru dengan media pendukung</p>
         </div>
 
-            @include('admin.components.notification')
+        @include('admin.components.notification')
 
         <!-- Form Card -->
         <div class="overflow-hidden bg-white rounded-lg shadow-md">
@@ -83,7 +83,7 @@
                                    id="mediaInput"
                                    name="media[]"
                                    multiple
-                                   accept="image/jpeg,image/png,image/jpg,image/gif,image/svg+xml,image/webp,video/mp4,video/mov,video/avi,video/mkv,video/wmv"
+                                   accept="image/*,video/*,application/pdf,.pdf"
                                    class="hidden"
                                    onchange="handleFileSelect(this)">
                             <div class="cursor-pointer" onclick="document.getElementById('mediaInput').click()">
@@ -93,6 +93,7 @@
                                 <p class="mb-2 text-gray-600">Klik untuk upload atau drag & drop file</p>
                                 <p class="text-sm text-gray-500">Gambar: JPG, PNG, GIF, SVG, WebP (max 10MB)</p>
                                 <p class="text-sm text-gray-500">Video: MP4, MOV, AVI, MKV, WMV (max 10MB)</p>
+                                <p class="text-sm text-gray-500">Dokumen: PDF (max 10MB)</p>
                             </div>
                         </div>
 
@@ -107,14 +108,14 @@
                             <p class="mt-1 text-sm text-gray-600">Memproses file... <span id="progressText">0%</span></p>
                         </div>
 
-                            @error('media')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                            @error('media.*')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
+                        @error('media')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                        @error('media.*')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
                     </div>
+                </div>
 
                 <!-- Form Footer -->
                 <div class="flex justify-end px-6 py-4 space-x-3 bg-gray-50">
@@ -144,6 +145,7 @@
         const maxFileSize = 10 * 1024 * 1024; // 10MB
         const allowedImageTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/svg+xml', 'image/webp'];
         const allowedVideoTypes = ['video/mp4', 'video/mov', 'video/avi', 'video/mkv', 'video/wmv'];
+        const allowedPdfTypes = ['application/pdf'];
 
         // Character counter for title
         document.getElementById('title').addEventListener('input', function() {
@@ -207,46 +209,66 @@
                 const fileItem = document.createElement('div');
                 fileItem.className = 'relative bg-gray-100 rounded-lg p-4 border hover:shadow-md transition-shadow';
 
-                const fileType = file.type.startsWith('image/') ? 'image' : 'video';
+                const fileType = getFileType(file);
 
                 if (fileType === 'image') {
                     const reader = new FileReader();
                     reader.onload = function(e) {
                         fileItem.innerHTML = `
-                    <div class="relative">
-                        <img src="${e.target.result}" class="object-cover w-full h-24 mb-2 rounded">
-                        <div class="absolute px-2 py-1 text-xs text-white bg-black bg-opacity-50 rounded top-1 left-1">
-                            IMG
-                        </div>
-                    </div>
-                    <p class="text-sm font-medium text-gray-600 truncate">${file.name}</p>
-                    <p class="text-xs text-gray-500">${formatFileSize(file.size)}</p>
-                    <button type="button" onclick="removeFile(${index})" class="absolute flex items-center justify-center w-6 h-6 text-xs text-white transition-colors bg-red-500 rounded-full top-2 right-2 hover:bg-red-600">
-                        ×
-                    </button>
-                `;
+                            <div class="relative">
+                                <img src="${e.target.result}" class="object-cover w-full h-24 mb-2 rounded">
+                                <div class="absolute px-2 py-1 text-xs text-white bg-black bg-opacity-50 rounded top-1 left-1">
+                                    IMG
+                                </div>
+                            </div>
+                            <p class="text-sm font-medium text-gray-600 truncate">${file.name}</p>
+                            <p class="text-xs text-gray-500">${formatFileSize(file.size)}</p>
+                            <button type="button" onclick="removeFile(${index})" class="absolute flex items-center justify-center w-6 h-6 text-xs text-white transition-colors bg-red-500 rounded-full top-2 right-2 hover:bg-red-600">
+                                ×
+                            </button>
+                        `;
                         processedFiles++;
                         updateProgress(processedFiles, totalFiles);
                     };
                     reader.readAsDataURL(file);
-                } else {
+                } else if (fileType === 'video') {
                     fileItem.innerHTML = `
-                <div class="relative">
-                    <div class="flex items-center justify-center w-full h-24 mb-2 bg-gray-200 rounded">
-                        <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
-                        </svg>
-                    </div>
-                    <div class="absolute px-2 py-1 text-xs text-white bg-black bg-opacity-50 rounded top-1 left-1">
-                        VID
-                    </div>
-                </div>
-                <p class="text-sm font-medium text-gray-600 truncate">${file.name}</p>
-                <p class="text-xs text-gray-500">${formatFileSize(file.size)}</p>
-                <button type="button" onclick="removeFile(${index})" class="absolute flex items-center justify-center w-6 h-6 text-xs text-white transition-colors bg-red-500 rounded-full top-2 right-2 hover:bg-red-600">
-                    ×
-                </button>
-            `;
+                        <div class="relative">
+                            <div class="flex items-center justify-center w-full h-24 mb-2 bg-gray-200 rounded">
+                                <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                                </svg>
+                            </div>
+                            <div class="absolute px-2 py-1 text-xs text-white bg-black bg-opacity-50 rounded top-1 left-1">
+                                VID
+                            </div>
+                        </div>
+                        <p class="text-sm font-medium text-gray-600 truncate">${file.name}</p>
+                        <p class="text-xs text-gray-500">${formatFileSize(file.size)}</p>
+                        <button type="button" onclick="removeFile(${index})" class="absolute flex items-center justify-center w-6 h-6 text-xs text-white transition-colors bg-red-500 rounded-full top-2 right-2 hover:bg-red-600">
+                            ×
+                        </button>
+                    `;
+                    processedFiles++;
+                    updateProgress(processedFiles, totalFiles);
+                } else if (fileType === 'pdf') {
+                    fileItem.innerHTML = `
+                        <div class="relative">
+                            <div class="flex items-center justify-center w-full h-24 mb-2 bg-red-100 rounded">
+                                <svg class="w-8 h-8 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path>
+                                </svg>
+                            </div>
+                            <div class="absolute px-2 py-1 text-xs text-white bg-red-600 rounded top-1 left-1">
+                                PDF
+                            </div>
+                        </div>
+                        <p class="text-sm font-medium text-gray-600 truncate" title="${file.name}">${file.name}</p>
+                        <p class="text-xs text-gray-500">${formatFileSize(file.size)}</p>
+                        <button type="button" onclick="removeFile(${index})" class="absolute flex items-center justify-center w-6 h-6 text-xs text-white transition-colors bg-red-500 rounded-full top-2 right-2 hover:bg-red-600">
+                            ×
+                        </button>
+                    `;
                     processedFiles++;
                     updateProgress(processedFiles, totalFiles);
                 }
@@ -255,6 +277,17 @@
             });
 
             updateFileInput();
+        }
+
+        function getFileType(file) {
+            if (allowedImageTypes.includes(file.type)) {
+                return 'image';
+            } else if (allowedVideoTypes.includes(file.type)) {
+                return 'video';
+            } else if (allowedPdfTypes.includes(file.type)) {
+                return 'pdf';
+            }
+            return 'unknown';
         }
 
         function validateFile(file) {
@@ -267,9 +300,10 @@
             // Check file type
             const isValidImage = allowedImageTypes.includes(file.type);
             const isValidVideo = allowedVideoTypes.includes(file.type);
+            const isValidPdf = allowedPdfTypes.includes(file.type);
 
-            if (!isValidImage && !isValidVideo) {
-                showError(`File "${file.name}" format tidak didukung.`);
+            if (!isValidImage && !isValidVideo && !isValidPdf) {
+                showError(`File "${file.name}" format tidak didukung. Hanya mendukung gambar, video, dan PDF.`);
                 return false;
             }
 
@@ -316,44 +350,62 @@
                 const fileItem = document.createElement('div');
                 fileItem.className = 'relative bg-gray-100 rounded-lg p-4 border hover:shadow-md transition-shadow';
 
-                const fileType = file.type.startsWith('image/') ? 'image' : 'video';
+                const fileType = getFileType(file);
 
                 if (fileType === 'image') {
                     const reader = new FileReader();
                     reader.onload = function(e) {
                         fileItem.innerHTML = `
-                    <div class="relative">
-                        <img src="${e.target.result}" class="object-cover w-full h-24 mb-2 rounded">
-                        <div class="absolute px-2 py-1 text-xs text-white bg-black bg-opacity-50 rounded top-1 left-1">
-                            IMG
-                        </div>
-                    </div>
-                    <p class="text-sm font-medium text-gray-600 truncate">${file.name}</p>
-                    <p class="text-xs text-gray-500">${formatFileSize(file.size)}</p>
-                    <button type="button" onclick="removeFile(${newIndex})" class="absolute flex items-center justify-center w-6 h-6 text-xs text-white transition-colors bg-red-500 rounded-full top-2 right-2 hover:bg-red-600">
-                        ×
-                    </button>
-                `;
+                            <div class="relative">
+                                <img src="${e.target.result}" class="object-cover w-full h-24 mb-2 rounded">
+                                <div class="absolute px-2 py-1 text-xs text-white bg-black bg-opacity-50 rounded top-1 left-1">
+                                    IMG
+                                </div>
+                            </div>
+                            <p class="text-sm font-medium text-gray-600 truncate">${file.name}</p>
+                            <p class="text-xs text-gray-500">${formatFileSize(file.size)}</p>
+                            <button type="button" onclick="removeFile(${newIndex})" class="absolute flex items-center justify-center w-6 h-6 text-xs text-white transition-colors bg-red-500 rounded-full top-2 right-2 hover:bg-red-600">
+                                ×
+                            </button>
+                        `;
                     };
                     reader.readAsDataURL(file);
-                } else {
+                } else if (fileType === 'video') {
                     fileItem.innerHTML = `
-                <div class="relative">
-                    <div class="flex items-center justify-center w-full h-24 mb-2 bg-gray-200 rounded">
-                        <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
-                        </svg>
-                    </div>
-                    <div class="absolute px-2 py-1 text-xs text-white bg-black bg-opacity-50 rounded top-1 left-1">
-                        VID
-                    </div>
-                </div>
-                <p class="text-sm font-medium text-gray-600 truncate">${file.name}</p>
-                <p class="text-xs text-gray-500">${formatFileSize(file.size)}</p>
-                <button type="button" onclick="removeFile(${newIndex})" class="absolute flex items-center justify-center w-6 h-6 text-xs text-white transition-colors bg-red-500 rounded-full top-2 right-2 hover:bg-red-600">
-                    ×
-                </button>
-            `;
+                        <div class="relative">
+                            <div class="flex items-center justify-center w-full h-24 mb-2 bg-gray-200 rounded">
+                                <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                                </svg>
+                            </div>
+                            <div class="absolute px-2 py-1 text-xs text-white bg-black bg-opacity-50 rounded top-1 left-1">
+                                VID
+                            </div>
+                        </div>
+                        <p class="text-sm font-medium text-gray-600 truncate">${file.name}</p>
+                        <p class="text-xs text-gray-500">${formatFileSize(file.size)}</p>
+                        <button type="button" onclick="removeFile(${newIndex})" class="absolute flex items-center justify-center w-6 h-6 text-xs text-white transition-colors bg-red-500 rounded-full top-2 right-2 hover:bg-red-600">
+                            ×
+                        </button>
+                    `;
+                } else if (fileType === 'pdf') {
+                    fileItem.innerHTML = `
+                        <div class="relative">
+                            <div class="flex items-center justify-center w-full h-24 mb-2 bg-red-100 rounded">
+                                <svg class="w-8 h-8 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path>
+                                </svg>
+                            </div>
+                            <div class="absolute px-2 py-1 text-xs text-white bg-red-600 rounded top-1 left-1">
+                                PDF
+                            </div>
+                        </div>
+                        <p class="text-sm font-medium text-gray-600 truncate" title="${file.name}">${file.name}</p>
+                        <p class="text-xs text-gray-500">${formatFileSize(file.size)}</p>
+                        <button type="button" onclick="removeFile(${newIndex})" class="absolute flex items-center justify-center w-6 h-6 text-xs text-white transition-colors bg-red-500 rounded-full top-2 right-2 hover:bg-red-600">
+                            ×
+                        </button>
+                    `;
                 }
 
                 filePreview.appendChild(fileItem);
@@ -478,8 +530,7 @@
 
                             // Update character counters
                             document.getElementById('titleCount').textContent = (draftData.title || '').length;
-                            document.getElementById('bodyCount').textContent = (draftData.body || '').length
-                                .toLocaleString();
+                            document.getElementById('bodyCount').textContent = (draftData.body || '').length.toLocaleString();
                         }
                     }
                 } catch (e) {
