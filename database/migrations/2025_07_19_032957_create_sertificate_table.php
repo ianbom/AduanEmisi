@@ -11,11 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-         Schema::create('content_media', function (Blueprint $table) {
+        Schema::create('sertificate', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('content_id')->constrained('contents')->onDelete('cascade');
-            $table->string('media_url');
-            $table->enum('media_type', ['image', 'video', 'document']);
+            $table->string('name');
+            $table->string('template');
             $table->timestamps();
         });
     }
@@ -25,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('content_media');
+        Schema::dropIfExists('sertificate');
     }
 };
