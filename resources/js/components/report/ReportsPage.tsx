@@ -1,4 +1,3 @@
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -25,6 +24,7 @@ import {
     ThumbsUp,
 } from 'lucide-react';
 import { useState } from 'react';
+import Badge from '../core/Badge';
 interface ReportsPageProps {
     reports: Report[];
     myReports: boolean;
@@ -266,7 +266,7 @@ const ReportsPage = ({
                                                     {report.status}
                                                 </Badge>
                                                 {report.mission && (
-                                                    <Badge className="bg-blue-100 text-blue-700">
+                                                    <Badge className="bg-indigo-100 text-indigo-700">
                                                         Ada Misi
                                                     </Badge>
                                                 )}
@@ -275,10 +275,7 @@ const ReportsPage = ({
 
                                         <CardContent className="p-4">
                                             <div className="mb-2">
-                                                <Badge
-                                                    variant="outline"
-                                                    className="mb-2 text-xs"
-                                                >
+                                                <Badge className="border border-gray-400 bg-white text-gray-700">
                                                     {report.category}
                                                 </Badge>
                                             </div>
@@ -322,7 +319,7 @@ const ReportsPage = ({
                                                                 0}
                                                         </span>
                                                     </div>
-                                                    <div className="flex items-center text-sm font-medium text-emerald-600">
+                                                    <div className="flex items-center text-sm font-medium text-rose-600">
                                                         <ThumbsDown
                                                             size={14}
                                                             className="mr-1"

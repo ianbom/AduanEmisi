@@ -2,7 +2,6 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
 import {
     Select,
     SelectContent,
@@ -16,14 +15,7 @@ import { getStatusColor } from '@/utils/reportStatusColor';
 import { Report } from '@/types/report';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import {
-    Calendar,
-    Eye,
-    Filter,
-    MapPin,
-    Search,
-    TrendingUp,
-} from 'lucide-react';
+import { Calendar, Eye, Filter, MapPin, TrendingUp } from 'lucide-react';
 import { useState } from 'react';
 import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
 interface MapPageProps {
@@ -52,16 +44,20 @@ const MapPage = ({
 }: MapPageProps) => {
     const [showFilters, setShowFilters] = useState(false);
     return (
-        <div className="flex h-screen">
-            <div
+        // <div className="flex h-screen">
+        <div className="flex h-screen flex-col lg:flex-row">
+            {/* <div
                 className={`w-80 border-r border-gray-200 bg-white shadow-lg transition-transform duration-300 ${
                     showFilters
                         ? 'translate-x-0'
                         : '-translate-x-full lg:translate-x-0'
                 } fixed z-30 h-full overflow-y-auto lg:relative`}
+            > */}
+            <div
+                className={`bg-white shadow-lg transition-all duration-300 ${showFilters ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'} overflow-hidden lg:relative lg:max-h-full lg:w-80 lg:border-r lg:border-gray-200 lg:opacity-100`}
             >
                 <div className="p-6">
-                    <div className="flex items-center justify-between mb-6">
+                    <div className="mb-6 flex items-center justify-between">
                         <h2 className="flex items-center text-xl font-semibold text-gray-900">
                             <Filter
                                 size={20}
@@ -225,11 +221,20 @@ const MapPage = ({
             </div>
             {/* Main Map Area */}
             <div className="relative flex-1">
+                <div className="p-4 lg:hidden">
+                    <Button
+                        onClick={() => setShowFilters(!showFilters)}
+                        className="w-full bg-emerald-600 text-white"
+                    >
+                        {showFilters ? 'Tutup Filter' : 'Tampilkan Filter'}
+                    </Button>
+                </div>
+
                 <MapContainer
                     center={[-2.5489, 118.0149]}
                     zoom={5}
                     scrollWheelZoom={true}
-                    className="z-10 w-full h-full"
+                    className="z-10 h-full w-full"
                 >
                     <TileLayer
                         attribution='&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>'
@@ -248,24 +253,24 @@ const MapPage = ({
                                 closeButton={true}
                                 autoPan={true}
                             >
-                                <div className="relative overflow-hidden bg-white rounded-lg shadow-lg">
+                                <div className="relative overflow-hidden rounded-lg bg-white shadow-lg">
                                     <div className="relative h-32 bg-gradient-to-r from-emerald-500 to-teal-600">
                                         {report.media?.[0] ? (
                                             report.media[0].media_type?.startsWith(
                                                 'video',
                                             ) ? (
-                                                <div className="relative w-full h-full bg-black">
+                                                <div className="relative h-full w-full bg-black">
                                                     <video
-                                                        className="object-cover w-full h-full opacity-50"
+                                                        className="h-full w-full object-cover opacity-50"
                                                         src={`/storage/${report.media[0].media_url}`}
                                                         muted
                                                         preload="metadata"
                                                     />
                                                     <div className="absolute inset-0 flex items-center justify-center">
-                                                        <div className="p-2 rounded-full bg-white/80">
+                                                        <div className="rounded-full bg-white/80 p-2">
                                                             <svg
                                                                 xmlns="http://www.w3.org/2000/svg"
-                                                                className="w-6 h-6 text-black"
+                                                                className="h-6 w-6 text-black"
                                                                 fill="none"
                                                                 viewBox="0 0 24 24"
                                                                 stroke="currentColor"
@@ -286,13 +291,13 @@ const MapPage = ({
                                                 <img
                                                     src={`/storage/${report.media[0].media_url}`}
                                                     alt={report.title}
-                                                    className="object-cover w-full h-full"
+                                                    className="h-full w-full object-cover"
                                                 />
                                             )
                                         ) : (
-                                            <div className="flex items-center justify-center h-full bg-gray-800">
+                                            <div className="flex h-full items-center justify-center bg-gray-800">
                                                 <svg
-                                                    className="w-8 h-8 text-white/80"
+                                                    className="h-8 w-8 text-white/80"
                                                     fill="none"
                                                     stroke="currentColor"
                                                     viewBox="0 0 24 24"
@@ -317,7 +322,7 @@ const MapPage = ({
 
                                         {report.hasMission && (
                                             <div className="absolute left-2 top-2">
-                                                <Badge className="text-xs font-medium text-white bg-blue-500 shadow-sm">
+                                                <Badge className="bg-blue-500 text-xs font-medium text-white shadow-sm">
                                                     Ada Misi
                                                 </Badge>
                                             </div>
@@ -328,17 +333,17 @@ const MapPage = ({
                                         <div className="mb-2">
                                             <Badge
                                                 variant="outline"
-                                                className="text-xs font-medium text-gray-700 border-gray-200 bg-gray-50"
+                                                className="border-gray-200 bg-gray-50 text-xs font-medium text-gray-700"
                                             >
                                                 {report.category}
                                             </Badge>
                                         </div>
 
-                                        <h3 className="mb-3 text-base font-semibold leading-tight text-gray-900 line-clamp-2">
+                                        <h3 className="mb-3 line-clamp-2 text-base font-semibold leading-tight text-gray-900">
                                             {report.title}
                                         </h3>
 
-                                        <div className="flex items-start mb-3 text-sm text-gray-600">
+                                        <div className="mb-3 flex items-start text-sm text-gray-600">
                                             <MapPin
                                                 size={14}
                                                 className="mr-2 mt-0.5 flex-shrink-0 text-gray-400"
@@ -348,7 +353,7 @@ const MapPage = ({
                                             </span>
                                         </div>
 
-                                        <div className="flex items-center justify-between mb-4 text-xs text-gray-500">
+                                        <div className="mb-4 flex items-center justify-between text-xs text-gray-500">
                                             <div className="flex items-center">
                                                 <Calendar
                                                     size={12}
@@ -372,7 +377,7 @@ const MapPage = ({
                                             onClick={() =>
                                                 onViewReport(report.id)
                                             }
-                                            className="w-full text-white transition-colors duration-200 bg-emerald-600 hover:bg-emerald-700"
+                                            className="w-full bg-emerald-600 text-white transition-colors duration-200 hover:bg-emerald-700"
                                         >
                                             <Eye size={14} className="mr-2" />
                                             Lihat Detail
@@ -384,8 +389,8 @@ const MapPage = ({
                     ))}
                 </MapContainer>
 
-                <div className="absolute z-20 bottom-4 right-4">
-                    <Card className="shadow-lg bg-white/90 backdrop-blur-sm">
+                <div className="absolute bottom-4 right-4 z-20">
+                    <Card className="bg-white/90 shadow-lg backdrop-blur-sm">
                         <CardContent className="p-3 text-center">
                             <div className="text-sm font-medium text-gray-900">
                                 {reports.length} Laporan Ditemukan

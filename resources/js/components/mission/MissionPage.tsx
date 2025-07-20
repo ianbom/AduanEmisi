@@ -10,11 +10,12 @@ import {
 } from '@/components/ui/select';
 import { Mission } from '@/types/report/mission';
 import { formatDateOnly } from '@/utils/formatDate';
-import { getStatusColor } from '@/utils/reportStatusColor';
+import { getStatusColor } from '@/utils/missionStatusColor';
 import { router as Inertia } from '@inertiajs/react';
 import { Calendar, Eye, Filter, MapPin, Search, Target } from 'lucide-react';
 import { useState } from 'react';
-import { Badge } from '../ui/badge';
+import Badge from '../core/Badge';
+
 interface MissionPageProps {
     missions: Mission[];
     myMissions: boolean;
@@ -262,14 +263,6 @@ const MissionPage = ({
                                                     Oleh:{' '}
                                                     {mission.creator?.name}
                                                 </span>
-                                                {/* <span>
-                                            {content.duration &&
-                                                ${content.duration}}
-                                            {content.readTime &&
-                                                ${content.readTime}}
-                                            {content.pages &&
-                                                ${content.pages} halaman}
-                                        </span> */}
                                             </div>
                                             <div className="mb-3 flex items-center text-sm text-gray-500">
                                                 <MapPin
