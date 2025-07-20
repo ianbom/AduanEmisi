@@ -5,11 +5,13 @@ import { Content } from '@/types/content';
 import { router as Inertia, usePage } from '@inertiajs/react';
 interface MissionPageRouteProps {
     missions: Content[];
+    myMissions: boolean;
     [key: string]: unknown;
 }
 const MissionPageRoute = () => {
     const { props } = usePage<PageProps<MissionPageRouteProps>>();
     const missions = props.missions?.data || [];
+    const myMissions = props.myMissions;
     const handleViewDetails = (reportId: number | null) => {
         if (reportId) {
             Inertia.visit(route('report.show', { id: reportId }));
@@ -21,6 +23,7 @@ const MissionPageRoute = () => {
     return (
         <CitizenLayout currentPage="mission">
             <MissionPage
+                myMissions={myMissions}
                 missions={missions}
                 onViewDetails={handleViewDetails}
             />

@@ -5,12 +5,10 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { User } from '@/types/user/interface';
 import {
-    Award,
     FileText,
     Heart,
     LogOut,
     Target,
-    Trophy,
     User as UserIcon,
 } from 'lucide-react';
 
@@ -59,11 +57,11 @@ export function getProfileMenuContent({
                 <span>Laporan Saya</span>
             </DropdownMenuItem>
             <DropdownMenuItem
-                onClick={() => (location.href = `${routePrefix}/my-menu`)}
+                onClick={() => (location.href = `${routePrefix}/my-mission`)}
                 className="flex cursor-pointer items-center gap-2"
             >
                 <Target className="h-4 w-4" />
-                <span>Misi Saya</span>
+                <span>Misi yang Diikuti</span>
             </DropdownMenuItem>
             <DropdownMenuItem
                 onClick={() => (location.href = `${routePrefix}/my-menu`)}
@@ -72,24 +70,24 @@ export function getProfileMenuContent({
                 <Heart className="h-4 w-4" />
                 <span>Donasi Saya</span>
             </DropdownMenuItem>
-            <DropdownMenuLabel className="px-3 py-1.5 text-xs font-medium uppercase tracking-wider text-gray-500">
+            {/* <DropdownMenuLabel className="px-3 py-1.5 text-xs font-medium uppercase tracking-wider text-gray-500">
                 PENGHARGAAN
             </DropdownMenuLabel>
             <DropdownMenuItem
                 onClick={() => (location.href = `${routePrefix}/my-badge`)}
-                className="flex cursor-pointer items-center gap-2"
+                className="flex items-center gap-2 cursor-pointer"
             >
-                <Award className="h-4 w-4" />
+                <Award className="w-4 h-4" />
                 <span>Sertifikat Saya</span>
             </DropdownMenuItem>
             <DropdownMenuItem
                 onClick={() => (location.href = `${routePrefix}/my-badge`)}
-                className="flex cursor-pointer items-center gap-2"
+                className="flex items-center gap-2 cursor-pointer"
             >
-                <Trophy className="h-4 w-4" />
+                <Trophy className="w-4 h-4" />
                 <span>Badge Saya</span>
             </DropdownMenuItem>
-
+*/}
             <DropdownMenuSeparator />
 
             <DropdownMenuItem

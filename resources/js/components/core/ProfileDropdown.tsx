@@ -20,7 +20,14 @@ const ProfileMenuDropdown = ({ user, menuItems }: Props) => {
             <DropdownMenuTrigger asChild>
                 <button className="flex h-10 w-10 items-center justify-center rounded-full transition-shadow hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2">
                     <Avatar className="h-10 w-10">
-                        <AvatarImage src={user?.profile_url} alt={userName} />
+                        <AvatarImage
+                            src={
+                                user?.profile_url
+                                    ? `/storage/${user.profile_url}`
+                                    : undefined
+                            }
+                            alt={userName}
+                        />
                         <AvatarFallback className="bg-emerald-100 text-sm font-semibold text-emerald-700">
                             {userInitial}
                         </AvatarFallback>
