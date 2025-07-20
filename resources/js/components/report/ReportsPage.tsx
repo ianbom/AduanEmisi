@@ -16,6 +16,7 @@ import { router as Inertia } from '@inertiajs/react';
 import {
     Calendar,
     Eye,
+    FileText,
     Filter,
     MapPin,
     Plus,
@@ -256,7 +257,7 @@ const ReportsPage = ({
                                                 />
                                             )}
 
-                                            <div className="absolute right-3 top-3">
+                                            <div className="absolute right-3 top-3 flex items-center gap-2">
                                                 <Badge
                                                     className={getStatusColor(
                                                         report.status,
@@ -264,14 +265,12 @@ const ReportsPage = ({
                                                 >
                                                     {report.status}
                                                 </Badge>
-                                            </div>
-                                            {report.mission && (
-                                                <div className="absolute left-3 top-3">
+                                                {report.mission && (
                                                     <Badge className="bg-blue-100 text-blue-700">
                                                         Ada Misi
                                                     </Badge>
-                                                </div>
-                                            )}
+                                                )}
+                                            </div>
                                         </div>
 
                                         <CardContent className="p-4">
@@ -369,20 +368,10 @@ const ReportsPage = ({
                             <Card className="w-full px-8 py-32 text-center">
                                 <div className="mb-4 flex justify-center">
                                     <div className="rounded-full bg-gray-100 p-4">
-                                        <svg
+                                        <FileText
+                                            size={32}
                                             className="h-12 w-12 text-gray-400"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            viewBox="0 0 24 24"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth={2}
-                                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                                            />
-                                        </svg>
+                                        />
                                     </div>
                                 </div>
                                 <h3 className="mb-2 text-lg font-semibold text-gray-900">

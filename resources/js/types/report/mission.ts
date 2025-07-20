@@ -32,5 +32,15 @@ export interface Mission {
     volunteers?: {
         is_leader: boolean;
     };
+    pivot: {
+        is_leader: boolean;
+        participation_status:
+            | 'pending'
+            | 'confirmed'
+            | 'cancelled'
+            | 'attended';
+        certificate_url: string | null;
+        awarded_at: string | null;
+    };
     documentation: MissionDocumentation[];
 }

@@ -2,7 +2,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { getTypeColor, getTypeIcon } from '@/utils/educationColor';
+import { getTypeColor } from '@/utils/educationColor';
 import { router as Inertia } from '@inertiajs/react';
 
 import {
@@ -195,6 +195,19 @@ const EducationalContentPage = ({
                                                         </div>
                                                     </div>
                                                 </div>
+                                            ) : content.media?.[0]
+                                                  ?.media_type ===
+                                              'document' ? (
+                                                <div className="flex h-48 w-full items-center justify-center bg-gray-100">
+                                                    <svg
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        className="h-12 w-12 text-emerald-600"
+                                                        viewBox="0 0 24 24"
+                                                        fill="currentColor"
+                                                    >
+                                                        <path d="M6 2a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6H6zm7 1.5L18.5 9H13V3.5zM8 13h8v2H8v-2zm0 4h5v2H8v-2z" />
+                                                    </svg>
+                                                </div>
                                             ) : (
                                                 <img
                                                     src={`/storage/${content.media?.[0]?.media_url}`}
@@ -202,6 +215,7 @@ const EducationalContentPage = ({
                                                     className="h-48 w-full object-cover transition-transform duration-300 group-hover:scale-105"
                                                 />
                                             )}
+
                                             <div className="absolute right-3 top-3">
                                                 <Badge
                                                     className={getTypeColor(
@@ -209,13 +223,11 @@ const EducationalContentPage = ({
                                                     )}
                                                 >
                                                     <div className="flex items-center gap-1">
-                                                        {getTypeIcon(
-                                                            content.content_type,
-                                                        )}
                                                         {content.content_type}
                                                     </div>
                                                 </Badge>
                                             </div>
+
                                             {content.content_type ===
                                                 'Video' && (
                                                 <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 transition-opacity group-hover:opacity-100">

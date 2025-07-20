@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Report } from '@/types/report';
+import { Mission } from '@/types/report/mission';
 import { User } from '@/types/user/interface';
 import { getRarityColor } from '@/utils/badgeRarityColor';
 import { formatFullDateTime } from '@/utils/formatDate';
@@ -29,24 +30,30 @@ interface CitizenProfilePageProps {
     user: User | null;
     myReports: Report[];
     myReportsCount: number;
+    myMissions: Mission[];
+    myMissionCounts: number;
 }
 const CitizenProfilePage = ({
     user,
     myReports,
     myReportsCount,
+    myMissions,
+    myMissionCounts,
 }: CitizenProfilePageProps) => {
     const [activeTab, setActiveTab] = useState('reports');
-
+    console.log(myMissionCounts);
+    console.log(myMissions);
+    console.log(myReportsCount);
     const stats = [
         {
             label: 'LAPORAN DIBUAT',
-            value: myReportsCount,
+            value: myReportsCount ?? 0,
             icon: FileText,
             color: 'text-blue-600',
         },
         {
             label: 'MISI DIIKUTI',
-            value: '8',
+            value: myMissionCounts ?? 0,
             icon: Target,
             color: 'text-green-600',
         },
@@ -85,112 +92,191 @@ const CitizenProfilePage = ({
         },
     ];
 
-    const myMissions = [
-        {
-            id: 1,
-            title: 'Pembersihan Pantai Ancol',
-            role: 'Anggota',
-            status: 'Completed',
-            date: '2024-01-12',
-        },
-        {
-            id: 2,
-            title: 'Penanaman Pohon di Monas',
-            role: 'Ketua Tim',
-            status: 'On Progress',
-            date: '2024-01-18',
-        },
-    ];
-
     return (
         <div className="min-h-screen">
             <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-                {/* Profile Header */}
                 <Card className="mb-8">
                     <CardContent className="p-6">
-                        <div className="flex flex-col items-start gap-6 md:flex-row md:items-center">
-                            <Avatar className="h-24 w-24">
-                                <AvatarImage
-                                    src={user?.profile_url}
-                                    alt={user?.name}
-                                />
-                                <AvatarFallback className="bg-emerald-100 text-xl font-semibold text-emerald-700">
-                                    {user?.name?.charAt(0)?.toUpperCase() ||
-                                        'U'}
-                                </AvatarFallback>
-                            </Avatar>
+                        <div className="flex flex-col items-start gap-8 lg:flex-row lg:items-start">
+                            <div className="flex flex-col items-center space-y-4">
+                                <div className="relative">
+                                    <Avatar className="h-24 w-24">
+                                        <AvatarImage
+                                            src={
+                                                user?.profile_url
+                                                    ? `/storage/${user.profile_url}`
+                                                    : undefined
+                                            }
+                                        />
 
-                            <div className="flex-1">
-                                <h1 className="mb-3 text-2xl font-bold text-gray-900">
-                                    {user?.name || 'User Name'}
-                                </h1>
+                                        <AvatarFallback className="bg-emerald-100 text-xl font-semibold text-emerald-700">
+                                            {user?.name
+                                                ?.charAt(0)
+                                                .toUpperCase() || 'U'}
+                                        </AvatarFallback>
+                                    </Avatar>
+                                </div>
 
-                                <div className="flex flex-col gap-4 md:flex-row md:gap-8">
-                                    <div className="space-y-2 text-gray-600 md:flex-1">
-                                        <div className="flex items-center gap-2">
-                                            <Mail
-                                                size={16}
-                                                className="text-gray-400"
-                                            />
-                                            <p>{user?.email}</p>
+                                <a
+                                    href="/edit-profile"
+                                    className="inline-flex items-center rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors duration-200 hover:bg-emerald-700"
+                                >
+                                    <svg
+                                        className="mr-2 h-4 w-4"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                                        />
+                                    </svg>
+                                    Edit Profile
+                                </a>
+                            </div>
+                            <div className="w-full flex-1">
+                                <div className="mb-6">
+                                    <h1 className="mb-2 text-3xl font-bold text-gray-900">
+                                        {user?.name || 'User Name'}
+                                    </h1>
+                                    {/* <div className="flex items-center space-x-2">
+                                        <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
+                                        <span className="text-sm font-medium text-emerald-600">
+                                            Active Member
+                                        </span>
+                                    </div> */}
+                                </div>
+                                <div className="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
+                                    <div className="space-y-4">
+                                        <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-gray-800">
+                                            Informasi Kontak
+                                        </h3>
+
+                                        <div className="flex items-center space-x-3 rounded-lg bg-gray-50 p-3">
+                                            <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-blue-100">
+                                                <Mail
+                                                    size={16}
+                                                    className="text-blue-600"
+                                                />
+                                            </div>
+                                            <div className="min-w-0 flex-1">
+                                                <p className="text-xs uppercase tracking-wide text-gray-500">
+                                                    Email
+                                                </p>
+                                                <p className="truncate text-sm font-medium text-gray-900">
+                                                    {user?.email ||
+                                                        'Tidak tersedia'}
+                                                </p>
+                                            </div>
                                         </div>
 
-                                        <div className="flex items-center gap-2">
-                                            <Phone
-                                                size={16}
-                                                className="text-gray-400"
-                                            />
-                                            <p>{user?.phone || '-'}</p>
-                                        </div>
-                                        <div className="flex items-start gap-2">
-                                            <MapPin
-                                                size={16}
-                                                className="mt-0.5 text-gray-400"
-                                            />
-                                            <p className="text-gray-700">
-                                                {
-                                                    (user?.district.name,
-                                                    user?.city.name,
-                                                    user?.province.name || '-')
-                                                }
-                                            </p>
-                                        </div>
-                                        <div className="flex items-start gap-2">
-                                            <MapPinned
-                                                size={16}
-                                                className="mt-0.5 text-gray-400"
-                                            />
-                                            <p className="text-gray-700">
-                                                {user?.address || '-'}
-                                            </p>
+                                        <div className="flex items-center space-x-3 rounded-lg bg-gray-50 p-3">
+                                            <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-green-100">
+                                                <Phone
+                                                    size={16}
+                                                    className="text-green-600"
+                                                />
+                                            </div>
+                                            <div className="min-w-0 flex-1">
+                                                <p className="text-xs uppercase tracking-wide text-gray-500">
+                                                    Telepon
+                                                </p>
+                                                <p className="text-sm font-medium text-gray-900">
+                                                    {user?.phone ||
+                                                        'Tidak tersedia'}
+                                                </p>
+                                            </div>
                                         </div>
                                     </div>
+                                    <div className="space-y-4">
+                                        <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-gray-800">
+                                            Informasi Lokasi
+                                        </h3>
 
-                                    <div className="space-y-2 text-sm text-gray-500 md:flex-shrink-0">
-                                        <div className="flex items-center gap-2">
-                                            <Calendar
-                                                size={14}
-                                                className="text-gray-400"
-                                            />
-                                            <p>
-                                                Bergabung:{' '}
-                                                {formatFullDateTime(
-                                                    user?.created_at || '',
-                                                )}
-                                            </p>
+                                        <div className="flex items-start space-x-3 rounded-lg bg-gray-50 p-3">
+                                            <div className="mt-0.5 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-red-100">
+                                                <MapPin
+                                                    size={16}
+                                                    className="text-red-600"
+                                                />
+                                            </div>
+                                            <div className="min-w-0 flex-1">
+                                                <p className="text-xs uppercase tracking-wide text-gray-500">
+                                                    Wilayah
+                                                </p>
+                                                <p className="text-sm font-medium leading-relaxed text-gray-900">
+                                                    {[
+                                                        user?.district?.name,
+                                                        user?.city?.name,
+                                                        user?.province?.name,
+                                                    ]
+                                                        .filter(Boolean)
+                                                        .join(', ') ||
+                                                        'Tidak tersedia'}
+                                                </p>
+                                            </div>
                                         </div>
 
-                                        <div className="flex items-center gap-2">
-                                            <Clock
-                                                size={14}
-                                                className="text-gray-400"
-                                            />
-                                            <p>
-                                                Diperbarui:{' '}
-                                                {formatFullDateTime(
-                                                    user?.updated_at || '',
-                                                )}
-                                            </p>
+                                        <div className="flex items-start space-x-3 rounded-lg bg-gray-50 p-3">
+                                            <div className="mt-0.5 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-purple-100">
+                                                <MapPinned
+                                                    size={16}
+                                                    className="text-purple-600"
+                                                />
+                                            </div>
+                                            <div className="min-w-0 flex-1">
+                                                <p className="text-xs uppercase tracking-wide text-gray-500">
+                                                    Alamat
+                                                </p>
+                                                <p className="text-sm font-medium leading-relaxed text-gray-900">
+                                                    {user?.address ||
+                                                        'Tidak tersedia'}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="border-t border-gray-100 pt-4">
+                                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                                        <div className="flex items-center space-x-3">
+                                            <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-emerald-100">
+                                                <Calendar
+                                                    size={14}
+                                                    className="text-emerald-600"
+                                                />
+                                            </div>
+                                            <div>
+                                                <p className="text-xs uppercase tracking-wide text-gray-500">
+                                                    Bergabung
+                                                </p>
+                                                <p className="text-sm font-medium text-gray-700">
+                                                    {formatFullDateTime(
+                                                        user?.created_at || '',
+                                                    )}
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex items-center space-x-3">
+                                            <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-orange-100">
+                                                <Clock
+                                                    size={14}
+                                                    className="text-orange-600"
+                                                />
+                                            </div>
+                                            <div>
+                                                <p className="text-xs uppercase tracking-wide text-gray-500">
+                                                    Terakhir Diperbarui
+                                                </p>
+                                                <p className="text-sm font-medium text-gray-700">
+                                                    {formatFullDateTime(
+                                                        user?.updated_at || '',
+                                                    )}
+                                                </p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -216,9 +302,7 @@ const CitizenProfilePage = ({
                                     />
                                     <div className="mb-1 text-3xl font-bold text-gray-900">
                                         {stat.label === 'LAPORAN DIBUAT' &&
-                                        myReportsCount === 0
-                                            ? '-'
-                                            : stat.value}
+                                            (stat.value ?? 0)}
                                     </div>
                                     <div className="text-sm text-gray-600">
                                         {stat.label}
@@ -246,6 +330,33 @@ const CitizenProfilePage = ({
                                                 className="mt-2 text-xs"
                                                 onClick={() =>
                                                     router.visit('/report')
+                                                }
+                                            >
+                                                Lihat Semua
+                                                <ArrowRight className="ml-1 h-3 w-3" />
+                                            </Button>
+                                        )
+                                    ) : stat.label === 'MISI DIIKUTI' ? (
+                                        myMissionCounts === 0 ||
+                                        myMissionCounts === undefined ? (
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                className="mt-2 text-xs"
+                                                onClick={() =>
+                                                    router.visit('/mission')
+                                                }
+                                            >
+                                                Cari Misi
+                                                <ArrowRight className="ml-1 h-3 w-3" />
+                                            </Button>
+                                        ) : (
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                className="mt-2 text-xs"
+                                                onClick={() =>
+                                                    router.visit('/my-mission')
                                                 }
                                             >
                                                 Lihat Semua
@@ -385,44 +496,63 @@ const CitizenProfilePage = ({
 
                             <TabsContent value="missions" className="mt-6">
                                 <div className="space-y-4">
-                                    {myMissions.map((mission) => (
-                                        <Card key={mission.id}>
-                                            <CardContent className="p-4">
-                                                <div className="flex items-start justify-between">
-                                                    <div>
-                                                        <h3 className="font-semibold text-gray-900">
-                                                            {mission.title}
-                                                        </h3>
-                                                        <p className="text-sm text-gray-600">
-                                                            Peran:{' '}
-                                                            {mission.role}
-                                                        </p>
-                                                        <p className="mt-1 text-xs text-gray-500">
-                                                            {mission.date}
-                                                        </p>
+                                    {myMissions.length > 0 ? (
+                                        myMissions.map((mission) => (
+                                            <Card key={mission.id}>
+                                                <CardContent className="p-4">
+                                                    <div className="flex items-start justify-between">
+                                                        <div>
+                                                            <h3 className="font-semibold text-gray-900">
+                                                                {mission.title}
+                                                            </h3>
+                                                            <p className="text-sm text-gray-600">
+                                                                Peran:{' '}
+                                                                {mission.pivot
+                                                                    ?.is_leader
+                                                                    ? 'Ketua Tim'
+                                                                    : 'Anggota Tim'}
+                                                            </p>
+
+                                                            <p className="mt-1 text-xs text-gray-500">
+                                                                {formatFullDateTime(
+                                                                    mission.created_at,
+                                                                )}
+                                                            </p>
+                                                        </div>
+                                                        <div className="flex items-center gap-3">
+                                                            <Badge
+                                                                variant={
+                                                                    mission.status ===
+                                                                    'Completed'
+                                                                        ? 'default'
+                                                                        : 'secondary'
+                                                                }
+                                                            >
+                                                                {mission.status}
+                                                            </Badge>
+                                                            <Link
+                                                                href={`/report/${mission.id}`}
+                                                            >
+                                                                <Button
+                                                                    variant="outline"
+                                                                    size="sm"
+                                                                >
+                                                                    Lihat Detail
+                                                                </Button>
+                                                            </Link>
+                                                        </div>
                                                     </div>
-                                                    <div className="flex items-center gap-3">
-                                                        <Badge
-                                                            variant={
-                                                                mission.status ===
-                                                                'Completed'
-                                                                    ? 'default'
-                                                                    : 'secondary'
-                                                            }
-                                                        >
-                                                            {mission.status}
-                                                        </Badge>
-                                                        <Button
-                                                            variant="outline"
-                                                            size="sm"
-                                                        >
-                                                            Lihat Detail
-                                                        </Button>
-                                                    </div>
-                                                </div>
-                                            </CardContent>
-                                        </Card>
-                                    ))}
+                                                </CardContent>
+                                            </Card>
+                                        ))
+                                    ) : (
+                                        <div className="py-8 text-center">
+                                            <Target className="mx-auto mb-4 h-12 w-12 text-gray-400" />
+                                            <p className="text-gray-600">
+                                                Belum ada riwayat misi
+                                            </p>
+                                        </div>
+                                    )}
                                 </div>
                             </TabsContent>
 
