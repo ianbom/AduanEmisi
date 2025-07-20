@@ -1,41 +1,17 @@
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Content } from '@/types/content';
+import { getTypeColor, getTypeIcon } from '@/utils/educationColor';
 import { formatFullDateTime } from '@/utils/formatDate';
-import { ArrowLeft, Download, FileText, Play, Share2 } from 'lucide-react';
+import { ArrowLeft, Download, FileText, Share2 } from 'lucide-react';
+import Badge from '../core/Badge';
+import ImageWithPopup from '../core/ImageWithPopup';
 interface ContentDetailsPageProps {
     content: Content;
     onBack: () => void;
 }
 
 const ContentDetailsPage = ({ content, onBack }: ContentDetailsPageProps) => {
-    const getTypeIcon = (type: string) => {
-        switch (type) {
-            case 'Video':
-                return <Play size={20} className="text-red-600" />;
-            case 'Artikel':
-                return <FileText size={20} className="text-blue-600" />;
-            case 'Modul PDF':
-                return <Download size={20} className="text-green-600" />;
-            default:
-                return <FileText size={20} className="text-gray-600" />;
-        }
-    };
-
-    const getTypeColor = (type: string) => {
-        switch (type) {
-            case 'Video':
-                return 'bg-red-100 text-red-700';
-            case 'Artikel':
-                return 'bg-blue-100 text-blue-700';
-            case 'Modul PDF':
-                return 'bg-green-100 text-green-700';
-            default:
-                return 'bg-gray-100 text-gray-700';
-        }
-    };
-
     return (
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
             <div className="mb-6 flex items-center justify-between">
@@ -155,7 +131,12 @@ const ContentDetailsPage = ({ content, onBack }: ContentDetailsPageProps) => {
                                                     src={`/storage/${mediaItem.media_url}`}
                                                 />
                                             ) : (
-                                                <img
+                                                // <img
+                                                //     src={`/storage/${mediaItem.media_url}`}
+                                                //     alt={`Media ${index + 1}`}
+                                                //     className="object-cover w-full h-full transition-transform duration-300 hover:scale-105"
+                                                // />
+                                                <ImageWithPopup
                                                     src={`/storage/${mediaItem.media_url}`}
                                                     alt={`Media ${index + 1}`}
                                                     className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
@@ -180,32 +161,32 @@ const ContentDetailsPage = ({ content, onBack }: ContentDetailsPageProps) => {
                     </CardContent>
                     {/* <CardContent>
                         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                            <div className="flex cursor-pointer items-center space-x-4 rounded-lg border p-4 transition-colors hover:bg-gray-50">
+                            <div className="flex items-center p-4 space-x-4 transition-colors border rounded-lg cursor-pointer hover:bg-gray-50">
                                 <FileText
                                     size={20}
-                                    className="h-14 w-14 rounded object-cover text-emerald-600"
+                                    className="object-cover rounded h-14 w-14 text-emerald-600"
                                 />
                                 <div className="flex-1">
                                     <h4 className="font-medium text-gray-900">
                                         Nugget Rebus
                                     </h4>
-                                    <div className="mt-1 flex items-center">
+                                    <div className="flex items-center mt-1">
                                         <span className="text-sm text-gray-500">
                                             Modul PDF
                                         </span>
                                     </div>
                                 </div>
                             </div>
-                            <div className="flex cursor-pointer items-center space-x-4 rounded-lg border p-4 transition-colors hover:bg-gray-50">
+                            <div className="flex items-center p-4 space-x-4 transition-colors border rounded-lg cursor-pointer hover:bg-gray-50">
                                 <FileText
                                     size={20}
-                                    className="h-14 w-14 rounded object-cover text-emerald-600"
+                                    className="object-cover rounded h-14 w-14 text-emerald-600"
                                 />
                                 <div className="flex-1">
                                     <h4 className="font-medium text-gray-900">
                                         Nugget Rebus
                                     </h4>
-                                    <div className="mt-1 flex items-center">
+                                    <div className="flex items-center mt-1">
                                         <span className="text-sm text-gray-500">
                                             Modul PDF
                                         </span>

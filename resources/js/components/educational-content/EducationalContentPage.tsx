@@ -1,9 +1,9 @@
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { getTypeColor } from '@/utils/educationColor';
 import { router as Inertia } from '@inertiajs/react';
+import Badge from '../core/Badge';
 
 import {
     Select,
@@ -29,7 +29,6 @@ const EducationalContentPage = ({
     const [sortBy, setSortBy] = useState('newest');
     return (
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-            {/* Header */}
             <div className="mb-8">
                 <h1 className="mb-2 text-3xl font-bold text-gray-900">
                     Konten Edukasi
@@ -244,8 +243,9 @@ const EducationalContentPage = ({
                                         <CardContent className="p-4">
                                             <div className="mb-2">
                                                 <Badge
-                                                    variant="outline"
-                                                    className="mb-2 text-xs"
+                                                    className={getTypeColor(
+                                                        content.content_type,
+                                                    )}
                                                 >
                                                     {content.content_type}
                                                 </Badge>
@@ -261,14 +261,6 @@ const EducationalContentPage = ({
                                                 <span>
                                                     Oleh: {content.author?.name}
                                                 </span>
-                                                {/* <span>
-                                            {content.duration &&
-                                                ${content.duration}}
-                                            {content.readTime &&
-                                                ${content.readTime}}
-                                            {content.pages &&
-                                                ${content.pages} halaman}
-                                        </span> */}
                                             </div>
                                             <div className="mb-4 flex items-center justify-between">
                                                 <div className="flex items-center text-sm text-gray-500">

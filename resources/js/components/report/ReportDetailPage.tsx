@@ -1,5 +1,4 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
@@ -7,6 +6,7 @@ import { Report } from '@/types/report';
 import { Comment } from '@/types/report/comment';
 import { User } from '@/types/user/interface';
 import { formatFullDateTime } from '@/utils/formatDate';
+import { getStatusColor as getMissionStatusColor } from '@/utils/missionStatusColor';
 import { getStatusColor } from '@/utils/reportStatusColor';
 import { router as Inertia, useForm } from '@inertiajs/react';
 import axios from 'axios';
@@ -24,6 +24,7 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import Badge from '../core/Badge';
 import ImageWithPopup from '../core/ImageWithPopup';
 import AttendanceFormModal from '../mission/AttendanceFormModal';
 import CancelVolunteerModal from '../mission/CancelVolunteerModal';
@@ -52,7 +53,6 @@ interface ReportDetailPageProps {
     volunteers: User[];
     volunteerCounts: number;
     your_vote: 'upvote' | 'dislike' | null;
-
     onBack: () => void;
 }
 
@@ -223,7 +223,7 @@ const ReportDetailPage = ({
                             <div className="mb-6 flex flex-col items-start justify-between md:flex-row">
                                 <div className="flex-1">
                                     <div className="mb-3 flex flex-wrap gap-2">
-                                        <Badge variant="outline">
+                                        <Badge className="border border-gray-400 bg-white text-gray-700">
                                             {report.category}
                                         </Badge>
                                         <Badge
@@ -234,7 +234,7 @@ const ReportDetailPage = ({
                                             {report.status}
                                         </Badge>
                                         {report.mission && (
-                                            <Badge className="bg-blue-100 text-blue-700">
+                                            <Badge className="bg-indigo-100 text-indigo-700">
                                                 Ada Misi
                                             </Badge>
                                         )}
@@ -389,7 +389,11 @@ const ReportDetailPage = ({
                             </CardHeader>
                             <CardContent>
                                 <div className="mb-3 flex flex-wrap gap-2">
-                                    <Badge variant="outline">
+                                    <Badge
+                                        className={getMissionStatusColor(
+                                            report.mission?.status,
+                                        )}
+                                    >
                                         {report.mission?.status}
                                     </Badge>
                                 </div>

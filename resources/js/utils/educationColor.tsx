@@ -1,26 +1,21 @@
-import { Download, FileText, Image, Play } from 'lucide-react';
+import { FileText, Newspaper, Play } from 'lucide-react';
 export const getTypeIcon = (type: string) => {
     switch (type) {
-        case 'Video':
-            return <Play size={16} className="text-red-600" />;
-        case 'Artikel':
-            return <FileText size={16} className="text-blue-600" />;
-        case 'Modul PDF':
-            return <Download size={16} className="text-green-600" />;
+        case 'artikel':
+            return <Newspaper size={16} className="text-purple-600" />;
+        case 'video':
+            return <Play size={16} className="text-rose-600" />;
         default:
-            return <Image size={16} className="text-gray-600" />;
+            return <FileText size={16} className="text-sky-600" />;
     }
 };
-
-export const getTypeColor = (type: string) => {
-    switch (type) {
-        case 'Video':
-            return 'bg-red-100 text-red-700';
-        case 'Artikel':
-            return 'bg-blue-100 text-blue-700';
-        case 'Modul PDF':
-            return 'bg-green-100 text-green-700';
+export const getTypeColor = (status: string) => {
+    switch (status) {
+        case 'artikel':
+            return 'bg-purple-100 text-purple-700';
+        case 'video':
+            return 'bg-rose-100 text-rose-700';
         default:
-            return 'bg-gray-100 text-gray-700';
+            return 'bg-sky-100 text-sky-700';
     }
 };

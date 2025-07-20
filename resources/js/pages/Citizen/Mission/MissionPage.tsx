@@ -1,10 +1,12 @@
 import CitizenLayout from '@/components/layouts/CitizenLayout';
 import MissionPage from '@/components/mission/MissionPage';
 import { PageProps } from '@/types';
-import { Content } from '@/types/content';
+import { Mission } from '@/types/report/mission';
 import { router as Inertia, usePage } from '@inertiajs/react';
 interface MissionPageRouteProps {
-    missions: Content[];
+    missions: {
+        data: Mission[];
+    };
     myMissions: boolean;
     [key: string]: unknown;
 }

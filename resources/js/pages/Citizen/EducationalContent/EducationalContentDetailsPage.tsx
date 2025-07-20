@@ -11,10 +11,10 @@ const ContentDetailsPageRoute = () => {
     const { props } = usePage<PageProps<ContentDetailsPageRouteProps>>();
     const content = props.content;
     const handleBack = () => {
-        Inertia.visit(route('report'));
+        Inertia.visit(route('education'));
     };
     return (
-        <CitizenLayout currentPage="education">
+        <CitizenLayout currentPage="education/{id}">
             <ContentDetailsPage content={content} onBack={handleBack} />
         </CitizenLayout>
     );
