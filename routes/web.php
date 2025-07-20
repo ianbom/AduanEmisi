@@ -40,7 +40,7 @@ Route::get('/dashboard', function () {
 
 
 // Route untuk akses fitur peran warga
-Route::prefix('')->middleware(['auth'])->group(function () {
+Route::prefix('')->middleware([''])->group(function () {
     Route::get('/homepage', function () {
         return Inertia::render('Citizen/HomePage');
     })->name('homepage');
