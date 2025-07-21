@@ -1,9 +1,11 @@
 <?php
 
 use App\Http\Controllers\Admin\BadgeController as AdmBadgeController;
+use App\Http\Controllers\Admin\CertificateController as AdmCertificateController;
 use App\Http\Controllers\Admin\ContentController as AdmContentController;
 use App\Http\Controllers\Admin\MissionController as AdmMissionController;
 use App\Http\Controllers\Admin\ReportController as AdmReportController;
+
 use App\Http\Controllers\Admin\UserController as AdmUserController;
 use App\Http\Controllers\Citizen\CommentController as CtzCommentController;
 use App\Http\Controllers\Citizen\NotificationController;
@@ -116,6 +118,10 @@ Route::prefix('admin')->as('admin.')->middleware(['auth'])->group(function () {
     Route::resource('badges', AdmBadgeController::class);
 
     Route::resource('users', AdmUserController::class);
+
+    Route::get('certificate/generate', [AdmCertificateController::class, 'generateCertificate'])->name('certificate.generate');
+    Route::post('/missions/certificates/generate', [AdmCertificateController::class, 'generate'])->name('missions.certificates.generate');
+    Route::resource('certificates', AdmCertificateController::class);
 });
 
 
