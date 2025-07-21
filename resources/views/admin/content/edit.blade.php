@@ -1,6 +1,21 @@
 @extends('admin.layouts.app')
 
 @section('content')
+
+<style>
+    /* Mengatur tinggi minimal editor */
+    .ck-editor__editable_inline {
+        min-height: 300px;
+    }
+    /* Mengembalikan style list default di dalam konten editor, karena Tailwind me-resetnya */
+    .ck-content ul,
+    .ck-content ol {
+        list-style: revert;
+        margin: revert;
+        padding: revert;
+    }
+</style>
+
 <div class="container mx-auto px-4 py-8">
     <div class="max-w-4xl mx-auto">
         <!-- Header -->
@@ -73,6 +88,7 @@
                             <span id="bodyCount">{{ strlen(old('body', $content->body)) }}</span> karakter
                         </p>
                     </div>
+
 
                     <!-- Media Upload -->
                     <div>
@@ -211,7 +227,33 @@
 @endsection
 
 @push('scripts')
+ <script src="https://cdn.ckeditor.com/ckeditor5/41.4.2/classic/ckeditor.js"></script>
+
 <script>
+
+       document.addEventListener('DOMContentLoaded', function() {
+        ClassicEditor
+            .create(document.querySelector('#body'), {
+                // Konfigurasi toolbar bisa ditambahkan di sini jika perlu
+                toolbar: {
+                    items: [
+                        'heading', '|',
+                        'bold', 'italic', 'underline', '|',
+                        'link', 'bulletedList', 'numberedList', '|',
+                        'blockQuote', 'insertTable', '|',
+                        'undo', 'redo'
+                    ]
+                },
+                language: 'id' // Menggunakan bahasa Indonesia jika tersedia
+            })
+            .then(editor => {
+                console.log('CKEditor berhasil diinisialisasi.', editor);
+            })
+            .catch(error => {
+                console.error('Terjadi error saat inisialisasi CKEditor:', error);
+            });
+    });
+    
 let selectedFiles = [];
 let deletedMediaIds = [];
 const maxFileSize = 10 * 1024 * 1024; // 10MB

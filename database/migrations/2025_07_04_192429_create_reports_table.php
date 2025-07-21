@@ -21,7 +21,18 @@ return new class extends Migration
             $table->foreignId('completed_by_user_id')->nullable()->constrained('users')->onDelete('set null');
             $table->string('title');
             $table->text('description');
-            $table->string('category')->nullable(); // Pertimbangkan tabel terpisah jika kategori adalah daftar terbatas);
+            $table->enum('category', [
+                  'Sampah Plastik',
+                  'Pencemaran Air',
+                  'Pencemaran Udara',
+                  'Pencemaran Tanah',
+                  'Limbah Industri',
+                  'Emisi Gas Rumah Kaca',
+                  'Penggundulan / Kebakaran Hutan',
+                  'Naiknya Permukaan Air Laut',
+                  'Limbah Pertanian / Peternakan',
+                  'Lainnya'
+            ])->nullable();
             $table->float('latitude')->nullable();
             $table->float('longitude')->nullable();
             $table->text('address')->nullable();

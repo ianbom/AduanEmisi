@@ -1,12 +1,26 @@
 @extends('admin.layouts.app')
 
 @section('content')
+<style>
+    /* Mengatur tinggi minimal editor */
+    .ck-editor__editable_inline {
+        min-height: 300px;
+    }
+    /* Mengembalikan style list default di dalam konten editor, karena Tailwind me-resetnya */
+    .ck-content ul,
+    .ck-content ol {
+        list-style: revert;
+        margin: revert;
+        padding: revert;
+    }
+</style>
+
 <div class="container px-4 py-8 mx-auto">
     <div class="max-w-4xl mx-auto">
         <!-- Header -->
         <div class="mb-8">
             <h1 class="mb-2 text-3xl font-bold text-gray-900">Buat Konten Baru</h1>
-            <p class="text-gray-600">Buat konten baru dengan media pendukung</p>
+            <p class="text-gray-600">Buat konten baru dengan editor modern dan media pendukung.</p>
         </div>
 
         @include('admin.components.notification')
@@ -32,9 +46,6 @@
                         @error('title')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
-                        <p class="mt-1 text-xs text-gray-500">
-                            <span id="titleCount">0</span>/255 karakter
-                        </p>
                     </div>
 
                     <!-- Content Type -->
@@ -46,7 +57,7 @@
                                 name="content_type"
                                 class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('content_type') border-red-500 @enderror">
                             <option value="">Pilih tipe konten</option>
-                            <option value="artikel" {{ old('content_type') == 'artikel' ? 'selected' : '' }}>Artikel</option>
+                             <option value="artikel" {{ old('content_type') == 'artikel' ? 'selected' : '' }}>Artikel</option>
                             <option value="video" {{ old('content_type') == 'video' ? 'selected' : '' }}>Video</option>
                             <option value="modul" {{ old('content_type') == 'modul' ? 'selected' : '' }}>Modul</option>
                         </select>
@@ -55,11 +66,12 @@
                         @enderror
                     </div>
 
-                    <!-- Body -->
+                    <!-- Body with CKEditor -->
                     <div>
                         <label for="body" class="block mb-2 text-sm font-medium text-gray-700">
                             Konten <span class="text-red-500">*</span>
                         </label>
+                        {{-- Textarea ini akan diubah menjadi CKEditor oleh JavaScript --}}
                         <textarea id="body"
                                   name="body"
                                   rows="10"
@@ -68,9 +80,6 @@
                         @error('body')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
-                        <p class="mt-1 text-xs text-gray-500">
-                            <span id="bodyCount">0</span> karakter
-                        </p>
                     </div>
 
                     <!-- Media Upload -->
@@ -115,22 +124,14 @@
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
+               
                 </div>
 
                 <!-- Form Footer -->
                 <div class="flex justify-end px-6 py-4 space-x-3 bg-gray-50">
-                    <a href="{{ route('admin.contents.index') }}"
-                       class="px-4 py-2 text-sm font-medium text-gray-700 transition-colors border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-                        Batal
-                    </a>
-                    <button type="submit"
-                            id="submitBtn"
-                            class="px-4 py-2 text-sm font-medium text-white transition-colors bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed">
-                        <span id="submitText">Simpan Konten</span>
-                        <svg id="submitLoader" class="hidden w-4 h-4 mr-3 -ml-1 text-white animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
+                    <a href="{{ route('admin.contents.index') }}" class="px-4 py-2 text-sm font-medium text-gray-700 transition-colors border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">Batal</a>
+                    <button type="submit" id="submitBtn" class="px-4 py-2 text-sm font-medium text-white transition-colors bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <span>Simpan Konten</span>
                     </button>
                 </div>
             </form>
@@ -140,7 +141,34 @@
 @endsection
 
 @push('scripts')
+    <script src="https://cdn.ckeditor.com/ckeditor5/41.4.2/classic/ckeditor.js"></script>
+
+
     <script>
+         document.addEventListener('DOMContentLoaded', function() {
+        ClassicEditor
+            .create(document.querySelector('#body'), {
+                // Konfigurasi toolbar bisa ditambahkan di sini jika perlu
+                toolbar: {
+                    items: [
+                        'heading', '|',
+                        'bold', 'italic', 'underline', '|',
+                        'link', 'bulletedList', 'numberedList', '|',
+                        'blockQuote', 'insertTable', '|',
+                        'undo', 'redo'
+                    ]
+                },
+                language: 'id' // Menggunakan bahasa Indonesia jika tersedia
+            })
+            .then(editor => {
+                console.log('CKEditor berhasil diinisialisasi.', editor);
+            })
+            .catch(error => {
+                console.error('Terjadi error saat inisialisasi CKEditor:', error);
+            });
+    });
+
+
         let selectedFiles = [];
         const maxFileSize = 10 * 1024 * 1024; // 10MB
         const allowedImageTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/svg+xml', 'image/webp'];
