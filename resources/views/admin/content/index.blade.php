@@ -230,12 +230,12 @@
                                         <div class="flex-shrink-0 h-8 w-8">
                                             <div class="h-8 w-8 rounded-full bg-gray-300 flex items-center justify-center">
                                                 <span class="text-xs font-medium text-gray-700">
-                                                    {{ substr($item->authorUser->name ?? 'Unknown', 0, 1) }}
+                                                    {{ substr($item->author->name ?? 'Unknown', 0, 1) }}
                                                 </span>
                                             </div>
                                         </div>
                                         <div class="ml-3">
-                                            <p class="text-sm font-medium text-gray-900">{{ $item->authorUser->name ?? 'Unknown' }}</p>
+                                            <p class="text-sm font-medium text-gray-900">{{ $item->author->name ?? 'Unknown' }}</p>
                                         </div>
                                     </div>
                                 </td>

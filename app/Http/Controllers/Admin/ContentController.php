@@ -22,7 +22,8 @@ class ContentController extends Controller
 
     public function index()
     {
-        $content = Content::orderBy('created_at', 'desc')->get();
+        $content = Content::orderBy('created_at', 'desc')->with('author')->get();
+        // return response()->json($content);
         return view('admin.content.index', ['content' => $content]);
     }
 

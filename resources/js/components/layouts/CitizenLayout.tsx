@@ -5,6 +5,7 @@ import { getProfileMenuContent } from '@/utils/profileMenuContent';
 import { router as Inertia, usePage } from '@inertiajs/react';
 import { ReactNode, useState } from 'react';
 import Footer from '../core/Footer';
+import FloatingChat from '../chatbot/FloatingChat';
 interface Props {
     children: ReactNode;
     currentPage: string;
@@ -54,6 +55,7 @@ export default function CitizenLayout({ children, currentPage }: Props) {
                 isOpen={isNotificationOpen}
                 onClose={() => setIsNotificationOpen(false)}
             />
+            <FloatingChat/>
             <Footer />
         </div>
     );
