@@ -37,7 +37,17 @@ class MissionServices extends Service
             $data['thumbnail_url'] = $filePath;
         }
 
+
+
         return DB::transaction(function () use ($data) {
+
+
+        $report = Report::findOrFail($data['report_id']);
+        $statusMission = '';
+        if ($report->status == 'under-authority') {
+            $statusMission = 'under-authority';
+        }
+
             $missionData = [
                 'report_id' => $data['report_id'] ?? null,
                 'creator_user_id' => Auth::id(),
@@ -50,7 +60,7 @@ class MissionServices extends Service
                 'latitude' => $data['latitude'] ?? null,
                 'longitude' => $data['longitude'] ?? null,
                 'address' => $data['address'] ?? null,
-                'status' => $data['status'] ?? 'open',
+                'status' => $statusMission ?? 'open',
                 'scheduled_date' => $data['scheduled_date'] ?? null,
                 'assigned_to_type' => $data['assigned_to_type'] ?? null,
                 'assigned_volunteer_id' => $data['assigned_volunteer_id'] ?? null,
