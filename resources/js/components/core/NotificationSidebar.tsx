@@ -1,21 +1,17 @@
 import { router, usePage } from '@inertiajs/react';
-import { AlertCircle, CheckCircle, Heart, Info, X } from 'lucide-react';
+import { AlertCircle, CheckCircle, Heart, Info, Trash2, X } from 'lucide-react';
 import React from 'react';
 import { PageProps } from '@/types';
 import { Notification } from '@/types/notification/interface';
 
-// --- Komponen UI Lokal ---
-const Card = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
-    <div className={`rounded-lg border bg-white shadow-sm ${className}`}>{children}</div>
-);
-
-const Button = ({ children, variant = 'ghost', size = 'sm', onClick, className = '' }: any) => {
-    const baseStyles = "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2";
-    const variantStyles = {
+// ... komponen Button dan ScrollArea tetap sama ...
+const Button = ({ children, variant = 'ghost', size = 'sm', onClick, className = '', ...props }: any) => {
+    const baseStyles = "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed";
+    const variantStyles: { [key: string]: string } = {
         ghost: "hover:bg-gray-100 text-gray-600 hover:text-gray-900",
         outline: "border border-gray-300 bg-white hover:bg-gray-50 text-gray-700"
     };
-    const sizeStyles = {
+    const sizeStyles: { [key: string]: string } = {
         sm: "h-8 px-3 text-xs",
         md: "h-10 px-4 py-2"
     };
@@ -23,7 +19,8 @@ const Button = ({ children, variant = 'ghost', size = 'sm', onClick, className =
     return (
         <button
             onClick={onClick}
-            className={`${baseStyles} ${variantStyles[variant] || variantStyles.ghost} ${sizeStyles[size] || sizeStyles.sm} ${className}`}
+            className={`${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${className}`}
+            {...props}
         >
             {children}
         </button>
@@ -34,7 +31,6 @@ const ScrollArea = ({ children, className = '' }: { children: React.ReactNode; c
     <div className={`overflow-y-auto ${className}`}>{children}</div>
 );
 
-// --- Interface untuk props sidebar ---
 interface NotificationSidebarProps {
     isOpen: boolean;
     onClose: () => void;
@@ -44,10 +40,7 @@ const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
     isOpen,
     onClose,
 }) => {
-    // Ambil data notifikasi dari shared props Inertia
     const { notifications: sharedNotifications } = usePage<PageProps>().props;
-
-    // Pastikan data ada dan akses dengan benar
     const notifications = sharedNotifications?.notifications || [];
     const unread_count = sharedNotifications?.unread_count || 0;
 
@@ -66,30 +59,56 @@ const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
         }
     };
 
-    // Fungsi untuk menandai notifikasi sebagai terbaca
+    // SOLUSI 1: Tambahkan 'only' parameter untuk refresh data notifikasi
     const handleMarkAsRead = (e: React.MouseEvent, notificationId: string | number) => {
         e.preventDefault();
         e.stopPropagation();
 
-        // Pastikan route helper tersedia, atau gunakan URL langsung
-        const url = ` /read-notification/${notificationId}`;
-
-        router.put(url, {}, {
+        router.put(`/read-notification/${notificationId}`, {}, {
             preserveScroll: true,
+            only: ['notifications'], // Hanya refresh data notifications
             onSuccess: () => {
-                // Optional: tambahkan feedback atau refresh data
-                console.log('Notification marked as read');
+                console.log(`Notifikasi ${notificationId} berhasil ditandai sebagai dibaca.`);
             },
             onError: (errors) => {
-                console.error('Error marking notification as read:', errors);
+                console.error('Gagal menandai notifikasi sebagai dibaca:', errors);
             }
         });
     };
 
-    // Fungsi untuk navigasi ke halaman semua notifikasi
+    
+
+    const handleDeleteNotification = (e: React.MouseEvent, notificationId: string | number) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (window.confirm("Apakah Anda yakin ingin menghapus notifikasi ini?")) {
+            router.delete(route('notification.delete', { id: notificationId }), {
+                preserveScroll: true,
+                only: ['notifications'], // Hanya refresh data notifications
+                onSuccess: () => {
+                    console.log(`Notifikasi ${notificationId} berhasil dihapus.`);
+                },
+                onError: (errors) => {
+                    console.error('Gagal menghapus notifikasi:', errors);
+                }
+            });
+        }
+    };
+
     const handleViewAll = () => {
-        router.get('/notifications'); // Sesuaikan dengan route yang ada
-        onClose();
+        router.put(route('notification.readAll'), {}, {
+            preserveScroll: true,
+            only: ['notifications'], // Hanya refresh data notifications
+            onSuccess: () => {
+                console.log('Semua notifikasi berhasil ditandai sebagai dibaca.');
+                onClose();
+            },
+            onError: (errors) => {
+                console.error("Gagal menandai semua notifikasi sebagai terbaca:", errors);
+                onClose();
+            }
+        });
     };
 
     if (!isOpen) return null;
@@ -126,7 +145,7 @@ const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
                             {notifications.map((notification: Notification) => (
                                 <div
                                     key={notification.id}
-                                    className={`rounded-lg border p-3 transition-colors cursor-pointer hover:shadow-md ${
+                                    className={`relative rounded-lg border p-3 transition-colors cursor-pointer group hover:shadow-md ${
                                         !notification.is_read
                                             ? 'border-blue-200 bg-blue-50'
                                             : 'border-gray-200 bg-white hover:bg-gray-50'
@@ -164,6 +183,17 @@ const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
                                             )}
                                         </div>
                                     </div>
+
+                                    {/* Tombol Hapus */}
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="absolute top-2 right-2 h-auto p-1 text-gray-400 opacity-0 transition-opacity group-hover:opacity-100 hover:bg-red-50 hover:text-red-600"
+                                        onClick={(e) => handleDeleteNotification(e, notification.id)}
+                                        title="Hapus notifikasi"
+                                    >
+                                        <Trash2 className="h-4 w-4" />
+                                    </Button>
                                 </div>
                             ))}
                         </div>

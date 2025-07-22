@@ -49,7 +49,8 @@ Route::prefix('')->middleware(['auth'])->group(function () {
     })->name('homepage');
 
     Route::put('/read-notification/{id}', [NotificationController::class, 'readNotification'])->name('notification.read');
-
+    Route::put('/read/all/notification', [NotificationController::class, 'readAllNotification'])->name('notification.readAll');
+    Route::delete('/delete/notification/{id}', [NotificationController::class, 'destroy'])->name('notification.delete');
     // Route untuk keperluan yang berkaitan dengan Profil
     Route::get('/profile', [CtzProfileController::class, 'showProfile'])->name('profile.show');
     Route::get('/edit-profile', [CtzProfileController::class, 'editProfile'])->name('profile.edit');
