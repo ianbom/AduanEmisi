@@ -106,10 +106,12 @@ class ReportController extends Controller
         $filters = request()->only(['status', 'city_id', 'district_id', 'category', 'search']);
         $perPage = request()->get('per_page', 15);
         $reports = $this->reportService->getReports($filters, $perPage);
-
+        $provinces = Province::orderBy('name', 'asc')->get();
+        
         return Inertia::render('Citizen/Report/ReportsPage', [
             'reports' => $reports,
             'myReports' => false,
+            'provinces' => $provinces
         ]);
     }
 
