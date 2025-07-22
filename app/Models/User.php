@@ -28,6 +28,9 @@ class User extends Authenticatable
         'province_id',
         'city_id',
         'district_id',
+        'google_id',
+        'google_token',
+        'google_refresh_token',
     ];
 
     protected $guarded = [

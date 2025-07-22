@@ -22,7 +22,7 @@ class IsProfileComplete
             return $next($request);
         } else {
 
-            return redirect()->route('complete.profile');
+            return redirect()->route('profile.complete');
         }
 
     }

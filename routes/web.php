@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\MissionController as AdmMissionController;
 use App\Http\Controllers\Admin\ReportController as AdmReportController;
 
 use App\Http\Controllers\Admin\UserController as AdmUserController;
+use App\Http\Controllers\Auth\GoogleAuthController;
 use App\Http\Controllers\ChatBotController;
 use App\Http\Controllers\Citizen\CommentController as CtzCommentController;
 use App\Http\Controllers\Citizen\NotificationController;
@@ -33,6 +34,9 @@ Route::get('/', function () {
     ]);
 });
 
+Route::get('/auth/google/redirect', [GoogleAuthController::class, 'redirect'])->name('auth.google.redirect');
+Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])->name('auth.google.callback');
+
 Route::get('/complete-profile', [CtzProfileController::class, 'completeProfile'])->name('profile.complete');
 Route::post('/complete-profile', [CtzProfileController::class, 'updateCompleteProfile'])->name('profile.complete.update');
 
@@ -43,7 +47,7 @@ Route::get('/dashboard', function () {
 
 
 // Route untuk akses fitur peran warga
-Route::prefix('')->middleware(['auth'])->group(function () {
+Route::prefix('')->middleware(['auth', 'isProfileComplete'])->group(function () {
     Route::get('/homepage', function () {
         return Inertia::render('Citizen/HomePage');
     })->name('homepage');
