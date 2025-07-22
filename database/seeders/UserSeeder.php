@@ -46,6 +46,7 @@ class UserSeeder extends Seeder
             'name' => 'komunitas',
             'email' => 'komunitas@gmail.com',
             'password' => Hash::make('ianbom123'),
+            'role' => 'community'
 
         ]);
 

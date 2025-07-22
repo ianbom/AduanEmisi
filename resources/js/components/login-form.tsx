@@ -48,9 +48,9 @@ export function LoginForm({
           <form className="p-6 md:p-8" onSubmit={handleSubmit}> {/* Tambahkan onSubmit */}
             <div className="flex flex-col gap-6">
               <div className="flex flex-col items-center text-center">
-                <h1 className="text-2xl font-bold">Welcome back</h1>
-                <p className="text-balance text-muted-foreground">
-                  Login to your Acme Inc account
+                <h1 className="text-2xl font-bold text-green-900">Selamat Datang</h1>
+                <p className="text-balance font-bold text-green-700">
+                  Masuk ke Akun Sobat Bumi
                 </p>
               </div>
               <div className="grid gap-2">
@@ -73,7 +73,7 @@ export function LoginForm({
                     href={route('password.request')} // Gunakan route() helper untuk link
                     className="ml-auto text-sm underline-offset-2 hover:underline"
                   >
-                    Forgot your password?
+                  Lupa passowrd ?
                   </Link>
                 </div>
                 <Input
@@ -86,8 +86,12 @@ export function LoginForm({
                 />
                 {errors.password && <p className="text-sm text-red-500 mt-1">{errors.password}</p>} {/* Tampilkan error */}
               </div>
-              <Button type="submit" className="w-full" disabled={processing}> {/* Nonaktifkan tombol saat processing */}
-                {processing ? 'Logging in...' : 'Login'} {/* Teks dinamis saat loading */}
+              <Button
+                    type="submit"
+                    className="w-full bg-green-800 hover:bg-green-700 text-white"
+                    disabled={processing}
+                >
+                    {processing ? 'Logging in...' : 'Login'}
               </Button>
 
               {/* Checkbox "Remember Me" (opsional, jika Anda ingin menambahkannya) */}
@@ -106,7 +110,7 @@ export function LoginForm({
 
               <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
                 <span className="relative z-10 bg-background px-2 text-muted-foreground">
-                  Or continue with
+                  Atau lanjutkan dengan
                 </span>
               </div>
               {/* Social login buttons (tetap statis, perlu integrasi Laravel Socialite untuk fungsionalitas) */}
@@ -140,16 +144,16 @@ export function LoginForm({
                 </Button>
               </div>
               <div className="text-center text-sm">
-                Don&apos;t have an account?{" "}
+                Belum memiliki akun ?
                 <Link href={route('register')} className="underline underline-offset-4"> {/* Gunakan route() helper */}
-                  Sign up
+                  Daftar
                 </Link>
               </div>
             </div>
           </form>
           <div className="relative hidden bg-muted md:block">
             <img
-              src="/vector-login.jpg"
+              src="/SOBUMI.png"
               alt="Image"
               className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
             />

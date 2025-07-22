@@ -1,0 +1,1 @@
+import{j as m}from"./app-CEf6-TVv.js";import{L as e}from"./login-form-CO0jkSE4.js";import"./index-T59oawn7.js";import"./label-r7WXdrwQ.js";function o(){return m.jsx("div",{className:"flex flex-col items-center justify-center p-6 min-h-svh bg-muted md:p-10",children:m.jsx("div",{className:"w-full max-w-sm md:max-w-3xl",children:m.jsx(e,{})})})}export{o as default};

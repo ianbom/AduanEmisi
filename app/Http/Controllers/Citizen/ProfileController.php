@@ -28,16 +28,26 @@ class ProfileController extends Controller
     public function showProfile()
     {
         $user = User::with('province', 'city', 'district')->find(Auth::id());
+
         $myReports = Report::with(['reporter'])->where('reporter_id', $user->id)->get();
-        $myReportCount = Report::with(['reporter'])->where('reporter_id', $user->id)->count();
+        $myReportCount = Report::where('reporter_id', $user->id)->count();
+        // $myMissions = $user->volunteeredMissions()->with('pivot')->get();
+        $myMissions = $user->volunteeredMissions; // otomatis get()
+        $myMissionCounts = $myMissions->count(); // hitung dari hasil atas
+
+        // $myMissionCounts = $user->volunteeredMissions()->count();
+
         return Inertia::render('Citizen/Profile/ProfilePage', [
             'auth' => [
                 'user' => $user,
             ],
             'myReports' => $myReports,
             'myReportsCount' => $myReportCount,
+            'myMissions' => $myMissions,
+            'myMissionCounts' => $myMissionCounts,
         ]);
     }
+
 
     public function completeProfile()
     {
@@ -64,8 +74,14 @@ class ProfileController extends Controller
     public function updateProfile(ProfileRequest $request)
     {
         $data = $request->validated();
+
         try {
-            $this->profileService->updateProfile($data);
+            if ($request->hasFile('profile_url')) {
+                $file = $request->file('profile_url');
+                $path = $file->store('profile_url', 'public');
+                $data['profile_url'] = $path;
+            }
+            $this->profileService->updateProfileData($data);
             return redirect()
                 ->route('profile.show')
                 ->with('success', 'Profile berhasil diperbarui');
@@ -75,6 +91,8 @@ class ProfileController extends Controller
                 ->withInput();
         }
     }
+
+
 
     public function updateCompleteProfile(ProfileRequest $request)
     {

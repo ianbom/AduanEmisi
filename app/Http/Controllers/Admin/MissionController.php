@@ -43,7 +43,7 @@ class MissionController extends Controller
             ]);
             DB::commit();
 
-           return redirect()->route('admin.missions.index')->with('success', 'Misi berhasil dibuat');
+            return redirect()->route('admin.missions.index')->with('success', 'Misi berhasil dibuat');
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
@@ -84,7 +84,7 @@ class MissionController extends Controller
         return view('admin.missions.create', ['reports' => $reports]);
     }
 
-     public function update(UpdateMissionRequest $request, Mission $mission)
+    public function update(UpdateMissionRequest $request, Mission $mission)
     {
         DB::beginTransaction();
         try {
@@ -103,40 +103,41 @@ class MissionController extends Controller
         }
     }
 
-   public function edit(Mission $mission)
-{
-    $volunteers = $this->missionService->getMissionVolunteers($mission->id);
-    $missionDocumentations = $this->missionService->getMissionDocumentations($mission->id);
-    $provinces = Province::all();
-    $cities = City::all();
-    $districts = District::all();
+    public function edit(Mission $mission)
+    {
+        $volunteers = $this->missionService->getMissionVolunteers($mission->id);
+        $missionDocumentations = $this->missionService->getMissionDocumentations($mission->id);
+        $provinces = Province::all();
+        $cities = City::all();
+        $districts = District::all();
 
-    $reports = $this->missionService->getVerifiedAndUniqueReport($mission->id);
+        $reports = $this->missionService->getVerifiedAndUniqueReport($mission->id);
 
-    return view('admin.missions.edit', [
-        'mission' => $mission,
-        'volunteers' => $volunteers,
-        'missionDocumentations' => $missionDocumentations,
-        'cities' => $cities,
-        'districts' => $districts,
-        'reports' => $reports,
-        'provinces' => $provinces
-    ]);
-}
+        return view('admin.missions.edit', [
+            'mission' => $mission,
+            'volunteers' => $volunteers,
+            'missionDocumentations' => $missionDocumentations,
+            'cities' => $cities,
+            'districts' => $districts,
+            'reports' => $reports,
+            'provinces' => $provinces
+        ]);
+    }
 
-    public function updateStatusVolunteer(Request $request, MissionVolunteer $missionVolunteer){
+    public function updateStatusVolunteer(Request $request, MissionVolunteer $missionVolunteer)
+    {
 
         DB::beginTransaction();
         try {
-        $missionVolunteer->update([
-        'participation_status' => $request->participation_status,
-        'is_leader' => $request->is_leader,
-       ]);
-        DB::commit();
-       return redirect()->back()->with('success', 'Status volunter berhasil diubah');
+            $missionVolunteer->update([
+                'participation_status' => $request->participation_status,
+                'is_leader' => $request->is_leader,
+            ]);
+            DB::commit();
+            return redirect()->back()->with('success', 'Status volunter berhasil diubah');
         } catch (\Throwable $th) {
             DB::rollBack();
-           return response()->json(['err' => $th->getMessage()]);
+            return response()->json(['err' => $th->getMessage()]);
         }
     }
 

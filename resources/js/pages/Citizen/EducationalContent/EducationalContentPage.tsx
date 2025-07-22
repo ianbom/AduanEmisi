@@ -5,7 +5,9 @@ import { PageProps } from '@/types';
 import { Content } from '@/types/content';
 import { router as Inertia, usePage } from '@inertiajs/react';
 interface EducationalContentPageRouteProps {
-    contents: Content[];
+    contents: {
+        data: Content[];
+    };
     [key: string]: unknown;
 }
 const EducationalContentPageRoute = () => {

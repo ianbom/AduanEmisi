@@ -35,7 +35,7 @@ class ProfileRequest extends FormRequest
             'district_id' => ['nullable', 'integer', 'exists:districts,id'], // Asumsi tabel districts ada
             'phone'       => ['nullable', 'string', 'max:20'],
             'address'     => ['nullable', 'string', 'max:500'],
-            'profile_url' => ['nullable', 'url', 'max:2048'],
+            'profile_url' => ['nullable', 'file', 'image', 'max:2048'], 
             'role' => 'nullable'
         ];
     }

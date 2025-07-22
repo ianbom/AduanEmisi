@@ -10,23 +10,31 @@ import {
 } from '@/components/ui/select';
 import { Mission } from '@/types/report/mission';
 import { formatDateOnly } from '@/utils/formatDate';
-import { getStatusColor } from '@/utils/reportStatusColor';
+import { getStatusColor } from '@/utils/missionStatusColor';
 import { router as Inertia } from '@inertiajs/react';
-import { Calendar, Eye, Filter, MapPin, Search } from 'lucide-react';
+import { Calendar, Eye, Filter, MapPin, Search, Target } from 'lucide-react';
 import { useState } from 'react';
-import { Badge } from '../ui/badge';
+import Badge from '../core/Badge';
+
 interface MissionPageProps {
     missions: Mission[];
+    myMissions: boolean;
     onViewDetails: (id: number) => void;
 }
-const MissionPage = ({ missions, onViewDetails }: MissionPageProps) => {
+const MissionPage = ({
+    missions,
+    myMissions,
+    onViewDetails,
+}: MissionPageProps) => {
     const [sortBy, setSortBy] = useState('newest');
     return (
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
             <div className="mb-8 flex flex-col items-start justify-between md:flex-row md:items-center">
                 <div>
                     <h1 className="mb-2 text-3xl font-bold text-gray-900">
-                        Daftar Misi
+                        <h1 className="mb-2 text-3xl font-bold text-gray-900">
+                            {myMissions ? 'Misi yang Diikuti' : 'Daftar Misi'}
+                        </h1>
                     </h1>
                     <p className="text-gray-600">
                         Temukan Misi dan jadilah bagian dalam aksi penyelamatan
@@ -255,14 +263,6 @@ const MissionPage = ({ missions, onViewDetails }: MissionPageProps) => {
                                                     Oleh:{' '}
                                                     {mission.creator?.name}
                                                 </span>
-                                                {/* <span>
-                                            {content.duration &&
-                                                ${content.duration}}
-                                            {content.readTime &&
-                                                ${content.readTime}}
-                                            {content.pages &&
-                                                ${content.pages} halaman}
-                                        </span> */}
                                             </div>
                                             <div className="mb-3 flex items-center text-sm text-gray-500">
                                                 <MapPin
@@ -323,28 +323,21 @@ const MissionPage = ({ missions, onViewDetails }: MissionPageProps) => {
                             <Card className="w-full px-8 py-32 text-center">
                                 <div className="mb-4 flex justify-center">
                                     <div className="rounded-full bg-gray-100 p-4">
-                                        <svg
+                                        <Target
+                                            size={32}
                                             className="h-12 w-12 text-gray-400"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            viewBox="0 0 24 24"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth={2}
-                                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                                            />
-                                        </svg>
+                                        />
                                     </div>
                                 </div>
                                 <h3 className="mb-2 text-lg font-semibold text-gray-900">
-                                    Misi Belum Tersedia
+                                    {myMissions
+                                        ? 'Anda Belum Memiliki Misi'
+                                        : 'Misi Belum Tersedia'}
                                 </h3>
                                 <p className="text-sm text-gray-500">
-                                    Belum ada misi yang tersedia saat ini. Coba
-                                    lagi nanti.
+                                    {myMissions
+                                        ? 'Anda belum memiliki misi. Silahkan mendaftar misi terlebih dahulu.'
+                                        : 'Belum ada misi yang tersedia saat ini. Coba lagi nanti.'}
                                 </p>
                             </Card>
                         </div>

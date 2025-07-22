@@ -8,4 +8,5 @@ export interface Content {
     created_at: string;
     media: MediaItem[];
     content_type: string;
+    content: string;
 }

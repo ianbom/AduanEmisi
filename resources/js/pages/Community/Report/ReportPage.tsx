@@ -6,7 +6,7 @@ import { Report } from '@/types/report';
 import { router as Inertia, usePage } from '@inertiajs/react';
 
 interface ReportPageRouteProps {
-    reports: Report[];
+    reports: { data: Report[] };
     myReports: boolean;
     [key: string]: unknown;
 }

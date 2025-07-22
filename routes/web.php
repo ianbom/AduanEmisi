@@ -1,10 +1,13 @@
 <?php
 
 use App\Http\Controllers\Admin\BadgeController as AdmBadgeController;
+use App\Http\Controllers\Admin\CertificateController as AdmCertificateController;
 use App\Http\Controllers\Admin\ContentController as AdmContentController;
 use App\Http\Controllers\Admin\MissionController as AdmMissionController;
 use App\Http\Controllers\Admin\ReportController as AdmReportController;
+
 use App\Http\Controllers\Admin\UserController as AdmUserController;
+use App\Http\Controllers\ChatBotController;
 use App\Http\Controllers\Citizen\CommentController as CtzCommentController;
 use App\Http\Controllers\Citizen\NotificationController;
 use App\Http\Controllers\Citizen\ReportController as CtzReportController;
@@ -50,7 +53,7 @@ Route::prefix('')->group(function () {
     // Route untuk keperluan yang berkaitan dengan Profil
     Route::get('/profile', [CtzProfileController::class, 'showProfile'])->name('profile.show');
     Route::get('/edit-profile', [CtzProfileController::class, 'editProfile'])->name('profile.edit');
-    Route::get('/update-profile', [CtzProfileController::class, 'editProfile'])->name('profile.edit');
+    Route::post('/update-profile', [CtzProfileController::class, 'updateProfile'])->name('profile.update');
 
     // Route untuk keperluan yang berkaitan dengan Laporan
     Route::get('/report', [CtzReportController::class, 'viewAllReportsPage'])->name('report');
@@ -66,6 +69,8 @@ Route::prefix('')->group(function () {
 
     // Route untuk keperluan yang berkaitan dengan misi
     Route::get('/mission', [CtzMissionController::class, 'index'])->name('mission');
+    Route::get('/my-mission', [CtzMissionController::class, 'myMissions'])->name('my-mission');
+
     Route::post('/join-missions/{id}', [CtzMissionController::class, 'join'])->name('mission.join');
     Route::post('/attendance-members', [CtzMissionController::class, 'attend'])->name('attendance.store');
     Route::delete('/volunteers/{mission}', [CtzMissionController::class, 'cancel'])->name('volunteer.cancel');
@@ -77,10 +82,6 @@ Route::prefix('')->group(function () {
     // Route untuk keperluan yang berkaitan dengan Konten Edukasi
     Route::get('/education', [CtzContentController::class, 'index'])->name('content.index');
     Route::get('/education/{id}', [CtzContentController::class, 'show'])->name('content.show');
-
-    Route::get('/education-detail/1', function () {
-        return Inertia::render('Citizen/EducationalContent/EducationalContentDetailsPage');
-    })->name('education-detail');
 });
 
 
@@ -101,9 +102,6 @@ Route::prefix('community')->as('community.')->middleware(['auth'])->group(functi
 });
 
 
-
-
-
 Route::prefix('admin')->as('admin.')->middleware(['auth'])->group(function () {
     Route::resource('missions', AdmMissionController::class);
     Route::put('missions/update/volunteer/{missionVolunteer}', [AdmMissionController::class, 'updateStatusVolunteer'])->name('update.volunteerStatus');
@@ -118,6 +116,12 @@ Route::prefix('admin')->as('admin.')->middleware(['auth'])->group(function () {
     Route::resource('badges', AdmBadgeController::class);
 
     Route::resource('users', AdmUserController::class);
+
+    Route::get('certificate/generate', [AdmCertificateController::class, 'generateCertificate'])->name('certificate.generate');
+    Route::post('/missions/certificates/generate', [AdmCertificateController::class, 'generate'])->name('missions.certificates.generate');
+    Route::resource('certificates', AdmCertificateController::class);
+
+    Route::resource('chatbot', ChatBotController::class);
 });
 
 

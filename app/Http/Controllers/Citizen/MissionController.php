@@ -29,7 +29,8 @@ class MissionController extends Controller
             $perPage = $request->get('per_page', 15);
             $missions = $this->missionService->getMissions($filters, $perPage);
             return Inertia::render('Citizen/Mission/MissionPage', [
-                'missions' => $missions
+                'missions' => $missions,
+                'myMissions' => false
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -38,7 +39,38 @@ class MissionController extends Controller
             ], 500);
         }
     }
-    // app/Http/Controllers/MissionVolunteerController.php
+    public function myMissions(Request $request)
+    {
+        try {
+            $filters = $request->only([
+                'status',
+                'city_id',
+                'district_id',
+                'assigned_to_type',
+                'creator_user_id',
+                'assigned_volunteer_id',
+                'search',
+                'date_from',
+                'date_to',
+                'participation_status',
+            ]);
+
+            $perPage = $request->get('per_page', 15);
+
+            $missions = $this->missionService->getMissionsJoined(Auth::user(), $filters, $perPage);
+            return Inertia::render('Citizen/Mission/MissionPage', [
+                'missions' => $missions,
+                'myMissions' => true
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengambil misi yang diikuti: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+
 
     public function join(Request $request, $missionId)
     {
@@ -47,7 +79,6 @@ class MissionController extends Controller
         ]);
 
         $mission = Mission::findOrFail($missionId);
-
         $already = MissionVolunteer::where('mission_id', $missionId)
             ->where('user_id', Auth::id())
             ->exists();
@@ -114,8 +145,6 @@ class MissionController extends Controller
         if (! $isPending) {
             return back()->withErrors(['message' => 'Tidak bisa membatalkan pendaftaran yang sudah diproses.']);
         }
-
-        // Ganti status menjadi 'cancelled' alih-alih menghapus relasi
         $mission->volunteers()->updateExistingPivot($user->id, [
             'participation_status' => 'cancelled',
         ]);
@@ -127,7 +156,7 @@ class MissionController extends Controller
         $user = Auth::user();
 
         $request->validate([
-            'media.*' => 'required|file|mimes:jpeg,png,jpg,gif,mp4,mov,avi,wmv|max:10240', // 10MB untuk video
+            'media.*' => 'required|file|mimes:jpeg,png,jpg,gif,mp4,mov,avi,wmv|max:10240',
             'mission_id' => 'required|exists:missions,id',
             'content' => 'nullable|string|max:1000',
         ]);

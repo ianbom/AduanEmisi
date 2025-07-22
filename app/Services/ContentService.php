@@ -105,7 +105,8 @@ class ContentService extends Service
             throw new Exception('File tidak valid');
         }
 
-        $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+        $fileName = $file->getClientOriginalName();
+
         $filePath = $file->storeAs('contents', $fileName, 'public');
 
         if (!$filePath) {

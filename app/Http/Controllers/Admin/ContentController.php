@@ -15,16 +15,20 @@ class ContentController extends Controller
 {
 
     protected $contentService;
-    public function __construct(ContentService $contentService){
+    public function __construct(ContentService $contentService)
+    {
         $this->contentService = $contentService;
     }
 
-    public function index(){
-        $content = Content::orderBy('created_at', 'desc')->get();
+    public function index()
+    {
+        $content = Content::orderBy('created_at', 'desc')->with('author')->get();
+        // return response()->json($content);
         return view('admin.content.index', ['content' => $content]);
     }
 
-    public function create(){
+    public function create()
+    {
         return view('admin.content.create');
     }
 
@@ -39,7 +43,6 @@ class ContentController extends Controller
             return redirect()
                 ->route('admin.contents.index')
                 ->with('success', 'Konten berhasil dibuat!');
-
         } catch (\Exception $e) {
             return redirect()
                 ->back()
@@ -48,14 +51,16 @@ class ContentController extends Controller
         }
     }
 
-    public function edit(Content $content){
+    public function edit(Content $content)
+    {
         return view('admin.content.edit', ['content' => $content]);
     }
 
-     public function update(Content $content, CreateContentRequest $request)
+    public function update(Content $content, CreateContentRequest $request)
     {
         try {
-            $content = $this->contentService->updateContent($content->id,
+            $content = $this->contentService->updateContent(
+                $content->id,
                 $request->validated(),
                 Auth::id()
             );
@@ -63,7 +68,6 @@ class ContentController extends Controller
             return redirect()
                 ->route('admin.contents.index')
                 ->with('success', 'Konten berhasil diupdate!');
-
         } catch (\Exception $e) {
             return redirect()
                 ->back()
@@ -72,7 +76,8 @@ class ContentController extends Controller
         }
     }
 
-    public function deleteMedia(ContentMedia $contentMedia){
+    public function deleteMedia(ContentMedia $contentMedia)
+    {
 
         DB::beginTransaction();
         try {
@@ -82,6 +87,5 @@ class ContentController extends Controller
         } catch (\Throwable $th) {
             return redirect()->back()->with('error', 'Terjadi kesalahan');
         }
-
     }
 }

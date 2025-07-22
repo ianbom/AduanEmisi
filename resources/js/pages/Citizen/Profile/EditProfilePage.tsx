@@ -14,6 +14,8 @@ const EditProfilePageRoute = () => {
     const { props } = usePage<PageProps<EditProfilePageRouteProps>>();
     const user = props.auth?.user ?? null;
     const provinces = props.provinces ?? [];
+    if (!user) return null;
+
     return (
         <CitizenLayout currentPage="profile">
             <EditProfilePage

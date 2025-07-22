@@ -4,6 +4,8 @@ import { PageProps } from '@/types';
 import { getProfileMenuContent } from '@/utils/profileMenuContent';
 import { router as Inertia, usePage } from '@inertiajs/react';
 import { ReactNode, useState } from 'react';
+import Footer from '../core/Footer';
+import FloatingChat from '../chatbot/FloatingChat';
 interface Props {
     children: ReactNode;
     currentPage: string;
@@ -14,6 +16,7 @@ export default function CitizenLayout({ children, currentPage }: Props) {
     const { auth } = usePage<PageProps>().props;
     const user = auth?.user;
     const navItems = [
+        { id: 'homepage', label: 'Beranda', key: 'homepage' },
         { id: 'report', label: 'Laporan', key: 'report' },
         { id: 'mission', label: 'Misi', key: 'mission' },
         { id: 'map', label: 'Peta', key: 'map' },
@@ -52,6 +55,8 @@ export default function CitizenLayout({ children, currentPage }: Props) {
                 isOpen={isNotificationOpen}
                 onClose={() => setIsNotificationOpen(false)}
             />
+            <FloatingChat/>
+            <Footer />
         </div>
     );
 }

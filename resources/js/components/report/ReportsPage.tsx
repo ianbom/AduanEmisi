@@ -1,4 +1,3 @@
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -16,6 +15,7 @@ import { router as Inertia } from '@inertiajs/react';
 import {
     Calendar,
     Eye,
+    FileText,
     Filter,
     MapPin,
     Plus,
@@ -24,6 +24,7 @@ import {
     ThumbsUp,
 } from 'lucide-react';
 import { useState } from 'react';
+import Badge from '../core/Badge';
 interface ReportsPageProps {
     reports: Report[];
     myReports: boolean;
@@ -256,7 +257,7 @@ const ReportsPage = ({
                                                 />
                                             )}
 
-                                            <div className="absolute right-3 top-3">
+                                            <div className="absolute right-3 top-3 flex items-center gap-2">
                                                 <Badge
                                                     className={getStatusColor(
                                                         report.status,
@@ -264,22 +265,17 @@ const ReportsPage = ({
                                                 >
                                                     {report.status}
                                                 </Badge>
-                                            </div>
-                                            {report.mission && (
-                                                <div className="absolute left-3 top-3">
-                                                    <Badge className="bg-blue-100 text-blue-700">
+                                                {report.mission && (
+                                                    <Badge className="bg-indigo-100 text-indigo-700">
                                                         Ada Misi
                                                     </Badge>
-                                                </div>
-                                            )}
+                                                )}
+                                            </div>
                                         </div>
 
                                         <CardContent className="p-4">
                                             <div className="mb-2">
-                                                <Badge
-                                                    variant="outline"
-                                                    className="mb-2 text-xs"
-                                                >
+                                                <Badge className="border border-gray-400 bg-white text-gray-700">
                                                     {report.category}
                                                 </Badge>
                                             </div>
@@ -323,7 +319,7 @@ const ReportsPage = ({
                                                                 0}
                                                         </span>
                                                     </div>
-                                                    <div className="flex items-center text-sm font-medium text-emerald-600">
+                                                    <div className="flex items-center text-sm font-medium text-rose-600">
                                                         <ThumbsDown
                                                             size={14}
                                                             className="mr-1"
@@ -369,20 +365,10 @@ const ReportsPage = ({
                             <Card className="w-full px-8 py-32 text-center">
                                 <div className="mb-4 flex justify-center">
                                     <div className="rounded-full bg-gray-100 p-4">
-                                        <svg
+                                        <FileText
+                                            size={32}
                                             className="h-12 w-12 text-gray-400"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            viewBox="0 0 24 24"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth={2}
-                                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                                            />
-                                        </svg>
+                                        />
                                     </div>
                                 </div>
                                 <h3 className="mb-2 text-lg font-semibold text-gray-900">
