@@ -185,9 +185,9 @@ const ReportsPage = ({
                             ? 'Laporan yang dibuat oleh Anda'
                             : 'Temukan Laporan dan bergabung dalam aksi penyelamatan lingkungan'}
                     </p>
-                    <p className="text-sm text-gray-500 mt-1">
+                    {/* <p className="text-sm text-gray-500 mt-1">
                         Menampilkan {filteredReports.length} dari {reports.length} laporan
-                    </p>
+                    </p> */}
                 </div>
                 <Button
                     onClick={onCreateReport}
@@ -546,7 +546,7 @@ const ReportsPage = ({
                                                             className="mr-1"
                                                         />
                                                         <span>
-                                                            {report.downvotes_count ||
+                                                            {report.dislikes_count ||
                                                                 0}
                                                         </span>
                                                     </div>

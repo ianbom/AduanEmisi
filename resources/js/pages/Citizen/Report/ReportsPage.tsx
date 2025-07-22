@@ -27,7 +27,7 @@ const ReportsPageRoute = ({ myReports }: { myReports: boolean }) => {
         Inertia.visit(route('create.report'));
     };
 
-    // console.log('provinsi',provinces);
+    console.log('provinsi',provinces);
     return (
         <CitizenLayout currentPage={myReports ? 'my-report' : 'report'}>
             <ReportsPage
