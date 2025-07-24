@@ -241,16 +241,6 @@ const EducationalContentPage = ({
                                         </div>
 
                                         <CardContent className="p-4">
-                                            <div className="mb-2">
-                                                <Badge
-                                                    className={getTypeColor(
-                                                        content.content_type,
-                                                    )}
-                                                >
-                                                    {content.content_type}
-                                                </Badge>
-                                            </div>
-
                                             <h3 className="mb-2 line-clamp-2 font-semibold text-gray-900 transition-colors group-hover:text-emerald-600">
                                                 {content.title}
                                             </h3>

@@ -3,8 +3,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Province } from '@/types/area/interface';
-
 import {
     Select,
     SelectContent,
@@ -13,8 +11,10 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { Province } from '@/types/area/interface';
 import { router as Inertia } from '@inertiajs/react';
 import {
+    AlertCircle,
     ArrowLeft,
     Camera,
     Eye,
@@ -41,6 +41,11 @@ interface PageProps {
             city_id: number | null;
             district_id: number | null;
             address: string | null;
+            community?: {
+                name: string;
+                member_count: number;
+                description: string;
+            };
         };
     };
     onBack: () => void;
@@ -52,7 +57,6 @@ const EditProfilePage = ({ provinces, onBack, auth }: PageProps) => {
     const [showPasswordConfirmation, setShowPasswordConfirmation] =
         useState(false);
     const [showCurrentPassword, setShowCurrentPassword] = useState(false);
-
     const [formData, setFormData] = useState({
         name: auth.user?.name || '',
         phone: auth.user?.phone || '',
@@ -63,6 +67,11 @@ const EditProfilePage = ({ provinces, onBack, auth }: PageProps) => {
         current_password: '',
         password: '',
         password_confirmation: '',
+        community: {
+            name: auth.user?.community?.name || '',
+            member_count: auth.user?.community?.member_count?.toString() || '',
+            description: auth.user?.community?.description || '',
+        },
     });
 
     const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
@@ -74,8 +83,18 @@ const EditProfilePage = ({ provinces, onBack, auth }: PageProps) => {
         (c) => c.id.toString() === formData.city_id,
     );
     const districts = selectedCity?.districts ?? [];
+
     const handleInputChange = (field: string, value: string) => {
-        if (field === 'province_id') {
+        if (field.startsWith('community.')) {
+            const key = field.split('.')[1];
+            setFormData((prev) => ({
+                ...prev,
+                community: {
+                    ...prev.community,
+                    [key]: value,
+                },
+            }));
+        } else if (field === 'province_id') {
             setFormData((prev) => ({
                 ...prev,
                 province_id: value,
@@ -141,10 +160,12 @@ const EditProfilePage = ({ provinces, onBack, auth }: PageProps) => {
         data.append('city_id', formData.city_id);
         data.append('district_id', formData.district_id);
 
+        data.append('community[name]', formData.community.name);
+        data.append('community[member_count]', formData.community.member_count);
+        data.append('community[description]', formData.community.description);
         if (uploadedFiles.length > 0) {
             data.append('profile_url', uploadedFiles[0]);
         }
-
         if (formData.password) {
             data.append('current_password', formData.current_password);
             data.append('password', formData.password);
@@ -153,7 +174,6 @@ const EditProfilePage = ({ provinces, onBack, auth }: PageProps) => {
                 formData.password_confirmation,
             );
         }
-
         // 🔍 DEBUG START
         console.log('Uploaded file:', uploadedFiles[0]);
         console.log('FormData entries:');
@@ -164,11 +184,32 @@ const EditProfilePage = ({ provinces, onBack, auth }: PageProps) => {
         setIsSubmitting(true);
 
         try {
-            await Inertia.post('/update-profile', data, {
+            await Inertia.post('/community/update-profile', data, {
                 forceFormData: true,
-                onSuccess: () => {
+                onSuccess: (page) => {
+                    // alert('Berhasil update!');
+                    // Inertia.visit('/community/profile');
+                    console.log('Success response:', page);
                     alert('Berhasil update!');
-                    Inertia.visit('/profile');
+                    // Gunakan window.location atau Inertia.visit dengan replace
+                    window.location.href = '/community/profile';
+                },
+                onError: (errors) => {
+                    console.error('Validation errors:', errors);
+                    // Tampilkan error yang lebih detail
+                    const errorMessages = Object.entries(errors)
+                        .map(([field, messages]) => {
+                            const messageArray = Array.isArray(messages)
+                                ? messages
+                                : [messages];
+                            return `${field}: ${messageArray.join(', ')}`;
+                        })
+                        .join('\n');
+                    alert(`Validation errors:\n${errorMessages}`);
+                    setIsSubmitting(false);
+                },
+                onFinish: () => {
+                    setIsSubmitting(false);
                 },
             });
         } catch (error: any) {
@@ -413,145 +454,78 @@ const EditProfilePage = ({ provinces, onBack, auth }: PageProps) => {
                     </div>
                 </div>
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                    {/* Bagian Bawah: Alamat Pengguna - Full Width */}
+
                     <div className="flex flex-col space-y-6">
                         <Card className="flex h-full flex-col">
                             <CardHeader>
                                 <CardTitle className="flex items-center">
-                                    <Lock
+                                    <AlertCircle
                                         size={20}
                                         className="mr-2 text-emerald-600"
                                     />
-                                    Kata Sandi
+                                    Informasi Komunitas
                                 </CardTitle>
                             </CardHeader>
                             <CardContent className="flex-1 space-y-6">
                                 <div className="space-y-2">
-                                    <Label htmlFor="current_password">
-                                        Password Lama{' '}
+                                    <Label htmlFor="community_name">
+                                        Nama Komunitas{' '}
                                         <span className="text-red-500">*</span>
                                     </Label>
-                                    <div className="relative">
-                                        <Input
-                                            id="current_password"
-                                            type={
-                                                showCurrentPassword
-                                                    ? 'text'
-                                                    : 'password'
-                                            }
-                                            placeholder="Masukkan password lama Anda"
-                                            value={formData.current_password}
-                                            onChange={(e) =>
-                                                handleInputChange(
-                                                    'current_password',
-                                                    e.target.value,
-                                                )
-                                            }
-                                            required
-                                            disabled={isSubmitting}
-                                            className="pr-10"
-                                        />
-                                        <button
-                                            type="button"
-                                            className="absolute inset-y-0 right-2 flex items-center text-gray-500"
-                                            onClick={() =>
-                                                setShowCurrentPassword(
-                                                    !showCurrentPassword,
-                                                )
-                                            }
-                                        >
-                                            {showCurrentPassword ? (
-                                                <EyeOff size={18} />
-                                            ) : (
-                                                <Eye size={18} />
-                                            )}
-                                        </button>
-                                    </div>
+                                    <Input
+                                        id="community_name"
+                                        placeholder="Masukkan nama komunitas Anda"
+                                        value={formData.community.name}
+                                        onChange={(e) =>
+                                            handleInputChange(
+                                                'community.name',
+                                                e.target.value,
+                                            )
+                                        }
+                                        required
+                                        disabled={isSubmitting}
+                                    />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="password">
-                                        Password Baru
+                                    <Label htmlFor="member_count">
+                                        Jumlah Anggota
                                         <span className="text-red-500">*</span>
                                     </Label>
-                                    <div className="relative">
-                                        <Input
-                                            id="password"
-                                            type={
-                                                showPassword
-                                                    ? 'text'
-                                                    : 'password'
-                                            }
-                                            placeholder="Masukkan password baru Anda"
-                                            value={formData.password}
-                                            onChange={(e) =>
-                                                handleInputChange(
-                                                    'password',
-                                                    e.target.value,
-                                                )
-                                            }
-                                            disabled={isSubmitting}
-                                            className="pr-10"
-                                        />
-                                        <button
-                                            type="button"
-                                            className="absolute inset-y-0 right-2 flex items-center text-gray-500"
-                                            onClick={() =>
-                                                setShowPassword(!showPassword)
-                                            }
-                                        >
-                                            {showPassword ? (
-                                                <EyeOff size={18} />
-                                            ) : (
-                                                <Eye size={18} />
-                                            )}
-                                        </button>
-                                    </div>
-                                    <p className="text-sm text-muted-foreground">
-                                        Kosongkan jika tidak ingin mengubah
-                                        password
-                                    </p>
+                                    <Input
+                                        id="member_count"
+                                        placeholder="Masukkan jumlah anggota Anda"
+                                        value={formData.community.member_count}
+                                        onChange={(e) =>
+                                            handleInputChange(
+                                                'community.member_count',
+                                                e.target.value,
+                                            )
+                                        }
+                                        type="number"
+                                        required
+                                        disabled={isSubmitting}
+                                    />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="password_confirmation">
-                                        Konfirmasi Password Baru
+                                    <Label htmlFor="description">
+                                        Deskripsi Komunitas{' '}
                                         <span className="text-red-500">*</span>
                                     </Label>
-                                    <div className="relative">
-                                        <Input
-                                            id="password_confirmation"
-                                            placeholder="Masukkan ulang password baru"
-                                            type={
-                                                showPasswordConfirmation
-                                                    ? 'text'
-                                                    : 'password'
-                                            }
-                                            value={
-                                                formData.password_confirmation
-                                            }
-                                            onChange={(e) =>
-                                                handleInputChange(
-                                                    'password_confirmation',
-                                                    e.target.value,
-                                                )
-                                            }
-                                            disabled={isSubmitting}
-                                            className="pr-10"
-                                        />
-                                        <button
-                                            type="button"
-                                            className="absolute inset-y-0 right-2 flex items-center text-gray-500"
-                                            onClick={() =>
-                                                setShowPasswordConfirmation(
-                                                    !showPasswordConfirmation,
-                                                )
-                                            }
-                                        >
-                                            {showPasswordConfirmation ? (
-                                                <EyeOff size={18} />
-                                            ) : (
-                                                <Eye size={18} />
-                                            )}
-                                        </button>
-                                    </div>
+                                    <Textarea
+                                        id="description"
+                                        placeholder="Masukkan deskripsi komunitas Anda"
+                                        rows={3}
+                                        value={formData.community.description}
+                                        onChange={(e) =>
+                                            handleInputChange(
+                                                'community.description',
+                                                e.target.value,
+                                            )
+                                        }
+                                        required
+                                        disabled={isSubmitting}
+                                    />
                                 </div>
                             </CardContent>
                         </Card>
@@ -644,9 +618,144 @@ const EditProfilePage = ({ provinces, onBack, auth }: PageProps) => {
                         </Card>
                     </div>
                 </div>
-
-                {/* Bagian Bawah: Alamat Pengguna - Full Width */}
-
+                <div className="flex flex-col space-y-6">
+                    <Card className="flex h-full flex-col">
+                        <CardHeader>
+                            <CardTitle className="flex items-center">
+                                <Lock
+                                    size={20}
+                                    className="mr-2 text-emerald-600"
+                                />
+                                Kata Sandi
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="flex-1 space-y-6">
+                            <div className="space-y-2">
+                                <Label htmlFor="current_password">
+                                    Password Lama{' '}
+                                    <span className="text-red-500">*</span>
+                                </Label>
+                                <div className="relative">
+                                    <Input
+                                        id="current_password"
+                                        type={
+                                            showCurrentPassword
+                                                ? 'text'
+                                                : 'password'
+                                        }
+                                        placeholder="Masukkan password lama Anda"
+                                        value={formData.current_password}
+                                        onChange={(e) =>
+                                            handleInputChange(
+                                                'current_password',
+                                                e.target.value,
+                                            )
+                                        }
+                                        required
+                                        disabled={isSubmitting}
+                                        className="pr-10"
+                                    />
+                                    <button
+                                        type="button"
+                                        className="absolute inset-y-0 right-2 flex items-center text-gray-500"
+                                        onClick={() =>
+                                            setShowCurrentPassword(
+                                                !showCurrentPassword,
+                                            )
+                                        }
+                                    >
+                                        {showCurrentPassword ? (
+                                            <EyeOff size={18} />
+                                        ) : (
+                                            <Eye size={18} />
+                                        )}
+                                    </button>
+                                </div>
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="password">
+                                    Password Baru
+                                    <span className="text-red-500">*</span>
+                                </Label>
+                                <div className="relative">
+                                    <Input
+                                        id="password"
+                                        type={
+                                            showPassword ? 'text' : 'password'
+                                        }
+                                        placeholder="Masukkan password baru Anda"
+                                        value={formData.password}
+                                        onChange={(e) =>
+                                            handleInputChange(
+                                                'password',
+                                                e.target.value,
+                                            )
+                                        }
+                                        disabled={isSubmitting}
+                                        className="pr-10"
+                                    />
+                                    <button
+                                        type="button"
+                                        className="absolute inset-y-0 right-2 flex items-center text-gray-500"
+                                        onClick={() =>
+                                            setShowPassword(!showPassword)
+                                        }
+                                    >
+                                        {showPassword ? (
+                                            <EyeOff size={18} />
+                                        ) : (
+                                            <Eye size={18} />
+                                        )}
+                                    </button>
+                                </div>
+                                <p className="text-sm text-muted-foreground">
+                                    Kosongkan jika tidak ingin mengubah password
+                                </p>
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="password_confirmation">
+                                    Konfirmasi Password Baru
+                                    <span className="text-red-500">*</span>
+                                </Label>
+                                <div className="relative">
+                                    <Input
+                                        id="password_confirmation"
+                                        placeholder="Masukkan ulang password baru"
+                                        type={
+                                            showPasswordConfirmation
+                                                ? 'text'
+                                                : 'password'
+                                        }
+                                        value={formData.password_confirmation}
+                                        onChange={(e) =>
+                                            handleInputChange(
+                                                'password_confirmation',
+                                                e.target.value,
+                                            )
+                                        }
+                                        disabled={isSubmitting}
+                                        className="pr-10"
+                                    />
+                                    <button
+                                        type="button"
+                                        className="absolute inset-y-0 right-2 flex items-center text-gray-500"
+                                        onClick={() =>
+                                            setShowPasswordConfirmation(
+                                                !showPasswordConfirmation,
+                                            )
+                                        }
+                                    >
+                                        {showPasswordConfirmation ? (
+                                            <EyeOff size={18} />
+                                        ) : (
+                                            <Eye size={18} />
+                                        )}
+                                    </button>
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
                 {/* Tombol Submit */}
                 <div className="flex flex-col justify-start gap-4 rounded-lg border border-gray-200 bg-white p-3 shadow-sm sm:flex-row">
                     <Button

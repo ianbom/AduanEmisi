@@ -23,7 +23,7 @@ interface ReportDetailPageRouteProps {
               };
           })
         | null;
-    confirmedLeader: User | null;
+    confirmedLeader: User[] | null;
     comments: Comment[];
     volunteers: User[];
     volunteerCounts: number;
@@ -31,6 +31,7 @@ interface ReportDetailPageRouteProps {
 }
 const ReportDetailPageRoute = () => {
     const { props } = usePage<PageProps<ReportDetailPageRouteProps>>();
+    const user = props.auth?.user ?? null;
     const report = props.report;
     const myParticipation = props.myParticipation;
     const confirmedLeader = props.confirmedLeader;
@@ -46,10 +47,11 @@ const ReportDetailPageRoute = () => {
         <CitizenLayout currentPage="report/{id}">
             <ReportDetailPage
                 report={report}
+                user={user}
                 onBack={handleBack}
                 your_vote={your_vote}
                 comments={comments}
-                confirmedLeader={confirmedLeader}
+                confirmedLeader={confirmedLeader ?? []}
                 myParticipation={myParticipation}
                 volunteers={volunteers}
                 volunteerCounts={volunteerCounts}

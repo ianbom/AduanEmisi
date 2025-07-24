@@ -34,9 +34,6 @@ class ContentService extends Service
                 'body' => $data['body'],
                 'content_type' => $data['content_type'] ?? null,
             ]);
-
-
-
             // Handle uploaded files
             if (isset($data['media']) && is_array($data['media']) && !empty($data['media'])) {
                 foreach ($data['media'] as $file) {

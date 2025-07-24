@@ -2,6 +2,13 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Report } from '@/types/report';
 import { Mission } from '@/types/report/mission';
@@ -33,6 +40,7 @@ interface CitizenProfilePageProps {
     myMissions: Mission[];
     myMissionCounts: number;
 }
+
 const CitizenProfilePage = ({
     user,
     myReports,
@@ -411,7 +419,6 @@ const CitizenProfilePage = ({
                         </Link>
                     </div>
                 </div>
-
                 {/* Detailed Activity Tabs */}
                 <Card>
                     <CardHeader>
@@ -419,7 +426,7 @@ const CitizenProfilePage = ({
                     </CardHeader>
                     <CardContent>
                         <Tabs value={activeTab} onValueChange={setActiveTab}>
-                            <TabsList className="grid w-full grid-cols-5">
+                            <TabsList className="hidden w-full grid-cols-5 md:grid">
                                 <TabsTrigger value="reports">
                                     Laporan Saya
                                 </TabsTrigger>
@@ -436,15 +443,41 @@ const CitizenProfilePage = ({
                                     Koleksi Badges
                                 </TabsTrigger>
                             </TabsList>
-
+                            <div className="mb-4 md:hidden">
+                                <Select
+                                    value={activeTab}
+                                    onValueChange={setActiveTab}
+                                >
+                                    <SelectTrigger className="w-full">
+                                        <SelectValue placeholder="Pilih aktivitas" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="reports">
+                                            Laporan Saya
+                                        </SelectItem>
+                                        <SelectItem value="missions">
+                                            Misi Saya
+                                        </SelectItem>
+                                        <SelectItem value="donations">
+                                            Donasi Saya
+                                        </SelectItem>
+                                        <SelectItem value="certificates">
+                                            Sertifikat Saya
+                                        </SelectItem>
+                                        <SelectItem value="badges">
+                                            Koleksi Badges
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
                             <TabsContent value="reports" className="mt-6">
                                 <div className="space-y-4">
                                     {myReports?.length > 0 ? (
                                         myReports.map((report) => (
                                             <Card key={report.id}>
                                                 <CardContent className="p-4">
-                                                    <div className="flex items-start justify-between">
-                                                        <div>
+                                                    <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                                                        <div className="flex-1">
                                                             <h3 className="font-semibold text-gray-900">
                                                                 {report.title}
                                                             </h3>
@@ -457,7 +490,7 @@ const CitizenProfilePage = ({
                                                                 )}
                                                             </p>
                                                         </div>
-                                                        <div className="flex items-center gap-3">
+                                                        <div className="flex items-center gap-3 self-start">
                                                             <Badge
                                                                 variant={
                                                                     report.status ===
@@ -500,8 +533,8 @@ const CitizenProfilePage = ({
                                         myMissions.map((mission) => (
                                             <Card key={mission.id}>
                                                 <CardContent className="p-4">
-                                                    <div className="flex items-start justify-between">
-                                                        <div>
+                                                    <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                                                        <div className="flex-1">
                                                             <h3 className="font-semibold text-gray-900">
                                                                 {mission.title}
                                                             </h3>
@@ -512,14 +545,13 @@ const CitizenProfilePage = ({
                                                                     ? 'Ketua Tim'
                                                                     : 'Anggota Tim'}
                                                             </p>
-
                                                             <p className="mt-1 text-xs text-gray-500">
                                                                 {formatFullDateTime(
                                                                     mission.created_at,
                                                                 )}
                                                             </p>
                                                         </div>
-                                                        <div className="flex items-center gap-3">
+                                                        <div className="flex items-center gap-3 self-start">
                                                             <Badge
                                                                 variant={
                                                                     mission.status ===
@@ -575,25 +607,25 @@ const CitizenProfilePage = ({
                             </TabsContent>
 
                             <TabsContent value="badges" className="mt-6">
-                                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                                     {badges.map((badge) => (
                                         <Card
                                             key={badge.id}
                                             className={`border-2 ${getRarityColor(badge.rarity)}`}
                                         >
-                                            <CardContent className="p-6 text-center">
-                                                <div className="mb-3 text-4xl">
+                                            <CardContent className="p-4 text-center sm:p-6">
+                                                <div className="mb-3 text-3xl sm:text-4xl">
                                                     {badge.icon}
                                                 </div>
-                                                <h3 className="mb-2 font-semibold text-gray-900">
+                                                <h3 className="mb-2 text-sm font-semibold text-gray-900 sm:text-base">
                                                     {badge.title}
                                                 </h3>
-                                                <p className="mb-3 text-sm text-gray-600">
+                                                <p className="mb-3 text-xs text-gray-600 sm:text-sm">
                                                     {badge.description}
                                                 </p>
                                                 <Badge
                                                     variant="outline"
-                                                    className="mb-2"
+                                                    className="mb-2 text-xs"
                                                 >
                                                     {badge.rarity}
                                                 </Badge>

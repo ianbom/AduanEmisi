@@ -22,6 +22,10 @@ export interface User {
     updated_at: string | null;
     community?: {
         name: string;
+        description: string;
+        member_count: number;
+        social_media: string;
+        created_at: string;
     };
     status: string;
 }

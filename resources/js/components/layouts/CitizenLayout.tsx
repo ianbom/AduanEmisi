@@ -1,9 +1,11 @@
 import Navbar from '@/components/core/Navbar';
 import NotificationSidebar from '@/components/core/NotificationSidebar';
+import { showToast } from '@/lib/toast';
 import { PageProps } from '@/types';
 import { getProfileMenuContent } from '@/utils/profileMenuContent';
 import { router as Inertia, usePage } from '@inertiajs/react';
-import { ReactNode, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
+import { Toaster } from 'sonner';
 import Footer from '../core/Footer';
 interface Props {
     children: ReactNode;
@@ -11,6 +13,7 @@ interface Props {
 }
 
 export default function CitizenLayout({ children, currentPage }: Props) {
+    const { flash } = usePage<PageProps>().props;
     const [isNotificationOpen, setIsNotificationOpen] = useState(false);
     const { auth } = usePage<PageProps>().props;
     const user = auth?.user;
@@ -21,6 +24,12 @@ export default function CitizenLayout({ children, currentPage }: Props) {
         { id: 'map', label: 'Peta', key: 'map' },
         { id: 'education', label: 'Konten Edukasi', key: 'education' },
     ];
+    useEffect(() => {
+        if (flash?.success) showToast('success', flash.success);
+        if (flash?.error) showToast('error', flash.error);
+        if (flash?.warning) showToast('warning', flash.warning);
+        if (flash?.info) showToast('info', flash.info);
+    }, [flash]);
     const handleNavigate = (page: string) => {
         Inertia.visit(`/${page}`);
     };
@@ -31,7 +40,6 @@ export default function CitizenLayout({ children, currentPage }: Props) {
             Inertia.visit(route('community.profile.show'));
         }
     };
-
     const handleLogoutClick = () => {
         Inertia.post(route('logout'));
     };
@@ -55,6 +63,7 @@ export default function CitizenLayout({ children, currentPage }: Props) {
                 onClose={() => setIsNotificationOpen(false)}
             />
             <Footer />
+            <Toaster position="top-right" richColors closeButton />
         </div>
     );
 }

@@ -7,9 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 class Community extends Model
 {
     protected $guarded = ['id'];
+    protected $fillable = ['name', 'description', 'social_media', 'user_id', 'member_count'];
 
     protected $casts = [
-        'social_media' => 'array', // Mengubah JSON menjadi array PHP
+        'social_media' => 'array',
     ];
 
     /**
@@ -34,7 +35,7 @@ class Community extends Model
     public function missions()
     {
         return $this->belongsToMany(Mission::class, 'mission_communities')
-                    ->withPivot('status', 'answered_at', 'certificate_url', 'awarded_at')
-                    ->withTimestamps();
+            ->withPivot('status', 'answered_at', 'certificate_url', 'awarded_at')
+            ->withTimestamps();
     }
 }

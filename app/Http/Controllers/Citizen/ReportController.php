@@ -69,11 +69,9 @@ class ReportController extends Controller
                 'report'
             );
             DB::commit();
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Laporan berhasil dibuat',
-                'data' => $report
-            ], 201);
+            return redirect()
+                ->route('report')
+                ->with('success', 'Laporan berhasil dibuat');
         } catch (Exception $e) {
             DB::rollBack();
             Log::error('Error creating report', [
@@ -150,7 +148,16 @@ class ReportController extends Controller
                 $myParticipation = $mission->volunteers
                     ->firstWhere('id', Auth::id());
             }
-            $confirmedLeader = $report->mission ? $report->mission->confirmedLeader() : null;
+            // $confirmedLeader = $report->mission ? $report->mission->confirmedLeader() : null;
+            $confirmedLeader = $report->mission
+                ? $report->mission->volunteers
+                ->filter(fn($v) => $v->pivot->is_leader && in_array($v->pivot->participation_status, ['confirmed', 'attended']))
+                ->map(fn($v) => [
+                    'id' => $v->id,
+                    'name' => $v->name,
+                ])->values()
+                : collect();
+
 
             $comments = $this->commentService->getCommentsByReport($id);
             $volunteers = $report->mission
