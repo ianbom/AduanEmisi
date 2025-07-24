@@ -25,19 +25,81 @@ class ProfileController extends Controller
     {
         $this->profileService = $profileService;
     }
+    // public function showProfile()
+    // {
+    //     $user = User::with('province', 'city', 'district', 'community')->find(Auth::id());
+    //     $myReports = Report::where('reporter_id', $user->id)->get();
+    //     $myReportsCount = Report::where('reporter_id', $user->id)->count();
+    //     return Inertia::render('Community/Profile/ProfilePage', [
+    //         'auth' => [
+    //             'user' => $user,
+
+    //         ],
+    //         'myReports' => $myReports,
+    //         'myReportsCount' => $myReportsCount
+    //     ]);
+    // }
     public function showProfile()
     {
         $user = User::with('province', 'city', 'district', 'community')->find(Auth::id());
-        $myReports = Report::where('reporter_id', $user->id)->get();
-        $myReportsCount = Report::where('reporter_id', $user->id)->count();
+
+        $myReports = Report::with(['reporter'])->where('reporter_id', $user->id)->get();
+        $myReportCount = Report::where('reporter_id', $user->id)->count();
+        // $myMissions = $user->volunteeredMissions()->with('pivot')->get();
+        $myMissions = $user->volunteeredMissions; // otomatis get()
+        $myMissionCounts = $myMissions->count(); // hitung dari hasil atas
+        // $myMissionCounts = $user->volunteeredMissions()->count();
         return Inertia::render('Community/Profile/ProfilePage', [
             'auth' => [
                 'user' => $user,
-
             ],
             'myReports' => $myReports,
-            'myReportsCount' => $myReportsCount
+            'myReportsCount' => $myReportCount,
+            'myMissions' => $myMissions,
+            'myMissionCounts' => $myMissionCounts,
         ]);
+    }
+    public function editProfile()
+    {
+
+
+        $user = User::with('community')->find(Auth::id());
+        $provinces = Province::with('cities.districts')->get();
+        return Inertia::render('Community/Profile/EditProfilePage', [
+            'provinces' => $provinces,
+            'auth' => [
+                'user' => $user
+            ]
+        ]);
+    }
+    public function updateProfile(ProfileRequest $request)
+    {
+        \Log::info('Update Profile Data:', $request->all());
+        $data = $request->validated();
+        \Log::info('Validated Data:', $data);
+        try {
+            if ($request->hasFile('profile_url')) {
+                $file = $request->file('profile_url');
+                $path = $file->store('profile_url', 'public');
+                $data['profile_url'] = $path;
+                \Log::info('File uploaded to:', ['path' => $path]);
+            }
+            $result = $this->profileService->updateProfileDataCommunity($data);
+            \Log::info('Update result:', ['user_id' => $result->id, 'community_exists' => $result->community ? 'yes' : 'no']);
+            return redirect()
+                ->route('community.profile.show')
+                ->with('success', 'Profile berhasil diperbarui');
+        } catch (Throwable $th) {
+            \Log::error('Update Profile Error:', [
+                'message' => $th->getMessage(),
+                'file' => $th->getFile(),
+                'line' => $th->getLine(),
+                'trace' => $th->getTraceAsString()
+            ]);
+            return back()
+                ->withErrors(['error' => 'Gagal memperbarui profile. ' . $th->getMessage()])
+                ->withInput();
+        }
     }
 
     public function completeProfile()

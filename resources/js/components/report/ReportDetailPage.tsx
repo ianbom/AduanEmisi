@@ -28,9 +28,14 @@ import Badge from '../core/Badge';
 import ImageWithPopup from '../core/ImageWithPopup';
 import AttendanceFormModal from '../mission/AttendanceFormModal';
 import CancelVolunteerModal from '../mission/CancelVolunteerModal';
+import ConfirmVolunteerAsCommunityModal from '../mission/ConfirmVolunteerAsCommunityModal';
 import ConfirmVolunteerModal from '../mission/ConfirmVolunteerModal';
 import UploadDocumentationModal from '../mission/UploadDocumentationModal';
 import CommentUploadCard from './InputCommentReport';
+interface Leader {
+    id: number;
+    name: string;
+}
 
 interface ReportDetailPageProps {
     report: Report;
@@ -53,6 +58,7 @@ interface ReportDetailPageProps {
     volunteers: User[];
     volunteerCounts: number;
     your_vote: 'upvote' | 'dislike' | null;
+    user: User[] | null;
     onBack: () => void;
 }
 
@@ -64,12 +70,14 @@ const ReportDetailPage = ({
     comments,
     volunteers,
     volunteerCounts,
+    user,
     your_vote,
 }: ReportDetailPageProps) => {
     const [hasUpvoted, setHasUpvoted] = useState(your_vote === 'upvote');
     const [hasDownvoted, setHasDownvoted] = useState(your_vote === 'dislike');
     const [reportState, setReport] = useState(report);
     const [replying, setReplying] = useState<string | number | null>(null);
+    console.log(confirmedLeader);
     const {
         data: replyData,
         setData: setReplyData,
@@ -107,6 +115,7 @@ const ReportDetailPage = ({
     const [openCancelModal, setOpenCancelModal] = useState(false);
     const [openUploadModal, setOpenUploadModal] = useState(false);
     const [modalOpenRegister, setModalOpenRegister] = useState(false);
+    const [showCommunityModal, setShowCommunityModal] = useState(false);
     const [selectedRole, setSelectedRole] = useState<'ketua' | 'anggota'>(
         'anggota',
     );
@@ -117,7 +126,9 @@ const ReportDetailPage = ({
         setSelectedRole(role);
         setModalOpenRegister(true);
     };
-
+    const handleOpenModalRegisterAsCommunity = () => {
+        setShowCommunityModal(true);
+    };
     const handleCancel = () => {
         Inertia.delete(route('volunteer.cancel', report.mission?.id), {
             preserveScroll: true,
@@ -133,7 +144,6 @@ const ReportDetailPage = ({
 
     const handleVote = async (type: 'upvote' | 'dislike') => {
         console.log('Handle Vote Triggered:', type);
-
         try {
             const response = await axios.post(`/reports/${report.id}/vote`, {
                 vote_type: type,
@@ -169,6 +179,24 @@ const ReportDetailPage = ({
             {
                 onSuccess: () => {
                     console.log('Berhasil mendaftar');
+                    console.log('myParticipation:', myParticipation);
+                },
+                onError: (errors) => {
+                    console.error(errors);
+                },
+            },
+        );
+    };
+    const handleConfirmRegisterAsCommunity = () => {
+        setShowCommunityModal(false);
+        Inertia.post(
+            `/join-missions/${report.mission?.id}`,
+            {
+                is_leader: true,
+            },
+            {
+                onSuccess: () => {
+                    console.log('Berhasil mendaftar sebagai komunitas');
                     console.log('myParticipation:', myParticipation);
                 },
                 onError: (errors) => {
@@ -288,9 +316,9 @@ const ReportDetailPage = ({
                                                 className="mr-2 mt-0.5"
                                             />
                                             <span>
-                                                {report.district?.name} ,
+                                                {report.district?.name},{' '}
                                                 {report.city?.name},{' '}
-                                                {report.province?.name},{' '}
+                                                {report.province?.name}
                                             </span>
                                         </div>
                                     </div>
@@ -441,11 +469,23 @@ const ReportDetailPage = ({
                                         {report.mission.description}
                                     </p>
                                 </div>
-                                {report.mission?.volunteers && (
+
+                                {report.status === 'under-authority' ? (
+                                    <div className="my-6">
+                                        <Badge className="mb-3 bg-yellow-300 text-lg font-semibold text-black">
+                                            Misi Khusus Pihak Berwenang
+                                        </Badge>
+                                        <p className="text-gray-700">
+                                            Misi ini ditangani oleh otoritas
+                                            terkait dan tidak terbuka untuk
+                                            partisipasi umum.
+                                        </p>
+                                    </div>
+                                ) : report.mission?.volunteers ? (
                                     <div className="mb-6">
                                         <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2">
                                             <div>
-                                                <span className="text-gray-600">
+                                                {/* <span className="text-gray-600">
                                                     Ketua Tim:{' '}
                                                     {confirmedLeader
                                                         ? confirmedLeader.name
@@ -457,7 +497,33 @@ const ReportDetailPage = ({
                                                             ?.volunteers
                                                             ?.is_leader
                                                     }
+                                                </span> */}
+                                                <span className="font-medium text-gray-600">
+                                                    Ketua Tim:
                                                 </span>
+                                                {confirmedLeader.length > 0 ? (
+                                                    <ul className="ml-5 list-disc text-gray-700">
+                                                        {confirmedLeader.map(
+                                                            (
+                                                                leader: Leader,
+                                                            ) => (
+                                                                <li
+                                                                    key={
+                                                                        leader.id
+                                                                    }
+                                                                >
+                                                                    {
+                                                                        leader.name
+                                                                    }
+                                                                </li>
+                                                            ),
+                                                        )}
+                                                    </ul>
+                                                ) : (
+                                                    <span className="ml-2 text-gray-500">
+                                                        Belum ada
+                                                    </span>
+                                                )}
                                             </div>
                                             <div>
                                                 <span className="text-gray-600">
@@ -472,28 +538,47 @@ const ReportDetailPage = ({
                                                 </span>
                                             </div>
                                         </div>
+
                                         <div className="flex flex-col gap-3 sm:flex-row">
                                             {myParticipation == null && (
                                                 <>
-                                                    <Button
-                                                        onClick={() =>
-                                                            handleOpenModalRegister(
-                                                                'ketua',
-                                                            )
-                                                        }
-                                                    >
-                                                        Ikut sebagai Ketua Tim
-                                                    </Button>
-                                                    <Button
-                                                        variant="outline"
-                                                        onClick={() =>
-                                                            handleOpenModalRegister(
-                                                                'anggota',
-                                                            )
-                                                        }
-                                                    >
-                                                        Ikut sebagai Anggota
-                                                    </Button>
+                                                    {user?.role ===
+                                                    'community' ? (
+                                                        <Button
+                                                            variant="outline"
+                                                            className="bg-yellow-400 text-black hover:bg-black hover:text-yellow-400"
+                                                            onClick={
+                                                                handleOpenModalRegisterAsCommunity
+                                                            }
+                                                        >
+                                                            Daftar sebagai
+                                                            Komunitas
+                                                        </Button>
+                                                    ) : (
+                                                        <>
+                                                            <Button
+                                                                onClick={() =>
+                                                                    handleOpenModalRegister(
+                                                                        'ketua',
+                                                                    )
+                                                                }
+                                                            >
+                                                                Ikut sebagai
+                                                                Ketua Tim
+                                                            </Button>
+                                                            <Button
+                                                                variant="outline"
+                                                                onClick={() =>
+                                                                    handleOpenModalRegister(
+                                                                        'anggota',
+                                                                    )
+                                                                }
+                                                            >
+                                                                Ikut sebagai
+                                                                Anggota
+                                                            </Button>
+                                                        </>
+                                                    )}
                                                 </>
                                             )}
 
@@ -525,49 +610,57 @@ const ReportDetailPage = ({
                                                 }
                                                 role={selectedRole}
                                             />
-                                            <>
-                                                {myParticipation &&
-                                                    [
-                                                        'pending',
-                                                        'confirmed',
-                                                    ].includes(
-                                                        myParticipation.pivot
-                                                            .participation_status,
-                                                    ) && (
-                                                        <>
-                                                            <Button
-                                                                onClick={() =>
-                                                                    setOpenCancelModal(
-                                                                        true,
-                                                                    )
-                                                                }
-                                                                variant="destructive"
-                                                            >
-                                                                Batal Daftar
-                                                            </Button>
+                                            <ConfirmVolunteerAsCommunityModal
+                                                open={showCommunityModal}
+                                                onClose={() =>
+                                                    setShowCommunityModal(false)
+                                                }
+                                                onConfirm={
+                                                    handleConfirmRegisterAsCommunity
+                                                }
+                                            />
 
-                                                            <CancelVolunteerModal
-                                                                open={
-                                                                    openCancelModal
-                                                                }
-                                                                onClose={() =>
-                                                                    setOpenCancelModal(
-                                                                        false,
-                                                                    )
-                                                                }
-                                                                onConfirm={
-                                                                    handleCancel
-                                                                }
-                                                                is_leader={
-                                                                    myParticipation
-                                                                        .pivot
-                                                                        .is_leader
-                                                                }
-                                                            />
-                                                        </>
-                                                    )}
-                                            </>
+                                            {myParticipation &&
+                                                [
+                                                    'pending',
+                                                    'confirmed',
+                                                ].includes(
+                                                    myParticipation.pivot
+                                                        .participation_status,
+                                                ) && (
+                                                    <>
+                                                        <Button
+                                                            onClick={() =>
+                                                                setOpenCancelModal(
+                                                                    true,
+                                                                )
+                                                            }
+                                                            variant="destructive"
+                                                        >
+                                                            Batal Daftar
+                                                        </Button>
+                                                        <CancelVolunteerModal
+                                                            open={
+                                                                openCancelModal
+                                                            }
+                                                            onClose={() =>
+                                                                setOpenCancelModal(
+                                                                    false,
+                                                                )
+                                                            }
+                                                            onConfirm={
+                                                                handleCancel
+                                                            }
+                                                            is_leader={
+                                                                myParticipation
+                                                                    .pivot
+                                                                    .is_leader
+                                                            }
+                                                        />
+                                                    </>
+                                                )}
                                         </div>
+
                                         {myParticipation &&
                                             myParticipation.pivot
                                                 .participation_status !==
@@ -584,6 +677,7 @@ const ReportDetailPage = ({
                                                     Presensi Kehadiran
                                                 </Button>
                                             )}
+
                                         <AttendanceFormModal
                                             open={openModalAttendance}
                                             onClose={() =>
@@ -591,19 +685,30 @@ const ReportDetailPage = ({
                                             }
                                             missionId={report.mission?.id}
                                             teamLeader={
-                                                confirmedLeader?.name ??
-                                                'Belum ditentukan'
+                                                confirmedLeader &&
+                                                confirmedLeader.length > 0
+                                                    ? confirmedLeader
+                                                          .map(
+                                                              (
+                                                                  leader: Leader,
+                                                              ) => leader.name,
+                                                          )
+                                                          .join(', ')
+                                                    : 'Belum ditentukan'
                                             }
                                             members={volunteers}
                                         />
                                     </div>
-                                )}
-                                {/* Mission Documentation */}
+                                ) : null}
                                 {report.mission?.documentation && (
                                     <div>
-                                        <h3 className="mb-3 text-lg font-semibold">
-                                            Dokumentasi Misi
-                                        </h3>
+                                        {report.status !==
+                                            'under-authority' && (
+                                            <h3 className="mb-3 text-lg font-semibold">
+                                                Dokumentasi Misi
+                                            </h3>
+                                        )}
+
                                         {myParticipation &&
                                             myParticipation.pivot.is_leader &&
                                             ['confirmed', 'attended'].includes(
@@ -1148,5 +1253,4 @@ const ReportDetailPage = ({
         </div>
     );
 };
-
 export default ReportDetailPage;

@@ -2,6 +2,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { router as Inertia } from '@inertiajs/react';
+
 import {
     Select,
     SelectContent,
@@ -10,8 +12,6 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { router as Inertia } from '@inertiajs/react';
-import axios from 'axios';
 import {
     ArrowLeft,
     Camera,
@@ -21,6 +21,7 @@ import {
     Upload,
     X,
 } from 'lucide-react';
+import { toast } from 'sonner';
 
 import { lazy, useState } from 'react';
 
@@ -195,30 +196,26 @@ const CreateReportPage = ({ provinces, onBack }: PageProps) => {
         });
 
         try {
-            const response = await axios.post('/reports', data, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
+            Inertia.post('/reports', data, {
+                forceFormData: true,
+                onSuccess: () => {
+                    toast.success('Laporan berhasil dikirim!');
+
+                    // Reset form
+                    setFormData({
+                        title: '',
+                        description: '',
+                        category: '',
+                        address: '',
+                        province_id: '',
+                        city_id: '',
+                        district_id: '',
+                    });
+                    setLocation(null);
+                    setUploadedFiles([]);
+                    Inertia.visit('/report');
                 },
             });
-
-            console.log('Report submitted:', response.data);
-            alert('Laporan berhasil dikirim!');
-
-            // Reset form
-            setFormData({
-                title: '',
-                description: '',
-                category: '',
-                address: '',
-                province_id: '',
-                city_id: '',
-                district_id: '',
-            });
-            setLocation(null);
-            setUploadedFiles([]);
-
-            // Redirect ke halaman laporan
-            Inertia.visit('/report');
         } catch (error: any) {
             console.error('Error submitting report:', error);
 
@@ -226,39 +223,30 @@ const CreateReportPage = ({ provinces, onBack }: PageProps) => {
                 const { status, data } = error.response;
 
                 if (status === 422) {
-                    // Error validasi
                     const errors = data.errors || {};
                     const errorMessages = Object.values(errors).flat();
                     alert('Validasi gagal:\n' + errorMessages.join('\n'));
                 } else if (status === 401) {
-                    // Belum login
                     alert('Anda belum login. Silakan login terlebih dahulu.');
-                    // Redirect ke login jika perlu
-                    // window.location.href = '/login';
                 } else if (status === 413) {
-                    // File terlalu besar
                     alert(
                         'File yang diunggah terlalu besar. Maksimal 10MB per file.',
                     );
                 } else if (status === 500) {
-                    // Server error
                     alert(
                         'Terjadi kesalahan pada server. Silakan coba lagi nanti.',
                     );
                 } else {
-                    // Error lain
                     alert(
                         'Terjadi kesalahan: ' +
                             (data.message || 'Unknown error'),
                     );
                 }
             } else if (error.request) {
-                // Network error
                 alert(
                     'Tidak dapat terhubung ke server. Periksa koneksi internet Anda.',
                 );
             } else {
-                // Error lainnya
                 alert(
                     'Terjadi kesalahan yang tidak terduga. Silakan coba lagi.',
                 );

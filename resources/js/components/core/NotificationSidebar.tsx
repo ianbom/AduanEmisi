@@ -27,9 +27,13 @@ const Button = ({ children, variant = 'ghost', size = 'sm', onClick, className =
     );
 };
 
-const ScrollArea = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
-    <div className={`overflow-y-auto ${className}`}>{children}</div>
-);
+const ScrollArea = ({
+    children,
+    className = '',
+}: {
+    children: React.ReactNode;
+    className?: string;
+}) => <div className={`overflow-y-auto ${className}`}>{children}</div>;
 
 interface NotificationSidebarProps {
     isOpen: boolean;
@@ -47,15 +51,15 @@ const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
     const getIcon = (type: string | null) => {
         switch (type) {
             case 'report_update':
-                return <AlertCircle className="h-5 w-5 text-blue-500 flex-shrink-0" />;
+                return <AlertCircle className="flex-shrink-0 w-5 h-5 text-blue-500" />;
             case 'mission_assigned':
-                return <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />;
+                return <CheckCircle className="flex-shrink-0 w-5 h-5 text-green-500" />;
             case 'badge_earned':
-                return <Heart className="h-5 w-5 text-purple-500 flex-shrink-0" />;
+                return <Heart className="flex-shrink-0 w-5 h-5 text-purple-500" />;
             case 'donation_received':
-                return <Heart className="h-5 w-5 text-pink-500 flex-shrink-0" />;
+                return <Heart className="flex-shrink-0 w-5 h-5 text-pink-500" />;
             default:
-                return <Info className="h-5 w-5 text-gray-500 flex-shrink-0" />;
+                return <Info className="flex-shrink-0 w-5 h-5 text-gray-500" />;
         }
     };
 
@@ -76,7 +80,7 @@ const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
         });
     };
 
-    
+
 
     const handleDeleteNotification = (e: React.MouseEvent, notificationId: string | number) => {
         e.preventDefault();
@@ -117,14 +121,14 @@ const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
         <>
             {/* Overlay */}
             <div
-                className="fixed inset-0 z-40 bg-black bg-opacity-50 transition-opacity"
+                className="fixed inset-0 z-40 transition-opacity bg-black bg-opacity-50"
                 onClick={onClose}
             />
 
             {/* Sidebar */}
-            <div className="fixed right-0 top-0 z-50 h-full w-full max-w-sm transform bg-white shadow-xl transition-transform duration-300 ease-in-out">
+            <div className="fixed top-0 right-0 z-50 w-full h-full max-w-sm transition-transform duration-300 ease-in-out transform bg-white shadow-xl">
                 {/* Header */}
-                <div className="flex items-center justify-between border-b border-gray-200 p-4">
+                <div className="flex items-center justify-between p-4 border-b border-gray-200">
                     <h2 className="text-lg font-semibold text-gray-900">
                         Notifikasi
                         {unread_count > 0 && (
@@ -134,14 +138,14 @@ const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
                         )}
                     </h2>
                     <Button variant="ghost" size="sm" onClick={onClose}>
-                        <X className="h-5 w-5" />
+                        <X className="w-5 h-5" />
                     </Button>
                 </div>
 
                 {/* Notifications List */}
                 <ScrollArea className="h-[calc(100vh-8rem)]">
                     {notifications && notifications.length > 0 ? (
-                        <div className="space-y-2 p-3">
+                        <div className="p-3 space-y-2">
                             {notifications.map((notification: Notification) => (
                                 <div
                                     key={notification.id}
@@ -153,7 +157,7 @@ const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
                                 >
                                     <div className="flex items-start space-x-3">
                                         {getIcon(notification.type)}
-                                        <div className="min-w-0 flex-1">
+                                        <div className="flex-1 min-w-0">
                                             <h3 className={`text-sm font-medium ${
                                                 !notification.is_read ? 'text-gray-900' : 'text-gray-700'
                                             }`}>
@@ -163,19 +167,21 @@ const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
                                                 {notification.body}
                                             </p>
                                             <p className="mt-2 text-xs text-gray-500">
-                                                {new Date(notification.created_at).toLocaleString('id-ID', {
+                                                {new Date(
+                                                    notification.created_at,
+                                                ).toLocaleString('id-ID', {
                                                     day: 'numeric',
                                                     month: 'long',
                                                     year: 'numeric',
                                                     hour: '2-digit',
-                                                    minute: '2-digit'
+                                                    minute: '2-digit',
                                                 })}
                                             </p>
                                             {!notification.is_read && (
                                                 <Button
                                                     variant="ghost"
                                                     size="sm"
-                                                    className="mt-2 h-auto p-0 text-xs font-semibold text-blue-600 hover:underline"
+                                                    className="h-auto p-0 mt-2 text-xs font-semibold text-blue-600 hover:underline"
                                                     onClick={(e) => handleMarkAsRead(e, notification.id)}
                                                 >
                                                     Tandai Sudah Dibaca
@@ -188,27 +194,27 @@ const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
                                     <Button
                                         variant="ghost"
                                         size="sm"
-                                        className="absolute top-2 right-2 h-auto p-1 text-gray-400 opacity-0 transition-opacity group-hover:opacity-100 hover:bg-red-50 hover:text-red-600"
+                                        className="absolute h-auto p-1 text-gray-400 transition-opacity opacity-0 top-2 right-2 group-hover:opacity-100 hover:bg-red-50 hover:text-red-600"
                                         onClick={(e) => handleDeleteNotification(e, notification.id)}
                                         title="Hapus notifikasi"
                                     >
-                                        <Trash2 className="h-4 w-4" />
+                                        <Trash2 className="w-4 h-4" />
                                     </Button>
                                 </div>
                             ))}
                         </div>
                     ) : (
-                        <div className="flex h-full items-center justify-center">
+                        <div className="flex items-center justify-center h-full">
                             <div className="text-center">
-                                <Info className="h-12 w-12 text-gray-400 mx-auto mb-3" />
-                                <p className="text-sm text-gray-500 italic">Tidak ada notifikasi.</p>
+                                <Info className="w-12 h-12 mx-auto mb-3 text-gray-400" />
+                                <p className="text-sm italic text-gray-500">Tidak ada notifikasi.</p>
                             </div>
                         </div>
                     )}
                 </ScrollArea>
 
                 {/* Footer */}
-                <div className="border-t border-gray-200 p-4">
+                <div className="p-4 border-t border-gray-200">
                     <Button
                         variant="outline"
                         className="w-full"

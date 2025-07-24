@@ -66,7 +66,6 @@ Route::prefix('')->middleware(['auth', 'isProfileComplete'])->group(function () 
     Route::get('/report/{id}', [CtzReportController::class, 'show'])->name('report.show');
     Route::get('/report-create', [CtzReportController::class, 'create'])->name('create.report');
     Route::post('/reports', [CtzReportController::class, 'store'])->name('reports.store');
-
     Route::post('/reports/{report}/vote', [CtzReportController::class, 'vote'])->name('report.vote');
 
 
@@ -91,7 +90,7 @@ Route::prefix('')->middleware(['auth', 'isProfileComplete'])->group(function () 
 
 
 // Route untuk akses fitur peran kommunitas
-Route::prefix('community')->as('community.')->middleware(['auth'])->group(function () {
+    Route::prefix('community')->as('community.')->middleware(['auth'])->group(function () {
     // Route untuk keperluan yang berkaitan dengan Laporan
     Route::get('/report', [ComReportController::class, 'viewAllReportsPage'])->name('report');
     Route::get('/my-report', [ComReportController::class, 'viewMyReportsPage'])->name('my-report');
@@ -101,6 +100,8 @@ Route::prefix('community')->as('community.')->middleware(['auth'])->group(functi
 
     // Route untuk keperluan yang berkaitan dengan Profil
     Route::get('/profile', [ComProfileController::class, 'showProfile'])->name('profile.show');
+    Route::get('/edit-profile', [ComProfileController::class, 'editProfile'])->name('profile.edit');
+    Route::post('/update-profile', [ComProfileController::class, 'updateProfile'])->name('profile.update');
 
     // Route untuk keperluan yang berkaitan dengan Peta
     Route::get('/map', [ComMapController::class, 'indexMap'])->name('map.index');
