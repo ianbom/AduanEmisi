@@ -26,4 +26,38 @@ class NotificationController extends Controller
         return redirect()->back()->with('error', 'Gagal menandai notifikasi sebagai dibaca');
     }
 }
+
+    public function readAllNotification(){
+        DB::beginTransaction();
+        try {
+            Notification::where('user_id', Auth::id())
+                ->where('is_read', false)
+                ->update(['is_read' => true]);
+
+
+            DB::commit();
+            return redirect()->back()->with([
+            'message' => 'Semua notifikasi berhasil ditandai sebagai dibaca.'
+        ]);
+
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Gagal menandai notifikasi sebagai dibaca');
+        }
+    }
+
+    public function destroy($id){
+
+        DB::beginTransaction();
+        try {
+        $notification = Notification::findOrFail($id);
+        $notification->delete();
+        DB::commit();
+        return redirect()->back();
+        } catch (\Throwable $th) {
+           DB::rollBack();
+           return redirect()->back();
+    }
+    }
+
 }

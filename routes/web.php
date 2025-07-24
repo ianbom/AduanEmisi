@@ -1,10 +1,14 @@
 <?php
 
 use App\Http\Controllers\Admin\BadgeController as AdmBadgeController;
+use App\Http\Controllers\Admin\CertificateController as AdmCertificateController;
 use App\Http\Controllers\Admin\ContentController as AdmContentController;
 use App\Http\Controllers\Admin\MissionController as AdmMissionController;
 use App\Http\Controllers\Admin\ReportController as AdmReportController;
+
 use App\Http\Controllers\Admin\UserController as AdmUserController;
+use App\Http\Controllers\Auth\GoogleAuthController;
+use App\Http\Controllers\ChatBotController;
 use App\Http\Controllers\Citizen\CommentController as CtzCommentController;
 use App\Http\Controllers\Citizen\NotificationController;
 use App\Http\Controllers\Citizen\ReportController as CtzReportController;
@@ -30,6 +34,9 @@ Route::get('/', function () {
     ]);
 });
 
+Route::get('/auth/google/redirect', [GoogleAuthController::class, 'redirect'])->name('auth.google.redirect');
+Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])->name('auth.google.callback');
+
 Route::get('/complete-profile', [CtzProfileController::class, 'completeProfile'])->name('profile.complete');
 Route::post('/complete-profile', [CtzProfileController::class, 'updateCompleteProfile'])->name('profile.complete.update');
 
@@ -40,13 +47,14 @@ Route::get('/dashboard', function () {
 
 
 // Route untuk akses fitur peran warga
-Route::prefix('')->middleware(['auth'])->group(function () {
+Route::prefix('')->middleware(['auth', 'isProfileComplete'])->group(function () {
     Route::get('/homepage', function () {
         return Inertia::render('Citizen/HomePage');
     })->name('homepage');
 
     Route::put('/read-notification/{id}', [NotificationController::class, 'readNotification'])->name('notification.read');
-
+    Route::put('/read/all/notification', [NotificationController::class, 'readAllNotification'])->name('notification.readAll');
+    Route::delete('/delete/notification/{id}', [NotificationController::class, 'destroy'])->name('notification.delete');
     // Route untuk keperluan yang berkaitan dengan Profil
     Route::get('/profile', [CtzProfileController::class, 'showProfile'])->name('profile.show');
     Route::get('/edit-profile', [CtzProfileController::class, 'editProfile'])->name('profile.edit');
@@ -100,9 +108,6 @@ Route::prefix('')->middleware(['auth'])->group(function () {
 });
 
 
-
-
-
 Route::prefix('admin')->as('admin.')->middleware(['auth'])->group(function () {
     Route::resource('missions', AdmMissionController::class);
     Route::put('missions/update/volunteer/{missionVolunteer}', [AdmMissionController::class, 'updateStatusVolunteer'])->name('update.volunteerStatus');
@@ -110,6 +115,7 @@ Route::prefix('admin')->as('admin.')->middleware(['auth'])->group(function () {
     Route::resource('reports', AdmReportController::class);
     Route::put('reject-report/{report}', [AdmReportController::class, 'rejectReport'])->name('reports.reject');
     Route::put('accept-report/{report}', [AdmReportController::class, 'acceptReport'])->name('reports.accept');
+    Route::put('authority-report/{report}', [AdmReportController::class, 'underAuthority'])->name('reports.underAuthority');
 
     Route::resource('contents', AdmContentController::class);
     Route::delete('content-media/{contentMedia}', [AdmContentController::class, 'deleteMedia'])->name('delete.contentMedia');
@@ -117,6 +123,12 @@ Route::prefix('admin')->as('admin.')->middleware(['auth'])->group(function () {
     Route::resource('badges', AdmBadgeController::class);
 
     Route::resource('users', AdmUserController::class);
+
+    Route::get('certificate/generate', [AdmCertificateController::class, 'generateCertificate'])->name('certificate.generate');
+    Route::post('/missions/certificates/generate', [AdmCertificateController::class, 'generate'])->name('missions.certificates.generate');
+    Route::resource('certificates', AdmCertificateController::class);
+
+    Route::resource('chatbot', ChatBotController::class);
 });
 
 

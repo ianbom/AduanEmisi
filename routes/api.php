@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\MissionController;
+use App\Http\Controllers\ChatBotController;
 use App\Http\Controllers\Citizen\CommentController as CtzCommentController;
 use App\Http\Controllers\Citizen\ProfileController as CtzProfileController;
 use App\Http\Controllers\Citizen\ReportController as CtzReportController;
@@ -13,7 +14,7 @@ Route::get('/user', function (Request $request) {
 
 Route::post('/register', [CtzProfileController::class, 'register']);
 Route::post('/login', [CtzProfileController::class, 'login']);
-;
+
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/me', [CtzProfileController::class, 'me']);
@@ -30,4 +31,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('register-volunteer', [CtzReportController::class, 'registerAsVolunteer']);
     Route::post('register-leader-volunteer', [CtzReportController::class, 'registerAsLeaderVolunteer']);
+
+
 });
+
+ Route::post('chatbot/send', [ChatBotController::class, 'send'])->name('chatbot.send');
+

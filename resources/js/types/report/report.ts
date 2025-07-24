@@ -7,6 +7,7 @@ export interface Report {
     category: string;
     reporter?: User;
     description: string;
+    province_id: number;
     province: { name: string };
     city: { name: string };
     district: { name: string };

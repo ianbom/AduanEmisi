@@ -6,6 +6,7 @@ import { formatFullDateTime } from '@/utils/formatDate';
 import { ArrowLeft, Download, FileText, Share2 } from 'lucide-react';
 import Badge from '../core/Badge';
 import ImageWithPopup from '../core/ImageWithPopup';
+import RenderHTML from '../RenderHtml';
 interface ContentDetailsPageProps {
     content: Content;
     onBack: () => void;
@@ -156,7 +157,10 @@ const ContentDetailsPage = ({ content, onBack }: ContentDetailsPageProps) => {
                             </div>
                         </CardContent>
                         <p className="leading-relaxed text-gray-700">
-                            {content.body}
+                            <RenderHTML
+                                htmlString={content.body}
+                                className="leading-relaxed text-gray-700"
+                            />
                         </p>
                     </CardContent>
                     {/* <CardContent>

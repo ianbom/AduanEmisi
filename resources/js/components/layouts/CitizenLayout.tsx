@@ -7,6 +7,7 @@ import { router as Inertia, usePage } from '@inertiajs/react';
 import { ReactNode, useEffect, useState } from 'react';
 import { Toaster } from 'sonner';
 import Footer from '../core/Footer';
+import FloatingChat from '../chatbot/FloatingChat';
 interface Props {
     children: ReactNode;
     currentPage: string;
@@ -62,6 +63,7 @@ export default function CitizenLayout({ children, currentPage }: Props) {
                 isOpen={isNotificationOpen}
                 onClose={() => setIsNotificationOpen(false)}
             />
+            <FloatingChat/>
             <Footer />
             <Toaster position="top-right" richColors closeButton />
         </div>

@@ -284,6 +284,9 @@
                                     Leader
                                 </th>
                                 <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b">
+                                    Sertifikat
+                                </th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b">
                                     Action
                                 </th>
                             </tr>
@@ -333,6 +336,23 @@
                                             </span>
                                         @endif
                                     </td>
+                                      <td class="px-4 py-4 whitespace-nowrap text-sm">
+                                    {{-- INI BAGIAN YANG DIPERBAIKI --}}
+                                    @if($volunteer->certificate_url)
+                                        <a href="{{ asset('storage/' . $volunteer->certificate_url) }}" target="_blank"
+                                           class="inline-flex items-center px-3 py-1 bg-green-100 text-green-800 text-xs font-semibold rounded-full hover:bg-green-200 transition-colors">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                            </svg>
+                                            Lihat
+                                        </a>
+                                    @elseif($volunteer->participation_status == 'attended')
+                                        <span class="px-3 py-1 bg-yellow-100 text-yellow-800 text-xs font-semibold rounded-full">
+                                            Belum Dibuat
+                                        </span>
+                                    @endif
+                                </td>
                                     <td class="px-4 py-4 whitespace-nowrap">
                                         <button
                                             onclick="openEditModal({{ $volunteer->id }}, '{{ $volunteer->user->name }}', '{{ $volunteer->participation_status }}', {{ $volunteer->is_leader ? 'true' : 'false' }})"
@@ -358,8 +378,79 @@
             @endif
         </div>
 
+               <!-- Section: Generate Certificate -->
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+
+            {{-- Cek apakah ada volunteer yang hadir. Jika tidak, tampilkan pesan. --}}
+            @if($volunteers->where('participation_status', 'attended')->count() > 0)
+
+                <div class="p-6 border-b border-gray-200">
+                    <h2 class="text-xl font-semibold text-gray-800">Generate Sertifikat Massal</h2>
+                    <p class="mt-1 text-sm text-gray-600">
+                        Gunakan form ini untuk membuat sertifikat bagi
+                        <span class="font-bold text-blue-600">{{ $volunteers->where('participation_status', 'attended')->count() }} volunteer</span>
+                        yang statusnya 'Attended'.
+                    </p>
+                </div>
+
+                <form id="certificateForm" action="{{ route('admin.missions.certificates.generate') }}" method="POST">
+                    @csrf
+                    <input type="hidden" name="mission_id" value="{{ $mission->id }}">
+
+                    <div class="p-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Certificate Signer Title -->
+                            <div>
+                                <label for="certificate_title" class="block mb-2 text-sm font-medium text-gray-700">Jabatan Penanda Tangan <span class="text-red-500">*</span></label>
+                                <input type="text" name="title" id="certificate_title" placeholder="cth: Ketua Pelaksana" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                                @error('title')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <!-- Certificate Date -->
+                            <div>
+                                <label for="certificate_date" class="block mb-2 text-sm font-medium text-gray-700">Tanggal Sertifikat <span class="text-red-500">*</span></label>
+                                <input type="date" name="date" id="certificate_date" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500" required value="{{ date('Y-m-d') }}">
+                                @error('date')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Form Footer -->
+                    <div class="flex justify-end px-6 py-4 bg-gray-50 border-t border-gray-200">
+                        <button id="generateBtn" type="submit" class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200 disabled:bg-blue-300 disabled:cursor-not-allowed">
+                            <svg id="btnIcon" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                            </svg>
+                            <svg id="btnSpinner" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <span id="btnText">Generate Sertifikat</span>
+                        </button>
+                    </div>
+                </form>
+
+            @else
+                {{-- Pesan yang ditampilkan jika tidak ada volunteer yang hadir --}}
+                <div class="p-6 text-center">
+                    <div class="flex justify-center items-center flex-col text-gray-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 mb-3 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m5.231 13.481L15 17.25m-4.5-15H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+                        </svg>
+                        <h3 class="text-lg font-semibold text-gray-700">Sertifikat Belum Dapat Dibuat</h3>
+                        <p class="mt-1 text-sm">Tidak ada volunteer yang tercatat hadir (Attended) pada misi ini.</p>
+                    </div>
+                </div>
+
+            @endif
+        </div>
+
         <!-- Documentation Section -->
-        <div class="bg-white rounded-lg shadow-md p-6">
+        {{-- <div class="bg-white rounded-lg shadow-md p-6">
             <h2 class="text-xl font-semibold text-gray-700 mb-4">Documentation</h2>
             @if($missionDocumentations->count() > 0)
                 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -386,7 +477,7 @@
                     <p class="text-gray-500 italic">No documentation available for this mission.</p>
                 </div>
             @endif
-        </div>
+        </div> --}}
     </div>
 </div>
 
@@ -471,6 +562,27 @@
 @push('scripts')
 
  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+    const certForm = document.getElementById('certificateForm');
+
+    if (certForm) {
+        certForm.addEventListener('submit', function() {
+            const generateBtn = document.getElementById('generateBtn');
+            const btnIcon = document.getElementById('btnIcon');
+            const btnSpinner = document.getElementById('btnSpinner');
+            const btnText = document.getElementById('btnText');
+
+            // Disable button to prevent double-clicking
+            generateBtn.disabled = true;
+
+            // Show spinner and change text
+            btnIcon.classList.add('hidden');
+            btnSpinner.classList.remove('hidden');
+            btnText.textContent = 'Generating...';
+        });
+    }
+});
+
         function openEditModal(missionVolunteer, volunteerName, participationStatus, isLeader) {
             // Set form action URL
             document.getElementById('editForm').action = `/admin/missions/update/volunteer/${missionVolunteer}`;
@@ -513,30 +625,28 @@
     </script>
 
 <script>
-    // JavaScript untuk dependensi dropdown
+
     document.addEventListener('DOMContentLoaded', function() {
-        // Ketika tipe penugasan berubah
-        // const assignTypeSelect = document.getElementById('assigned_to_type');
         const volunteerSelect = document.getElementById('assigned_volunteer_id');
 
         assignTypeSelect.addEventListener('change', function() {
             if (this.value === 'volunteer') {
                 volunteerSelect.disabled = false;
-                // Di sini Anda bisa menambahkan AJAX untuk mengambil daftar volunteer
+
             } else {
                 volunteerSelect.disabled = true;
                 volunteerSelect.value = '';
             }
         });
 
-        // Inisialisasi awal
+
         if (assignTypeSelect.value !== 'volunteer') {
             volunteerSelect.disabled = true;
         }
     });
 
     $(document).ready(function() {
-        // Initialize DataTable
+
         $('#volunteerTable').DataTable({
 
         });
