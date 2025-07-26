@@ -37,9 +37,9 @@ class ProfileRequest extends FormRequest
             'address'     => ['nullable', 'string', 'max:500'],
             'profile_url' => ['nullable', 'file', 'image', 'max:2048'],
             'current_password' => ['required_with:password', 'current_password:web'],
-            'community.name' => ['required', 'string', 'max:255'],
-            'community.description' => ['required', 'string'],
-            'community.member_count' => ['required', 'integer', 'min:1'],
+            'community.name' => ['nullable', 'string', 'max:255'],
+            'community.description' => ['nullable', 'string'],
+            'community.member_count' => ['nullable', 'integer', 'min:1'],
             'role' => 'nullable'
         ];
     }

@@ -8,6 +8,7 @@ import { User } from '@/types/user/interface';
 import { formatFullDateTime } from '@/utils/formatDate';
 import { getStatusColor as getMissionStatusColor } from '@/utils/missionStatusColor';
 import { getStatusColor } from '@/utils/reportStatusColor';
+import { getStatusLabel } from '@/utils/reportStatusLabel';
 import { router as Inertia, useForm } from '@inertiajs/react';
 import axios from 'axios';
 import {
@@ -103,13 +104,21 @@ const ReportDetailPage = ({
         {} as Record<string, typeof report.mission.documentation>,
     );
     const docEntries = Object.entries(groupedDocs || {});
+    // const displayedDocs = showAllDocs
+    //     ? (docEntries ?? [])
+    //     : docEntries.slice(0, INITIAL_DOCS_COUNT);
+    // const hasMoreDocs = docEntries.length > INITIAL_DOCS_COUNT;
+    // const displayedComments = showAll
+    //     ? comments
+    //     : comments.slice(0, INITIAL_COMMENTS_COUNT);
     const displayedDocs = showAllDocs
-        ? docEntries
-        : docEntries.slice(0, INITIAL_DOCS_COUNT);
-    const hasMoreDocs = docEntries.length > INITIAL_DOCS_COUNT;
+        ? (docEntries ?? [])
+        : (docEntries ?? []).slice(0, INITIAL_DOCS_COUNT);
+    const hasMoreDocs = (docEntries ?? []).length > INITIAL_DOCS_COUNT;
     const displayedComments = showAll
-        ? comments
-        : comments.slice(0, INITIAL_COMMENTS_COUNT);
+        ? (comments ?? [])
+        : (comments ?? []).slice(0, INITIAL_COMMENTS_COUNT);
+
     const hasMoreComments = comments.length > INITIAL_COMMENTS_COUNT;
     const [openModalAttendance, setOpenModalAttendance] = useState(false);
     const [openCancelModal, setOpenCancelModal] = useState(false);
@@ -259,7 +268,7 @@ const ReportDetailPage = ({
                                                 report.status,
                                             )}
                                         >
-                                            {report.status}
+                                            {getStatusLabel(report.status)}
                                         </Badge>
                                         {report.mission && (
                                             <Badge className="bg-indigo-100 text-indigo-700">
@@ -665,6 +674,9 @@ const ReportDetailPage = ({
                                             myParticipation.pivot
                                                 .participation_status !==
                                                 'cancelled' &&
+                                            myParticipation.pivot
+                                                .participation_status !==
+                                                'pending' &&
                                             myParticipation.pivot.is_leader && (
                                                 <Button
                                                     onClick={() =>

@@ -1,4 +1,4 @@
-import CommunityLayout from '@/components/layouts/CitizenLayout';
+import CommunityLayout from '@/components/layouts/CommunityLayout';
 import CreateReportPage from '@/components/report/CreateReportPage';
 import { PageProps } from '@/types';
 import { Province } from '@/types/area/interface';

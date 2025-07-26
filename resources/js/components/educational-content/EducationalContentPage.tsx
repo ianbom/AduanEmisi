@@ -1,10 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { getTypeColor } from '@/utils/educationColor';
-import { router as Inertia } from '@inertiajs/react';
-import Badge from '../core/Badge';
-
 import {
     Select,
     SelectContent,
@@ -13,9 +9,13 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { Content } from '@/types/content';
+import { getTypeColor } from '@/utils/educationColor';
 import { formatDateOnly } from '@/utils/formatDate';
+import { router as Inertia } from '@inertiajs/react';
 import { Calendar, Eye, Filter, Play, Search } from 'lucide-react';
 import { useState } from 'react';
+import Badge from '../core/Badge';
+import RenderHTML from '../RenderHtml';
 interface EducationalContentPageProps {
     contents: Content[];
 
@@ -244,9 +244,12 @@ const EducationalContentPage = ({
                                             <h3 className="mb-2 line-clamp-2 font-semibold text-gray-900 transition-colors group-hover:text-emerald-600">
                                                 {content.title}
                                             </h3>
-                                            <p className="mb-3 line-clamp-2 text-sm text-gray-600">
-                                                {content.body}
-                                            </p>
+                                            <div className="mb-3 line-clamp-2 text-sm text-gray-600">
+                                                <RenderHTML
+                                                    htmlString={content.body}
+                                                    className="leading-relaxed text-gray-700"
+                                                />
+                                            </div>
                                             <div className="mb-3 flex items-center justify-between text-xs text-gray-500">
                                                 <span>
                                                     Oleh: {content.author?.name}

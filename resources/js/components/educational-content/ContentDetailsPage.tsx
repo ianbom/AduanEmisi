@@ -11,7 +11,6 @@ interface ContentDetailsPageProps {
     content: Content;
     onBack: () => void;
 }
-
 const ContentDetailsPage = ({ content, onBack }: ContentDetailsPageProps) => {
     return (
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
@@ -91,7 +90,6 @@ const ContentDetailsPage = ({ content, onBack }: ContentDetailsPageProps) => {
                             <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2">
                                 {content.media?.map((mediaItem, index) => {
                                     const type = mediaItem.media_type;
-
                                     if (type === 'document') {
                                         return (
                                             <a
@@ -132,11 +130,6 @@ const ContentDetailsPage = ({ content, onBack }: ContentDetailsPageProps) => {
                                                     src={`/storage/${mediaItem.media_url}`}
                                                 />
                                             ) : (
-                                                // <img
-                                                //     src={`/storage/${mediaItem.media_url}`}
-                                                //     alt={`Media ${index + 1}`}
-                                                //     className="object-cover w-full h-full transition-transform duration-300 hover:scale-105"
-                                                // />
                                                 <ImageWithPopup
                                                     src={`/storage/${mediaItem.media_url}`}
                                                     alt={`Media ${index + 1}`}
@@ -156,49 +149,13 @@ const ContentDetailsPage = ({ content, onBack }: ContentDetailsPageProps) => {
                                 />
                             </div>
                         </CardContent>
-                        <p className="leading-relaxed text-gray-700">
+                        <div className="leading-relaxed text-gray-700">
                             <RenderHTML
                                 htmlString={content.body}
                                 className="leading-relaxed text-gray-700"
                             />
-                        </p>
-                    </CardContent>
-                    {/* <CardContent>
-                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                            <div className="flex items-center p-4 space-x-4 transition-colors border rounded-lg cursor-pointer hover:bg-gray-50">
-                                <FileText
-                                    size={20}
-                                    className="object-cover rounded h-14 w-14 text-emerald-600"
-                                />
-                                <div className="flex-1">
-                                    <h4 className="font-medium text-gray-900">
-                                        Nugget Rebus
-                                    </h4>
-                                    <div className="flex items-center mt-1">
-                                        <span className="text-sm text-gray-500">
-                                            Modul PDF
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="flex items-center p-4 space-x-4 transition-colors border rounded-lg cursor-pointer hover:bg-gray-50">
-                                <FileText
-                                    size={20}
-                                    className="object-cover rounded h-14 w-14 text-emerald-600"
-                                />
-                                <div className="flex-1">
-                                    <h4 className="font-medium text-gray-900">
-                                        Nugget Rebus
-                                    </h4>
-                                    <div className="flex items-center mt-1">
-                                        <span className="text-sm text-gray-500">
-                                            Modul PDF
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
-                    </CardContent> */}
+                    </CardContent>
                 </Card>
             </div>
         </div>

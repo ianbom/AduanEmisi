@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Citizen;
+namespace App\Http\Controllers\Community;
 
 use App\Http\Controllers\Controller;
 use App\Models\Notification;

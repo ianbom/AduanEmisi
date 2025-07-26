@@ -42,58 +42,10 @@ class ProfileService
             unset($data['password']);
         }
         if (!$user->update($data)) {
-            dd('Update gagal', $data);
-        } else {
-            dd('Update berhasil', $data);
+            throw new \Exception('Gagal mengupdate data profil.');
         }
         return $user;
     }
-    // public function updateProfileDataCommunity(array $data)
-    // {
-    //     $user = Auth::user();
-    //     if (!$user) {
-    //         throw new \Exception('User not authenticated.');
-    //     }
-    //     // Debug: Log user dan data
-    //     \Log::info('Current User:', ['id' => $user->id, 'name' => $user->name]);
-    //     \Log::info('Update Data:', $data);
-    //     $userData = Arr::only($data, [
-    //         'name',
-    //         'email',
-    //         'password',
-    //         'profile_url',
-    //         'phone',
-    //         'address',
-    //         'province_id',
-    //         'city_id',
-    //         'district_id'
-    //     ]);
-
-    //     if (isset($userData['password'])) {
-    //         $userData['password'] = Hash::make($userData['password']);
-    //     } else {
-    //         unset($userData['password']);
-    //     }
-
-    //     $communityData = $data['community'] ?? [];
-    //     // Debug: Log data yang akan diupdate
-    //     \Log::info('User Data to Update:', $userData);
-    //     \Log::info('Community Data to Update:', $communityData);
-
-    //     $user->update($userData);
-
-    //     // if ($user->community) {
-    //     //     $user->community->update($communityData);
-    //     // }
-    //     if ($user->community) {
-    //         $user->community->update($communityData);
-    //     } else {
-    //         $user->community()->create($communityData);
-    //     }
-
-
-    //     return $user;
-    // }
     public function updateProfileDataCommunity(array $data)
     {
         $user = Auth::user();
@@ -101,7 +53,6 @@ class ProfileService
             throw new \Exception('User not authenticated.');
         }
 
-        // Debug: Log user dan data
         \Log::info('Current User:', ['id' => $user->id, 'name' => $user->name]);
         \Log::info('Update Data:', $data);
 
@@ -124,16 +75,10 @@ class ProfileService
         }
 
         $communityData = $data['community'] ?? [];
-
-        // Debug: Log data yang akan diupdate
         \Log::info('User Data to Update:', $userData);
         \Log::info('Community Data to Update:', $communityData);
-
-        // Update user data
         $userUpdated = $user->update($userData);
         \Log::info('User Update Result:', ['success' => $userUpdated]);
-
-        // Update atau create community
         if ($user->community) {
             \Log::info('Updating existing community:', ['community_id' => $user->community->id]);
             $communityUpdated = $user->community->update($communityData);
@@ -143,8 +88,6 @@ class ProfileService
             $community = $user->community()->create($communityData);
             \Log::info('Community Create Result:', ['community_id' => $community->id]);
         }
-
-        // Refresh user dengan relationship
         $user->refresh();
         $user->load('community');
 

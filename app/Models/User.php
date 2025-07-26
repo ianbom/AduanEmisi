@@ -31,6 +31,7 @@ class User extends Authenticatable
         'google_id',
         'google_token',
         'google_refresh_token',
+        'role',
     ];
 
     protected $guarded = [
@@ -218,6 +219,15 @@ class User extends Authenticatable
             }
         }
 
+
+        // Tambahan khusus untuk role community
+        if ($this->role === 'community') {
+            $community = $this->community;
+
+            if (!$community || empty($community->name) || empty($community->description)) {
+                return false;
+            }
+        }
 
         return true;
     }

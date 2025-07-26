@@ -15,6 +15,7 @@ use App\Models\Province;
 use App\Models\Report;
 use Throwable;
 use Inertia\Inertia;
+use Pest\Plugins\Profile;
 
 class ProfileController extends Controller
 {
@@ -52,14 +53,26 @@ class ProfileController extends Controller
     public function completeProfile()
     {
         $user = Auth::user();
+        if ($user->role === 'community') {
+            $user->load('community');
+        }
         $provinces = Province::with('cities.districts')->get();
+        if ($user->role === 'community') {
+            return Inertia::render('Community/CompleteProfile', [
+                'auth' => [
+                    'user' => $user
+                ],
+                'provinces' => $provinces
+            ]);
+        }
         return Inertia::render('Citizen/CompleteProfile', [
-            'provinces' => $provinces,
             'auth' => [
                 'user' => $user
-            ]
+            ],
+            'provinces' => $provinces
         ]);
     }
+
     public function editProfile()
     {
         $user = Auth::user();
@@ -94,18 +107,41 @@ class ProfileController extends Controller
 
 
 
+    // public function updateCompleteProfile(ProfileRequest $request)
+    // {
+    //     $data = $request->validated();
+    //     try {
+    //         $this->profileService->updateProfile($data);
+    //         return redirect()
+    //             ->route('profile.show')
+    //             ->with('success', 'Profile berhasil diperbarui');
+    //     } catch (Throwable $th) {
+    //         return back()
+    //             ->withErrors(['error' => 'Gagal memperbarui profile. ' . $th->getMessage()])
+    //             ->withInput();
+    //     }
+    // }
     public function updateCompleteProfile(ProfileRequest $request)
     {
         $data = $request->validated();
-
         try {
-            $this->profileService->updateProfile($data);
-            return redirect()
-                ->route('profile.show')
-                ->with('success', 'Profile berhasil diperbarui');
+            $user = Auth::user();
+
+            if ($user->role === 'community') {
+                $this->profileService->updateProfileDataCommunity($data);
+
+                return redirect()
+                    ->route('community.profile.show')
+                    ->with('success', 'Data profil berhasil diperbarui');
+            } else {
+                $this->profileService->updateProfile($data);
+                return redirect()
+                    ->route('profile.show')
+                    ->with('success', 'Data profil berhasil diperbarui');
+            }
         } catch (Throwable $th) {
             return back()
-                ->withErrors(['error' => 'Gagal memperbarui profile. ' . $th->getMessage()])
+                ->withErrors(['error' => 'Gagal memperbarui profil. ' . $th->getMessage()])
                 ->withInput();
         }
     }

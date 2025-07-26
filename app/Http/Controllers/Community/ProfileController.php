@@ -25,20 +25,6 @@ class ProfileController extends Controller
     {
         $this->profileService = $profileService;
     }
-    // public function showProfile()
-    // {
-    //     $user = User::with('province', 'city', 'district', 'community')->find(Auth::id());
-    //     $myReports = Report::where('reporter_id', $user->id)->get();
-    //     $myReportsCount = Report::where('reporter_id', $user->id)->count();
-    //     return Inertia::render('Community/Profile/ProfilePage', [
-    //         'auth' => [
-    //             'user' => $user,
-
-    //         ],
-    //         'myReports' => $myReports,
-    //         'myReportsCount' => $myReportsCount
-    //     ]);
-    // }
     public function showProfile()
     {
         $user = User::with('province', 'city', 'district', 'community')->find(Auth::id());
@@ -74,18 +60,14 @@ class ProfileController extends Controller
     }
     public function updateProfile(ProfileRequest $request)
     {
-        \Log::info('Update Profile Data:', $request->all());
         $data = $request->validated();
-        \Log::info('Validated Data:', $data);
         try {
             if ($request->hasFile('profile_url')) {
                 $file = $request->file('profile_url');
                 $path = $file->store('profile_url', 'public');
                 $data['profile_url'] = $path;
-                \Log::info('File uploaded to:', ['path' => $path]);
             }
             $result = $this->profileService->updateProfileDataCommunity($data);
-            \Log::info('Update result:', ['user_id' => $result->id, 'community_exists' => $result->community ? 'yes' : 'no']);
             return redirect()
                 ->route('community.profile.show')
                 ->with('success', 'Profile berhasil diperbarui');

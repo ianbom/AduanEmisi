@@ -53,10 +53,8 @@ class ReportController extends Controller
             ]);
             if (!Auth::check()) {
                 Log::warning('User not authenticated in store method');
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'User tidak terautentikasi'
-                ], 401);
+                return back()
+                    ->with('error', 'User tidak terautentikasi');
             }
 
             $report = $this->reportService->createReport($request->validated());
@@ -79,11 +77,14 @@ class ReportController extends Controller
                 'trace' => $e->getTraceAsString()
             ]);
 
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Gagal membuat laporan',
-                'error' => $e->getMessage()
-            ], 500);
+            // return response()->json([
+            //     'status' => 'error',
+            //     'message' => 'Gagal membuat laporan',
+            //     'error' => $e->getMessage()
+            // ], 500);
+            return back()
+                ->withInput() // kembalikan input user
+                ->with('error', 'Gagal membuat laporan: ' . $e->getMessage()); // ← flash message
         }
     }
     public function viewMyReportsPage()

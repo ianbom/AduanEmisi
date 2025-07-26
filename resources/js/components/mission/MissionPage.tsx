@@ -32,9 +32,7 @@ const MissionPage = ({
             <div className="mb-8 flex flex-col items-start justify-between md:flex-row md:items-center">
                 <div>
                     <h1 className="mb-2 text-3xl font-bold text-gray-900">
-                        <h1 className="mb-2 text-3xl font-bold text-gray-900">
-                            {myMissions ? 'Misi yang Diikuti' : 'Daftar Misi'}
-                        </h1>
+                        {myMissions ? 'Misi yang Diikuti' : 'Daftar Misi'}
                     </h1>
                     <p className="text-gray-600">
                         Temukan Misi dan jadilah bagian dalam aksi penyelamatan
