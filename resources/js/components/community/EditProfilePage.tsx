@@ -149,9 +149,83 @@ const EditProfilePage = ({ provinces, onBack, auth }: PageProps) => {
         return true;
     };
 
+    // const handleSubmit = async (e: React.FormEvent) => {
+    //     e.preventDefault();
+    //     if (!validateForm()) return;
+    //     const data = new FormData();
+    //     data.append('name', formData.name);
+    //     data.append('phone', formData.phone);
+    //     data.append('address', formData.address);
+    //     data.append('province_id', formData.province_id);
+    //     data.append('city_id', formData.city_id);
+    //     data.append('district_id', formData.district_id);
+
+    //     data.append('community[name]', formData.community.name);
+    //     data.append('community[member_count]', formData.community.member_count);
+    //     data.append('community[description]', formData.community.description);
+    //     if (uploadedFiles.length > 0) {
+    //         data.append('profile_url', uploadedFiles[0]);
+    //     }
+    //     if (formData.password) {
+    //         data.append('current_password', formData.current_password);
+    //         data.append('password', formData.password);
+    //         data.append(
+    //             'password_confirmation',
+    //             formData.password_confirmation,
+    //         );
+    //     }
+    //     console.log('Uploaded file:', uploadedFiles[0]);
+    //     console.log('FormData entries:');
+    //     for (const pair of data.entries()) {
+    //         console.log(`${pair[0]}:`, pair[1]);
+    //     }
+
+    //     setIsSubmitting(true);
+    //     try {
+    //         await Inertia.post('/community/update-profile', data, {
+    //             forceFormData: true,
+    //             onSuccess: (page) => {
+    //                 console.log('Success response:', page);
+    //                 alert('Berhasil update!');
+    //                 window.location.href = '/community/profile';
+    //             },
+    //             onError: (errors) => {
+    //                 console.error('Validation errors:', errors);
+
+    //                 const errorMessages = Object.entries(errors)
+    //                     .map(([field, messages]) => {
+    //                         const messageArray = Array.isArray(messages)
+    //                             ? messages
+    //                             : [messages];
+    //                         return `${field}: ${messageArray.join(', ')}`;
+    //                     })
+    //                     .join('\n');
+    //                 alert(`Validation errors:\n${errorMessages}`);
+    //                 setIsSubmitting(false);
+    //             },
+    //             onFinish: () => {
+    //                 setIsSubmitting(false);
+    //             },
+    //         });
+    //     } catch (error: any) {
+    //         console.error(error);
+    //         if (error.response?.status === 422) {
+    //             const errors = error.response.data.errors;
+    //             alert(Object.values(errors).flat().join('\n'));
+    //         } else {
+    //             alert('Terjadi kesalahan. Silakan coba lagi.');
+    //         }
+    //     } finally {
+    //         setIsSubmitting(false);
+    //     }
+    // };
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
         if (!validateForm()) return;
+
+        setIsSubmitting(true);
+
         const data = new FormData();
         data.append('name', formData.name);
         data.append('phone', formData.phone);
@@ -160,12 +234,22 @@ const EditProfilePage = ({ provinces, onBack, auth }: PageProps) => {
         data.append('city_id', formData.city_id);
         data.append('district_id', formData.district_id);
 
-        data.append('community[name]', formData.community.name);
-        data.append('community[member_count]', formData.community.member_count);
-        data.append('community[description]', formData.community.description);
+        if (formData.community) {
+            data.append('community[name]', formData.community.name);
+            data.append(
+                'community[member_count]',
+                formData.community.member_count,
+            );
+            data.append(
+                'community[description]',
+                formData.community.description,
+            );
+        }
+
         if (uploadedFiles.length > 0) {
             data.append('profile_url', uploadedFiles[0]);
         }
+
         if (formData.password) {
             data.append('current_password', formData.current_password);
             data.append('password', formData.password);
@@ -174,55 +258,47 @@ const EditProfilePage = ({ provinces, onBack, auth }: PageProps) => {
                 formData.password_confirmation,
             );
         }
-        // 🔍 DEBUG START
-        console.log('Uploaded file:', uploadedFiles[0]);
         console.log('FormData entries:');
         for (const pair of data.entries()) {
             console.log(`${pair[0]}:`, pair[1]);
         }
-        // 🔍 DEBUG END
-        setIsSubmitting(true);
 
-        try {
-            await Inertia.post('/community/update-profile', data, {
-                forceFormData: true,
-                onSuccess: (page) => {
-                    // alert('Berhasil update!');
-                    // Inertia.visit('/community/profile');
-                    console.log('Success response:', page);
-                    alert('Berhasil update!');
-                    // Gunakan window.location atau Inertia.visit dengan replace
-                    window.location.href = '/community/profile';
-                },
-                onError: (errors) => {
-                    console.error('Validation errors:', errors);
-                    // Tampilkan error yang lebih detail
-                    const errorMessages = Object.entries(errors)
-                        .map(([field, messages]) => {
-                            const messageArray = Array.isArray(messages)
-                                ? messages
-                                : [messages];
-                            return `${field}: ${messageArray.join(', ')}`;
-                        })
-                        .join('\n');
-                    alert(`Validation errors:\n${errorMessages}`);
-                    setIsSubmitting(false);
-                },
-                onFinish: () => {
-                    setIsSubmitting(false);
-                },
-            });
-        } catch (error: any) {
-            console.error(error);
-            if (error.response?.status === 422) {
-                const errors = error.response.data.errors;
-                alert(Object.values(errors).flat().join('\n'));
-            } else {
-                alert('Terjadi kesalahan. Silakan coba lagi.');
-            }
-        } finally {
-            setIsSubmitting(false);
-        }
+        Inertia.post('/community/update-profile', data, {
+            forceFormData: true,
+            onStart: () => setIsSubmitting(true),
+            onSuccess: () => {
+                setFormData({
+                    name: '',
+                    phone: '',
+                    address: '',
+                    province_id: '',
+                    city_id: '',
+                    district_id: '',
+                    current_password: '',
+                    password: '',
+                    password_confirmation: '',
+                    community: {
+                        name: '',
+                        member_count: '',
+                        description: '',
+                    },
+                });
+                setUploadedFiles([]);
+            },
+            onError: (errors) => {
+                console.error('Validation errors:', errors);
+                const errorMessages = Object.entries(errors)
+                    .map(([field, messages]) => {
+                        const messageArray = Array.isArray(messages)
+                            ? messages
+                            : [messages];
+                        return `${field}: ${messageArray.join(', ')}`;
+                    })
+                    .join('\n');
+                alert(`Validation errors:\n${errorMessages}`);
+            },
+            onFinish: () => setIsSubmitting(false),
+        });
     };
 
     return (
@@ -628,11 +704,14 @@ const EditProfilePage = ({ provinces, onBack, auth }: PageProps) => {
                                 />
                                 Kata Sandi
                             </CardTitle>
+                            <p className="text-sm text-muted-foreground">
+                                Kosongkan jika tidak ingin mengubah password
+                            </p>
                         </CardHeader>
                         <CardContent className="flex-1 space-y-6">
                             <div className="space-y-2">
                                 <Label htmlFor="current_password">
-                                    Password Lama{' '}
+                                    Password Saat Ini{' '}
                                     <span className="text-red-500">*</span>
                                 </Label>
                                 <div className="relative">
@@ -651,7 +730,6 @@ const EditProfilePage = ({ provinces, onBack, auth }: PageProps) => {
                                                 e.target.value,
                                             )
                                         }
-                                        required
                                         disabled={isSubmitting}
                                         className="pr-10"
                                     />
@@ -708,9 +786,6 @@ const EditProfilePage = ({ provinces, onBack, auth }: PageProps) => {
                                         )}
                                     </button>
                                 </div>
-                                <p className="text-sm text-muted-foreground">
-                                    Kosongkan jika tidak ingin mengubah password
-                                </p>
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="password_confirmation">
@@ -756,7 +831,6 @@ const EditProfilePage = ({ provinces, onBack, auth }: PageProps) => {
                         </CardContent>
                     </Card>
                 </div>
-                {/* Tombol Submit */}
                 <div className="flex flex-col justify-start gap-4 rounded-lg border border-gray-200 bg-white p-3 shadow-sm sm:flex-row">
                     <Button
                         type="button"

@@ -1,20 +1,20 @@
 import Navbar from '@/components/core/Navbar';
 import NotificationSidebar from '@/components/core/NotificationSidebar';
-import { showToast } from '@/lib/toast';
 import { PageProps } from '@/types';
 import { getProfileMenuContent } from '@/utils/profileMenuContent';
+import { showToast } from '@/utils/toast';
 import { router as Inertia, usePage } from '@inertiajs/react';
 import { ReactNode, useEffect, useState } from 'react';
 import { Toaster } from 'sonner';
-import Footer from '../core/Footer';
 import FloatingChat from '../chatbot/FloatingChat';
+import Footer from '../core/Footer';
 interface Props {
     children: ReactNode;
     currentPage: string;
 }
 
 export default function CitizenLayout({ children, currentPage }: Props) {
-    const { flash } = usePage<PageProps>().props;
+    const { flash = {} } = usePage().props;
     const [isNotificationOpen, setIsNotificationOpen] = useState(false);
     const { auth } = usePage<PageProps>().props;
     const user = auth?.user;
@@ -26,10 +26,8 @@ export default function CitizenLayout({ children, currentPage }: Props) {
         { id: 'education', label: 'Konten Edukasi', key: 'education' },
     ];
     useEffect(() => {
-        if (flash?.success) showToast('success', flash.success);
-        if (flash?.error) showToast('error', flash.error);
-        if (flash?.warning) showToast('warning', flash.warning);
-        if (flash?.info) showToast('info', flash.info);
+        console.log('Flash data di CitizenLayout:', flash);
+        showToast.handleFlash(flash);
     }, [flash]);
     const handleNavigate = (page: string) => {
         Inertia.visit(`/${page}`);
@@ -63,9 +61,10 @@ export default function CitizenLayout({ children, currentPage }: Props) {
                 isOpen={isNotificationOpen}
                 onClose={() => setIsNotificationOpen(false)}
             />
-            <FloatingChat/>
-            <Footer />
+            <FloatingChat />
             <Toaster position="top-right" richColors closeButton />
+
+            <Footer />
         </div>
     );
 }

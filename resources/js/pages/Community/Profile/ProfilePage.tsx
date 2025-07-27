@@ -1,5 +1,5 @@
 import CommunityProfilePage from '@/components/community/CommunityProfilePage';
-import CommunityLayout from '@/components/layouts/CitizenLayout';
+import CommunityLayout from '@/components/layouts/CommunityLayout';
 import { PageProps } from '@/types';
 import { Report } from '@/types/report';
 import { Mission } from '@/types/report/mission';

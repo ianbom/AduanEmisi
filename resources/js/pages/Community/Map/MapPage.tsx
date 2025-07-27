@@ -1,4 +1,4 @@
-import CommunityLayout from '@/components/layouts/CitizenLayout';
+import CommunityLayout from '@/components/layouts/CommunityLayout';
 import MapPage from '@/components/map/MapPage';
 import { PageProps } from '@/types';
 import { City, District, Province } from '@/types/area/interface';
@@ -21,7 +21,7 @@ const MapPageRoute = () => {
         window.location.href = `/report/${id}`;
     };
     return (
-        <CommunityLayout currentPage="community.map">
+        <CommunityLayout currentPage="community/map">
             <MapPage
                 reports={reports}
                 provinces={provinces}

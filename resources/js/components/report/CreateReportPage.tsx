@@ -21,7 +21,6 @@ import {
     Upload,
     X,
 } from 'lucide-react';
-import { toast } from 'sonner';
 
 import { lazy, useState } from 'react';
 
@@ -168,6 +167,93 @@ const CreateReportPage = ({ provinces, onBack }: PageProps) => {
         return true;
     };
 
+    // const handleSubmit = async (e: React.FormEvent) => {
+    //     e.preventDefault();
+
+    //     if (!validateForm()) {
+    //         return;
+    //     }
+
+    //     setIsSubmitting(true);
+
+    //     const data = new FormData();
+    //     data.append('title', formData.title);
+    //     data.append('description', formData.description);
+    //     data.append('category', formData.category);
+    //     data.append('address', formData.address);
+    //     data.append('province_id', formData.province_id);
+    //     data.append('city_id', formData.city_id);
+    //     data.append('district_id', formData.district_id);
+
+    //     if (location) {
+    //         data.append('latitude', location.latitude.toString());
+    //         data.append('longitude', location.longitude.toString());
+    //     }
+
+    //     uploadedFiles.forEach((file) => {
+    //         data.append('media[]', file);
+    //     });
+
+    //     try {
+    //         Inertia.post('/reports', data, {
+    //             forceFormData: true,
+    //             onSuccess: () => {
+    //                 setFormData({
+    //                     title: '',
+    //                     description: '',
+    //                     category: '',
+    //                     address: '',
+    //                     province_id: '',
+    //                     city_id: '',
+    //                     district_id: '',
+    //                 });
+    //                 setLocation(null);
+    //                 setUploadedFiles([]);
+    //                 // Inertia.visit('/report');
+    //             },
+    //             onError: (errors) => {
+    //                 console.error('Form errors:', errors);
+    //             },
+    //         });
+    //     } catch (error: any) {
+    //         console.error('Error submitting report:', error);
+
+    //         if (error.response) {
+    //             const { status, data } = error.response;
+
+    //             if (status === 422) {
+    //                 const errors = data.errors || {};
+    //                 const errorMessages = Object.values(errors).flat();
+    //                 alert('Validasi gagal:\n' + errorMessages.join('\n'));
+    //             } else if (status === 401) {
+    //                 alert('Anda belum login. Silakan login terlebih dahulu.');
+    //             } else if (status === 413) {
+    //                 alert(
+    //                     'File yang diunggah terlalu besar. Maksimal 10MB per file.',
+    //                 );
+    //             } else if (status === 500) {
+    //                 alert(
+    //                     'Terjadi kesalahan pada server. Silakan coba lagi nanti.',
+    //                 );
+    //             } else {
+    //                 alert(
+    //                     'Terjadi kesalahan: ' +
+    //                         (data.message || 'Unknown error'),
+    //                 );
+    //             }
+    //         } else if (error.request) {
+    //             alert(
+    //                 'Tidak dapat terhubung ke server. Periksa koneksi internet Anda.',
+    //             );
+    //         } else {
+    //             alert(
+    //                 'Terjadi kesalahan yang tidak terduga. Silakan coba lagi.',
+    //             );
+    //         }
+    //     } finally {
+    //         setIsSubmitting(false);
+    //     }
+    // };
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -195,70 +281,32 @@ const CreateReportPage = ({ provinces, onBack }: PageProps) => {
             data.append('media[]', file);
         });
 
-        try {
-            Inertia.post('/reports', data, {
-                forceFormData: true,
-                onSuccess: () => {
-                    toast.success('Laporan berhasil dikirim!');
-
-                    // Reset form
-                    setFormData({
-                        title: '',
-                        description: '',
-                        category: '',
-                        address: '',
-                        province_id: '',
-                        city_id: '',
-                        district_id: '',
-                    });
-                    setLocation(null);
-                    setUploadedFiles([]);
-                    Inertia.visit('/report');
-                },
-            });
-        } catch (error: any) {
-            console.error('Error submitting report:', error);
-
-            if (error.response) {
-                const { status, data } = error.response;
-
-                if (status === 422) {
-                    const errors = data.errors || {};
-                    const errorMessages = Object.values(errors).flat();
-                    alert('Validasi gagal:\n' + errorMessages.join('\n'));
-                } else if (status === 401) {
-                    alert('Anda belum login. Silakan login terlebih dahulu.');
-                } else if (status === 413) {
-                    alert(
-                        'File yang diunggah terlalu besar. Maksimal 10MB per file.',
-                    );
-                } else if (status === 500) {
-                    alert(
-                        'Terjadi kesalahan pada server. Silakan coba lagi nanti.',
-                    );
-                } else {
-                    alert(
-                        'Terjadi kesalahan: ' +
-                            (data.message || 'Unknown error'),
-                    );
-                }
-            } else if (error.request) {
-                alert(
-                    'Tidak dapat terhubung ke server. Periksa koneksi internet Anda.',
-                );
-            } else {
-                alert(
-                    'Terjadi kesalahan yang tidak terduga. Silakan coba lagi.',
-                );
-            }
-        } finally {
-            setIsSubmitting(false);
-        }
+        Inertia.post('/reports', data, {
+            forceFormData: true,
+            onStart: () => setIsSubmitting(true),
+            onFinish: () => setIsSubmitting(false),
+            onSuccess: () => {
+                setFormData({
+                    title: '',
+                    description: '',
+                    category: '',
+                    address: '',
+                    province_id: '',
+                    city_id: '',
+                    district_id: '',
+                });
+                setLocation(null);
+                setUploadedFiles([]);
+            },
+            onError: (errors) => {
+                console.error('Form errors:', errors);
+            },
+        });
     };
-
     return (
         <div className="mx-auto max-w-7xl space-y-6 px-4 py-8 sm:px-6 lg:px-8">
             <div className="mb-8 flex items-center justify-between">
+                {' '}
                 <Button
                     variant="ghost"
                     onClick={onBack}
@@ -351,20 +399,32 @@ const CreateReportPage = ({ provinces, onBack }: PageProps) => {
                                             <SelectValue placeholder="Pilih kategori masalah" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="pencemaran-air">
-                                                Pencemaran Air
-                                            </SelectItem>
-                                            <SelectItem value="pencemaran-laut">
-                                                Pencemaran Laut
-                                            </SelectItem>
-                                            <SelectItem value="kerusakan-hutan">
-                                                Kerusakan Hutan
-                                            </SelectItem>
                                             <SelectItem value="sampah-plastik">
                                                 Sampah Plastik
                                             </SelectItem>
+                                            <SelectItem value="pencemaran-air">
+                                                Pencemaran Air
+                                            </SelectItem>
                                             <SelectItem value="pencemaran-udara">
                                                 Pencemaran Udara
+                                            </SelectItem>
+                                            <SelectItem value="pencemaran-tanah">
+                                                Pencemaran Tanah
+                                            </SelectItem>
+                                            <SelectItem value="limbah-industri">
+                                                Limbah Industri
+                                            </SelectItem>
+                                            <SelectItem value="emisi-gas-rumah-kaca">
+                                                Emisi Gas Rumah Kaca
+                                            </SelectItem>
+                                            <SelectItem value="penggundulan-kebakaran-hutan">
+                                                Penggundulan / Kebakaran Hutan
+                                            </SelectItem>
+                                            <SelectItem value="naiknya-permukaan-air-laut">
+                                                Naiknya Permukaan Air Laut
+                                            </SelectItem>
+                                            <SelectItem value="limbah-pertanian-peternakan">
+                                                Limbah Pertanian / Peternakan
                                             </SelectItem>
                                             <SelectItem value="lainnya">
                                                 Lainnya

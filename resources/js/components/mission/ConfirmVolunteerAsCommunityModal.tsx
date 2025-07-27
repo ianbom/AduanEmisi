@@ -30,8 +30,8 @@ export default function ConfirmVolunteerAsCommunityModal({
                 <div className="py-4 text-gray-700">
                     <p>
                         Apakah Anda yakin ingin mendaftar sebagai{' '}
-                        <strong>Komunitas</strong>? Jika anda terpilih akan
-                        menjadi ketua tim.
+                        <strong>Komunitas</strong>? Jika Anda terpilih, Anda
+                        akan otomatis menjadi ketua tim.
                     </p>
                 </div>
                 <DialogFooter>

@@ -36,7 +36,7 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
-             'notifications' => function () {
+            'notifications' => function () {
                 if (Auth::check()) {
                     $userId = Auth::id();
                     $notifications = Notification::where('user_id', $userId)
@@ -57,6 +57,12 @@ class HandleInertiaRequests extends Middleware
                     'latest' => [],
                 ];
             },
+            'flash' => [
+                'success' => fn() => $request->session()->get('success'),
+                'error' => fn() => $request->session()->get('error'),
+                'info' => fn() => $request->session()->get('info'),
+                'warning' => fn() => $request->session()->get('warning'),
+            ],
         ];
     }
 }

@@ -13,6 +13,7 @@ import { Province } from '@/types/area/interface';
 import { Report } from '@/types/report';
 import { formatDateOnly } from '@/utils/formatDate';
 import { getStatusColor } from '@/utils/reportStatusColor';
+import { getStatusLabel } from '@/utils/reportStatusLabel';
 import { router as Inertia } from '@inertiajs/react';
 import {
     Calendar,
@@ -24,7 +25,7 @@ import {
     ThumbsDown,
     ThumbsUp,
 } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 interface ReportsPageProps {
     reports: Report[];
@@ -59,14 +60,14 @@ const ReportsPage = ({
         status: 'semua',
         province: 'semua',
         startDate: '',
-        endDate: ''
+        endDate: '',
     });
 
     // Function untuk mengupdate filter individual
     const updateFilter = (key: keyof FilterState, value: string) => {
-        setFilters(prev => ({
+        setFilters((prev) => ({
             ...prev,
-            [key]: value
+            [key]: value,
         }));
     };
 
@@ -77,7 +78,7 @@ const ReportsPage = ({
             status: 'semua',
             province: 'semua',
             startDate: '',
-            endDate: ''
+            endDate: '',
         });
         setSearchQuery('');
     };
@@ -88,30 +89,41 @@ const ReportsPage = ({
 
         // Apply search filter
         if (searchQuery.trim()) {
-            processedReports = processedReports.filter((report) =>
-                report.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                report.description?.toLowerCase().includes(searchQuery.toLowerCase())
+            processedReports = processedReports.filter(
+                (report) =>
+                    report.title
+                        .toLowerCase()
+                        .includes(searchQuery.toLowerCase()) ||
+                    report.description
+                        ?.toLowerCase()
+                        .includes(searchQuery.toLowerCase()),
             );
         }
 
         // Apply category filter
         if (filters.category !== 'semua') {
-            processedReports = processedReports.filter((report) =>
-                report.category.toLowerCase() === filters.category.toLowerCase()
+            processedReports = processedReports.filter(
+                (report) =>
+                    report.category.toLowerCase() ===
+                    filters.category.toLowerCase(),
             );
         }
 
         // Apply status filter
         if (filters.status !== 'semua') {
-            processedReports = processedReports.filter((report) =>
-                report.status.toLowerCase() === filters.status.toLowerCase()
+            processedReports = processedReports.filter(
+                (report) =>
+                    report.status.toLowerCase() ===
+                    filters.status.toLowerCase(),
             );
         }
 
         // Apply province filter
         if (filters.province !== 'semua') {
             processedReports = processedReports.filter((report) =>
-                report.province?.name.toLowerCase().includes(filters.province.toLowerCase())
+                report.province?.name
+                    .toLowerCase()
+                    .includes(filters.province.toLowerCase()),
             );
         }
 
@@ -128,7 +140,7 @@ const ReportsPage = ({
             processedReports = processedReports.filter((report) => {
                 const reportDate = new Date(report.created_at);
                 const endDate = new Date(filters.endDate);
-                endDate.setHours(23, 59, 59, 999); // Set to end of day
+                endDate.setHours(23, 59, 59, 999);
                 return reportDate <= endDate;
             });
         }
@@ -138,17 +150,17 @@ const ReportsPage = ({
             processedReports.sort(
                 (a, b) =>
                     new Date(b.created_at).getTime() -
-                    new Date(a.created_at).getTime()
+                    new Date(a.created_at).getTime(),
             );
         } else if (sortBy === 'oldest') {
             processedReports.sort(
                 (a, b) =>
                     new Date(a.created_at).getTime() -
-                    new Date(b.created_at).getTime()
+                    new Date(b.created_at).getTime(),
             );
         } else if (sortBy === 'popular') {
             processedReports.sort(
-                (a, b) => (b.upvotes_count || 0) - (a.upvotes_count || 0)
+                (a, b) => (b.upvotes_count || 0) - (a.upvotes_count || 0),
             );
         } else if (sortBy === 'status') {
             processedReports.sort((a, b) => a.status.localeCompare(b.status));
@@ -157,20 +169,21 @@ const ReportsPage = ({
         }
 
         setFilteredReports(processedReports);
-
     }, [reports, searchQuery, sortBy, filters]);
 
     // Get unique categories from reports for dynamic options
-    const availableCategories = [ 'Sampah Plastik',
-                  'Pencemaran Air',
-                  'Pencemaran Udara',
-                  'Pencemaran Tanah',
-                  'Limbah Industri',
-                  'Emisi Gas Rumah Kaca',
-                  'Penggundulan / Kebakaran Hutan',
-                  'Naiknya Permukaan Air Laut',
-                  'Limbah Pertanian / Peternakan',
-                  'Lainnya']
+    const availableCategories = [
+        'Sampah Plastik',
+        'Pencemaran Air',
+        'Pencemaran Udara',
+        'Pencemaran Tanah',
+        'Limbah Industri',
+        'Emisi Gas Rumah Kaca',
+        'Penggundulan / Kebakaran Hutan',
+        'Naiknya Permukaan Air Laut',
+        'Limbah Pertanian / Peternakan',
+        'Lainnya',
+    ];
     // const availableProvinces = provinces.name
 
     return (
@@ -185,7 +198,7 @@ const ReportsPage = ({
                             ? 'Laporan yang dibuat oleh Anda'
                             : 'Temukan Laporan dan bergabung dalam aksi penyelamatan lingkungan'}
                     </p>
-                    {/* <p className="text-sm text-gray-500 mt-1">
+                    {/* <p className="mt-1 text-sm text-gray-500">
                         Menampilkan {filteredReports.length} dari {reports.length} laporan
                     </p> */}
                 </div>
@@ -219,7 +232,9 @@ const ReportsPage = ({
                                 </label>
                                 <Select
                                     value={filters.category}
-                                    onValueChange={(value) => updateFilter('category', value)}
+                                    onValueChange={(value) =>
+                                        updateFilter('category', value)
+                                    }
                                 >
                                     <SelectTrigger>
                                         <SelectValue placeholder="Pilih kategori" />
@@ -229,7 +244,10 @@ const ReportsPage = ({
                                             Semua Kategori
                                         </SelectItem>
                                         {availableCategories.map((category) => (
-                                            <SelectItem key={category} value={category}>
+                                            <SelectItem
+                                                key={category}
+                                                value={category}
+                                            >
                                                 {category}
                                             </SelectItem>
                                         ))}
@@ -243,7 +261,9 @@ const ReportsPage = ({
                                 </label>
                                 <Select
                                     value={filters.status}
-                                    onValueChange={(value) => updateFilter('status', value)}
+                                    onValueChange={(value) =>
+                                        updateFilter('status', value)
+                                    }
                                 >
                                     <SelectTrigger>
                                         <SelectValue placeholder="Pilih status" />
@@ -280,7 +300,9 @@ const ReportsPage = ({
                                 </label>
                                 <Select
                                     value={filters.province}
-                                    onValueChange={(value) => updateFilter('province', value)}
+                                    onValueChange={(value) =>
+                                        updateFilter('province', value)
+                                    }
                                 >
                                     <SelectTrigger>
                                         <SelectValue placeholder="Pilih provinsi" />
@@ -289,8 +311,11 @@ const ReportsPage = ({
                                         <SelectItem value="semua">
                                             Semua Provinsi
                                         </SelectItem>
-                                        {provinces.map((province) => (
-                                            <SelectItem key={province.id} value={province.name}>
+                                        {provinces?.map((province) => (
+                                            <SelectItem
+                                                key={province.id}
+                                                value={province.name}
+                                            >
                                                 {province.name}
                                             </SelectItem>
                                         ))}
@@ -306,7 +331,12 @@ const ReportsPage = ({
                                     <Input
                                         type="date"
                                         value={filters.startDate}
-                                        onChange={(e) => updateFilter('startDate', e.target.value)}
+                                        onChange={(e) =>
+                                            updateFilter(
+                                                'startDate',
+                                                e.target.value,
+                                            )
+                                        }
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -316,7 +346,12 @@ const ReportsPage = ({
                                     <Input
                                         type="date"
                                         value={filters.endDate}
-                                        onChange={(e) => updateFilter('endDate', e.target.value)}
+                                        onChange={(e) =>
+                                            updateFilter(
+                                                'endDate',
+                                                e.target.value,
+                                            )
+                                        }
                                         min={filters.startDate} // Prevent end date before start date
                                     />
                                 </div>
@@ -327,7 +362,10 @@ const ReportsPage = ({
                                     className="w-full bg-emerald-600 hover:bg-emerald-700"
                                     onClick={() => {
                                         // Optional: force re-filter (already happens automatically via useEffect)
-                                        console.log('Filters applied:', filters);
+                                        console.log(
+                                            'Filters applied:',
+                                            filters,
+                                        );
                                     }}
                                 >
                                     Terapkan Filter
@@ -385,40 +423,94 @@ const ReportsPage = ({
                     </div>
 
                     {/* Active Filters Display */}
-                    {(filters.category !== 'semua' || filters.status !== 'semua' || filters.province !== 'semua' || filters.startDate || filters.endDate || searchQuery) && (
+                    {(filters.category !== 'semua' ||
+                        filters.status !== 'semua' ||
+                        filters.province !== 'semua' ||
+                        filters.startDate ||
+                        filters.endDate ||
+                        searchQuery) && (
                         <div className="mb-4 flex flex-wrap gap-2">
-                            <span className="text-sm font-medium text-gray-700 mr-2">Filter aktif:</span>
+                            <span className="mr-2 text-sm font-medium text-gray-700">
+                                Filter aktif:
+                            </span>
                             {searchQuery && (
-                                <Badge variant="secondary" className="flex items-center gap-1">
+                                <Badge
+                                    variant="secondary"
+                                    className="flex items-center gap-1"
+                                >
                                     Pencarian: "{searchQuery}"
-                                    <button onClick={() => setSearchQuery('')} className="ml-1 text-xs">×</button>
+                                    <button
+                                        onClick={() => setSearchQuery('')}
+                                        className="ml-1 text-xs"
+                                    >
+                                        ×
+                                    </button>
                                 </Badge>
                             )}
                             {filters.category !== 'semua' && (
-                                <Badge variant="secondary" className="flex items-center gap-1">
+                                <Badge
+                                    variant="secondary"
+                                    className="flex items-center gap-1"
+                                >
                                     Kategori: {filters.category}
-                                    <button onClick={() => updateFilter('category', 'semua')} className="ml-1 text-xs">×</button>
+                                    <button
+                                        onClick={() =>
+                                            updateFilter('category', 'semua')
+                                        }
+                                        className="ml-1 text-xs"
+                                    >
+                                        ×
+                                    </button>
                                 </Badge>
                             )}
                             {filters.status !== 'semua' && (
-                                <Badge variant="secondary" className="flex items-center gap-1">
+                                <Badge
+                                    variant="secondary"
+                                    className="flex items-center gap-1"
+                                >
                                     Status: {filters.status}
-                                    <button onClick={() => updateFilter('status', 'semua')} className="ml-1 text-xs">×</button>
+                                    <button
+                                        onClick={() =>
+                                            updateFilter('status', 'semua')
+                                        }
+                                        className="ml-1 text-xs"
+                                    >
+                                        ×
+                                    </button>
                                 </Badge>
                             )}
                             {filters.province !== 'semua' && (
-                                <Badge variant="secondary" className="flex items-center gap-1">
+                                <Badge
+                                    variant="secondary"
+                                    className="flex items-center gap-1"
+                                >
                                     Provinsi: {filters.province}
-                                    <button onClick={() => updateFilter('province', 'semua')} className="ml-1 text-xs">×</button>
+                                    <button
+                                        onClick={() =>
+                                            updateFilter('province', 'semua')
+                                        }
+                                        className="ml-1 text-xs"
+                                    >
+                                        ×
+                                    </button>
                                 </Badge>
                             )}
                             {(filters.startDate || filters.endDate) && (
-                                <Badge variant="secondary" className="flex items-center gap-1">
-                                    Tanggal: {filters.startDate || '...'} - {filters.endDate || '...'}
-                                    <button onClick={() => {
-                                        updateFilter('startDate', '');
-                                        updateFilter('endDate', '');
-                                    }} className="ml-1 text-xs">×</button>
+                                <Badge
+                                    variant="secondary"
+                                    className="flex items-center gap-1"
+                                >
+                                    Tanggal: {filters.startDate || '...'} -{' '}
+                                    {filters.endDate || '...'}
+                                    <button
+                                        onClick={() => {
+                                            updateFilter('startDate', '');
+                                            updateFilter('endDate', '');
+                                        }}
+                                        className="ml-1 text-xs"
+                                    >
+                                        ×
+                                    </button>
                                 </Badge>
                             )}
                         </div>
@@ -479,12 +571,14 @@ const ReportsPage = ({
                                                         report.status,
                                                     )}
                                                 >
-                                                    {report.status}
+                                                    {getStatusLabel(
+                                                        report.status,
+                                                    )}
                                                 </Badge>
                                             </div>
                                             {report.mission && (
                                                 <div className="absolute left-3 top-3">
-                                                    <Badge className="bg-blue-100 text-blue-700">
+                                                    <Badge className="bg-indigo-100 text-indigo-700">
                                                         Ada Misi
                                                     </Badge>
                                                 </div>
@@ -555,8 +649,8 @@ const ReportsPage = ({
 
                                             <Button
                                                 className="mt-auto w-full bg-amber-500 transition-colors duration-200 hover:bg-amber-700"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
+                                                onClick={() => {
+                                                    // e.stopPropagation();
                                                     Inertia.visit(
                                                         `/report/${report.id}`,
                                                     );
@@ -572,15 +666,6 @@ const ReportsPage = ({
                                     </Card>
                                 ))}
                             </div>
-                            {/* <div className="mt-8 text-center">
-                                <Button
-                                    variant="outline"
-                                    size="lg"
-                                    className="min-w-32"
-                                >
-                                    Muat Lebih Banyak
-                                </Button>
-                            </div> */}
                         </>
                     ) : (
                         <div className="flex w-full items-center justify-center">
@@ -604,16 +689,31 @@ const ReportsPage = ({
                                     </div>
                                 </div>
                                 <h3 className="mb-2 text-lg font-semibold text-gray-900">
-                                    {searchQuery || filters.category !== 'semua' || filters.status !== 'semua' || filters.province !== 'semua' || filters.startDate || filters.endDate
+                                    {searchQuery ||
+                                    filters.category !== 'semua' ||
+                                    filters.status !== 'semua' ||
+                                    filters.province !== 'semua' ||
+                                    filters.startDate ||
+                                    filters.endDate
                                         ? 'Tidak Ada Laporan yang Sesuai Filter'
                                         : 'Laporan Belum Tersedia'}
                                 </h3>
                                 <p className="text-sm text-gray-500">
-                                    {searchQuery || filters.category !== 'semua' || filters.status !== 'semua' || filters.province !== 'semua' || filters.startDate || filters.endDate
+                                    {searchQuery ||
+                                    filters.category !== 'semua' ||
+                                    filters.status !== 'semua' ||
+                                    filters.province !== 'semua' ||
+                                    filters.startDate ||
+                                    filters.endDate
                                         ? 'Coba ubah atau hapus beberapa filter untuk melihat lebih banyak laporan.'
                                         : 'Belum ada laporan yang tersedia saat ini. Coba buat laporan baru.'}
                                 </p>
-                                {(searchQuery || filters.category !== 'semua' || filters.status !== 'semua' || filters.province !== 'semua' || filters.startDate || filters.endDate) && (
+                                {(searchQuery ||
+                                    filters.category !== 'semua' ||
+                                    filters.status !== 'semua' ||
+                                    filters.province !== 'semua' ||
+                                    filters.startDate ||
+                                    filters.endDate) && (
                                     <Button
                                         variant="outline"
                                         className="mt-4"
