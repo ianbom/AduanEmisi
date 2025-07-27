@@ -122,11 +122,14 @@ class ContentService extends Service
         $extension = strtolower($file->getClientOriginalExtension());
         $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'];
         $videoExtensions = ['mp4', 'mov', 'avi', 'mkv', 'wmv'];
+        $documentExtensions = ['pdf'];
 
         if (in_array($extension, $imageExtensions)) {
             return 'image';
         } elseif (in_array($extension, $videoExtensions)) {
             return 'video';
+        }elseif (in_array($extension, $documentExtensions)) {
+            return 'document';
         }
 
         return 'image'; // default fallback
