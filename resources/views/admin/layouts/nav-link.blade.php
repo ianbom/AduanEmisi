@@ -1,5 +1,21 @@
 <nav class="flex flex-1 flex-col">
     <ul role="list" class="flex flex-1 flex-col gap-y-7">
+         <li>
+            <div class="text-xs/6 font-semibold text-emerald-200">Dashboard</div>
+            <ul role="list" class="-mx-2 mt-2 space-y-1">
+                <li>
+                    {{-- Dashboard --}}
+                    <a href="{{ route('admin.dashboard.index') }}" class="group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold {{ request()->routeIs('admin.dashboard.*') ? 'bg-emerald-800 text-white' : 'text-emerald-100 hover:text-white hover:bg-emerald-800' }}">
+                        <svg class="size-6 shrink-0 {{ request()->routeIs('admin.dashboard.*') ? 'text-white' : 'text-emerald-300 group-hover:text-white' }}" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+                        </svg>
+                        Dashboard
+                    </a>
+                </li>
+
+            </ul>
+        </li>
         <li>
             <div class="text-xs/6 font-semibold text-emerald-200">Reports and Missions</div>
             <ul role="list" class="-mx-2 mt-2 space-y-1">
@@ -21,15 +37,7 @@
                         Missions
                     </a>
                 </li>
-                <li>
-                    {{-- Map --}}
-                    <a href="#" class="group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold text-emerald-100 hover:text-white hover:bg-emerald-800">
-                        <svg class="size-6 shrink-0 text-emerald-300 group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
-                           <path stroke-linecap="round" stroke-linejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498l4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.25c-.836-.417-1.873-.417-2.709 0L3.372 4.82c-.836.417-.88 1.38-.128 1.847l3.848 2.437c.317.2.69.2 1.006 0l4.125-2.063c.836-.417 1.873-.417 2.709 0L21 6.75" />
-                        </svg>
-                        Map
-                    </a>
-                </li>
+
                 <li>
                     {{-- Content --}}
                     <a href="{{ route('admin.contents.index') }}" class="group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold {{ request()->routeIs('admin.contents.*') ? 'bg-emerald-800 text-white' : 'text-emerald-100 hover:text-white hover:bg-emerald-800' }}">

@@ -11,7 +11,7 @@ const ContentDetailsPageRoute = () => {
     const { props } = usePage<PageProps<ContentDetailsPageRouteProps>>();
     const content = props.content;
     const handleBack = () => {
-        Inertia.visit(route('education'));
+        Inertia.visit(route('content.index'));
     };
     return (
         <CitizenLayout currentPage="education/{id}">

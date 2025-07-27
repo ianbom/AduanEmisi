@@ -23,4 +23,5 @@ export interface Report {
     latitude: number;
     longitude: number;
     data: [];
+    is_donation: boolean;
 }

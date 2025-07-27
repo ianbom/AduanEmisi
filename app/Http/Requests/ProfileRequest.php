@@ -39,7 +39,7 @@ class ProfileRequest extends FormRequest
             'current_password' => ['required_with:password', 'current_password:web'],
             'community.name' => ['nullable', 'string', 'max:255'],
             'community.description' => ['nullable', 'string'],
-            'community.member_count' => ['nullable', 'integer', 'min:1'],
+            'community.member_count' => ['nullable', 'integer'],
             'role' => 'nullable'
         ];
     }
