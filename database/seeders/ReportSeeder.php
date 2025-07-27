@@ -11,7 +11,7 @@ class ReportSeeder extends Seeder
 {
     public function run(): void
     {
-         Report::factory(50)
+        Report::factory(50)
             ->has(ReportMedia::factory()->count(rand(1, 3)), 'media')
             ->create();
     }

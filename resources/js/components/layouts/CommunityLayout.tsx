@@ -22,13 +22,13 @@ export default function CommunityLayout({ children, currentPage }: Props) {
         { id: 'homepage', label: 'Beranda', key: 'community/homepage' },
         {
             id: 'community/report',
-            label: 'Daftar Laporan',
+            label: 'Laporan',
             key: 'community/report',
         },
         {
-            id: 'community/my-report',
-            label: 'Laporan Saya',
-            key: 'community/my-report',
+            id: 'community/mission',
+            label: 'Misi',
+            key: 'community/mission',
         },
         { id: 'community/map', label: 'Peta', key: 'community/map' },
         {
