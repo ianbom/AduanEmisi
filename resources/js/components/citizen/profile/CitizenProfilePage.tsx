@@ -2,6 +2,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import {
     Select,
     SelectContent,
@@ -49,6 +50,8 @@ const CitizenProfilePage = ({
     myMissionCounts,
 }: CitizenProfilePageProps) => {
     const [activeTab, setActiveTab] = useState('reports');
+    const [activeTabAchievements, setActiveTabAchievements] =
+        useState('certificates');
     console.log(myMissionCounts);
     console.log(myMissions);
     console.log(myReportsCount);
@@ -420,13 +423,13 @@ const CitizenProfilePage = ({
                     </div>
                 </div>
                 {/* Detailed Activity Tabs */}
-                <Card>
+                <Card className="mb-8">
                     <CardHeader>
                         <CardTitle>Riwayat Aktivitas Detail</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <Tabs value={activeTab} onValueChange={setActiveTab}>
-                            <TabsList className="hidden w-full grid-cols-5 md:grid">
+                            <TabsList className="hidden w-full grid-cols-3 md:grid">
                                 <TabsTrigger value="reports">
                                     Laporan Saya
                                 </TabsTrigger>
@@ -435,12 +438,6 @@ const CitizenProfilePage = ({
                                 </TabsTrigger>
                                 <TabsTrigger value="donations">
                                     Donasi Saya
-                                </TabsTrigger>
-                                <TabsTrigger value="certificates">
-                                    Sertifikat Saya
-                                </TabsTrigger>
-                                <TabsTrigger value="badges">
-                                    Koleksi Badges
                                 </TabsTrigger>
                             </TabsList>
                             <div className="mb-4 md:hidden">
@@ -460,12 +457,6 @@ const CitizenProfilePage = ({
                                         </SelectItem>
                                         <SelectItem value="donations">
                                             Donasi Saya
-                                        </SelectItem>
-                                        <SelectItem value="certificates">
-                                            Sertifikat Saya
-                                        </SelectItem>
-                                        <SelectItem value="badges">
-                                            Koleksi Badges
                                         </SelectItem>
                                     </SelectContent>
                                 </Select>
@@ -596,8 +587,68 @@ const CitizenProfilePage = ({
                                     </p>
                                 </div>
                             </TabsContent>
-
+                        </Tabs>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Riwayat Pencapaian</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <Tabs
+                            value={activeTabAchievements}
+                            onValueChange={setActiveTabAchievements}
+                        >
+                            <TabsList className="hidden w-full grid-cols-2 md:grid">
+                                <TabsTrigger value="certificates">
+                                    Sertifikat Saya
+                                </TabsTrigger>
+                                <TabsTrigger value="badges">
+                                    Koleksi Badges
+                                </TabsTrigger>
+                            </TabsList>
+                            <div className="mb-4 md:hidden">
+                                <Select
+                                    value={activeTabAchievements}
+                                    onValueChange={setActiveTabAchievements}
+                                >
+                                    <SelectTrigger className="w-full">
+                                        <SelectValue placeholder="Pilih aktivitas" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="certificates">
+                                            Sertifikat Saya
+                                        </SelectItem>
+                                        <SelectItem value="badges">
+                                            Koleksi Badges
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
                             <TabsContent value="certificates" className="mt-6">
+                                <div className="mb-4 flex flex-col items-start justify-between gap-2 sm:flex-row sm:items-center">
+                                    <div></div>{' '}
+                                    <div className="flex items-center gap-2">
+                                        <Select>
+                                            <SelectTrigger className="w-[140px]">
+                                                <SelectValue placeholder="Tampilkan" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="asc">
+                                                    Terbaru
+                                                </SelectItem>
+                                                <SelectItem value="desc">
+                                                    Terlama
+                                                </SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                        <Input
+                                            type="text"
+                                            placeholder="Cari sertifikat..."
+                                            className="w-40"
+                                        />
+                                    </div>
+                                </div>
                                 <div className="py-8 text-center">
                                     <Award className="mx-auto mb-4 h-12 w-12 text-gray-400" />
                                     <p className="text-gray-600">
@@ -605,8 +656,30 @@ const CitizenProfilePage = ({
                                     </p>
                                 </div>
                             </TabsContent>
-
                             <TabsContent value="badges" className="mt-6">
+                                <div className="mb-4 flex flex-col items-start justify-between gap-2 sm:flex-row sm:items-center">
+                                    <div></div>{' '}
+                                    <div className="flex items-center gap-2">
+                                        <Select>
+                                            <SelectTrigger className="w-[140px]">
+                                                <SelectValue placeholder="Tampilkan" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="asc">
+                                                    Terbaru
+                                                </SelectItem>
+                                                <SelectItem value="desc">
+                                                    Terlama
+                                                </SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                        <Input
+                                            type="text"
+                                            placeholder="Cari badge..."
+                                            className="w-40"
+                                        />
+                                    </div>
+                                </div>
                                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                                     {badges.map((badge) => (
                                         <Card

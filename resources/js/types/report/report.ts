@@ -21,6 +21,7 @@ export interface Report {
     mission?: Mission;
     address: string;
     latitude: number;
+    completion_details: string;
     longitude: number;
     data: [];
     is_donation: boolean;

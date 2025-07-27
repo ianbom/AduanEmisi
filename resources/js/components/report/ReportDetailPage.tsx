@@ -5,8 +5,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { Report } from '@/types/report';
 import { Comment } from '@/types/report/comment';
 import { User } from '@/types/user/interface';
+import { getCategoryLabel } from '@/utils/categoryReportLabel';
 import { formatFullDateTime } from '@/utils/formatDate';
 import { getStatusColor as getMissionStatusColor } from '@/utils/missionStatusColor';
+import { getMissionStatusLabel } from '@/utils/missionStatusLabel';
 import { getStatusColor } from '@/utils/reportStatusColor';
 import { getStatusLabel } from '@/utils/reportStatusLabel';
 import { router as Inertia, useForm } from '@inertiajs/react';
@@ -268,7 +270,7 @@ const ReportDetailPage = ({
                                 <div className="flex-1">
                                     <div className="mb-3 flex flex-wrap gap-2">
                                         <Badge className="border border-gray-400 bg-white text-gray-700">
-                                            {report.category}
+                                            {getCategoryLabel(report.category)}
                                         </Badge>
                                         <Badge
                                             className={getStatusColor(
@@ -420,6 +422,74 @@ const ReportDetailPage = ({
                                     {reportState.dislikes_count}
                                 </button>
                             </div>
+                            {report.status === 'completed' && (
+                                <div className="mt-6 rounded-xl border-2 border-emerald-200 bg-gradient-to-br from-emerald-50 to-green-50 p-6 shadow-lg">
+                                    <div className="mb-4 flex items-center space-x-3">
+                                        <div>
+                                            <h3 className="text-xl font-bold text-emerald-800">
+                                                Laporan dan Misi Terkait
+                                                Selesai!
+                                            </h3>
+                                            <p className="text-sm font-medium text-emerald-600">
+                                                Detail penyelesaian
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div className="mb-4 inline-flex items-center rounded-full border border-emerald-300 bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-800">
+                                        <svg
+                                            className="mr-1 h-3 w-3"
+                                            fill="currentColor"
+                                            viewBox="0 0 20 20"
+                                        >
+                                            <path
+                                                fillRule="evenodd"
+                                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                                clipRule="evenodd"
+                                            />
+                                        </svg>
+                                        STATUS: COMPLETED
+                                    </div>
+                                    <div className="rounded-lg border border-emerald-100 bg-white/70 p-4">
+                                        <h4 className="mb-3 flex items-center font-semibold text-emerald-800">
+                                            <svg
+                                                className="mr-2 h-4 w-4"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                viewBox="0 0 24 24"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    strokeWidth={2}
+                                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                                                />
+                                            </svg>
+                                            Laporan Akhir:
+                                        </h4>
+                                        <div className="prose-sm prose max-w-none">
+                                            <p className="text-justify leading-relaxed text-gray-700">
+                                                {report.completion_details || (
+                                                    <span className="italic text-gray-500">
+                                                        Tidak ada detail laporan
+                                                        yang disertakan
+                                                    </span>
+                                                )}
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    {/* Footer with celebration elements */}
+                                    <div className="mt-4 flex items-center justify-between">
+                                        <div className="flex items-center space-x-2 text-emerald-600">
+                                            <span className="text-2xl">🎉</span>
+                                            <span className="text-sm font-medium">
+                                                Terima kasih atas kontribusi
+                                                pihak yang terlibat!
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
                         </CardContent>
                     </Card>
 
@@ -438,7 +508,9 @@ const ReportDetailPage = ({
                                             report.mission?.status,
                                         )}
                                     >
-                                        {report.mission?.status}
+                                        {getMissionStatusLabel(
+                                            report.mission?.status,
+                                        )}
                                     </Badge>
                                 </div>
                                 <h1 className="mb-4 text-3xl font-bold text-gray-900">

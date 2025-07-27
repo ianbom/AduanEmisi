@@ -1,4 +1,3 @@
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -11,6 +10,7 @@ import {
 } from '@/components/ui/select';
 import { Province } from '@/types/area/interface';
 import { Report } from '@/types/report';
+import { getCategoryLabel } from '@/utils/categoryReportLabel';
 import { formatDateOnly } from '@/utils/formatDate';
 import { getStatusColor } from '@/utils/reportStatusColor';
 import { getStatusLabel } from '@/utils/reportStatusLabel';
@@ -18,14 +18,15 @@ import { router as Inertia } from '@inertiajs/react';
 import {
     Calendar,
     Eye,
-    Filter,
     MapPin,
     Plus,
     Search,
+    SlidersHorizontal,
     ThumbsDown,
     ThumbsUp,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { Badge } from '../ui/badge';
 
 interface ReportsPageProps {
     reports: Report[];
@@ -173,17 +174,27 @@ const ReportsPage = ({
 
     // Get unique categories from reports for dynamic options
     const availableCategories = [
-        'Sampah Plastik',
-        'Pencemaran Air',
-        'Pencemaran Udara',
-        'Pencemaran Tanah',
-        'Limbah Industri',
-        'Emisi Gas Rumah Kaca',
-        'Penggundulan / Kebakaran Hutan',
-        'Naiknya Permukaan Air Laut',
-        'Limbah Pertanian / Peternakan',
-        'Lainnya',
+        { label: 'Sampah Plastik', value: 'sampah-plastik' },
+        { label: 'Pencemaran Air', value: 'pencemaran-air' },
+        { label: 'Pencemaran Udara', value: 'pencemaran-udara' },
+        { label: 'Pencemaran Tanah', value: 'pencemaran-tanah' },
+        { label: 'Limbah Industri', value: 'limbah-industri' },
+        { label: 'Emisi Gas Rumah Kaca', value: 'emisi-gas-rumah-kaca' },
+        {
+            label: 'Penggundulan / Kebakaran Hutan',
+            value: 'penggundulan-kebakaran-hutan',
+        },
+        {
+            label: 'Naiknya Permukaan Air Laut',
+            value: 'naiknya-permukaan-air-laut',
+        },
+        {
+            label: 'Limbah Pertanian / Peternakan',
+            value: 'limbah-pertanian-peternakan',
+        },
+        { label: 'Lainnya', value: 'lainnya' },
     ];
+
     // const availableProvinces = provinces.name
 
     return (
@@ -218,7 +229,7 @@ const ReportsPage = ({
                     <Card className="sticky top-24">
                         <CardHeader>
                             <CardTitle className="flex items-center text-lg">
-                                <Filter
+                                <SlidersHorizontal
                                     size={20}
                                     className="mr-2 text-emerald-600"
                                 />
@@ -243,12 +254,12 @@ const ReportsPage = ({
                                         <SelectItem value="semua">
                                             Semua Kategori
                                         </SelectItem>
-                                        {availableCategories.map((category) => (
+                                        {availableCategories.map((cat) => (
                                             <SelectItem
-                                                key={category}
-                                                value={category}
+                                                key={cat.value}
+                                                value={cat.value}
                                             >
-                                                {category}
+                                                {cat.label}
                                             </SelectItem>
                                         ))}
                                     </SelectContent>
@@ -352,7 +363,7 @@ const ReportsPage = ({
                                                 e.target.value,
                                             )
                                         }
-                                        min={filters.startDate} // Prevent end date before start date
+                                        min={filters.startDate}
                                     />
                                 </div>
                             </div>
@@ -361,7 +372,6 @@ const ReportsPage = ({
                                 <Button
                                     className="w-full bg-emerald-600 hover:bg-emerald-700"
                                     onClick={() => {
-                                        // Optional: force re-filter (already happens automatically via useEffect)
                                         console.log(
                                             'Filters applied:',
                                             filters,
@@ -421,7 +431,6 @@ const ReportsPage = ({
                             />
                         </div>
                     </div>
-
                     {/* Active Filters Display */}
                     {(filters.category !== 'semua' ||
                         filters.status !== 'semua' ||
@@ -591,7 +600,9 @@ const ReportsPage = ({
                                                     variant="outline"
                                                     className="mb-2 text-xs"
                                                 >
-                                                    {report.category}
+                                                    {getCategoryLabel(
+                                                        report.category,
+                                                    )}
                                                 </Badge>
                                             </div>
 
