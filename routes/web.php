@@ -92,7 +92,7 @@ Route::prefix('')->middleware(['auth', 'isProfileComplete'])->group(function () 
     Route::get('/education/{id}', [CtzContentController::class, 'show'])->name('content.show');
 
     Route::get('/leaderboard', function () {
-    return Inertia::render('Leaderboard/LeaderBoardPage');
+    return Inertia::render('Citizen/Leaderboard/LeaderBoardPage');
 });
 });
 
