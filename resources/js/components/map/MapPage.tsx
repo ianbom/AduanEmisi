@@ -1,4 +1,5 @@
 ('use client');
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -10,17 +11,12 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { City, District, Province } from '@/types/area/interface';
-
 import { getStatusColor } from '@/utils/reportStatusColor';
 import { getStatusLabel } from '@/utils/reportStatusLabel';
 
 import { Report } from '@/types/report';
-import { formatDateOnly } from '@/utils/formatDate';
-import { getStatusColor } from '@/utils/reportStatusColor';
-import { getStatusLabel } from '@/utils/reportStatusLabel';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-
 import { Calendar, Eye, Filter, MapPin, Search, TrendingUp } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
@@ -180,7 +176,7 @@ const MapPage = ({
                 <div className="p-6">
                     <div className="mb-6 flex items-center justify-between">
                         <h2 className="flex items-center text-xl font-semibold text-gray-900">
-                            <SlidersHorizontal
+                            <Filter
                                 size={20}
                                 className="mr-2 text-emerald-600"
                             />
@@ -436,8 +432,8 @@ const MapPage = ({
                 </div>
 
                 <MapContainer
-                    center={[-7.5, 110.5]}
-                    zoom={7}
+                    center={[-2.5489, 118.0149]}
+                    zoom={5}
                     scrollWheelZoom={true}
                     className="z-10 h-full w-full"
                 >
@@ -536,7 +532,10 @@ const MapPage = ({
 
                                     <div className="p-4">
                                         <div className="mb-2">
-                                            <Badge className="border-gray-500 bg-gray-50 text-xs font-medium text-gray-700">
+                                            <Badge
+                                                variant="outline"
+                                                className="border-gray-200 bg-gray-50 text-xs font-medium text-gray-700"
+                                            >
                                                 {report.category}
                                             </Badge>
                                         </div>
@@ -551,9 +550,7 @@ const MapPage = ({
                                                 className="mr-2 mt-0.5 flex-shrink-0 text-gray-400"
                                             />
                                             <span className="line-clamp-2">
-                                                {report.district?.name},{' '}
-                                                {report.city?.name},{' '}
-                                                {report.province?.name}
+                                                {report.address}
                                             </span>
                                         </div>
 
@@ -563,19 +560,25 @@ const MapPage = ({
                                                     size={12}
                                                     className="mr-1"
                                                 />
-                                                <span>
-                                                    {formatDateOnly(
-                                                        report.created_at,
-                                                    )}
+                                                <span>{report.created_at}</span>
+                                            </div>
+                                            <div className="flex items-center text-emerald-600">
+                                                <TrendingUp
+                                                    size={12}
+                                                    className="mr-1"
+                                                />
+                                                <span className="font-medium">
+                                                    {report.upvotes_count || 0}
                                                 </span>
                                             </div>
                                         </div>
+
                                         <Button
                                             size="sm"
                                             onClick={() =>
                                                 onViewReport(report.id)
                                             }
-                                            className="w-full bg-amber-600 text-white transition-colors duration-200 hover:bg-amber-700"
+                                            className="w-full bg-emerald-600 text-white transition-colors duration-200 hover:bg-emerald-700"
                                         >
                                             <Eye size={14} className="mr-2" />
                                             Lihat Detail
@@ -586,6 +589,7 @@ const MapPage = ({
                         </Marker>
                     ))}
                 </MapContainer>
+
                 <div className="absolute bottom-4 right-4 z-20">
                     <Card className="bg-white/90 shadow-lg backdrop-blur-sm">
                         <CardContent className="p-3 text-center">
