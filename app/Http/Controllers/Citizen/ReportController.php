@@ -192,7 +192,7 @@ class ReportController extends Controller
                 'volunteers' => $volunteers,
                 'volunteerCounts' => $volunteerCounts,
                 'donations' => $donations,
-                
+
             ]);
         } catch (Exception $e) {
             return response()->json([
@@ -425,4 +425,6 @@ class ReportController extends Controller
             'your_vote' => $yourVote,
         ]);
     }
+
+
 }
