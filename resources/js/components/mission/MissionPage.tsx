@@ -11,8 +11,16 @@ import {
 import { Mission } from '@/types/report/mission';
 import { formatDateOnly } from '@/utils/formatDate';
 import { getStatusColor } from '@/utils/missionStatusColor';
+import { getMissionStatusLabel } from '@/utils/missionStatusLabel';
 import { router as Inertia } from '@inertiajs/react';
-import { Calendar, Eye, Filter, MapPin, Search, Target } from 'lucide-react';
+import {
+    Calendar,
+    Eye,
+    MapPin,
+    Search,
+    SlidersHorizontal,
+    Target,
+} from 'lucide-react';
 import { useState } from 'react';
 import Badge from '../core/Badge';
 
@@ -27,6 +35,14 @@ const MissionPage = ({
     onViewDetails,
 }: MissionPageProps) => {
     const [sortBy, setSortBy] = useState('newest');
+    const availableMissionStatus = [
+        { label: 'Dibuka', value: 'open' },
+        { label: 'Sedang Berlangsung', value: 'on-progress' },
+        { label: 'Selesai', value: 'completed' },
+        { label: 'Terverifikasi', value: 'verified' },
+        { label: 'Dibatalkan', value: 'cancelled' },
+        { label: 'Misi Pihak Berwenang', value: 'under-authority' },
+    ];
     return (
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
             <div className="mb-8 flex flex-col items-start justify-between md:flex-row md:items-center">
@@ -46,39 +62,14 @@ const MissionPage = ({
                     <Card className="sticky top-24">
                         <CardHeader>
                             <CardTitle className="flex items-center text-lg">
-                                <Filter
+                                <SlidersHorizontal
                                     size={20}
                                     className="mr-2 text-emerald-600"
                                 />
-                                Filter Laporan
+                                Filter Misi
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium text-gray-700">
-                                    Kategori
-                                </label>
-                                <Select>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Pilih kategori" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="semua">
-                                            Semua Kategori
-                                        </SelectItem>
-                                        <SelectItem value="pencemaran-air">
-                                            Pencemaran Air
-                                        </SelectItem>
-                                        <SelectItem value="pencemaran-laut">
-                                            Pencemaran Laut
-                                        </SelectItem>
-                                        <SelectItem value="kerusakan-hutan">
-                                            Kerusakan Hutan
-                                        </SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-gray-700">
                                     Status
@@ -89,17 +80,18 @@ const MissionPage = ({
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="semua">
-                                            Semua Status
+                                            Semua Kategori
                                         </SelectItem>
-                                        <SelectItem value="menunggu">
-                                            Menunggu
-                                        </SelectItem>
-                                        <SelectItem value="progress">
-                                            Dalam Progress
-                                        </SelectItem>
-                                        <SelectItem value="selesai">
-                                            Selesai
-                                        </SelectItem>
+                                        {availableMissionStatus.map(
+                                            (status) => (
+                                                <SelectItem
+                                                    key={status.value}
+                                                    value={status.value}
+                                                >
+                                                    {status.label}
+                                                </SelectItem>
+                                            ),
+                                        )}
                                     </SelectContent>
                                 </Select>
                             </div>
@@ -178,11 +170,10 @@ const MissionPage = ({
                                 </SelectContent>
                             </Select>
                         </div>
-
                         <div className="relative w-full sm:w-64">
                             <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                             <Input
-                                placeholder="Cari laporan..."
+                                placeholder="Cari misi..."
                                 className="pl-10"
                             />
                         </div>
@@ -244,7 +235,9 @@ const MissionPage = ({
                                                         mission.status,
                                                     )}
                                                 >
-                                                    {mission.status}
+                                                    {getMissionStatusLabel(
+                                                        mission.status,
+                                                    )}
                                                 </Badge>
                                             </div>
                                         </div>

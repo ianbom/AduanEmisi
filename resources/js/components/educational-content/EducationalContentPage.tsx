@@ -12,14 +12,17 @@ import { Content } from '@/types/content';
 import { getTypeColor } from '@/utils/educationColor';
 import { formatDateOnly } from '@/utils/formatDate';
 import { router as Inertia } from '@inertiajs/react';
-import { Calendar, Eye, Filter, Play, Search } from 'lucide-react';
-import { useState } from 'react';
-import Badge from '../core/Badge';
+import { Calendar, Eye, Play, Search, SlidersHorizontal } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import RenderHTML from '../RenderHtml';
+import { Badge } from '../ui/badge';
 interface EducationalContentPageProps {
     contents: Content[];
-
     onViewDetails: (id: number) => void;
+}
+
+interface FilterState {
+    content_type: string;
 }
 
 const EducationalContentPage = ({
@@ -27,6 +30,69 @@ const EducationalContentPage = ({
     contents,
 }: EducationalContentPageProps) => {
     const [sortBy, setSortBy] = useState('newest');
+    const [searchQuery, setSearchQuery] = useState('');
+    const [filteredContents, setFilteredContents] =
+        useState<Content[]>(contents);
+
+    // State untuk semua filter
+    const [filters, setFilters] = useState<FilterState>({
+        content_type: 'semua',
+    });
+    // Function untuk mengupdate filter individual
+    const updateFilter = (key: keyof FilterState, value: string) => {
+        setFilters((prev) => ({
+            ...prev,
+            [key]: value,
+        }));
+    };
+    // Function untuk reset filter
+    const resetFilters = () => {
+        setFilters({
+            content_type: 'semua',
+        });
+        setSearchQuery('');
+    };
+
+    // Function untuk apply semua filter dan sorting
+    useEffect(() => {
+        let processedContents = [...contents];
+        // Apply search filter
+        if (searchQuery.trim()) {
+            processedContents = processedContents.filter((content) =>
+                content.title.toLowerCase().includes(searchQuery.toLowerCase()),
+            );
+        }
+        // Apply type filter
+        if (filters.content_type !== 'semua') {
+            processedContents = processedContents.filter(
+                (content) =>
+                    content.content_type.toLowerCase() ===
+                    filters.content_type.toLowerCase(),
+            );
+        }
+        // Apply sorting
+        if (sortBy === 'newest') {
+            processedContents.sort(
+                (a, b) =>
+                    new Date(b.created_at).getTime() -
+                    new Date(a.created_at).getTime(),
+            );
+        } else if (sortBy === 'oldest') {
+            processedContents.sort(
+                (a, b) =>
+                    new Date(a.created_at).getTime() -
+                    new Date(b.created_at).getTime(),
+            );
+        } else if (sortBy === 'title') {
+            processedContents.sort((a, b) => a.title.localeCompare(b.title));
+        }
+        setFilteredContents(processedContents);
+    }, [contents, searchQuery, sortBy, filters]);
+    const availableContentTypes = [
+        { label: 'Artikel', value: 'artikel' },
+        { label: 'Modul PDF', value: 'modul' },
+        { label: 'Video', value: 'video' },
+    ];
     return (
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
             <div className="mb-8">
@@ -45,7 +111,7 @@ const EducationalContentPage = ({
                     <Card className="sticky top-24">
                         <CardHeader>
                             <CardTitle className="flex items-center text-lg">
-                                <Filter
+                                <SlidersHorizontal
                                     size={20}
                                     className="mr-2 text-emerald-600"
                                 />
@@ -55,37 +121,14 @@ const EducationalContentPage = ({
                         <CardContent className="space-y-4">
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-gray-700">
-                                    Kategori Topik
-                                </label>
-                                <Select>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Pilih topik" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="semua">
-                                            Semua Topik
-                                        </SelectItem>
-                                        <SelectItem value="sampah">
-                                            Pengelolaan Sampah
-                                        </SelectItem>
-                                        <SelectItem value="air">
-                                            Konservasi Air
-                                        </SelectItem>
-                                        <SelectItem value="biodiversitas">
-                                            Biodiversitas
-                                        </SelectItem>
-                                        <SelectItem value="energi">
-                                            Energi Terbarukan
-                                        </SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium text-gray-700">
                                     Tipe Konten
                                 </label>
-                                <Select>
+                                <Select
+                                    value={filters.content_type}
+                                    onValueChange={(value) =>
+                                        updateFilter('content_type', value)
+                                    }
+                                >
                                     <SelectTrigger>
                                         <SelectValue placeholder="Pilih tipe" />
                                     </SelectTrigger>
@@ -93,26 +136,36 @@ const EducationalContentPage = ({
                                         <SelectItem value="semua">
                                             Semua Tipe
                                         </SelectItem>
-                                        <SelectItem value="video">
-                                            Video
-                                        </SelectItem>
-                                        <SelectItem value="artikel">
-                                            Artikel
-                                        </SelectItem>
-                                        <SelectItem value="pdf">
-                                            Modul PDF
-                                        </SelectItem>
-                                        <SelectItem value="gambar">
-                                            Infografis
-                                        </SelectItem>
+                                        {availableContentTypes.map(
+                                            (content) => (
+                                                <SelectItem
+                                                    key={content.value}
+                                                    value={content.value}
+                                                >
+                                                    {content.label}
+                                                </SelectItem>
+                                            ),
+                                        )}
                                     </SelectContent>
                                 </Select>
                             </div>
                             <div className="space-y-2 pt-4">
-                                <Button className="w-full bg-emerald-600 hover:bg-emerald-700">
+                                <Button
+                                    className="w-full bg-emerald-600 hover:bg-emerald-700"
+                                    onClick={() => {
+                                        console.log(
+                                            'Filters applied:',
+                                            filters,
+                                        );
+                                    }}
+                                >
                                     Terapkan Filter
                                 </Button>
-                                <Button variant="outline" className="w-full">
+                                <Button
+                                    variant="outline"
+                                    className="w-full"
+                                    onClick={resetFilters}
+                                >
                                     Reset Filter
                                 </Button>
                             </div>
@@ -134,10 +187,10 @@ const EducationalContentPage = ({
                                         Terbaru
                                     </SelectItem>
                                     <SelectItem value="popular">
-                                        Terpopuler
+                                        Terlama
                                     </SelectItem>
-                                    <SelectItem value="rating">
-                                        Rating Tertinggi
+                                    <SelectItem value="title">
+                                        Judul A-Z
                                     </SelectItem>
                                 </SelectContent>
                             </Select>
@@ -148,13 +201,56 @@ const EducationalContentPage = ({
                             <Input
                                 placeholder="Cari konten..."
                                 className="pl-10"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
                             />
                         </div>
                     </div>
-                    {contents.length > 0 ? (
+                    {/* Active Filters Display */}
+                    {(filters.content_type !== 'semua' || searchQuery) && (
+                        <div className="mb-4 flex flex-wrap gap-2">
+                            <span className="mr-2 text-sm font-medium text-gray-700">
+                                Filter aktif:
+                            </span>
+                            {searchQuery && (
+                                <Badge
+                                    variant="secondary"
+                                    className="flex items-center gap-1"
+                                >
+                                    Pencarian: "{searchQuery}"
+                                    <button
+                                        onClick={() => setSearchQuery('')}
+                                        className="ml-1 text-xs"
+                                    >
+                                        ×
+                                    </button>
+                                </Badge>
+                            )}
+                            {filters.content_type !== 'semua' && (
+                                <Badge
+                                    variant="secondary"
+                                    className="flex items-center gap-1"
+                                >
+                                    Kategori: {filters.content_type}
+                                    <button
+                                        onClick={() =>
+                                            updateFilter(
+                                                'content_type',
+                                                'semua',
+                                            )
+                                        }
+                                        className="ml-1 text-xs"
+                                    >
+                                        ×
+                                    </button>
+                                </Badge>
+                            )}
+                        </div>
+                    )}
+                    {filteredContents.length > 0 ? (
                         <>
                             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
-                                {contents.map((content: Content) => (
+                                {filteredContents.map((content: Content) => (
                                     <Card
                                         key={content.id}
                                         className="group cursor-pointer border-0 shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
@@ -319,12 +415,27 @@ const EducationalContentPage = ({
                                     </div>
                                 </div>
                                 <h3 className="mb-2 text-lg font-semibold text-gray-900">
-                                    Konten Edukasi Belum Tersedia
+                                    {searchQuery ||
+                                    filters.content_type !== 'semua'
+                                        ? 'Tidak Ada Konten Edukasi yang Sesuai Filter'
+                                        : 'Konten Edukasi Belum Tersedia'}
                                 </h3>
                                 <p className="text-sm text-gray-500">
-                                    Belum ada konten edukasi yang tersedia saat
-                                    ini. Coba lagi nanti.
+                                    {searchQuery ||
+                                    filters.content_type !== 'semua'
+                                        ? 'Coba ubah atau hapus beberapa filter untuk melihat lebih banyak konten edukasi.'
+                                        : 'Belum ada konten edukasi yang tersedia saat ini.'}
                                 </p>
+                                {(searchQuery ||
+                                    filters.content_type !== 'semua') && (
+                                    <Button
+                                        variant="outline"
+                                        className="mt-4"
+                                        onClick={resetFilters}
+                                    >
+                                        Reset Semua Filter
+                                    </Button>
+                                )}
                             </Card>
                         </div>
                     )}
