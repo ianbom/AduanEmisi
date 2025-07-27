@@ -32,7 +32,7 @@ class GoogleAuthController extends Controller
                     'google_id' => $googleUser->id,
                     'google_token' => $googleUser->token,
                     'google_refresh_token' => $googleUser->refreshToken,
-                    'password' => Hash::make(Str::random(24)) // Buat password acak
+                    'password' => Hash::make(Str::random(24))
                 ]
             );
             Auth::login($user);

@@ -43,7 +43,6 @@ class MissionServices extends Service
 
 
         $report = Report::findOrFail($data['report_id']);
-        $statusMission = '';
         if ($report->status == 'under-authority') {
             $statusMission = 'under-authority';
         }

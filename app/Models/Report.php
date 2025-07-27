@@ -5,12 +5,12 @@ namespace App\Models;
 use App\Models\User;
 use App\Models\Province;
 use App\Models\City;
-
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Report extends Model
 {
-
+    use HasFactory;
     protected $guarded = ['id'];
     protected $casts = [
         'verified_at' => 'datetime',
