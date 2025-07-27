@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Link } from '@inertiajs/react';
-import { ArrowRight, FileText, Map, Newspaper } from 'lucide-react';
+import { ArrowRight, FileText, Map, Newspaper, Target } from 'lucide-react';
 
 const FeatureSection = () => {
     const features = [
@@ -10,6 +10,13 @@ const FeatureSection = () => {
             title: 'Laporkan Isu Lingkungan',
             description:
                 'Laporkan masalah lingkungan di sekitar Anda dengan mudah dan cepat',
+            link: '/reports/create',
+        },
+        {
+            icon: <Target className="h-8 w-8 text-red-600" />,
+            title: 'Bergabung dengan Gerakan Lingkungan',
+            description:
+                'Temukan Misi dan Jadilah bagian dari Gerakan Lingkungan Indonesia',
             link: '/reports/create',
         },
         {
@@ -29,7 +36,7 @@ const FeatureSection = () => {
     ];
 
     return (
-        <section className="relative overflow-hidden bg-gradient-to-br from-gray-50 via-emerald-50/30 to-gray-50 py-20">
+        <section className="relative overflow-hidden bg-gradient-to-br from-gray-100 via-emerald-50/30 to-gray-50 py-20">
             <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <div className="mb-16 text-center">
                     <div className="mb-6 inline-flex items-center rounded-full border border-emerald-200/50 bg-emerald-100/80 px-4 py-2 text-sm font-medium text-emerald-800 backdrop-blur-sm">
@@ -53,7 +60,7 @@ const FeatureSection = () => {
                     </div>
                 </div>
 
-                <div className="grid gap-8 md:grid-cols-3 lg:gap-12">
+                <div className="grid gap-8 md:grid-cols-2 lg:gap-12">
                     {features.map((feature, index) => (
                         <Card
                             key={index}
@@ -83,7 +90,7 @@ const FeatureSection = () => {
                                 <Link href={feature.link}>
                                     <Button
                                         variant="outline"
-                                        className="group/btn relative w-full overflow-hidden rounded-xl border-2 border-emerald-200 bg-transparent px-6 py-4 text-lg font-semibold text-emerald-700 shadow-lg transition-all duration-500 hover:border-emerald-500 hover:bg-emerald-500 hover:text-white hover:shadow-xl"
+                                        className="group/btn relative w-full overflow-hidden rounded-xl border-2 border-emerald-200 bg-transparent px-6 py-6 text-lg font-semibold text-emerald-700 shadow-lg transition-all duration-500 hover:border-emerald-500 hover:bg-emerald-500 hover:text-white hover:shadow-xl"
                                     >
                                         <span className="relative flex items-center justify-center">
                                             Mulai Sekarang

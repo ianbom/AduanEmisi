@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Link } from '@inertiajs/react';
-import { ArrowRight } from 'lucide-react';
+import { Headset, Mail } from 'lucide-react';
 import { useState } from 'react';
 
 ('use client');
@@ -38,7 +38,7 @@ const QnASection = () => {
     };
 
     return (
-        <section className="relative overflow-hidden bg-gradient-to-br from-green-500 via-emerald-50/30 to-gray-50 py-20">
+        <section className="relative overflow-hidden bg-gradient-to-br from-green-200 via-emerald-50/30 to-gray-50 py-20">
             {/* <div className="container relative px-10 mx-auto lg:px-10"> */}
             {/* <div className="relative z-10 px-4 mx-auto max-w-7xl sm:px-6 lg:px-8"> */}
             <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -102,23 +102,31 @@ const QnASection = () => {
                 <div className="mt-16 text-center">
                     <div className="rounded-2xl bg-emerald-600 p-8 py-16 text-white shadow-lg">
                         <h3 className="mb-4 text-3xl font-bold text-white">
-                            Bergabunglah dengan Gerakan Lingkungan
+                            Masih Ada Pertanyaan?
                         </h3>
                         <p className="mb-6 leading-relaxed text-white">
-                            Ribuan warga Indonesia telah bergabung. Saatnya Anda
-                            menjadi bagian dari solusi!{' '}
+                            Tim customer service kami siap membantu Anda 24/7
                         </p>
-                        <Link href="/dashboard">
-                            {' '}
-                            {/* Gunakan 'href' bukan 'to' */}
-                            <Button
-                                size="lg"
-                                className="bg-white text-green-600 hover:bg-green-50"
-                            >
-                                Lihat Dashboard Saya
-                                <ArrowRight className="ml-2 h-5 w-5" />
-                            </Button>
-                        </Link>
+                        <div className="mt-6 flex flex-wrap justify-center gap-4">
+                            <Link href="/dashboard">
+                                <Button
+                                    size="lg"
+                                    className="bg-white text-green-600 hover:bg-green-50"
+                                >
+                                    Wa Admin
+                                    <Headset className="ml-1 h-5 w-5" />
+                                </Button>
+                            </Link>
+                            <Link href="/laporan">
+                                <Button
+                                    size="lg"
+                                    className="bg-amber-500 text-white hover:bg-yellow-700"
+                                >
+                                    Email Kami
+                                    <Mail className="ml-2 h-5 w-5" />
+                                </Button>
+                            </Link>
+                        </div>
                     </div>
                 </div>
             </div>
