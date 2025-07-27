@@ -19,15 +19,16 @@ import { getStatusColor } from '@/utils/reportStatusColor';
 import { getStatusLabel } from '@/utils/reportStatusLabel';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { Badge } from '../ui/badge';
 
 import {
     Calendar,
     Eye,
+    Filter,
     MapPin,
     RefreshCcw,
     Search,
     SlidersHorizontal,
+    TrendingUp,
 } from 'lucide-react';
 
 import { useEffect, useState } from 'react';
