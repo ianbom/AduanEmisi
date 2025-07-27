@@ -3,11 +3,12 @@
 namespace App\Models;
 
 use App\Models\Province;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Mission extends Model
 {
-
+    use HasFactory;
     protected $guarded = ['id'];
     protected $casts = [
         'scheduled_date' => 'datetime',

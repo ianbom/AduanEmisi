@@ -3,10 +3,11 @@
 use App\Http\Controllers\Admin\BadgeController as AdmBadgeController;
 use App\Http\Controllers\Admin\CertificateController as AdmCertificateController;
 use App\Http\Controllers\Admin\ContentController as AdmContentController;
+use App\Http\Controllers\Admin\DashboardController as AdmDashboardController;
 use App\Http\Controllers\Admin\MissionController as AdmMissionController;
 use App\Http\Controllers\Admin\ReportController as AdmReportController;
-
 use App\Http\Controllers\Admin\UserController as AdmUserController;
+
 use App\Http\Controllers\Auth\GoogleAuthController;
 use App\Http\Controllers\ChatBotController;
 use App\Http\Controllers\Citizen\CommentController as CtzCommentController;
@@ -47,7 +48,7 @@ Route::get('/dashboard', function () {
 
 
 // Route untuk akses fitur peran warga
-Route::prefix('')->middleware(['auth', 'isProfileComplete'])->group(function () {
+Route::prefix('')->middleware(['auth'])->group(function () {
     Route::get('/homepage', function () {
         return Inertia::render('Citizen/HomePage');
     })->name('homepage');
@@ -127,6 +128,7 @@ Route::prefix('admin')->as('admin.')->middleware(['auth'])->group(function () {
     Route::get('certificate/generate', [AdmCertificateController::class, 'generateCertificate'])->name('certificate.generate');
     Route::post('/missions/certificates/generate', [AdmCertificateController::class, 'generate'])->name('missions.certificates.generate');
     Route::resource('certificates', AdmCertificateController::class);
+    Route::resource('dashboard', AdmDashboardController::class);
 
     Route::resource('chatbot', ChatBotController::class);
 });
