@@ -17,6 +17,7 @@ use App\Http\Controllers\Citizen\ReportController as CtzReportController;
 use App\Http\Controllers\Citizen\ProfileController as CtzProfileController;
 use App\Http\Controllers\Citizen\MapController as CtzMapController;
 use App\Http\Controllers\Citizen\ContentController as CtzContentController;
+use App\Http\Controllers\Citizen\DonationController as CtzDonationController;
 use App\Http\Controllers\Citizen\MissionController as CtzMissionController;
 use App\Http\Controllers\Community\ReportController as ComReportController;
 use App\Http\Controllers\Community\ProfileController as ComProfileController;
@@ -74,6 +75,7 @@ Route::prefix('')->middleware(['auth', 'isProfileComplete'])->group(function () 
     Route::get('/report-create', [CtzReportController::class, 'create'])->name('create.report');
     Route::post('/reports', [CtzReportController::class, 'store'])->name('reports.store');
     Route::post('/reports/{report}/vote', [CtzReportController::class, 'vote'])->name('report.vote');
+    Route::post('/donate/report/{id}', [CtzDonationController::class, 'donateReport'])->name('donate.report');
     // Route untuk keperluan yang berkaitan dengan Komentar
     Route::post('comments/store', [CtzCommentController::class, 'store'])->name('comments.store');
     // Route untuk keperluan yang berkaitan dengan misi
@@ -129,7 +131,7 @@ Route::prefix('community')->as('community.')->middleware(['auth'])->group(functi
 });
 
 
-Route::prefix('admin')->as('admin.')->middleware(['auth'])->group(function () {
+Route::prefix('admin')->as('admin.')->middleware(['auth', ])->group(function () {
     Route::resource('missions', AdmMissionController::class);
     Route::put('missions/update/volunteer/{missionVolunteer}', [AdmMissionController::class, 'updateStatusVolunteer'])->name('update.volunteerStatus');
 

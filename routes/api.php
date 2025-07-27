@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\MissionController;
 use App\Http\Controllers\ChatBotController;
 use App\Http\Controllers\Citizen\CommentController as CtzCommentController;
+use App\Http\Controllers\Citizen\DonationController;
 use App\Http\Controllers\Citizen\ProfileController as CtzProfileController;
 use App\Http\Controllers\Citizen\ReportController as CtzReportController;
 use Illuminate\Http\Request;
@@ -33,7 +34,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('register-leader-volunteer', [CtzReportController::class, 'registerAsLeaderVolunteer']);
 
 
-});
 
+});
+ Route::post('payment-success/{donationId}', [DonationController::class, 'paymentSuccess'])->name('payment.success');
+ Route::post('/donate/report/{id}', [DonationController::class, 'donateReport']);
  Route::post('chatbot/send', [ChatBotController::class, 'send'])->name('chatbot.send');
 

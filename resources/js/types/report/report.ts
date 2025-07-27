@@ -24,4 +24,5 @@ export interface Report {
     completion_details: string;
     longitude: number;
     data: [];
+    is_donation: boolean;
 }

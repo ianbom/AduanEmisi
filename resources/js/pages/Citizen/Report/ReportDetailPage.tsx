@@ -3,11 +3,13 @@ import ReportDetailPage from '@/components/report/ReportDetailPage';
 import { PageProps } from '@/types';
 import { Report } from '@/types/report';
 import { Comment } from '@/types/report/comment';
+import { Donation } from '@/types/report/donations';
 import { User } from '@/types/user/interface';
 import { router as Inertia, usePage } from '@inertiajs/react';
 interface ReportDetailPageRouteProps {
     report: Report;
     your_vote: 'upvote' | 'dislike' | null;
+    donations: Donation | null;
 
     myParticipation:
         | (User & {
@@ -39,6 +41,9 @@ const ReportDetailPageRoute = () => {
     const volunteers = props.volunteers;
     const volunteerCounts = props.volunteerCounts;
     const your_vote = props.your_vote;
+    const donations = props.donations;
+
+    // console.log('donasi', donations);
 
     const handleBack = () => {
         Inertia.visit(route('report'));
@@ -55,6 +60,7 @@ const ReportDetailPageRoute = () => {
                 myParticipation={myParticipation}
                 volunteers={volunteers}
                 volunteerCounts={volunteerCounts}
+                donations={donations}
             />
         </CitizenLayout>
     );
