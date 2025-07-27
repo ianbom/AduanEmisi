@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Bot, MessageCircle, Send, Trash2, X } from 'lucide-react';
+import { Bot, Send, Trash2, X } from 'lucide-react';
 import type React from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
@@ -327,7 +327,7 @@ export default function FloatingChat() {
                     }`}
                 >
                     <h3 className="select-none text-lg font-semibold">
-                        SobatBumi Assistant
+                        SobatBumi AI Assistant
                     </h3>
                     <div className="flex items-center">
                         <Button
@@ -418,9 +418,7 @@ export default function FloatingChat() {
                     </div>
                 </div>
             </div>
-
-            {/* Tombol Aksi Floating */}
-            <Button
+            {/* <Button
                 onClick={toggleChat}
                 onMouseDown={handleFabDragStart}
                 onTouchStart={handleFabDragStart}
@@ -433,6 +431,30 @@ export default function FloatingChat() {
                 size="icon"
             >
                 {isOpen ? <X size={24} /> : <MessageCircle size={24} />}
+            </Button> */}
+            <Button
+                onClick={toggleChat}
+                onMouseDown={handleFabDragStart}
+                onTouchStart={handleFabDragStart}
+                style={{
+                    transform: `translate(${fabPosition.x}px, ${fabPosition.y}px)`,
+                }}
+                className={`fixed bottom-6 right-6 z-50 flex transform items-center gap-2 rounded-lg bg-emerald-600 px-4 py-3 text-white shadow-lg hover:bg-emerald-700 ${
+                    isOpen ? 'rotate-[360deg] scale-95' : 'rotate-0'
+                } ${isFabDragging ? 'cursor-grabbing transition-none' : 'cursor-grab transition-all duration-300 ease-in-out'}`}
+            >
+                {isOpen ? (
+                    <X size={20} />
+                ) : (
+                    <img
+                        src="/assets/images/sobatbumibnw.png"
+                        alt="SobatBumi"
+                        className="h-6 w-6"
+                    />
+                )}
+                <span className="whitespace-nowrap text-sm font-medium">
+                    SobatBumi AI Assistant
+                </span>
             </Button>
         </>
     );
