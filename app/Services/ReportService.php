@@ -431,7 +431,7 @@ class ReportService extends Service
     }
 
     public function getReportDonation($reportId){
-        $donations = Donation::with('user', 'report')->where('report_id', $reportId)->get();
+        $donations = Donation::with('user', 'report')->where('report_id', $reportId)->where('status', 'paid')->get();
         return $donations;
     }
 

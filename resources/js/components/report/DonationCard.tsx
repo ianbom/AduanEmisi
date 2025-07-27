@@ -2,7 +2,21 @@ import React, { useMemo, useState } from 'react';
 import { Heart, ChevronDown, ChevronUp, Users, DollarSign, X, Sparkles, Gift } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { router as Inertia } from '@inertiajs/react';
+import { router as Inertia, Head, usePage } from '@inertiajs/react';
+
+// Declare Snap for TypeScript
+declare global {
+    interface Window {
+        snap: {
+            pay: (token: string, options?: {
+                onSuccess?: (result: any) => void;
+                onPending?: (result: any) => void;
+                onError?: (result: any) => void;
+                onClose?: () => void;
+            }) => void;
+        };
+    }
+}
 
 // --- Tipe Data (Sangat penting untuk TypeScript) ---
 interface Donor {
@@ -83,7 +97,7 @@ const DonationModal = ({ isOpen, onClose, onSubmit, loading }: {
     if (!isOpen) return null;
 
     return (
-         <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+         <div className="fixed inset-0 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
             <div className="bg-white rounded-2xl w-full max-w-3xl shadow-2xl flex overflow-hidden transform transition-all duration-300 scale-100">
                 {/* Bagian Kiri: Gambar Laporan */}
                 <div className="hidden md:block md:w-1/2 bg-gray-200">
@@ -183,6 +197,10 @@ export function DonationCard({ donations, reportId }: DonationCardProps) {
     const [modalOpen, setModalOpen] = useState(false);
     const [loading, setLoading] = useState(false);
 
+    // Get page props untuk konfigurasi Midtrans
+    const { props } = usePage();
+    const { midtrans_client_key, midtrans_is_production } = props as any;
+
     // --- Kalkulasi Data dari Props menggunakan useMemo untuk efisiensi ---
     const { totalAmount, totalDonors } = useMemo(() => {
         const total = donations.reduce((sum, donation) => sum + donation.amount, 0);
@@ -191,29 +209,154 @@ export function DonationCard({ donations, reportId }: DonationCardProps) {
             totalDonors: donations.length,
         };
     }, [donations]);
+    const getCsrfToken = (): string => {
+    const tokenMeta = document.querySelector('meta[name="csrf-token"]');
+    return tokenMeta ? tokenMeta.getAttribute('content') || '' : '';
+};
 
-    const handleDonateSubmit = async (amount: number) => {
-        setLoading(true);
-        try {
-            await Inertia.post(route('report.donate', reportId), {
-                amount: amount
-            }, {
-                onSuccess: () => {
-                    setModalOpen(false);
-                    setLoading(false);
-                },
-                onError: () => {
-                    setLoading(false);
-                }
-            });
-        } catch (error) {
-            setLoading(false);
-            console.error('Error submitting donation:', error);
+ const getRouteUrl = (routeName: string, params?: any): string => {
+        switch (routeName) {
+            case 'report.donate':
+                return `/donate/report/${params}`;
+            case 'payment.success':
+                return `/api/payment-success/${params}`;
+            default:
+                return '';
         }
     };
 
+   const handleSuccessPayment = async (donationId: number, paymentResult?: any) => {
+    console.log(`Mengirim konfirmasi untuk ID Donasi: ${donationId}`);
+    console.log('Payment result data:', paymentResult);
+
+    try {
+        // Menggunakan custom route helper dengan fallback
+        const url = typeof route !== 'undefined'
+            ? route('payment.success', donationId)
+            : getRouteUrl('payment.success', donationId);
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': getCsrfToken(),
+            },
+            body: JSON.stringify({
+                donation_id: donationId,
+                payment_data: paymentResult || {},
+                status: 'success'
+            })
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Payment confirmation error response:', errorText);
+
+            let errorData;
+            try {
+                errorData = JSON.parse(errorText);
+            } catch (e) {
+                errorData = { message: `Server error: ${response.status} ${response.statusText}` };
+            }
+
+            throw new Error(errorData.message || 'Gagal mengkonfirmasi pembayaran di server.');
+        }
+
+        const result = await response.json();
+        console.log('Konfirmasi pembayaran berhasil dikirim ke server:', result);
+        return result;
+
+    } catch (error) {
+        console.error("Gagal mengirim konfirmasi pembayaran:", error);
+        // Re-throw error agar bisa di-handle di onSuccess
+        throw error;
+    }
+};
+
+    const handleDonateSubmit = async (amount: number) => {
+    setLoading(true);
+    try {
+        // Request ke backend untuk mendapatkan snap token
+        const response = await fetch(route('donate.report', reportId), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                amount: amount,
+                report_id: reportId,
+            })
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data) {
+            // PERBAIKAN: Simpan donation_id dalam variable yang bisa diakses
+            const donationId = data.donation_id;
+            const snapToken = data.snap_token || data; // Sesuaikan dengan response backend Anda
+
+            setModalOpen(false);
+            setLoading(false);
+
+            // Buka Midtrans Snap
+            window.snap.pay(snapToken, {
+                onSuccess: async function(result: any) {
+                    console.log('Payment success:', result);
+                    console.log('Donation ID:', donationId);
+
+                    try {
+                        // PERBAIKAN: Panggil dengan donationId yang benar
+                        await handleSuccessPayment(donationId, result);
+                        console.log('handleSuccessPayment completed successfully');
+
+                        // Reload data donations
+                        Inertia.reload({ only: ['donations'], preserveScroll: true });
+                    } catch (error) {
+                        console.error('Error in handleSuccessPayment:', error);
+                        // Tetap reload meskipun ada error di handleSuccessPayment
+                        Inertia.reload({ only: ['donations'], preserveScroll: true });
+                    }
+                },
+                onPending: function(result: any) {
+                    console.log('Payment pending:', result);
+                    // Untuk pending, mungkin tidak perlu panggil handleSuccessPayment
+                    Inertia.reload({ only: ['donations'], preserveScroll: true });
+                },
+                onError: function(result: any) {
+                    console.log('Payment error:', result);
+                    alert('Pembayaran gagal. Halaman akan dimuat ulang.');
+                    Inertia.reload();
+                },
+                onClose: function() {
+                    console.log('Payment popup closed');
+                    // User closed the popup without completing payment
+                }
+            });
+        } else {
+            throw new Error(data.message || 'Gagal memproses donasi');
+        }
+    } catch (error) {
+        setLoading(false);
+        console.error('Error submitting donation:', error);
+        alert('Terjadi kesalahan. Silakan coba lagi.');
+    }
+};
+
     return (
         <>
+            <Head>
+                <script
+                    src={midtrans_is_production
+                        ? "https://app.midtrans.com/snap/snap.js"
+                        : "https://app.sandbox.midtrans.com/snap/snap.js"
+                    }
+                    data-client-key={midtrans_client_key}
+                />
+            </Head>
+
             <Card className="bg-gradient-to-r from-emerald-50 to-green-50">
                 <CardContent className="p-6">
                     <div className="text-center">

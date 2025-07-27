@@ -75,7 +75,7 @@ Route::prefix('')->middleware(['auth', 'isProfileComplete'])->group(function () 
     Route::get('/report-create', [CtzReportController::class, 'create'])->name('create.report');
     Route::post('/reports', [CtzReportController::class, 'store'])->name('reports.store');
     Route::post('/reports/{report}/vote', [CtzReportController::class, 'vote'])->name('report.vote');
-    Route::post('/donate/report/{id}', [CtzDonationController::class, 'donateReport'])->name('report.donate');
+    Route::post('/donate/report/{id}', [CtzDonationController::class, 'donateReport'])->name('donate.report');
     // Route untuk keperluan yang berkaitan dengan Komentar
     Route::post('comments/store', [CtzCommentController::class, 'store'])->name('comments.store');
     // Route untuk keperluan yang berkaitan dengan misi
