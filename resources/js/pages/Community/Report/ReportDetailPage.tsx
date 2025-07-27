@@ -1,4 +1,4 @@
-import CommunityLayout from '@/components/layouts/CitizenLayout';
+import CommunityLayout from '@/components/layouts/CommunityLayout';
 import ReportDetailPage from '@/components/report/ReportDetailPage';
 import { PageProps } from '@/types';
 import { Report } from '@/types/report';

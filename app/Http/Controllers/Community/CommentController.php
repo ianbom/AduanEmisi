@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Citizen;
+namespace App\Http\Controllers\Community;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CommentRequest;
@@ -24,7 +24,6 @@ class CommentController extends Controller
         try {
             $comment = $this->commentService->createComment($data);
             $comment->load(['user:id,name,email']);
-
             return redirect()->back()->with('success', 'Komentar berhasil ditambahkan');
         } catch (\Exception $e) {
             return response()->json([

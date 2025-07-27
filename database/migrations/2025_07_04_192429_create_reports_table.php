@@ -22,16 +22,16 @@ return new class extends Migration
             $table->string('title');
             $table->text('description');
             $table->enum('category', [
-                  'Sampah Plastik',
-                  'Pencemaran Air',
-                  'Pencemaran Udara',
-                  'Pencemaran Tanah',
-                  'Limbah Industri',
-                  'Emisi Gas Rumah Kaca',
-                  'Penggundulan / Kebakaran Hutan',
-                  'Naiknya Permukaan Air Laut',
-                  'Limbah Pertanian / Peternakan',
-                  'Lainnya'
+                'sampah-plastik',
+                'pencemaran-air',
+                'pencemaran-udara',
+                'pencemaran-tanah',
+                'limbah-industri',
+                'emisi-gas-rumah-kaca',
+                'penggundulan-kebakaran-hutan',
+                'naiknya-permukaan-air-laut',
+                'limbah-pertanian-peternakan',
+                'lainnya'
             ])->nullable();
             $table->float('latitude')->nullable();
             $table->float('longitude')->nullable();

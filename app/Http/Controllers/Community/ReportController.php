@@ -326,4 +326,56 @@ class ReportController extends Controller
             ], 500);
         }
     }
+    public function vote(Request $request, Report $report)
+    {
+        $type = $request->input('vote_type'); // pastikan ini vote_type
+        \Log::info('Vote type masuk:', ['type' => $type]);
+        $user = Auth::user();
+
+        if (!$user) {
+            return response()->json(['message' => 'Unauthenticated'], 401);
+        }
+
+        // Cari apakah user sudah pernah vote
+        $existingVote = $report->votes()->where('user_id', $user->id)->first();
+
+        if ($existingVote) {
+            \Log::info('Existing vote vs new:', [
+                'existing' => $existingVote->vote_type,
+                'new' => $type,
+            ]);
+
+            if ($existingVote->vote_type === $type) {
+                $existingVote->delete(); // toggle: batal vote
+            } else {
+                $existingVote->update(['vote_type' => $type]); // ganti vote
+                \Log::info('Updated vote now is:', ['after_update' => $existingVote->vote_type]);
+            }
+        } else {
+            $report->votes()->create([
+                'user_id' => $user->id,
+                'vote_type' => $type,
+            ]);
+        }
+
+
+        $upvotes = $report->votes()->where('vote_type', 'upvote')->count();
+        $dislikes = $report->votes()->where('vote_type', 'dislike')->count();
+
+
+        $report->update([
+            'upvotes_count' => $upvotes,
+            'dislikes_count' => $dislikes,
+        ]);
+        $latestVote = $report->votes()->where('user_id', $user->id)->first();
+        \Log::info('After update or insert, vote is now:', ['vote_type' => $latestVote?->vote_type]);
+
+        $yourVote = $report->votes()->where('user_id', $user->id)->first()?->vote_type;
+
+        return response()->json([
+            'upvotes_count' => $upvotes,
+            'dislikes_count' => $dislikes,
+            'your_vote' => $yourVote,
+        ]);
+    }
 }

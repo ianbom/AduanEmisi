@@ -20,7 +20,8 @@ class ReportController extends Controller
     }
 
 
-    public function index(Request $request){
+    public function index(Request $request)
+    {
 
         $filters = [];
         $filters = $this->reportService->buildFilter($request);
@@ -30,40 +31,54 @@ class ReportController extends Controller
         $cities = City::orderBy('name', 'asc')->get();
         $districts = District::orderBy('name', 'asc')->get();
 
-        return view('admin.reports.index', ['reports' => $reports,
-        'filters' => $filters,
-        'cities' => $cities,
-        'districts' => $districts]);
+        return view('admin.reports.index', [
+            'reports' => $reports,
+            'filters' => $filters,
+            'cities' => $cities,
+            'districts' => $districts
+        ]);
     }
 
-    public function edit(Report $report){
+    public function edit(Report $report)
+    {
         return view('admin.reports.edit', ['report' => $report]);
     }
 
-    public function acceptReport(Report $report, Request $request){
+    public function acceptReport(Report $report, Request $request)
+    {
         $user = Auth::user();
         DB::beginTransaction();
         try {
             $assignedType = $request->input('assigned_type', 'community');
-            $report = $this->reportService->updateStatus($report->id, 'verified',
-            $user->id, null, $assignedType);
+            $report = $this->reportService->updateStatus(
+                $report->id,
+                'verified',
+                $user->id,
+                null,
+                $assignedType
+            );
 
             DB::commit();
-             return redirect()->back()->with('success', 'Aduan berhasil diverifikasi');
+            return redirect()->back()->with('success', 'Aduan berhasil diverifikasi');
         } catch (\Throwable $th) {
             DB::rollBack();
             return response()->json(['err' => $th->getMessage()]);
         }
-
     }
 
-     public function rejectReport(Report $report, Request $request){
+    public function rejectReport(Report $report, Request $request)
+    {
         $user = Auth::user();
         DB::beginTransaction();
         try {
             $assignedType = $request->input('assigned_type', 'community');
-            $report = $this->reportService->updateStatus($report->id, 'rejected',
-            $user->id, null, $assignedType);
+            $report = $this->reportService->updateStatus(
+                $report->id,
+                'rejected',
+                $user->id,
+                null,
+                $assignedType
+            );
 
             DB::commit();
             return redirect()->back()->with('success', 'Aduan berhasil ditolak');
@@ -71,16 +86,21 @@ class ReportController extends Controller
             DB::rollBack();
             return response()->json(['err' => $th->getMessage()]);
         }
-
     }
 
-    public function underAuthority(Report $report, Request $request){
+    public function underAuthority(Report $report, Request $request)
+    {
         $user = Auth::user();
         DB::beginTransaction();
         try {
             $assignedType = $request->input('assigned_type', 'community');
-            $report = $this->reportService->updateStatus($report->id, 'under-authority',
-            $user->id, null, $assignedType);
+            $report = $this->reportService->updateStatus(
+                $report->id,
+                'under-authority',
+                $user->id,
+                null,
+                $assignedType
+            );
 
             DB::commit();
             return redirect()->back()->with('success', 'Aduan ditangani oleh pihak berwenang');
@@ -88,8 +108,5 @@ class ReportController extends Controller
             DB::rollBack();
             return response()->json(['err' => $th->getMessage()]);
         }
-
     }
-
-
 }

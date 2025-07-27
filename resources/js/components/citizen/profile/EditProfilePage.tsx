@@ -130,9 +130,66 @@ const EditProfilePage = ({ provinces, onBack, auth }: PageProps) => {
         return true;
     };
 
+    // const handleSubmit = async (e: React.FormEvent) => {
+    //     e.preventDefault();
+    //     if (!validateForm()) return;
+    //     const data = new FormData();
+    //     data.append('name', formData.name);
+    //     data.append('phone', formData.phone);
+    //     data.append('address', formData.address);
+    //     data.append('province_id', formData.province_id);
+    //     data.append('city_id', formData.city_id);
+    //     data.append('district_id', formData.district_id);
+
+    //     if (uploadedFiles.length > 0) {
+    //         data.append('profile_url', uploadedFiles[0]);
+    //     }
+
+    //     if (formData.password) {
+    //         data.append('current_password', formData.current_password);
+    //         data.append('password', formData.password);
+    //         data.append(
+    //             'password_confirmation',
+    //             formData.password_confirmation,
+    //         );
+    //     }
+
+    //     // 🔍 DEBUG START
+    //     console.log('Uploaded file:', uploadedFiles[0]);
+    //     console.log('FormData entries:');
+    //     for (const pair of data.entries()) {
+    //         console.log(`${pair[0]}:`, pair[1]);
+    //     }
+    //     // 🔍 DEBUG END
+    //     setIsSubmitting(true);
+
+    //     try {
+    //         await Inertia.post('/update-profile', data, {
+    //             forceFormData: true,
+    //             onSuccess: () => {
+    //                 alert('Berhasil update!');
+    //                 Inertia.visit('/profile');
+    //             },
+    //         });
+    //     } catch (error: any) {
+    //         console.error(error);
+    //         if (error.response?.status === 422) {
+    //             const errors = error.response.data.errors;
+    //             alert(Object.values(errors).flat().join('\n'));
+    //         } else {
+    //             alert('Terjadi kesalahan. Silakan coba lagi.');
+    //         }
+    //     } finally {
+    //         setIsSubmitting(false);
+    //     }
+    // };
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
         if (!validateForm()) return;
+
+        setIsSubmitting(true);
+
         const data = new FormData();
         data.append('name', formData.name);
         data.append('phone', formData.phone);
@@ -154,34 +211,28 @@ const EditProfilePage = ({ provinces, onBack, auth }: PageProps) => {
             );
         }
 
-        // 🔍 DEBUG START
-        console.log('Uploaded file:', uploadedFiles[0]);
-        console.log('FormData entries:');
-        for (const pair of data.entries()) {
-            console.log(`${pair[0]}:`, pair[1]);
-        }
-        // 🔍 DEBUG END
-        setIsSubmitting(true);
-
-        try {
-            await Inertia.post('/update-profile', data, {
-                forceFormData: true,
-                onSuccess: () => {
-                    alert('Berhasil update!');
-                    Inertia.visit('/profile');
-                },
-            });
-        } catch (error: any) {
-            console.error(error);
-            if (error.response?.status === 422) {
-                const errors = error.response.data.errors;
-                alert(Object.values(errors).flat().join('\n'));
-            } else {
-                alert('Terjadi kesalahan. Silakan coba lagi.');
-            }
-        } finally {
-            setIsSubmitting(false);
-        }
+        Inertia.post('/update-profile', data, {
+            forceFormData: true,
+            onStart: () => setIsSubmitting(true),
+            onFinish: () => setIsSubmitting(false),
+            onSuccess: () => {
+                setFormData({
+                    name: '',
+                    phone: '',
+                    address: '',
+                    province_id: '',
+                    city_id: '',
+                    district_id: '',
+                    current_password: '',
+                    password: '',
+                    password_confirmation: '',
+                });
+                setUploadedFiles([]);
+            },
+            onError: (errors) => {
+                console.error('Form errors:', errors);
+            },
+        });
     };
 
     return (
@@ -423,11 +474,14 @@ const EditProfilePage = ({ provinces, onBack, auth }: PageProps) => {
                                     />
                                     Kata Sandi
                                 </CardTitle>
+                                <p className="text-sm text-muted-foreground">
+                                    Kosongkan jika tidak ingin mengubah password
+                                </p>
                             </CardHeader>
                             <CardContent className="flex-1 space-y-6">
                                 <div className="space-y-2">
                                     <Label htmlFor="current_password">
-                                        Password Lama{' '}
+                                        Password Saat Ini{' '}
                                         <span className="text-red-500">*</span>
                                     </Label>
                                     <div className="relative">
@@ -446,7 +500,6 @@ const EditProfilePage = ({ provinces, onBack, auth }: PageProps) => {
                                                     e.target.value,
                                                 )
                                             }
-                                            required
                                             disabled={isSubmitting}
                                             className="pr-10"
                                         />
@@ -505,10 +558,6 @@ const EditProfilePage = ({ provinces, onBack, auth }: PageProps) => {
                                             )}
                                         </button>
                                     </div>
-                                    <p className="text-sm text-muted-foreground">
-                                        Kosongkan jika tidak ingin mengubah
-                                        password
-                                    </p>
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="password_confirmation">
@@ -645,9 +694,6 @@ const EditProfilePage = ({ provinces, onBack, auth }: PageProps) => {
                     </div>
                 </div>
 
-                {/* Bagian Bawah: Alamat Pengguna - Full Width */}
-
-                {/* Tombol Submit */}
                 <div className="flex flex-col justify-start gap-4 rounded-lg border border-gray-200 bg-white p-3 shadow-sm sm:flex-row">
                     <Button
                         type="button"
