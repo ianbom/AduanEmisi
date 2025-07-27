@@ -20,6 +20,7 @@ import {
     Eye,
     MapPin,
     Plus,
+    RefreshCcw,
     Search,
     SlidersHorizontal,
     ThumbsDown,
@@ -195,7 +196,13 @@ const ReportsPage = ({
         { label: 'Lainnya', value: 'lainnya' },
     ];
 
-    // const availableProvinces = provinces.name
+    const hasActiveFilters =
+        searchQuery.trim() ||
+        filters.category !== 'semua' ||
+        filters.status !== 'semua' ||
+        filters.province !== 'semua' ||
+        filters.startDate ||
+        filters.endDate;
 
     return (
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
@@ -226,14 +233,22 @@ const ReportsPage = ({
             <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
                 {/* Filter Sidebar */}
                 <div className="lg:col-span-1">
-                    <Card className="sticky top-24">
+                    {/* <Card className="sticky top-24"> */}
+                    <Card className="sticky top-24 overflow-visible">
                         <CardHeader>
-                            <CardTitle className="flex items-center text-lg">
-                                <SlidersHorizontal
-                                    size={20}
-                                    className="mr-2 text-emerald-600"
-                                />
-                                Filter Laporan
+                            <CardTitle className="flex items-center justify-between text-lg">
+                                <div className="flex items-center">
+                                    <SlidersHorizontal
+                                        size={20}
+                                        className="mr-2 text-emerald-600"
+                                    />
+                                    Filter Laporan
+                                </div>
+                                {hasActiveFilters && (
+                                    <span className="rounded-full bg-emerald-100 px-2 py-1 text-xs text-emerald-600">
+                                        Aktif
+                                    </span>
+                                )}
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
@@ -287,10 +302,10 @@ const ReportsPage = ({
                                             Menunggu
                                         </SelectItem>
                                         <SelectItem value="verified">
-                                            Sudah Diverifikasi
+                                            Terverifikasi
                                         </SelectItem>
                                         <SelectItem value="on-progress">
-                                            Sedang Progress
+                                            Sedang Diproses
                                         </SelectItem>
                                         <SelectItem value="rejected">
                                             Ditolak
@@ -333,58 +348,44 @@ const ReportsPage = ({
                                     </SelectContent>
                                 </Select>
                             </div>
-
-                            <div className="grid grid-cols-2 gap-2">
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium text-gray-700">
-                                        Tanggal Mulai
-                                    </label>
-                                    <Input
-                                        type="date"
-                                        value={filters.startDate}
-                                        onChange={(e) =>
-                                            updateFilter(
-                                                'startDate',
-                                                e.target.value,
-                                            )
-                                        }
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium text-gray-700">
-                                        Tanggal Selesai
-                                    </label>
-                                    <Input
-                                        type="date"
-                                        value={filters.endDate}
-                                        onChange={(e) =>
-                                            updateFilter(
-                                                'endDate',
-                                                e.target.value,
-                                            )
-                                        }
-                                        min={filters.startDate}
-                                    />
-                                </div>
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium text-gray-700">
+                                    Tanggal Mulai
+                                </label>
+                                <input
+                                    type="date"
+                                    className="w-full rounded-md border border-gray-200 px-2 py-2"
+                                    value={filters.startDate}
+                                    onChange={(e) =>
+                                        updateFilter(
+                                            'startDate',
+                                            e.target.value,
+                                        )
+                                    }
+                                />
                             </div>
-
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium text-gray-700">
+                                    Tanggal Selesai
+                                </label>
+                                <input
+                                    type="date"
+                                    className="w-full rounded-md border border-gray-200 px-2 py-2"
+                                    value={filters.endDate}
+                                    onChange={(e) =>
+                                        updateFilter('endDate', e.target.value)
+                                    }
+                                    min={filters.startDate}
+                                />
+                            </div>
                             <div className="space-y-2 pt-4">
                                 <Button
-                                    className="w-full bg-emerald-600 hover:bg-emerald-700"
-                                    onClick={() => {
-                                        console.log(
-                                            'Filters applied:',
-                                            filters,
-                                        );
-                                    }}
-                                >
-                                    Terapkan Filter
-                                </Button>
-                                <Button
                                     variant="outline"
-                                    className="w-full"
+                                    className="flex w-full items-center justify-center gap-2"
                                     onClick={resetFilters}
+                                    disabled={!hasActiveFilters}
                                 >
+                                    <RefreshCcw className="h-4 w-4" />
                                     Reset Filter
                                 </Button>
                             </div>
@@ -524,7 +525,6 @@ const ReportsPage = ({
                             )}
                         </div>
                     )}
-
                     {filteredReports.length > 0 ? (
                         <>
                             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">

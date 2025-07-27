@@ -8,15 +8,23 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { Province } from '@/types/area/interface';
 import { Mission } from '@/types/report/mission';
 import { formatDateOnly } from '@/utils/formatDate';
 import { getStatusColor } from '@/utils/missionStatusColor';
+import { getMissionStatusLabel } from '@/utils/missionStatusLabel';
 import { router as Inertia } from '@inertiajs/react';
-import { Calendar, Eye, Filter, MapPin, Search, Target } from 'lucide-react';
-import { useState, useEffect, useMemo } from 'react';
-import Badge from '../core/Badge';
-import { Province } from '@/types/area/interface';
-
+import {
+    Calendar,
+    Eye,
+    MapPin,
+    RefreshCcw,
+    Search,
+    SlidersHorizontal,
+    Target,
+} from 'lucide-react';
+import { useMemo, useState } from 'react';
+import { Badge } from '../ui/badge';
 interface MissionPageProps {
     missions: Mission[];
     myMissions: boolean;
@@ -36,11 +44,9 @@ const MissionPage = ({
     missions,
     myMissions,
     onViewDetails,
-    provinces
+    provinces,
 }: MissionPageProps) => {
-
     // console.log('ini prov', provinces);
-
     const [sortBy, setSortBy] = useState('newest');
     const [searchQuery, setSearchQuery] = useState('');
     const [filters, setFilters] = useState<FilterOptions>({
@@ -50,52 +56,54 @@ const MissionPage = ({
         startDate: '',
         endDate: '',
     });
-
-
-
-    // Get unique categories from missions (assuming you have category field or derive from report)
-    const uniqueCategories = useMemo(() => {
-        // This assumes you have a category field or can derive it from report
-        // Adjust based on your actual data structure
-        const categories = ['Pencemaran Air', 'Pencemaran Laut', 'Kerusakan Hutan'];
-        return categories;
-    }, []);
-
     // Filter and sort missions
     const filteredAndSortedMissions = useMemo(() => {
         let filtered = missions;
 
         // Apply search filter
         if (searchQuery.trim()) {
-            filtered = filtered.filter(mission =>
-                mission.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                mission.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                mission.creator?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                mission.address?.toLowerCase().includes(searchQuery.toLowerCase())
+            filtered = filtered.filter(
+                (mission) =>
+                    mission.title
+                        ?.toLowerCase()
+                        .includes(searchQuery.toLowerCase()) ||
+                    mission.description
+                        ?.toLowerCase()
+                        .includes(searchQuery.toLowerCase()) ||
+                    mission.creator?.name
+                        ?.toLowerCase()
+                        .includes(searchQuery.toLowerCase()) ||
+                    mission.address
+                        ?.toLowerCase()
+                        .includes(searchQuery.toLowerCase()),
             );
         }
 
         // Apply status filter
         if (filters.status !== 'semua') {
             const statusMap: { [key: string]: string } = {
-                'menunggu': 'open',
-                'progress': 'on-progress',
-                'selesai': 'completed',
+                open: 'Dibuka',
+                'on-progress': 'Sedang Berlangsung',
+                completed: 'Selesai',
+                cancelled: 'Dibatalkan',
+                'under-authority': 'Misi Pihak Berwenang',
             };
             const mappedStatus = statusMap[filters.status] || filters.status;
-            filtered = filtered.filter(mission => mission.status === mappedStatus);
+            filtered = filtered.filter(
+                (mission) => mission.status === mappedStatus,
+            );
         }
 
         // Apply province filter
         if (filters.province !== 'semua') {
-            filtered = filtered.filter(mission =>
-                mission.province?.name === filters.province
+            filtered = filtered.filter(
+                (mission) => mission.province?.name === filters.province,
             );
         }
 
         // Apply date range filter
         if (filters.startDate) {
-            filtered = filtered.filter(mission => {
+            filtered = filtered.filter((mission) => {
                 const missionDate = new Date(mission.created_at);
                 const startDate = new Date(filters.startDate);
                 return missionDate >= startDate;
@@ -103,7 +111,7 @@ const MissionPage = ({
         }
 
         if (filters.endDate) {
-            filtered = filtered.filter(mission => {
+            filtered = filtered.filter((mission) => {
                 const missionDate = new Date(mission.created_at);
                 const endDate = new Date(filters.endDate);
                 return missionDate <= endDate;
@@ -114,9 +122,15 @@ const MissionPage = ({
         const sorted = [...filtered].sort((a, b) => {
             switch (sortBy) {
                 case 'newest':
-                    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+                    return (
+                        new Date(b.created_at).getTime() -
+                        new Date(a.created_at).getTime()
+                    );
                 case 'oldest':
-                    return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+                    return (
+                        new Date(a.created_at).getTime() -
+                        new Date(b.created_at).getTime()
+                    );
                 case 'title':
                     return (a.title || '').localeCompare(b.title || '');
                 case 'status':
@@ -132,9 +146,9 @@ const MissionPage = ({
 
     // Handle filter changes
     const handleFilterChange = (key: keyof FilterOptions, value: string) => {
-        setFilters(prev => ({
+        setFilters((prev) => ({
             ...prev,
-            [key]: value
+            [key]: value,
         }));
     };
 
@@ -151,10 +165,9 @@ const MissionPage = ({
         setSortBy('newest');
     };
 
-
-
     // Check if any filters are active
-    const hasActiveFilters = searchQuery.trim() ||
+    const hasActiveFilters =
+        searchQuery.trim() ||
         filters.status !== 'semua' ||
         filters.province !== 'semua' ||
         filters.startDate ||
@@ -168,9 +181,9 @@ const MissionPage = ({
                         {myMissions ? 'Misi yang Diikuti' : 'Daftar Misi'}
                     </h1>
                     <p className="text-gray-600">
-                        Temukan Misi dan jadilah bagian dalam aksi penyelamatan lingkungan
+                        Temukan Misi dan jadilah bagian dalam aksi penyelamatan
+                        lingkungan
                     </p>
-
                 </div>
             </div>
 
@@ -181,11 +194,14 @@ const MissionPage = ({
                         <CardHeader>
                             <CardTitle className="flex items-center justify-between text-lg">
                                 <div className="flex items-center">
-                                    <Filter size={20} className="mr-2 text-emerald-600" />
+                                    <SlidersHorizontal
+                                        size={20}
+                                        className="mr-2 text-emerald-600"
+                                    />
                                     Filter Misi
                                 </div>
                                 {hasActiveFilters && (
-                                    <span className="text-xs text-emerald-600 bg-emerald-100 px-2 py-1 rounded-full">
+                                    <span className="rounded-full bg-emerald-100 px-2 py-1 text-xs text-emerald-600">
                                         Aktif
                                     </span>
                                 )}
@@ -198,18 +214,33 @@ const MissionPage = ({
                                 </label>
                                 <Select
                                     value={filters.status}
-                                    onValueChange={(value) => handleFilterChange('status', value)}
+                                    onValueChange={(value) =>
+                                        handleFilterChange('status', value)
+                                    }
                                 >
                                     <SelectTrigger>
                                         <SelectValue placeholder="Pilih status" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="semua">Semua Status</SelectItem>
-                                        <SelectItem value="menunggu">Menunggu</SelectItem>
-                                        <SelectItem value="progress">Dalam Progress</SelectItem>
-                                        <SelectItem value="selesai">Selesai</SelectItem>
-                                        <SelectItem value="cancelled">Dibatalkan</SelectItem>
-                                        <SelectItem value="under-authority">Dalam Penanganan</SelectItem>
+                                        <SelectItem value="semua">
+                                            Semua Status
+                                        </SelectItem>
+                                        <SelectItem value="open">
+                                            Dibuka
+                                        </SelectItem>
+                                        <SelectItem value="on-progress">
+                                            Sedang Berlangsung
+                                        </SelectItem>
+                                        <SelectItem value="completed">
+                                            Selesai
+                                        </SelectItem>
+
+                                        <SelectItem value="cancelled">
+                                            Dibatalkan
+                                        </SelectItem>
+                                        <SelectItem value="under-authority">
+                                            Misi Pihak Berwenang
+                                        </SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
@@ -220,52 +251,70 @@ const MissionPage = ({
                                 </label>
                                 <Select
                                     value={filters.province}
-                                    onValueChange={(value) => handleFilterChange('province', value)}
+                                    onValueChange={(value) =>
+                                        handleFilterChange('province', value)
+                                    }
                                 >
                                     <SelectTrigger>
                                         <SelectValue placeholder="Pilih provinsi" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="semua">Semua Provinsi</SelectItem>
+                                        <SelectItem value="semua">
+                                            Semua Provinsi
+                                        </SelectItem>
                                         {provinces.map((province) => (
-                                            <SelectItem key={province.id} value={province.name}>
+                                            <SelectItem
+                                                key={province.id}
+                                                value={province.name}
+                                            >
                                                 {province.name}
                                             </SelectItem>
                                         ))}
                                     </SelectContent>
                                 </Select>
                             </div>
-
-                            <div className="grid grid-cols-2 gap-2">
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium text-gray-700">
-                                        Tanggal Mulai
-                                    </label>
-                                    <Input
-                                        type="date"
-                                        value={filters.startDate}
-                                        onChange={(e) => handleFilterChange('startDate', e.target.value)}
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium text-gray-700">
-                                        Tanggal Selesai
-                                    </label>
-                                    <Input
-                                        type="date"
-                                        value={filters.endDate}
-                                        onChange={(e) => handleFilterChange('endDate', e.target.value)}
-                                    />
-                                </div>
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium text-gray-700">
+                                    Tanggal Mulai
+                                </label>
+                                <input
+                                    type="date"
+                                    className="w-full rounded-md border border-gray-200 px-2 py-2"
+                                    value={filters.startDate}
+                                    onChange={(e) =>
+                                        handleFilterChange(
+                                            'startDate',
+                                            e.target.value,
+                                        )
+                                    }
+                                />
                             </div>
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium text-gray-700">
+                                    Tanggal Selesai
+                                </label>
 
+                                <input
+                                    type="date"
+                                    className="w-full rounded border border-gray-300 px-2 py-2"
+                                    value={filters.endDate}
+                                    onChange={(e) =>
+                                        handleFilterChange(
+                                            'endDate',
+                                            e.target.value,
+                                        )
+                                    }
+                                    min={filters.startDate}
+                                />
+                            </div>
                             <div className="space-y-2 pt-4">
                                 <Button
                                     variant="outline"
-                                    className="w-full"
+                                    className="flex w-full items-center justify-center gap-2"
                                     onClick={resetFilters}
                                     disabled={!hasActiveFilters}
                                 >
+                                    <RefreshCcw className="h-4 w-4" />
                                     Reset Filter
                                 </Button>
                             </div>
@@ -283,11 +332,21 @@ const MissionPage = ({
                                     <SelectValue placeholder="Urutkan berdasarkan" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="newest">Terbaru</SelectItem>
-                                    <SelectItem value="oldest">Terlama</SelectItem>
-                                    <SelectItem value="title">Judul A-Z</SelectItem>
-                                    <SelectItem value="status">Status</SelectItem>
-                                    <SelectItem value="location">Lokasi</SelectItem>
+                                    <SelectItem value="newest">
+                                        Terbaru
+                                    </SelectItem>
+                                    <SelectItem value="oldest">
+                                        Terlama
+                                    </SelectItem>
+                                    <SelectItem value="title">
+                                        Judul A-Z
+                                    </SelectItem>
+                                    <SelectItem value="status">
+                                        Status
+                                    </SelectItem>
+                                    <SelectItem value="location">
+                                        Lokasi
+                                    </SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
@@ -306,95 +365,135 @@ const MissionPage = ({
                     {filteredAndSortedMissions.length > 0 ? (
                         <>
                             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
-                                {filteredAndSortedMissions.map((mission: Mission) => (
-                                    <Card
-                                        key={mission.id}
-                                        className="group cursor-pointer border-0 shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
-                                        onClick={() => onViewDetails(mission.report?.id)}
-                                    >
-                                        <div className="relative overflow-hidden rounded-t-lg">
-                                            {mission.report?.media?.[0]?.media_type?.startsWith('video') ? (
-                                                <div className="relative h-48 w-full bg-black">
-                                                    <video
-                                                        className="h-full w-full object-cover opacity-50"
-                                                        src={`/storage/${mission.report.media[0].media_url}`}
-                                                        muted
-                                                        preload="metadata"
-                                                    />
-                                                    <div className="absolute inset-0 flex items-center justify-center">
-                                                        <div className="rounded-full bg-white/80 p-2">
-                                                            <svg
-                                                                xmlns="http://www.w3.org/2000/svg"
-                                                                className="h-6 w-6 text-black"
-                                                                fill="none"
-                                                                viewBox="0 0 24 24"
-                                                                stroke="currentColor"
-                                                            >
-                                                                <path
-                                                                    strokeLinecap="round"
-                                                                    strokeLinejoin="round"
-                                                                    strokeWidth={2}
-                                                                    d="M14.752 11.168l-5.197-3.03A1 1 0 008 9.03v5.94a1 1 0 001.555.832l5.197-3.03a1 1 0 000-1.664z"
-                                                                />
-                                                            </svg>
+                                {filteredAndSortedMissions.map(
+                                    (mission: Mission) => (
+                                        <Card
+                                            key={mission.id}
+                                            className="group cursor-pointer border-0 shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+                                            onClick={() =>
+                                                onViewDetails(
+                                                    mission.report?.id,
+                                                )
+                                            }
+                                        >
+                                            <div className="relative overflow-hidden rounded-t-lg">
+                                                {mission.report?.media?.[0]?.media_type?.startsWith(
+                                                    'video',
+                                                ) ? (
+                                                    <div className="relative h-48 w-full bg-black">
+                                                        <video
+                                                            className="h-full w-full object-cover opacity-50"
+                                                            src={`/storage/${mission.report.media[0].media_url}`}
+                                                            muted
+                                                            preload="metadata"
+                                                        />
+                                                        <div className="absolute inset-0 flex items-center justify-center">
+                                                            <div className="rounded-full bg-white/80 p-2">
+                                                                <svg
+                                                                    xmlns="http://www.w3.org/2000/svg"
+                                                                    className="h-6 w-6 text-black"
+                                                                    fill="none"
+                                                                    viewBox="0 0 24 24"
+                                                                    stroke="currentColor"
+                                                                >
+                                                                    <path
+                                                                        strokeLinecap="round"
+                                                                        strokeLinejoin="round"
+                                                                        strokeWidth={
+                                                                            2
+                                                                        }
+                                                                        d="M14.752 11.168l-5.197-3.03A1 1 0 008 9.03v5.94a1 1 0 001.555.832l5.197-3.03a1 1 0 000-1.664z"
+                                                                    />
+                                                                </svg>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            ) : (
-                                                <img
-                                                    src={`/storage/${mission.thumbnail_url}`}
-                                                    alt={mission.title}
-                                                    className="h-48 w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                                                />
-                                            )}
+                                                ) : (
+                                                    <img
+                                                        src={`/storage/${mission.thumbnail_url}`}
+                                                        alt={mission.title}
+                                                        className="h-48 w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                                    />
+                                                )}
 
-                                            <div className="absolute right-3 top-3">
-                                                <Badge className={getStatusColor(mission.status)}>
-                                                    {mission.status}
-                                                </Badge>
-                                            </div>
-                                        </div>
-
-                                        <CardContent className="p-4">
-                                            <h3 className="mb-2 line-clamp-2 font-semibold text-gray-900 transition-colors group-hover:text-emerald-600">
-                                                {mission.title}
-                                            </h3>
-                                            <p className="mb-3 line-clamp-2 text-sm text-gray-600">
-                                                {mission.description}
-                                            </p>
-                                            <div className="mb-3 flex items-center justify-between text-xs text-gray-500">
-                                                <span>Oleh: {mission.creator?.name}</span>
-                                            </div>
-                                            <div className="mb-3 flex items-center text-sm text-gray-500">
-                                                <MapPin size={14} className="mr-1" />
-                                                <span className="truncate">
-                                                    {mission.district?.name}, {mission.city?.name}, {mission.province?.name}
-                                                </span>
-                                            </div>
-
-                                            <div className="mb-4 flex items-center justify-between">
-                                                <div className="flex items-center text-sm text-gray-500">
-                                                    <Calendar size={14} className="mr-1" />
-                                                    <span>{formatDateOnly(mission.created_at)}</span>
+                                                <div className="absolute right-3 top-3">
+                                                    <Badge
+                                                        className={getStatusColor(
+                                                            mission.status,
+                                                        )}
+                                                    >
+                                                        {getMissionStatusLabel(
+                                                            mission.status,
+                                                        )}
+                                                    </Badge>
                                                 </div>
                                             </div>
 
-                                            <Button
-                                                className="mt-auto w-full bg-amber-500 transition-colors duration-200 hover:bg-amber-700"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    Inertia.visit(`/report/${mission.id}`);
-                                                }}
-                                            >
-                                                <Eye size={16} className="mr-2" />
-                                                Lihat Detail
-                                            </Button>
-                                        </CardContent>
-                                    </Card>
-                                ))}
+                                            <CardContent className="p-4">
+                                                <h3 className="mb-2 line-clamp-2 font-semibold text-gray-900 transition-colors group-hover:text-emerald-600">
+                                                    {mission.title}
+                                                </h3>
+                                                <p className="mb-3 line-clamp-2 text-sm text-gray-600">
+                                                    {mission.description}
+                                                </p>
+                                                <div className="mb-3 flex items-center justify-between text-xs text-gray-500">
+                                                    <span>
+                                                        Oleh:{' '}
+                                                        {mission.creator?.name}
+                                                    </span>
+                                                </div>
+                                                <div className="mb-3 flex items-center text-sm text-gray-500">
+                                                    <MapPin
+                                                        size={14}
+                                                        className="mr-1"
+                                                    />
+                                                    <span className="truncate">
+                                                        {mission.district?.name}
+                                                        , {mission.city?.name},{' '}
+                                                        {mission.province?.name}
+                                                    </span>
+                                                </div>
+
+                                                <div className="mb-4 flex items-center justify-between">
+                                                    <div className="flex items-center text-sm text-gray-500">
+                                                        <Calendar
+                                                            size={14}
+                                                            className="mr-1"
+                                                        />
+                                                        <span>
+                                                            {formatDateOnly(
+                                                                mission.created_at,
+                                                            )}
+                                                        </span>
+                                                    </div>
+                                                </div>
+
+                                                <Button
+                                                    className="mt-auto w-full bg-amber-500 transition-colors duration-200 hover:bg-amber-700"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        Inertia.visit(
+                                                            `/report/${mission.id}`,
+                                                        );
+                                                    }}
+                                                >
+                                                    <Eye
+                                                        size={16}
+                                                        className="mr-2"
+                                                    />
+                                                    Lihat Detail
+                                                </Button>
+                                            </CardContent>
+                                        </Card>
+                                    ),
+                                )}
                             </div>
                             <div className="mt-8 text-center">
-                                <Button variant="outline" size="lg" className="min-w-32">
+                                <Button
+                                    variant="outline"
+                                    size="lg"
+                                    className="min-w-32"
+                                >
                                     Muat Lebih Banyak
                                 </Button>
                             </div>
@@ -404,24 +503,25 @@ const MissionPage = ({
                             <Card className="w-full px-8 py-32 text-center">
                                 <div className="mb-4 flex justify-center">
                                     <div className="rounded-full bg-gray-100 p-4">
-                                        <Target size={32} className="h-12 w-12 text-gray-400" />
+                                        <Target
+                                            size={32}
+                                            className="h-12 w-12 text-gray-400"
+                                        />
                                     </div>
                                 </div>
                                 <h3 className="mb-2 text-lg font-semibold text-gray-900">
                                     {hasActiveFilters
                                         ? 'Tidak Ada Misi yang Sesuai'
                                         : myMissions
-                                            ? 'Anda Belum Memiliki Misi'
-                                            : 'Misi Belum Tersedia'
-                                    }
+                                          ? 'Anda Belum Memiliki Misi'
+                                          : 'Misi Belum Tersedia'}
                                 </h3>
                                 <p className="text-sm text-gray-500">
                                     {hasActiveFilters
                                         ? 'Coba ubah filter atau kata kunci pencarian Anda.'
                                         : myMissions
-                                            ? 'Anda belum memiliki misi. Silahkan mendaftar misi terlebih dahulu.'
-                                            : 'Belum ada misi yang tersedia saat ini. Coba lagi nanti.'
-                                    }
+                                          ? 'Anda belum memiliki misi. Silahkan mendaftar misi terlebih dahulu.'
+                                          : 'Belum ada misi yang tersedia saat ini. Coba lagi nanti.'}
                                 </p>
                                 {hasActiveFilters && (
                                     <Button

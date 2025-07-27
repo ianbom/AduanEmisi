@@ -10,7 +10,7 @@ interface MissionPageRouteProps {
     };
     provinces: {
         provinces: Province[];
-    }
+    };
     myMissions: boolean;
     [key: string]: unknown;
 }
