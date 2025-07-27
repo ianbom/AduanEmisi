@@ -12,21 +12,116 @@ import { Content } from '@/types/content';
 import { getTypeColor } from '@/utils/educationColor';
 import { formatDateOnly } from '@/utils/formatDate';
 import { router as Inertia } from '@inertiajs/react';
-import { Calendar, Eye, Filter, Play, Search } from 'lucide-react';
-import { useState } from 'react';
+import { Calendar, Eye, Filter, Play, Search, X } from 'lucide-react';
+import { useState, useEffect, useMemo } from 'react';
 import Badge from '../core/Badge';
 import RenderHTML from '../RenderHtml';
+
 interface EducationalContentPageProps {
     contents: Content[];
-
     onViewDetails: (id: number) => void;
+}
+
+interface FilterState {
+    topic: string;
+    contentType: string;
+    search: string;
+    sortBy: string;
 }
 
 const EducationalContentPage = ({
     onViewDetails,
     contents,
 }: EducationalContentPageProps) => {
-    const [sortBy, setSortBy] = useState('newest');
+    const [filters, setFilters] = useState<FilterState>({
+        topic: 'semua',
+        contentType: 'semua',
+        search: '',
+        sortBy: 'newest'
+    });
+
+    const [debouncedSearch, setDebouncedSearch] = useState('');
+
+    // Debounce search input
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setDebouncedSearch(filters.search);
+        }, 300);
+
+        return () => clearTimeout(timer);
+    }, [filters.search]);
+
+    // Filter and sort contents
+    const filteredAndSortedContents = useMemo(() => {
+        let filtered = contents.filter((content) => {
+            // Topic filter (you might need to add topic field to your schema)
+            const topicMatch = filters.topic === 'semua' ||
+                (content.title.toLowerCase().includes(getTopicKeyword(filters.topic)) ||
+                 content.body.toLowerCase().includes(getTopicKeyword(filters.topic)));
+
+            // Content type filter
+            const typeMatch = filters.contentType === 'semua' ||
+                content.content_type === filters.contentType;
+
+            // Search filter
+            const searchMatch = debouncedSearch === '' ||
+                content.title.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+                content.body.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+                content.author?.name?.toLowerCase().includes(debouncedSearch.toLowerCase());
+
+            return topicMatch && typeMatch && searchMatch;
+        });
+
+        // Sort contents
+        filtered.sort((a, b) => {
+            switch (filters.sortBy) {
+                case 'newest':
+                    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+                case 'oldest':
+                    return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+                case 'title':
+                    return a.title.localeCompare(b.title);
+                case 'author':
+                    return (a.author?.name || '').localeCompare(b.author?.name || '');
+                default:
+                    return 0;
+            }
+        });
+
+        return filtered;
+    }, [contents, filters.topic, filters.contentType, debouncedSearch, filters.sortBy]);
+
+    // Helper function to get topic keywords for filtering
+    const getTopicKeyword = (topic: string): string => {
+        const topicKeywords: { [key: string]: string } = {
+            'sampah': 'sampah',
+            'air': 'air',
+            'biodiversitas': 'biodiversitas',
+            'energi': 'energi'
+        };
+        return topicKeywords[topic] || '';
+    };
+
+    // Update filter functions
+    const updateFilter = (key: keyof FilterState, value: string) => {
+        setFilters(prev => ({ ...prev, [key]: value }));
+    };
+
+    // Reset filters
+    const resetFilters = () => {
+        setFilters({
+            topic: 'semua',
+            contentType: 'semua',
+            search: '',
+            sortBy: 'newest'
+        });
+    };
+
+    // Check if any filters are active
+    const hasActiveFilters = filters.topic !== 'semua' ||
+        filters.contentType !== 'semua' ||
+        filters.search !== '';
+
     return (
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
             <div className="mb-8">
@@ -37,6 +132,8 @@ const EducationalContentPage = ({
                     Pelajari berbagai topik lingkungan untuk meningkatkan
                     kesadaran Anda
                 </p>
+
+
             </div>
 
             <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
@@ -44,50 +141,38 @@ const EducationalContentPage = ({
                 <div className="lg:col-span-1">
                     <Card className="sticky top-24">
                         <CardHeader>
-                            <CardTitle className="flex items-center text-lg">
-                                <Filter
-                                    size={20}
-                                    className="mr-2 text-emerald-600"
-                                />
-                                Filter Konten
+                            <CardTitle className="flex items-center justify-between text-lg">
+                                <div className="flex items-center">
+                                    <Filter
+                                        size={20}
+                                        className="mr-2 text-emerald-600"
+                                    />
+                                    Filter Konten
+                                </div>
+                                {hasActiveFilters && (
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={resetFilters}
+                                        className="text-xs text-gray-500 hover:text-gray-700"
+                                    >
+                                        Reset
+                                    </Button>
+                                )}
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium text-gray-700">
-                                    Kategori Topik
-                                </label>
-                                <Select>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Pilih topik" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="semua">
-                                            Semua Topik
-                                        </SelectItem>
-                                        <SelectItem value="sampah">
-                                            Pengelolaan Sampah
-                                        </SelectItem>
-                                        <SelectItem value="air">
-                                            Konservasi Air
-                                        </SelectItem>
-                                        <SelectItem value="biodiversitas">
-                                            Biodiversitas
-                                        </SelectItem>
-                                        <SelectItem value="energi">
-                                            Energi Terbarukan
-                                        </SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
 
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-gray-700">
                                     Tipe Konten
                                 </label>
-                                <Select>
+                                <Select
+                                    value={filters.contentType}
+                                    onValueChange={(value) => updateFilter('contentType', value)}
+                                >
                                     <SelectTrigger>
-                                        <SelectValue placeholder="Pilih tipe" />
+                                        <SelectValue />
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="semua">
@@ -99,20 +184,28 @@ const EducationalContentPage = ({
                                         <SelectItem value="artikel">
                                             Artikel
                                         </SelectItem>
-                                        <SelectItem value="pdf">
-                                            Modul PDF
-                                        </SelectItem>
-                                        <SelectItem value="gambar">
-                                            Infografis
+                                        <SelectItem value="modul">
+                                            Modul
                                         </SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
+
                             <div className="space-y-2 pt-4">
-                                <Button className="w-full bg-emerald-600 hover:bg-emerald-700">
-                                    Terapkan Filter
+                                <Button
+                                    className="w-full bg-emerald-600 hover:bg-emerald-700"
+                                    onClick={() => {
+                                        // Optional: Add analytics or additional actions when applying filters
+                                        console.log('Filters applied:', filters);
+                                    }}
+                                >
+                                    Filter Diterapkan
                                 </Button>
-                                <Button variant="outline" className="w-full">
+                                <Button
+                                    variant="outline"
+                                    className="w-full"
+                                    onClick={resetFilters}
+                                >
                                     Reset Filter
                                 </Button>
                             </div>
@@ -125,22 +218,32 @@ const EducationalContentPage = ({
                     {/* Sort and Search */}
                     <div className="mb-6 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
                         <div className="flex items-center space-x-4">
-                            <Select value={sortBy} onValueChange={setSortBy}>
+                            <Select
+                                value={filters.sortBy}
+                                onValueChange={(value) => updateFilter('sortBy', value)}
+                            >
                                 <SelectTrigger className="w-48">
-                                    <SelectValue placeholder="Urutkan berdasarkan" />
+                                    <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="newest">
                                         Terbaru
                                     </SelectItem>
-                                    <SelectItem value="popular">
-                                        Terpopuler
+                                    <SelectItem value="oldest">
+                                        Terlama
                                     </SelectItem>
-                                    <SelectItem value="rating">
-                                        Rating Tertinggi
+                                    <SelectItem value="title">
+                                        Judul (A-Z)
+                                    </SelectItem>
+                                    <SelectItem value="author">
+                                        Penulis (A-Z)
                                     </SelectItem>
                                 </SelectContent>
                             </Select>
+
+                            <span className="text-sm text-gray-500">
+                                {filteredAndSortedContents.length} dari {contents.length} konten
+                            </span>
                         </div>
 
                         <div className="relative w-full sm:w-64">
@@ -148,19 +251,29 @@ const EducationalContentPage = ({
                             <Input
                                 placeholder="Cari konten..."
                                 className="pl-10"
+                                value={filters.search}
+                                onChange={(e) => updateFilter('search', e.target.value)}
                             />
+                            {filters.search && (
+                                <X
+                                    className="absolute right-3 top-3 h-4 w-4 cursor-pointer text-gray-400 hover:text-gray-600"
+                                    onClick={() => updateFilter('search', '')}
+                                />
+                            )}
                         </div>
                     </div>
-                    {contents.length > 0 ? (
+
+                    {filteredAndSortedContents.length > 0 ? (
                         <>
                             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
-                                {contents.map((content: Content) => (
+                                {filteredAndSortedContents.map((content: Content) => (
                                     <Card
                                         key={content.id}
                                         className="group cursor-pointer border-0 shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
-                                        onClick={() =>
-                                            onViewDetails(content.id)
-                                        }
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            onViewDetails(content.id);
+                                        }}
                                     >
                                         <div className="relative overflow-hidden rounded-t-lg">
                                             {content.media?.[0]?.media_type?.startsWith(
@@ -227,8 +340,7 @@ const EducationalContentPage = ({
                                                 </Badge>
                                             </div>
 
-                                            {content.content_type ===
-                                                'Video' && (
+                                            {content.content_type === 'video' && (
                                                 <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 transition-opacity group-hover:opacity-100">
                                                     <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white/90">
                                                         <Play
@@ -271,11 +383,12 @@ const EducationalContentPage = ({
 
                                             <Button
                                                 className="mt-auto w-full bg-amber-500 transition-colors duration-200 hover:bg-amber-700"
-                                                onClick={() =>
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
                                                     Inertia.visit(
                                                         `/content/${content.id}`,
-                                                    )
-                                                }
+                                                    );
+                                                }}
                                             >
                                                 <Eye
                                                     size={16}
@@ -287,44 +400,45 @@ const EducationalContentPage = ({
                                     </Card>
                                 ))}
                             </div>
-                            <div className="mt-8 text-center">
-                                <Button
-                                    variant="outline"
-                                    size="lg"
-                                    className="min-w-32"
-                                >
-                                    Muat Lebih Banyak
-                                </Button>
-                            </div>
+
+                            {filteredAndSortedContents.length >= 12 && (
+                                <div className="mt-8 text-center">
+                                    <Button
+                                        variant="outline"
+                                        size="lg"
+                                        className="min-w-32"
+                                    >
+                                        Muat Lebih Banyak
+                                    </Button>
+                                </div>
+                            )}
                         </>
                     ) : (
                         <div className="flex w-full items-center justify-center">
                             <Card className="w-full px-8 py-32 text-center">
                                 <div className="mb-4 flex justify-center">
                                     <div className="rounded-full bg-gray-100 p-4">
-                                        <svg
-                                            className="h-12 w-12 text-gray-400"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            viewBox="0 0 24 24"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth={2}
-                                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                                            />
-                                        </svg>
+                                        <Search className="h-12 w-12 text-gray-400" />
                                     </div>
                                 </div>
                                 <h3 className="mb-2 text-lg font-semibold text-gray-900">
-                                    Konten Edukasi Belum Tersedia
+                                    {hasActiveFilters ? 'Tidak Ada Hasil Ditemukan' : 'Konten Edukasi Belum Tersedia'}
                                 </h3>
-                                <p className="text-sm text-gray-500">
-                                    Belum ada konten edukasi yang tersedia saat
-                                    ini. Coba lagi nanti.
+                                <p className="mb-4 text-sm text-gray-500">
+                                    {hasActiveFilters
+                                        ? 'Coba ubah atau hapus filter untuk melihat lebih banyak konten.'
+                                        : 'Belum ada konten edukasi yang tersedia saat ini. Coba lagi nanti.'
+                                    }
                                 </p>
+                                {hasActiveFilters && (
+                                    <Button
+                                        variant="outline"
+                                        onClick={resetFilters}
+                                        className="mt-2"
+                                    >
+                                        Reset Semua Filter
+                                    </Button>
+                                )}
                             </Card>
                         </div>
                     )}

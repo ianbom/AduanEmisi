@@ -179,6 +179,10 @@ class ReportController extends Controller
                 : collect();
 
             $volunteerCounts = $volunteers->count();
+
+            $donations = $this->reportService->getReportDonation($id);
+
+
             return Inertia::render('Citizen/Report/ReportDetailPage', [
                 'report' => $report,
                 'your_vote' => $report->votes()->where('user_id', Auth::id())->first()?->vote_type,
@@ -186,7 +190,9 @@ class ReportController extends Controller
                 'confirmedLeader' => $confirmedLeader,
                 'comments' => $comments,
                 'volunteers' => $volunteers,
-                'volunteerCounts' => $volunteerCounts
+                'volunteerCounts' => $volunteerCounts,
+                'donations' => $donations,
+                
             ]);
         } catch (Exception $e) {
             return response()->json([

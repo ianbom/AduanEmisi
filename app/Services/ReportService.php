@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Donation;
 use App\Models\Mission;
 use App\Models\MissionVolunteer;
 use App\Models\Report;
@@ -427,5 +428,29 @@ class ReportService extends Service
         }
 
         return $filters;
+    }
+
+    public function getReportDonation($reportId){
+        $donations = Donation::with('user', 'report')->where('report_id', $reportId)->get();
+        return $donations;
+    }
+
+    public function getReportTotalDonation($reportId){
+
+        $donations = $this->getReportDonation($reportId);
+
+        $totalDonations = $donations->where('status', 'paid')->sum('amount');
+        return $totalDonations;
+    }
+
+    public function getReportTotalDonors($reportId){
+        $donations = $this->getReportDonation($reportId);
+
+        $totalDonors = $donations
+        ->where('status', 'paid')
+        ->distinct('user_id')
+        ->count();
+
+        return $totalDonors;
     }
 }

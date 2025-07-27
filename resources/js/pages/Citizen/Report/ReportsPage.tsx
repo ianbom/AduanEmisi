@@ -19,7 +19,7 @@ interface ReportsPageRouteProps {
 const ReportsPageRoute = ({ myReports }: { myReports: boolean }) => {
     const { props } = usePage<PageProps<ReportsPageRouteProps>>();
     const reports = props.reports?.data || [];
-    const provinces = props.provinces;
+    const provinces = props.provinces.provinces;
     const handleViewDetails = (id: number) => {
         Inertia.visit(route('report.show', { id }));
     };

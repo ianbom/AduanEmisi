@@ -28,9 +28,11 @@ class MissionController extends Controller
             $filters = $request->only(['content_type', 'search']);
             $perPage = $request->get('per_page', 15);
             $missions = $this->missionService->getMissions($filters, $perPage);
+            $provinces = Province::orderBy('name', 'asc')->get();
             return Inertia::render('Citizen/Mission/MissionPage', [
                 'missions' => $missions,
-                'myMissions' => false
+                'myMissions' => false,
+                'provinces' => $provinces
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -58,9 +60,11 @@ class MissionController extends Controller
             $perPage = $request->get('per_page', 15);
 
             $missions = $this->missionService->getMissionsJoined(Auth::user(), $filters, $perPage);
+               $provinces = Province::orderBy('name', 'asc')->get();
             return Inertia::render('Citizen/Mission/MissionPage', [
                 'missions' => $missions,
-                'myMissions' => true
+                'myMissions' => true,
+                'provinces' => $provinces
             ]);
         } catch (\Exception $e) {
             return response()->json([

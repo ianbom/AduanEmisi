@@ -129,7 +129,7 @@ Route::prefix('community')->as('community.')->middleware(['auth'])->group(functi
 });
 
 
-Route::prefix('admin')->as('admin.')->middleware(['auth'])->group(function () {
+Route::prefix('admin')->as('admin.')->middleware(['auth', ])->group(function () {
     Route::resource('missions', AdmMissionController::class);
     Route::put('missions/update/volunteer/{missionVolunteer}', [AdmMissionController::class, 'updateStatusVolunteer'])->name('update.volunteerStatus');
 

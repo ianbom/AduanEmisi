@@ -33,6 +33,9 @@ import ConfirmVolunteerAsCommunityModal from '../mission/ConfirmVolunteerAsCommu
 import ConfirmVolunteerModal from '../mission/ConfirmVolunteerModal';
 import UploadDocumentationModal from '../mission/UploadDocumentationModal';
 import CommentUploadCard from './InputCommentReport';
+
+import { Donation } from '@/types/report/donations';
+import { DonationCard } from './DonationCard';
 interface Leader {
     id: number;
     name: string;
@@ -40,6 +43,7 @@ interface Leader {
 
 interface ReportDetailPageProps {
     report: Report;
+    donations: Donation | null;
     myParticipation:
         | (User & {
               pivot: {
@@ -73,6 +77,7 @@ const ReportDetailPage = ({
     volunteerCounts,
     user,
     your_vote,
+    donations
 }: ReportDetailPageProps) => {
     const [hasUpvoted, setHasUpvoted] = useState(your_vote === 'upvote');
     const [hasDownvoted, setHasDownvoted] = useState(your_vote === 'dislike');
@@ -128,6 +133,8 @@ const ReportDetailPage = ({
     const [selectedRole, setSelectedRole] = useState<'ketua' | 'anggota'>(
         'anggota',
     );
+
+      console.log('donasi masuk:', donations);
 
     console.log('myParticipation:', myParticipation);
     console.log('ini komen', comments);
@@ -958,27 +965,14 @@ const ReportDetailPage = ({
                         </Card>
                     )}
 
-                    {/* Donation Section */}
-                    <Card className="bg-gradient-to-r from-emerald-50 to-green-50">
-                        <CardContent className="p-6">
-                            <div className="text-center">
-                                <Heart className="mx-auto mb-4 h-12 w-12 text-emerald-600" />
-                                <h3 className="mb-2 text-xl font-semibold">
-                                    Donasi untuk Penanganan
-                                </h3>
-                                <p className="mb-4 text-gray-600">
-                                    Bantu penanganan masalah ini dengan
-                                    memberikan donasi
-                                </p>
-                                <Button
-                                    size="lg"
-                                    className="bg-emerald-600 hover:bg-emerald-700"
-                                >
-                                    Donasi Sekarang
-                                </Button>
-                            </div>
-                        </CardContent>
-                    </Card>
+                {/* Donation Section */}
+                    {report.is_donation ? <>
+                    <DonationCard
+                    donations={donations}
+                    reportId={report.id}/>
+                    </> : null}
+
+
                 </div>
 
                 <div className="space-y-6">

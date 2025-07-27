@@ -70,6 +70,8 @@ export default function CompleteProfile() {
         },
     });
 
+    console.log(data);
+
     useEffect(() => {
         const filtered = cities.filter(
             (city) => city.province_id === parseInt(data.province_id),

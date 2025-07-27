@@ -41,6 +41,7 @@ return new class extends Migration
             $table->integer('dislikes_count')->default(0);
             $table->timestamp('verified_at')->nullable();
             $table->text('completion_details')->nullable();
+            $table->boolean('is_donation')->default(false);
             $table->timestamps();
         });
     }
