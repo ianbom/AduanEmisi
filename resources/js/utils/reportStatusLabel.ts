@@ -6,7 +6,7 @@ export const getStatusLabel = (status: string): string => {
         'on-progress': 'Sedang Diproses',
         verified: 'Terverifikasi',
         rejected: 'Ditolak',
-        'under-authority': 'Pihak Berwenang',
+        'under-authority': 'Ditangani Pihak Berwenang',
         pending: 'Menunggu',
     };
 

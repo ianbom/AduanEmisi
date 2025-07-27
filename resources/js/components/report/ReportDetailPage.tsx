@@ -16,7 +16,6 @@ import axios from 'axios';
 import {
     ArrowLeft,
     Calendar,
-    Heart,
     LocateFixed,
     MapPin,
     MessageCircle,
@@ -79,7 +78,7 @@ const ReportDetailPage = ({
     volunteerCounts,
     user,
     your_vote,
-    donations
+    donations,
 }: ReportDetailPageProps) => {
     const [hasUpvoted, setHasUpvoted] = useState(your_vote === 'upvote');
     const [hasDownvoted, setHasDownvoted] = useState(your_vote === 'dislike');
@@ -136,7 +135,7 @@ const ReportDetailPage = ({
         'anggota',
     );
 
-      console.log('donasi masuk:', donations);
+    console.log('donasi masuk:', donations);
 
     console.log('myParticipation:', myParticipation);
     console.log('ini komen', comments);
@@ -1037,14 +1036,15 @@ const ReportDetailPage = ({
                         </Card>
                     )}
 
-                {/* Donation Section */}
-                    {report.is_donation ? <>
-                    <DonationCard
-                    donations={donations}
-                    reportId={report.id}/>
-                    </> : null}
-
-
+                    {/* Donation Section */}
+                    {report.is_donation ? (
+                        <>
+                            <DonationCard
+                                donations={donations}
+                                reportId={report.id}
+                            />
+                        </>
+                    ) : null}
                 </div>
 
                 <div className="space-y-6">

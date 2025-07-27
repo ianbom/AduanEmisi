@@ -9,10 +9,18 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { Content } from '@/types/content';
+import { getContentTypeLabel } from '@/utils/contentTypeLabel';
 import { getTypeColor } from '@/utils/educationColor';
 import { formatDateOnly } from '@/utils/formatDate';
 import { router as Inertia } from '@inertiajs/react';
-import { Calendar, Eye, Play, Search, SlidersHorizontal } from 'lucide-react';
+import {
+    Calendar,
+    Eye,
+    Play,
+    RefreshCcw,
+    Search,
+    SlidersHorizontal,
+} from 'lucide-react';
 import { useEffect, useState } from 'react';
 import RenderHTML from '../RenderHtml';
 import { Badge } from '../ui/badge';
@@ -88,11 +96,15 @@ const EducationalContentPage = ({
         }
         setFilteredContents(processedContents);
     }, [contents, searchQuery, sortBy, filters]);
+
     const availableContentTypes = [
         { label: 'Artikel', value: 'artikel' },
         { label: 'Modul PDF', value: 'modul' },
         { label: 'Video', value: 'video' },
     ];
+
+    const hasActiveFilters =
+        searchQuery.trim() || filters.content_type !== 'semua';
     return (
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
             <div className="mb-8">
@@ -110,12 +122,19 @@ const EducationalContentPage = ({
                 <div className="lg:col-span-1">
                     <Card className="sticky top-24">
                         <CardHeader>
-                            <CardTitle className="flex items-center text-lg">
-                                <SlidersHorizontal
-                                    size={20}
-                                    className="mr-2 text-emerald-600"
-                                />
-                                Filter Konten
+                            <CardTitle className="flex items-center justify-between text-lg">
+                                <div className="flex items-center">
+                                    <SlidersHorizontal
+                                        size={20}
+                                        className="mr-2 text-emerald-600"
+                                    />
+                                    Filter Konten
+                                </div>
+                                {hasActiveFilters && (
+                                    <span className="rounded-full bg-emerald-100 px-2 py-1 text-xs text-emerald-600">
+                                        Aktif
+                                    </span>
+                                )}
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
@@ -151,21 +170,12 @@ const EducationalContentPage = ({
                             </div>
                             <div className="space-y-2 pt-4">
                                 <Button
-                                    className="w-full bg-emerald-600 hover:bg-emerald-700"
-                                    onClick={() => {
-                                        console.log(
-                                            'Filters applied:',
-                                            filters,
-                                        );
-                                    }}
-                                >
-                                    Terapkan Filter
-                                </Button>
-                                <Button
                                     variant="outline"
-                                    className="w-full"
+                                    className="flex w-full items-center justify-center gap-2"
                                     onClick={resetFilters}
+                                    disabled={!hasActiveFilters}
                                 >
+                                    <RefreshCcw className="h-4 w-4" />
                                     Reset Filter
                                 </Button>
                             </div>
@@ -186,7 +196,7 @@ const EducationalContentPage = ({
                                     <SelectItem value="newest">
                                         Terbaru
                                     </SelectItem>
-                                    <SelectItem value="popular">
+                                    <SelectItem value="oldest">
                                         Terlama
                                     </SelectItem>
                                     <SelectItem value="title">
@@ -318,7 +328,9 @@ const EducationalContentPage = ({
                                                     )}
                                                 >
                                                     <div className="flex items-center gap-1">
-                                                        {content.content_type}
+                                                        {getContentTypeLabel(
+                                                            content.content_type,
+                                                        )}
                                                     </div>
                                                 </Badge>
                                             </div>

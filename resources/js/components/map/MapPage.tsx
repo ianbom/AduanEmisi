@@ -10,18 +10,23 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { City, District, Province } from '@/types/area/interface';
-
-import { getStatusColor } from '@/utils/reportStatusColor';
-import { getStatusLabel } from '@/utils/reportStatusLabel';
-
 import { Report } from '@/types/report';
+import { getCategoryLabel } from '@/utils/categoryReportLabel';
 import { formatDateOnly } from '@/utils/formatDate';
 import { getStatusColor } from '@/utils/reportStatusColor';
 import { getStatusLabel } from '@/utils/reportStatusLabel';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import { Badge } from '../ui/badge';
 
-import { Calendar, Eye, Filter, MapPin, Search, TrendingUp } from 'lucide-react';
+import {
+    Calendar,
+    Eye,
+    MapPin,
+    RefreshCcw,
+    Search,
+    SlidersHorizontal,
+} from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
 
@@ -50,13 +55,7 @@ L.Icon.Default.mergeOptions({
     shadowUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-shadow.png',
 });
 
-const MapPage = ({
-    reports,
-    provinces,
-    cities,
-    districts,
-    onViewReport,
-}: MapPageProps) => {
+const MapPage = ({ reports, provinces, onViewReport }: MapPageProps) => {
     const [showFilters, setShowFilters] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [filteredReports, setFilteredReports] = useState<Report[]>(reports);
@@ -160,18 +159,33 @@ const MapPage = ({
 
     // Get unique categories from reports for dynamic options
     const availableCategories = [
-        'Sampah Plastik',
-        'Pencemaran Air',
-        'Pencemaran Udara',
-        'Pencemaran Tanah',
-        'Limbah Industri',
-        'Emisi Gas Rumah Kaca',
-        'Penggundulan / Kebakaran Hutan',
-        'Naiknya Permukaan Air Laut',
-        'Limbah Pertanian / Peternakan',
-        'Lainnya',
+        { label: 'Sampah Plastik', value: 'sampah-plastik' },
+        { label: 'Pencemaran Air', value: 'pencemaran-air' },
+        { label: 'Pencemaran Udara', value: 'pencemaran-udara' },
+        { label: 'Pencemaran Tanah', value: 'pencemaran-tanah' },
+        { label: 'Limbah Industri', value: 'limbah-industri' },
+        { label: 'Emisi Gas Rumah Kaca', value: 'emisi-gas-rumah-kaca' },
+        {
+            label: 'Penggundulan / Kebakaran Hutan',
+            value: 'penggundulan-kebakaran-hutan',
+        },
+        {
+            label: 'Naiknya Permukaan Air Laut',
+            value: 'naiknya-permukaan-air-laut',
+        },
+        {
+            label: 'Limbah Pertanian / Peternakan',
+            value: 'limbah-pertanian-peternakan',
+        },
+        { label: 'Lainnya', value: 'lainnya' },
     ];
-
+    const hasActiveFilters =
+        searchQuery.trim() ||
+        filters.category !== 'semua' ||
+        filters.status !== 'semua' ||
+        filters.province !== 'semua' ||
+        filters.startDate ||
+        filters.endDate;
     return (
         <div className="flex h-screen flex-col lg:flex-row">
             <div
@@ -184,7 +198,12 @@ const MapPage = ({
                                 size={20}
                                 className="mr-2 text-emerald-600"
                             />
-                            Filter
+                            Filter Peta Laporan
+                            {hasActiveFilters && (
+                                <span className="ml-2 inline-block rounded-full bg-emerald-100 px-2 py-1 text-xs text-emerald-600">
+                                    Aktif
+                                </span>
+                            )}
                         </h2>
                         <Button
                             variant="ghost"
@@ -303,9 +322,12 @@ const MapPage = ({
                                     <SelectItem value="semua">
                                         Semua Kategori
                                     </SelectItem>
-                                    {availableCategories.map((category) => (
-                                        <SelectItem key={category} value={category}>
-                                            {category}
+                                    {availableCategories.map((cat) => (
+                                        <SelectItem
+                                            key={cat.value}
+                                            value={cat.value}
+                                        >
+                                            {cat.label}
                                         </SelectItem>
                                     ))}
                                 </SelectContent>
@@ -333,10 +355,10 @@ const MapPage = ({
                                         Menunggu
                                     </SelectItem>
                                     <SelectItem value="verified">
-                                        Sudah Diverifikasi
+                                        Terverifikasi
                                     </SelectItem>
                                     <SelectItem value="on-progress">
-                                        Sedang Progress
+                                        Sedang Diproses
                                     </SelectItem>
                                     <SelectItem value="rejected">
                                         Ditolak
@@ -379,44 +401,41 @@ const MapPage = ({
                                 </SelectContent>
                             </Select>
                         </div>
-
-                        <div className="grid grid-cols-2 gap-1">
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium text-gray-700">
-                                    Tanggal Mulai
-                                </label>
-                                <Input
-                                    type="date"
-                                    value={filters.startDate}
-                                    onChange={(e) =>
-                                        updateFilter('startDate', e.target.value)
-                                    }
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium text-gray-700">
-                                    Tanggal Selesai
-                                </label>
-                                <Input
-                                    type="date"
-                                    value={filters.endDate}
-                                    onChange={(e) =>
-                                        updateFilter('endDate', e.target.value)
-                                    }
-                                    min={filters.startDate}
-                                />
-                            </div>
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium text-gray-700">
+                                Tanggal Mulai
+                            </label>
+                            <input
+                                type="date"
+                                className="w-full rounded-md border border-gray-200 px-2 py-2"
+                                value={filters.startDate}
+                                onChange={(e) =>
+                                    updateFilter('startDate', e.target.value)
+                                }
+                            />
                         </div>
-
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium text-gray-700">
+                                Tanggal Selesai
+                            </label>
+                            <input
+                                type="date"
+                                className="w-full rounded-md border border-gray-200 px-2 py-2"
+                                value={filters.endDate}
+                                onChange={(e) =>
+                                    updateFilter('endDate', e.target.value)
+                                }
+                                min={filters.startDate}
+                            />
+                        </div>
                         <div className="flex space-x-2">
-                            <Button className="flex-1 bg-emerald-600 hover:bg-emerald-700">
-                                Terapkan Filter
-                            </Button>
                             <Button
                                 variant="outline"
-                                className="flex-1"
+                                className="flex w-full items-center justify-center gap-2"
                                 onClick={resetFilters}
+                                disabled={!hasActiveFilters}
                             >
+                                <RefreshCcw className="h-4 w-4" />
                                 Reset Filter
                             </Button>
                         </div>
@@ -536,8 +555,10 @@ const MapPage = ({
 
                                     <div className="p-4">
                                         <div className="mb-2">
-                                            <Badge className="border-gray-500 bg-gray-50 text-xs font-medium text-gray-700">
-                                                {report.category}
+                                            <Badge className="border-gray-200 bg-gray-50 text-xs font-medium text-gray-700">
+                                                {getCategoryLabel(
+                                                    report.category,
+                                                )}
                                             </Badge>
                                         </div>
 
