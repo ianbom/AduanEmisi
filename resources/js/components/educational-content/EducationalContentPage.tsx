@@ -265,7 +265,7 @@ const EducationalContentPage = ({
                                                 <div className="relative h-48 w-full bg-black">
                                                     <video
                                                         className="h-full w-full object-cover opacity-50"
-                                                        src={/storage/${content.media[0].media_url}}
+                                                        src={`/storage/${content.media[0].media_url}`}
                                                         muted
                                                         preload="metadata"
                                                     />
@@ -305,7 +305,7 @@ const EducationalContentPage = ({
                                                 </div>
                                             ) : (
                                                 <img
-                                                    src={/storage/${content.media?.[0]?.media_url}}
+                                                    src={`/storage/${content.media?.[0]?.media_url}`}
                                                     alt={content.title}
                                                     className="h-48 w-full object-cover transition-transform duration-300 group-hover:scale-105"
                                                 />
@@ -369,7 +369,7 @@ const EducationalContentPage = ({
                                                 className="mt-auto w-full bg-amber-500 transition-colors duration-200 hover:bg-amber-700"
                                                 onClick={() =>
                                                     Inertia.visit(
-                                                        /content/${content.id},
+                                                        `/content/${content.id}`,
                                                     )
                                                 }
                                             >

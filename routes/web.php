@@ -90,6 +90,10 @@ Route::prefix('')->middleware(['auth', 'isProfileComplete'])->group(function () 
     // Route untuk keperluan yang berkaitan dengan Konten Edukasi
     Route::get('/education', [CtzContentController::class, 'index'])->name('content.index');
     Route::get('/education/{id}', [CtzContentController::class, 'show'])->name('content.show');
+
+    Route::get('/leaderboard', function () {
+    return Inertia::render('Leaderboard/LeaderBoardPage');
+});
 });
 
 
