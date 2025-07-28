@@ -23,6 +23,8 @@ class QuizController extends Controller
 
     public function store(Request $request)
     {
+
+
         $request->validate([
             'title' => 'nullable|string|max:255',
             'description' => 'nullable|string',
@@ -34,7 +36,6 @@ class QuizController extends Controller
             // Validasi untuk questions
             'questions' => 'nullable|array|min:1',
             'questions.*.question_text' => 'nullable|string',
-            'questions.*.question_image' => 'nullable',
             'questions.*.order' => 'nullable|integer|min:1',
             'questions.*.correct_answer' => 'nullable|integer|min:0',
 

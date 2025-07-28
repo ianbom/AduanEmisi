@@ -138,165 +138,152 @@ document.addEventListener('DOMContentLoaded', function() {
     const questionsContainer = document.getElementById('questionsContainer');
     const addQuestionBtn = document.getElementById('addQuestion');
 
-    // Add initial question
-    addQuestion();
-
-    addQuestionBtn.addEventListener('click', function() {
-        addQuestion();
-    });
-
-    function addQuestion() {
-        const questionDiv = document.createElement('div');
-        questionDiv.className = 'question-item border border-gray-200 rounded-lg p-6 mb-6';
-        questionDiv.innerHTML = `
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="text-lg font-medium text-gray-800">Pertanyaan ${questionIndex + 1}</h3>
-                <div class="flex space-x-2">
-                    <button type="button" class="add-answer bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm">
-                        + Jawaban
-                    </button>
-                    ${questionIndex > 0 ? `
-                    <button type="button" class="remove-question bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm">
-                        Hapus
-                    </button>
-                    ` : ''}
+    // --- Template untuk Pertanyaan Baru ---
+    const createQuestionTemplate = (qIndex) => `
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-medium text-gray-800">Pertanyaan ${qIndex + 1}</h3>
+            <div class="flex space-x-2">
+                <button type="button" class="add-answer-btn bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm">
+                    + Jawaban
+                </button>
+                ${qIndex > 0 ? `
+                <button type="button" class="remove-question-btn bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm">
+                    Hapus
+                </button>
+                ` : ''}
+            </div>
+        </div>
+        <div class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Teks Pertanyaan *</label>
+                <textarea name="questions[${qIndex}][question_text]" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="Masukkan pertanyaan..." required></textarea>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Gambar Pertanyaan (Opsional)</label>
+                <input type="file" name="questions[${qIndex}][question_image]" accept="image/*" class="w-full text-sm">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Urutan</label>
+                <input type="number" name="questions[${qIndex}][order]" value="${qIndex + 1}" class="w-20 px-4 py-2 border border-gray-300 rounded-lg">
+            </div>
+            <div class="answers-container">
+                <h4 class="text-md font-medium text-gray-700 mb-3">Jawaban (Pilih satu yang benar)</h4>
+                <div class="answers-list space-y-3">
+                    <!-- Jawaban dinamis akan ditambahkan di sini -->
                 </div>
             </div>
+        </div>
+    `;
 
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Teks Pertanyaan *</label>
-                    <textarea name="questions[${questionIndex}][question_text]"
-                              rows="3"
-                              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                              placeholder="Masukkan pertanyaan..."
-                              required></textarea>
-                </div>
-
-             
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Urutan</label>
-                    <input type="number"
-                           name="questions[${questionIndex}][order]"
-                           value="${questionIndex + 1}"
-                           class="w-20 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                </div>
-
-                <div class="answers-container">
-                    <h4 class="text-md font-medium text-gray-700 mb-3">Jawaban</h4>
-                    <div class="answers-list space-y-3">
-                        <!-- Answers will be added here -->
-                    </div>
-                </div>
-            </div>
-        `;
-
-        questionsContainer.appendChild(questionDiv);
-
-        // Add event listeners for this question
-        const removeBtn = questionDiv.querySelector('.remove-question');
-        if (removeBtn) {
-            removeBtn.addEventListener('click', function() {
-                questionDiv.remove();
-                updateQuestionNumbers();
-            });
-        }
-
-        const addAnswerBtn = questionDiv.querySelector('.add-answer');
-        addAnswerBtn.addEventListener('click', function() {
-            addAnswer(questionDiv, questionIndex);
-        });
-
-        // Add initial answers
-        addAnswer(questionDiv, questionIndex);
-        addAnswer(questionDiv, questionIndex);
-
-        questionIndex++;
-    }
-
-    function addAnswer(questionDiv, qIndex) {
-        const answersContainer = questionDiv.querySelector('.answers-list');
-        const answerIndex = answersContainer.children.length;
-
-        const answerDiv = document.createElement('div');
-        answerDiv.className = 'answer-item flex items-start space-x-3 p-4 border border-gray-100 rounded-lg';
-        answerDiv.innerHTML = `
+    // --- Template untuk Jawaban Baru ---
+    const createAnswerTemplate = (qIndex, aIndex) => `
+        <div class="answer-item flex items-start space-x-3 p-4 border border-gray-100 rounded-lg bg-gray-50">
             <div class="flex items-center mt-2">
                 <input type="radio"
                        name="questions[${qIndex}][correct_answer]"
-                       value="${answerIndex}"
+                       value="${aIndex}"
                        class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
-                       title="Pilih sebagai jawaban benar">
+                       title="Pilih sebagai jawaban benar"
+                       required>
             </div>
             <div class="flex-1 space-y-3">
                 <div>
                     <label class="block text-sm font-medium text-gray-600 mb-1">Teks Jawaban</label>
-                    <textarea name="questions[${qIndex}][answers][${answerIndex}][answer_text]"
-                              rows="2"
-                              class="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
-                              placeholder="Masukkan jawaban..."></textarea>
+                    <textarea name="questions[${qIndex}][answers][${aIndex}][answer_text]" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded text-sm" placeholder="Masukkan teks jawaban (opsional jika ada gambar)"></textarea>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-600 mb-1">Gambar Jawaban</label>
-                    <input type="file"
-                           name="questions[${qIndex}][answers][${answerIndex}][image]"
-                           accept="image/*"
-                           class="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm">
+                    <label class="block text-sm font-medium text-gray-600 mb-1">Gambar Jawaban (Opsional)</label>
+                    <input type="file" name="questions[${qIndex}][answers][${aIndex}][image]" accept="image/*" class="w-full text-sm">
                 </div>
             </div>
             <div class="mt-2">
-                <button type="button" class="remove-answer text-red-500 hover:text-red-700">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                    </svg>
+                <button type="button" class="remove-answer-btn text-red-500 hover:text-red-700">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                 </button>
             </div>
-        `;
+        </div>
+    `;
 
-        answersContainer.appendChild(answerDiv);
+    // --- Fungsi Utama ---
+    const addQuestion = () => {
+        const questionDiv = document.createElement('div');
+        questionDiv.className = 'question-item border border-gray-200 rounded-lg p-6 mb-6';
+        questionDiv.setAttribute('data-index', questionIndex);
+        questionDiv.innerHTML = createQuestionTemplate(questionIndex);
+        questionsContainer.appendChild(questionDiv);
 
-        // Add remove answer functionality
-        const removeAnswerBtn = answerDiv.querySelector('.remove-answer');
-        removeAnswerBtn.addEventListener('click', function() {
-            if (answersContainer.children.length > 2) {
-                answerDiv.remove();
-                updateAnswerIndices(questionDiv, qIndex);
+        // Tambahkan 2 jawaban awal untuk pertanyaan baru
+        addAnswer(questionDiv);
+        addAnswer(questionDiv);
+
+        // Tandai radio button pertama sebagai checked secara default
+        questionDiv.querySelector('input[type="radio"]').checked = true;
+
+        questionIndex++;
+    };
+
+    const addAnswer = (questionDiv) => {
+        const qIndex = questionDiv.getAttribute('data-index');
+        const answersList = questionDiv.querySelector('.answers-list');
+        const answerIndex = answersList.children.length;
+
+        const answerDiv = document.createElement('div');
+        answerDiv.innerHTML = createAnswerTemplate(qIndex, answerIndex);
+        answersList.appendChild(answerDiv.firstElementChild);
+    };
+
+    const updateDOMIndices = () => {
+        document.querySelectorAll('.question-item').forEach((questionDiv, qIdx) => {
+            // Update question index
+            questionDiv.setAttribute('data-index', qIdx);
+            questionDiv.querySelector('h3').textContent = `Pertanyaan ${qIdx + 1}`;
+            questionDiv.querySelectorAll('[name*="questions["]').forEach(input => {
+                input.name = input.name.replace(/questions\[\d+\]/, `questions[${qIdx}]`);
+            });
+
+            // Update answer indices within the question
+            questionDiv.querySelectorAll('.answer-item').forEach((answerDiv, aIdx) => {
+                answerDiv.querySelectorAll('[name*="[answers]"]').forEach(input => {
+                    input.name = input.name.replace(/\[answers\]\[\d+\]/, `\[answers\][${aIdx}]`);
+                });
+                const radio = answerDiv.querySelector('input[type="radio"]');
+                if (radio) {
+                    radio.value = aIdx;
+                }
+            });
+        });
+    };
+
+    // --- Event Delegation (Cara yang lebih efisien) ---
+    questionsContainer.addEventListener('click', function(e) {
+        // Hapus Pertanyaan
+        if (e.target.closest('.remove-question-btn')) {
+            e.target.closest('.question-item').remove();
+            updateDOMIndices(); // Re-index semua pertanyaan dan jawaban
+        }
+
+        // Tambah Jawaban
+        if (e.target.closest('.add-answer-btn')) {
+            addAnswer(e.target.closest('.question-item'));
+        }
+
+        // Hapus Jawaban
+        if (e.target.closest('.remove-answer-btn')) {
+            const questionDiv = e.target.closest('.question-item');
+            const answersList = questionDiv.querySelector('.answers-list');
+            if (answersList.children.length > 2) {
+                e.target.closest('.answer-item').remove();
+                updateDOMIndices(); // Re-index jawaban di dalam pertanyaan ini
             } else {
-                alert('Minimal harus ada 2 jawaban untuk setiap pertanyaan.');
+                alert('Setiap pertanyaan harus memiliki minimal 2 pilihan jawaban.');
             }
-        });
-    }
+        }
+    });
 
-    function updateQuestionNumbers() {
-        const questions = questionsContainer.querySelectorAll('.question-item');
-        questions.forEach((question, index) => {
-            const title = question.querySelector('h3');
-            title.textContent = `Pertanyaan ${index + 1}`;
+    addQuestionBtn.addEventListener('click', addQuestion);
 
-            const orderInput = question.querySelector('input[name*="[order]"]');
-            orderInput.value = index + 1;
-        });
-    }
-
-    function updateAnswerIndices(questionDiv, qIndex) {
-        const answers = questionDiv.querySelectorAll('.answer-item');
-        const radioButtons = questionDiv.querySelectorAll('input[type="radio"]');
-
-        answers.forEach((answer, index) => {
-            // Update textarea name
-            const textarea = answer.querySelector('textarea');
-            textarea.name = `questions[${qIndex}][answers][${index}][answer_text]`;
-
-            // Update file input name
-            const fileInput = answer.querySelector('input[type="file"]');
-            fileInput.name = `questions[${qIndex}][answers][${index}][image]`;
-
-            // Update radio button value
-            const radio = radioButtons[index];
-            radio.value = index;
-        });
-    }
+    // Tambahkan pertanyaan pertama saat halaman dimuat
+    addQuestion();
 });
 </script>
 @endsection

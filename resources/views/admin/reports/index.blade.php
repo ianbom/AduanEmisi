@@ -62,7 +62,7 @@
                     </div>
                     <div class="ml-4">
                         <p class="text-sm font-medium text-gray-600">Diproses</p>
-                        <p class="text-2xl font-bold text-gray-900">{{ $reports->where('status', 'in_progress')->count() }}</p>
+                        <p class="text-2xl font-bold text-gray-900">{{ $reports->where('status', 'on-progress')->count() }}</p>
                     </div>
                 </div>
             </div>

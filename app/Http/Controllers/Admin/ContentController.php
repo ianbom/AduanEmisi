@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
+
 class ContentController extends Controller
 {
 
@@ -20,11 +21,15 @@ class ContentController extends Controller
         $this->contentService = $contentService;
     }
 
-    public function index()
+     public function index(Request $request)
     {
-        $content = Content::orderBy('created_at', 'desc')->with('author')->get();
-        // return response()->json($content);
-        return view('admin.content.index', ['content' => $content]);
+        $filters = $this->contentService->buildFilter($request);
+
+        // 2. Ambil data konten menggunakan filter
+        $contents = $this->contentService->getContentByFilter($filters);
+
+        // 3. Kirim data ke view
+        return view('admin.content.index', ['content' => $contents]);
     }
 
     public function create()
