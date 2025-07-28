@@ -1,0 +1,454 @@
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import {
+    CheckCircle,
+    XCircle,
+    Clock,
+    Trophy,
+    ArrowLeft,
+    ArrowRight,
+    Flag,
+    AlertTriangle,
+} from 'lucide-react';
+import { useEffect, useState } from 'react';
+
+interface Answer {
+    id: number;
+    question_id: number;
+    answer_text?: string;
+    image_url?: string;
+    is_correct: boolean;
+}
+
+interface Question {
+    id: number;
+    quiz_id: number;
+    question_text: string;
+    question_image_url?: string;
+    order: number;
+    answers: Answer[];
+}
+
+interface Quiz {
+    id: number;
+    title: string;
+    description?: string;
+    thumbnail_url?: string;
+    difficulty: 'mudah' | 'sedang' | 'sulit';
+    points_reward: number;
+    is_active: boolean;
+    questions: Question[];
+}
+
+interface QuizTakingPageProps {
+    quiz: Quiz;
+    onSubmitQuiz: (answers: Record<number, number>) => void;
+    onExitQuiz: () => void;
+    timeLimit?: number; // in minutes
+}
+
+const QuizTakingPage = ({
+    quiz,
+    onSubmitQuiz,
+    onExitQuiz,
+    timeLimit = 30,
+}: QuizTakingPageProps) => {
+    const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+    const [selectedAnswers, setSelectedAnswers] = useState<Record<number, number>>({});
+    const [timeRemaining, setTimeRemaining] = useState(timeLimit * 60); // in seconds
+    const [showExitDialog, setShowExitDialog] = useState(false);
+    const [showSubmitDialog, setShowSubmitDialog] = useState(false);
+    const [isQuizFinished, setIsQuizFinished] = useState(false);
+
+    const currentQuestion = quiz.questions[currentQuestionIndex];
+    const totalQuestions = quiz.questions.length;
+    const answeredQuestions = Object.keys(selectedAnswers).length;
+    const progressPercentage = ((currentQuestionIndex + 1) / totalQuestions) * 100;
+
+    // Timer countdown
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setTimeRemaining((prev) => {
+                if (prev <= 1) {
+                    handleSubmitQuiz();
+                    return 0;
+                }
+                return prev - 1;
+            });
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, []);
+
+    const formatTime = (seconds: number) => {
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = seconds % 60;
+        return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+    };
+
+    const getDifficultyColor = (difficulty: string) => {
+        switch (difficulty) {
+            case 'mudah':
+                return 'bg-green-100 text-green-700 border-green-200';
+            case 'sedang':
+                return 'bg-yellow-100 text-yellow-700 border-yellow-200';
+            case 'sulit':
+                return 'bg-red-100 text-red-700 border-red-200';
+            default:
+                return 'bg-gray-100 text-gray-700 border-gray-200';
+        }
+    };
+
+    const getDifficultyLabel = (difficulty: string) => {
+        switch (difficulty) {
+            case 'mudah':
+                return 'Mudah';
+            case 'sedang':
+                return 'Sedang';
+            case 'sulit':
+                return 'Sulit';
+            default:
+                return difficulty;
+        }
+    };
+
+    const handleAnswerSelect = (answerId: number) => {
+        setSelectedAnswers((prev) => ({
+            ...prev,
+            [currentQuestion.id]: answerId,
+        }));
+    };
+
+    const goToNextQuestion = () => {
+        if (currentQuestionIndex < totalQuestions - 1) {
+            setCurrentQuestionIndex(currentQuestionIndex + 1);
+        }
+    };
+
+    const goToPreviousQuestion = () => {
+        if (currentQuestionIndex > 0) {
+            setCurrentQuestionIndex(currentQuestionIndex - 1);
+        }
+    };
+
+    const goToQuestion = (index: number) => {
+        setCurrentQuestionIndex(index);
+    };
+
+    const handleSubmitQuiz = () => {
+        setIsQuizFinished(true);
+        onSubmitQuiz(selectedAnswers);
+    };
+
+    const handleExitQuiz = () => {
+        setShowExitDialog(false);
+        onExitQuiz();
+    };
+
+    const getTimeColor = () => {
+        if (timeRemaining > 300) return 'text-green-600'; // > 5 minutes
+        if (timeRemaining > 60) return 'text-yellow-600'; // > 1 minute
+        return 'text-red-600'; // <= 1 minute
+    };
+
+    if (isQuizFinished) {
+        return (
+            <div className="mx-auto max-w-4xl px-4 py-8">
+                <Card className="text-center">
+                    <CardContent className="py-12">
+                        <div className="mb-6">
+                            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
+                                <CheckCircle className="h-8 w-8 text-green-600" />
+                            </div>
+                            <h2 className="mb-2 text-2xl font-bold text-gray-900">
+                                Quiz Selesai!
+                            </h2>
+                            <p className="text-gray-600">
+                                Jawaban Anda sedang diproses...
+                            </p>
+                        </div>
+                    </CardContent>
+                </Card>
+            </div>
+        );
+    }
+
+    return (
+        <div className="mx-auto max-w-6xl px-4 py-6">
+            {/* Header */}
+            <div className="mb-6 flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setShowExitDialog(true)}
+                        className="flex items-center"
+                    >
+                        <ArrowLeft className="mr-2 h-4 w-4" />
+                        Keluar
+                    </Button>
+                    <div>
+                        <h1 className="text-xl font-bold text-gray-900">{quiz.title}</h1>
+                        <div className="flex items-center space-x-2">
+                            <Badge className={getDifficultyColor(quiz.difficulty)}>
+                                {getDifficultyLabel(quiz.difficulty)}
+                            </Badge>
+                            <div className="flex items-center text-sm text-emerald-600">
+                                <Trophy size={14} className="mr-1" />
+                                {quiz.points_reward} poin
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="flex items-center space-x-4">
+                    <div className={`flex items-center font-mono text-lg font-bold ${getTimeColor()}`}>
+                        <Clock className="mr-2 h-5 w-5" />
+                        {formatTime(timeRemaining)}
+                    </div>
+                    <Button
+                        onClick={() => setShowSubmitDialog(true)}
+                        className="bg-emerald-600 hover:bg-emerald-700"
+                        disabled={answeredQuestions === 0}
+                    >
+                        <Flag className="mr-2 h-4 w-4" />
+                        Selesai
+                    </Button>
+                </div>
+            </div>
+
+            {/* Progress */}
+            <div className="mb-6">
+                <div className="mb-2 flex items-center justify-between text-sm text-gray-600">
+                    <span>
+                        Pertanyaan {currentQuestionIndex + 1} dari {totalQuestions}
+                    </span>
+                    <span>
+                        {answeredQuestions} dari {totalQuestions} terjawab
+                    </span>
+                </div>
+                <Progress value={progressPercentage} className="h-2" />
+            </div>
+
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
+                {/* Question Navigation */}
+                <div className="lg:col-span-1">
+                    <Card className="sticky top-6">
+                        <CardHeader>
+                            <CardTitle className="text-lg">Navigasi Soal</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="grid grid-cols-5 gap-2 lg:grid-cols-4">
+                                {quiz.questions.map((question, index) => (
+                                    <button
+                                        key={question.id}
+                                        onClick={() => goToQuestion(index)}
+                                        className={`aspect-square rounded border-2 text-sm font-medium transition-colors ${
+                                            currentQuestionIndex === index
+                                                ? 'border-emerald-500 bg-emerald-50 text-emerald-700'
+                                                : selectedAnswers[question.id]
+                                                ? 'border-green-500 bg-green-50 text-green-700'
+                                                : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300'
+                                        }`}
+                                    >
+                                        {index + 1}
+                                    </button>
+                                ))}
+                            </div>
+                            <div className="mt-4 space-y-2 text-xs text-gray-600">
+                                <div className="flex items-center">
+                                    <div className="mr-2 h-3 w-3 rounded border-2 border-emerald-500 bg-emerald-50"></div>
+                                    Soal saat ini
+                                </div>
+                                <div className="flex items-center">
+                                    <div className="mr-2 h-3 w-3 rounded border-2 border-green-500 bg-green-50"></div>
+                                    Sudah dijawab
+                                </div>
+                                <div className="flex items-center">
+                                    <div className="mr-2 h-3 w-3 rounded border-2 border-gray-200 bg-white"></div>
+                                    Belum dijawab
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+
+                {/* Main Question */}
+                <div className="lg:col-span-3">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="text-lg">
+                                Pertanyaan {currentQuestionIndex + 1}
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-6">
+                            {/* Question Text */}
+                            <div className="space-y-4">
+                                <p className="text-lg leading-relaxed text-gray-900">
+                                    {currentQuestion.question_text}
+                                </p>
+                                {currentQuestion.question_image_url && (
+                                    <div className="flex justify-center">
+                                        <img
+                                            src={currentQuestion.question_image_url.startsWith('/storage/')
+                                                ? currentQuestion.question_image_url
+                                                : `/storage/${currentQuestion.question_image_url}`
+                                            }
+                                            alt="Question illustration"
+                                            className="max-h-64 rounded-lg border"
+                                        />
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Answer Options */}
+                            <div className="space-y-3">
+                                {currentQuestion.answers.map((answer, index) => (
+                                    <button
+                                        key={answer.id}
+                                        onClick={() => handleAnswerSelect(answer.id)}
+                                        className={`w-full rounded-lg border-2 p-4 text-left transition-all ${
+                                            selectedAnswers[currentQuestion.id] === answer.id
+                                                ? 'border-emerald-500 bg-emerald-50'
+                                                : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50'
+                                        }`}
+                                    >
+                                        <div className="flex items-start space-x-3">
+                                            <div
+                                                className={`mt-1 flex h-6 w-6 items-center justify-center rounded-full border-2 text-sm font-medium ${
+                                                    selectedAnswers[currentQuestion.id] === answer.id
+                                                        ? 'border-emerald-500 bg-emerald-500 text-white'
+                                                        : 'border-gray-300 bg-white text-gray-600'
+                                                }`}
+                                            >
+                                                {String.fromCharCode(65 + index)}
+                                            </div>
+                                            <div className="flex-1">
+                                                {answer.answer_text && (
+                                                    <p className="text-gray-900">{answer.answer_text}</p>
+                                                )}
+                                                {answer.image_url && (
+                                                    <img
+                                                        src={answer.image_url.startsWith('/storage/')
+                                                            ? answer.image_url
+                                                            : `/storage/${answer.image_url}`
+                                                        }
+                                                        alt={`Option ${String.fromCharCode(65 + index)}`}
+                                                        className="mt-2 max-h-32 rounded border"
+                                                    />
+                                                )}
+                                            </div>
+                                        </div>
+                                    </button>
+                                ))}
+                            </div>
+
+                            {/* Navigation Buttons */}
+                            <div className="flex items-center justify-between border-t pt-6">
+                                <Button
+                                    variant="outline"
+                                    onClick={goToPreviousQuestion}
+                                    disabled={currentQuestionIndex === 0}
+                                >
+                                    <ArrowLeft className="mr-2 h-4 w-4" />
+                                    Sebelumnya
+                                </Button>
+
+                                {currentQuestionIndex === totalQuestions - 1 ? (
+                                    <Button
+                                        onClick={() => setShowSubmitDialog(true)}
+                                        className="bg-emerald-600 hover:bg-emerald-700"
+                                        disabled={answeredQuestions === 0}
+                                    >
+                                        <Flag className="mr-2 h-4 w-4" />
+                                        Selesaikan Quiz
+                                    </Button>
+                                ) : (
+                                    <Button
+                                        onClick={goToNextQuestion}
+                                        className="bg-emerald-600 hover:bg-emerald-700"
+                                    >
+                                        Selanjutnya
+                                        <ArrowRight className="ml-2 h-4 w-4" />
+                                    </Button>
+                                )}
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+            </div>
+
+            {/* Exit Dialog */}
+            <AlertDialog open={showExitDialog} onOpenChange={setShowExitDialog}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle className="flex items-center">
+                            <AlertTriangle className="mr-2 h-5 w-5 text-amber-500" />
+                            Keluar dari Quiz?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Apakah Anda yakin ingin keluar? Semua jawaban yang sudah Anda pilih akan hilang
+                            dan tidak dapat dikembalikan.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Batal</AlertDialogCancel>
+                        <AlertDialogAction
+                            onClick={handleExitQuiz}
+                            className="bg-red-600 hover:bg-red-700"
+                        >
+                            Ya, Keluar
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+
+            {/* Submit Dialog */}
+            <AlertDialog open={showSubmitDialog} onOpenChange={setShowSubmitDialog}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle className="flex items-center">
+                            <Flag className="mr-2 h-5 w-5 text-emerald-500" />
+                            Selesaikan Quiz?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                            <div className="space-y-2">
+                                <p>Anda telah menjawab {answeredQuestions} dari {totalQuestions} pertanyaan.</p>
+                                {answeredQuestions < totalQuestions && (
+                                    <p className="text-amber-600">
+                                        <AlertTriangle className="mr-1 inline h-4 w-4" />
+                                        {totalQuestions - answeredQuestions} pertanyaan belum dijawab dan akan dianggap salah.
+                                    </p>
+                                )}
+                                <p>Apakah Anda yakin ingin menyelesaikan quiz ini?</p>
+                            </div>
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Batal</AlertDialogCancel>
+                        <AlertDialogAction
+                            onClick={handleSubmitQuiz}
+                            className="bg-emerald-600 hover:bg-emerald-700"
+                        >
+                            Ya, Selesaikan
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+        </div>
+    );
+};
+
+export default QuizTakingPage;
