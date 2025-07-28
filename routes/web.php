@@ -10,11 +10,13 @@ use App\Http\Controllers\Admin\ContentController as AdmContentController;
 use App\Http\Controllers\Admin\DashboardController as AdmDashboardController;
 use App\Http\Controllers\Admin\MerchandiseController as AdmMerchandiseController;
 use App\Http\Controllers\Admin\MissionController as AdmMissionController;
+use App\Http\Controllers\Admin\QuizController as AdmQuizController;
 use App\Http\Controllers\Admin\ReportController as AdmReportController;
 use App\Http\Controllers\Admin\UserController as AdmUserController;
 
 use App\Http\Controllers\Citizen\MerchandiseController as CtzMerchandiseController;
 use App\Http\Controllers\Citizen\CommentController as CtzCommentController;
+use App\Http\Controllers\Citizen\QuizController as CtzQuizController;
 use App\Http\Controllers\Citizen\ReportController as CtzReportController;
 use App\Http\Controllers\Citizen\ProfileController as CtzProfileController;
 use App\Http\Controllers\Citizen\MapController as CtzMapController;
@@ -97,6 +99,7 @@ Route::prefix('')->middleware(['auth', 'isProfileComplete'])->group(function () 
 
     Route::resource('merchandise', CtzMerchandiseController::class);
     Route::get('/my-merchandise', [CtzMerchandiseController::class, 'viewMyMerchandise'])->name('my-merchandise');
+    Route::resource('quiz', CtzQuizController::class);
 
     Route::get('/leaderboard', function () {
         return Inertia::render('Citizen/Leaderboard/LeaderBoardPage');
@@ -163,7 +166,7 @@ Route::prefix('admin')->as('admin.')->middleware(['auth',])->group(function () {
     Route::resource('certificates', AdmCertificateController::class);
     Route::resource('dashboard', AdmDashboardController::class);
     Route::resource('merchandise', AdmMerchandiseController::class);
-
+    Route::resource('quizzes', AdmQuizController::class);
 
     Route::resource('chatbot', ChatBotController::class);
 });
