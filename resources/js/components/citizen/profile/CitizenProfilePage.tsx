@@ -30,6 +30,7 @@ import {
     MapPinned,
     Phone,
     Plus,
+    Star,
     Target,
     Trophy,
 } from 'lucide-react';
@@ -153,12 +154,10 @@ const CitizenProfilePage = ({
                                     <h1 className="mb-2 text-3xl font-bold text-gray-900">
                                         {user?.name || 'User Name'}
                                     </h1>
-                                    {/* <div className="flex items-center space-x-2">
-                                        <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
-                                        <span className="text-sm font-medium text-emerald-600">
-                                            Active Member
-                                        </span>
-                                    </div> */}
+                                    <div className="mt-2 inline-flex items-center gap-1.5 rounded-md bg-yellow-100 px-2 py-0.5 text-xs font-medium text-yellow-800">
+                                        <Star className="h-4 w-4 text-yellow-500" />
+                                        {user?.points_balance || 0} Poin
+                                    </div>
                                 </div>
                                 <div className="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
                                     <div className="space-y-4">

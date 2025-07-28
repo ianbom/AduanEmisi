@@ -79,7 +79,9 @@ Route::prefix('')->middleware(['auth', 'isProfileComplete'])->group(function () 
     Route::get('/report-create', [CtzReportController::class, 'create'])->name('create.report');
     Route::post('/reports', [CtzReportController::class, 'store'])->name('reports.store');
     Route::post('/reports/{report}/vote', [CtzReportController::class, 'vote'])->name('report.vote');
+    // Route untuk keperluan yang berkaitan dengan Donasi
     Route::post('/donate/report/{id}', [CtzDonationController::class, 'donateReport'])->name('donate.report');
+    Route::get('/my-donations', [CtzDonationController::class, 'viewMyDonations'])->name('my-donations');
     // Route untuk keperluan yang berkaitan dengan Komentar
     Route::post('comments/store', [CtzCommentController::class, 'store'])->name('comments.store');
     // Route untuk keperluan yang berkaitan dengan misi
@@ -96,11 +98,12 @@ Route::prefix('')->middleware(['auth', 'isProfileComplete'])->group(function () 
     Route::get('/education/{id}', [CtzContentController::class, 'show'])->name('content.show');
 
     Route::resource('merchandise', CtzMerchandiseController::class);
+    Route::get('/my-merchandise', [CtzMerchandiseController::class, 'viewMyMerchandise'])->name('my-merchandise');
     Route::resource('quiz', CtzQuizController::class);
 
     Route::get('/leaderboard', function () {
-    return Inertia::render('Citizen/Leaderboard/LeaderBoardPage');
-});
+        return Inertia::render('Citizen/Leaderboard/LeaderBoardPage');
+    });
 });
 
 
@@ -142,7 +145,7 @@ Route::prefix('community')->as('community.')->middleware(['auth'])->group(functi
 });
 
 
-Route::prefix('admin')->as('admin.')->middleware(['auth', ])->group(function () {
+Route::prefix('admin')->as('admin.')->middleware(['auth',])->group(function () {
     Route::resource('missions', AdmMissionController::class);
     Route::put('missions/update/volunteer/{missionVolunteer}', [AdmMissionController::class, 'updateStatusVolunteer'])->name('update.volunteerStatus');
 

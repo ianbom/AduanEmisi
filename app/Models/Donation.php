@@ -18,7 +18,7 @@ class Donation extends Model
     //     'payment_response' => 'array',
     // ];
 
- 
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

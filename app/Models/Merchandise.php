@@ -10,10 +10,8 @@ class Merchandise extends Model
 
     protected $table = 'merchandise';
 
-    public function reedems(){
+    public function reedems()
+    {
         return $this->hasMany(Reedems::class);
     }
-
-    
-
 }

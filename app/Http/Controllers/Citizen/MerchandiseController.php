@@ -15,26 +15,39 @@ class MerchandiseController extends Controller
 {
 
     protected $pointService;
-    public function __construct(PointService $pointService){
+    public function __construct(PointService $pointService)
+    {
         $this->pointService = $pointService;
     }
 
-    public function index(){
+    public function index()
+    {
         $userPoints = Auth::user()->points_balance;
         $merchandise = Merchandise::where('is_active', true)->get();
         return Inertia::render('Citizen/Merchandise/MerchandisePage', ['merchandise' => $merchandise, 'userPoints' => $userPoints]);
     }
 
-    public function store(CreateReedemsRequest $request){
+    public function store(CreateReedemsRequest $request)
+    {
         $data = $request->validated();
 
         DB::beginTransaction();
         try {
             $this->pointService->reedemMerchandise($data);
-          DB::commit();
+            DB::commit();
         } catch (\Throwable $th) {
             DB::rollBack();
             return response()->json(['err' => $th->getMessage()]);
         }
+    }
+    public function viewMyMerchandise()
+    {
+        $user = Auth::user();
+        $redeems = $user->reedems()->with('merchandise')->latest()->get();
+
+
+        return Inertia::render('Citizen/Merchandise/MyMerchandisePage', [
+            'redeems' => $redeems
+        ]);
     }
 }

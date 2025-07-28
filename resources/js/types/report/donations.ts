@@ -1,4 +1,4 @@
-import {User} from '@/types/user/interface'
+import { User } from '@/types/user/interface';
 import { Report } from './report';
 
 export interface Donation {
@@ -10,5 +10,4 @@ export interface Donation {
     transaction_id: string;
     snap_token: string;
     payment_response: string;
-
 }

@@ -14,7 +14,6 @@ interface Props {
 const ProfileMenuDropdown = ({ user, menuItems }: Props) => {
     const userName = user?.name?.trim() || 'Guest';
     const userInitial = userName ? userName.charAt(0).toUpperCase() : 'G';
-
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
