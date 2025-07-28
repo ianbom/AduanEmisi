@@ -341,7 +341,7 @@ const MerchandisePage = ({
                                                 <img
                                                     src={`/storage/${item.image_url}`}
                                                     alt={item.name}
-                                                    className="h-48 w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                                    className="h-48 w-full object-contain transition-transform duration-300 group-hover:scale-105"
                                                 />
                                                 <div className="absolute right-3 top-3">
                                                     <Badge

@@ -1,5 +1,4 @@
 'use client';
-
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -228,7 +227,7 @@ const MyMerchandisePage = ({ reedems, auth }: MyMerchandisePageProps) => {
                                     <img
                                         src={`/storage/${reedem.merchandise?.image_url}`}
                                         alt={reedem.merchandise?.name}
-                                        className="h-16 w-16 rounded-md border border-gray-300 object-cover"
+                                        className="h-16 w-16 rounded-md border border-gray-300 object-contain"
                                     />
                                     <div>
                                         <p className="text-sm text-gray-500">

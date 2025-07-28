@@ -9,7 +9,7 @@ export const getStatusColor = (status: string) => {
         case 'rejected':
             return 'bg-rose-100 text-rose-700';
         case 'under-authority':
-            return 'bg-yellow-400 text-yellow-700';
+            return 'bg-yellow-400 text-black';
         default:
             return 'bg-gray-100 text-slate-700';
     }
