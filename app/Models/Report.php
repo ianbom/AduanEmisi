@@ -18,9 +18,11 @@ class Report extends Model
         'longitude' => 'decimal:7',
     ];
 
-    /**
-     * Get the user who reported this.
-     */
+    public function points()
+    {
+        // Parameter kedua ('pointable') harus cocok dengan nama yang Anda gunakan di `morphs()`
+        return $this->morphMany(Point::class, 'pointable');
+    }
     public function reporter()
     {
         return $this->belongsTo(User::class, 'reporter_id');

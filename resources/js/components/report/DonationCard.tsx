@@ -313,17 +313,18 @@ export function DonationCard({ donations, reportId }: DonationCardProps) {
                         console.log('handleSuccessPayment completed successfully');
 
                         // Reload data donations
-                        Inertia.reload({ only: ['donations'], preserveScroll: true });
+                        window.location.reload();
+                        // Inertia.reload({ only: ['donations'], preserveScroll: true });
                     } catch (error) {
                         console.error('Error in handleSuccessPayment:', error);
                         // Tetap reload meskipun ada error di handleSuccessPayment
-                        Inertia.reload({ only: ['donations'], preserveScroll: true });
+                        window.location.reload();
                     }
                 },
                 onPending: function(result: any) {
                     console.log('Payment pending:', result);
                     // Untuk pending, mungkin tidak perlu panggil handleSuccessPayment
-                    Inertia.reload({ only: ['donations'], preserveScroll: true });
+                    window.location.reload();
                 },
                 onError: function(result: any) {
                     console.log('Payment error:', result);

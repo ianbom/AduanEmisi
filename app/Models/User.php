@@ -63,6 +63,10 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function reedems(){
+        return $this->hasMany(Reedems::class);
+    }
     public function province()
     {
         return $this->belongsTo(Province::class);
