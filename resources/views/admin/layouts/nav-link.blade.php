@@ -111,6 +111,18 @@
                         <span class="truncate">Badges</span>
                     </a>
                 </li>
+                <li>
+                    {{-- Merchandise --}}
+                    <a href="{{ route('admin.merchandise.index') }}"
+                       class="group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold {{ request()->routeIs('admin.merchandise.*') ? 'bg-emerald-800 text-white' : 'text-emerald-100 hover:text-white hover:bg-emerald-800' }}">
+                        <svg class="size-6 shrink-0 {{ request()->routeIs('admin.merchandise.*') ? 'text-white' : 'text-emerald-300 group-hover:text-white' }}"
+                             fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 11.25v8.25a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 19.5v-8.25M12 4.875A2.625 2.625 0 1 0 9.375 7.5H12m0-2.625V7.5m0-2.625A2.625 2.625 0 1 1 14.625 7.5H12m0 0H9.375m0 0A2.625 2.625 0 1 1 6.75 4.875c0 1.437.875 2.625 2.625 2.625M12 7.5v12m-3-12h6" />
+                        </svg>
+
+                        <span class="truncate">Merchandise</span>
+                    </a>
+                </li>
             </ul>
         </li>
         <li>

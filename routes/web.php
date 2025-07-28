@@ -2,16 +2,18 @@
 
 use App\Http\Controllers\ChatBotController;
 use App\Http\Controllers\Auth\GoogleAuthController;
+
 use App\Http\Controllers\Citizen\NotificationController;
 use App\Http\Controllers\Admin\BadgeController as AdmBadgeController;
 use App\Http\Controllers\Admin\CertificateController as AdmCertificateController;
 use App\Http\Controllers\Admin\ContentController as AdmContentController;
 use App\Http\Controllers\Admin\DashboardController as AdmDashboardController;
+use App\Http\Controllers\Admin\MerchandiseController as AdmMerchandiseController;
 use App\Http\Controllers\Admin\MissionController as AdmMissionController;
 use App\Http\Controllers\Admin\ReportController as AdmReportController;
 use App\Http\Controllers\Admin\UserController as AdmUserController;
 
-
+use App\Http\Controllers\Citizen\MerchandiseController as CtzMerchandiseController;
 use App\Http\Controllers\Citizen\CommentController as CtzCommentController;
 use App\Http\Controllers\Citizen\ReportController as CtzReportController;
 use App\Http\Controllers\Citizen\ProfileController as CtzProfileController;
@@ -91,6 +93,8 @@ Route::prefix('')->middleware(['auth', 'isProfileComplete'])->group(function () 
     Route::get('/education', [CtzContentController::class, 'index'])->name('content.index');
     Route::get('/education/{id}', [CtzContentController::class, 'show'])->name('content.show');
 
+    Route::resource('merchandise', CtzMerchandiseController::class);
+
     Route::get('/leaderboard', function () {
     return Inertia::render('Citizen/Leaderboard/LeaderBoardPage');
 });
@@ -155,6 +159,8 @@ Route::prefix('admin')->as('admin.')->middleware(['auth', ])->group(function () 
     Route::post('/missions/certificates/generate', [AdmCertificateController::class, 'generate'])->name('missions.certificates.generate');
     Route::resource('certificates', AdmCertificateController::class);
     Route::resource('dashboard', AdmDashboardController::class);
+    Route::resource('merchandise', AdmMerchandiseController::class);
+
 
     Route::resource('chatbot', ChatBotController::class);
 });

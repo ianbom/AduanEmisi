@@ -24,6 +24,7 @@ export default function CitizenLayout({ children, currentPage }: Props) {
         { id: 'mission', label: 'Misi', key: 'mission' },
         { id: 'map', label: 'Peta', key: 'map' },
         { id: 'education', label: 'Konten Edukasi', key: 'education' },
+        { id: 'merchandise', label: 'Merchandise', key: 'merchandise' },
     ];
     useEffect(() => {
         console.log('Flash data di CitizenLayout:', flash);

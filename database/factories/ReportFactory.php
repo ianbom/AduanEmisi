@@ -38,9 +38,16 @@ class ReportFactory extends Factory
             'title' => fake()->sentence(6),
             'description' => fake()->paragraph(5),
             'category' => fake()->randomElement([
-                'Sampah Plastik', 'Pencemaran Air', 'Pencemaran Udara', 'Pencemaran Tanah',
-                'Limbah Industri', 'Emisi Gas Rumah Kaca', 'Penggundulan / Kebakaran Hutan',
-                'Naiknya Permukaan Air Laut', 'Limbah Pertanian / Peternakan', 'Lainnya'
+                'sampah-plastik',
+                'pencemaran-air',
+                'pencemaran-udara',
+                'pencemaran-tanah',
+                'limbah-industri',
+                'emisi-gas-rumah-kaca',
+                'penggundulan-kebakaran-hutan',
+                'naiknya-permukaan-air-laut',
+                'limbah-pertanian-peternakan',
+                'lainnya'
             ]),
             'latitude' => fake()->latitude(),
             'longitude' => fake()->longitude(),
