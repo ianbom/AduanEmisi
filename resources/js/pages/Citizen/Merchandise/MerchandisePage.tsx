@@ -1,7 +1,7 @@
 import CitizenLayout from '@/components/layouts/CitizenLayout';
 import MerchandisePage from '@/components/merchandise/MerchandisePage';
 import { PageProps } from '@/types';
-import { router as Inertia, usePage } from '@inertiajs/react';
+import { usePage } from '@inertiajs/react';
 
 interface Merchandise {
     id: number;
@@ -22,10 +22,10 @@ interface MerchandisePageRouteProps {
 const MerchandisePageRoute = () => {
     const { props } = usePage<PageProps<MerchandisePageRouteProps>>();
     const merchandise = props.merchandise || [];
-    const userPoints = props.userPoints
-    const handleViewDetails = (merchandiseId: number) => {
-        Inertia.visit(route('merchandise.show', { id: merchandiseId }));
-    };
+    const userPoints = props.userPoints;
+    // const handleViewDetails = (merchandiseId: number) => {
+    //     Inertia.visit(route('merchandise.show', { id: merchandiseId }));
+    // };
 
     console.log('point', userPoints);
 
@@ -38,8 +38,7 @@ const MerchandisePageRoute = () => {
         <CitizenLayout currentPage="merchandise">
             <MerchandisePage
                 merchandise={merchandise}
-                onViewDetails={handleViewDetails}
-
+                // onViewDetails={handleViewDetails}
                 userPoints={userPoints}
             />
         </CitizenLayout>

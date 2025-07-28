@@ -28,4 +28,5 @@ export interface User {
         created_at: string;
     };
     status: string;
+    points_balance: number;
 }

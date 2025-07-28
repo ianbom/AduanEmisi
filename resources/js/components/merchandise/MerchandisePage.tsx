@@ -11,19 +11,16 @@ import {
 import { formatDateOnly } from '@/utils/formatDate';
 import {
     Calendar,
-    Eye,
+    Gift,
     RefreshCcw,
     Search,
     ShoppingBag,
     SlidersHorizontal,
     Star,
-    Gift,
-    Coins,
 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { Badge } from '../ui/badge';
 import ModalRedeemMerchandise from './ModalReedemMerchandise';
-
 
 interface Merchandise {
     id: number;
@@ -39,7 +36,7 @@ interface Merchandise {
 interface MerchandisePageProps {
     merchandise: Merchandise[];
     userPoints: number;
-    onViewDetails: (id: number) => void;
+    // onViewDetails: (id: number) => void;
     onPurchase: (id: number, address: string) => Promise<void>;
 }
 
@@ -53,7 +50,7 @@ interface FilterOptions {
 const MerchandisePage = ({
     merchandise,
     userPoints,
-    onViewDetails,
+    // onViewDetails,
     // onPurchase,
 }: MerchandisePageProps) => {
     const [sortBy, setSortBy] = useState('newest');
@@ -67,7 +64,8 @@ const MerchandisePage = ({
 
     // Modal state - simplified
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedMerchandise, setSelectedMerchandise] = useState<Merchandise | null>(null);
+    const [selectedMerchandise, setSelectedMerchandise] =
+        useState<Merchandise | null>(null);
 
     // Filter and sort merchandise
     const filteredAndSortedMerchandise = useMemo(() => {
@@ -210,14 +208,15 @@ const MerchandisePage = ({
                         Toko Merchandise
                     </h1>
                     <p className="text-gray-600">
-                        Tukarkan poin Anda dengan merchandise eksklusif dan jadilah bagian dari gerakan lingkungan
+                        Tukarkan poin Anda dengan merchandise eksklusif dan
+                        jadilah bagian dari gerakan lingkungan
                     </p>
                 </div>
                 <div className="mt-4 md:mt-0">
-                    <div className="flex items-center rounded-lg bg-emerald-50 px-4 py-2">
-                        <Coins className="mr-2 h-5 w-5 text-emerald-600" />
-                        <span className="font-semibold text-emerald-700">
-                            Poin Saya: {userPoints.toLocaleString('id-ID')}
+                    <div className="flex items-center rounded-lg bg-yellow-100 px-4 py-2">
+                        <Star className="mr-2 h-5 w-5 text-yellow-800" />
+                        <span className="font-semibold text-yellow-800">
+                            Poin Saya: {userPoints.toLocaleString('id-ID')} Poin
                         </span>
                     </div>
                 </div>
@@ -352,10 +351,13 @@ const MerchandisePage = ({
                                                                 : 'bg-red-100 text-red-800 hover:bg-red-200'
                                                         }
                                                     >
-                                                        {item.is_active ? 'Tersedia' : 'Habis'}
+                                                        {item.is_active
+                                                            ? 'Tersedia'
+                                                            : 'Habis'}
                                                     </Badge>
                                                 </div>
-                                                {userPoints < item.points_cost && (
+                                                {userPoints <
+                                                    item.points_cost && (
                                                     <div className="absolute left-3 top-3">
                                                         <Badge className="bg-yellow-100 text-yellow-800">
                                                             Poin Kurang
@@ -374,45 +376,69 @@ const MerchandisePage = ({
 
                                                 <div className="mb-3 flex items-center justify-between">
                                                     <div className="flex items-center text-lg font-bold text-emerald-600">
-                                                        <Star size={16} className="mr-1 fill-current" />
-                                                        {item.points_cost.toLocaleString('id-ID')} Poin
+                                                        <Star
+                                                            size={16}
+                                                            className="mr-1 fill-current"
+                                                        />
+                                                        {item.points_cost.toLocaleString(
+                                                            'id-ID',
+                                                        )}{' '}
+                                                        Poin
                                                     </div>
                                                 </div>
 
                                                 <div className="mb-4 flex items-center text-sm text-gray-500">
-                                                    <Calendar size={14} className="mr-1" />
+                                                    <Calendar
+                                                        size={14}
+                                                        className="mr-1"
+                                                    />
                                                     <span>
-                                                        Ditambahkan: {formatDateOnly(item.created_at)}
+                                                        Ditambahkan:{' '}
+                                                        {formatDateOnly(
+                                                            item.created_at,
+                                                        )}
                                                     </span>
                                                 </div>
 
                                                 <div className="flex gap-2">
-                                                    <Button
+                                                    {/* <Button
                                                         variant="outline"
                                                         className="flex-1"
                                                         onClick={(e) => {
                                                             e.stopPropagation();
-                                                            onViewDetails(item.id);
+                                                            onViewDetails(
+                                                                item.id,
+                                                            );
                                                         }}
                                                     >
-                                                        <Eye size={16} className="mr-2" />
+                                                        <Eye
+                                                            size={16}
+                                                            className="mr-2"
+                                                        />
                                                         Detail
-                                                    </Button>
+                                                    </Button> */}
                                                     <Button
-                                                        className="flex-1 bg-emerald-600 transition-colors duration-200 hover:bg-emerald-700 disabled:bg-gray-400"
+                                                        className="flex-1 bg-amber-600 transition-colors duration-200 hover:bg-amber-700 disabled:bg-gray-400"
                                                         onClick={(e) => {
                                                             e.stopPropagation();
                                                             openModal(item);
                                                         }}
-                                                        disabled={!item.is_active || userPoints < item.points_cost}
+                                                        disabled={
+                                                            !item.is_active ||
+                                                            userPoints <
+                                                                item.points_cost
+                                                        }
                                                     >
-                                                        <ShoppingBag size={16} className="mr-2" />
+                                                        <ShoppingBag
+                                                            size={16}
+                                                            className="mr-2"
+                                                        />
                                                         {!item.is_active
                                                             ? 'Habis'
-                                                            : userPoints < item.points_cost
-                                                                ? 'Poin Kurang'
-                                                                : 'Tukar'
-                                                        }
+                                                            : userPoints <
+                                                                item.points_cost
+                                                              ? 'Poin Kurang'
+                                                              : 'Tukar'}
                                                     </Button>
                                                 </div>
                                             </CardContent>
@@ -463,7 +489,6 @@ const MerchandisePage = ({
                 onClose={closeModal}
                 merchandise={selectedMerchandise}
                 userPoints={userPoints}
-                
             />
         </div>
     );
