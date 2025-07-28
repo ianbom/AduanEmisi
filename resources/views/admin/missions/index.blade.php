@@ -106,12 +106,14 @@
                             <label for="status" class="block text-sm font-semibold text-gray-700">Status</label>
                             <select name="status" id="status" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
                                 <option value="">Semua Status</option>
-                                <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
-                                <option value="in_progress" {{ request('status') == 'in_progress' ? 'selected' : '' }}>In Progress</option>
-                                <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Completed</option>
-                                <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+                                <option value="open" {{ request('status') == 'open' ? 'selected' : '' }}>Terbuka</option>
+                                <option value="on-progress" {{ request('status') == 'on-progress' ? 'selected' : '' }}>Dalam Proses</option>
+                                <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Selesai</option>
+                                <option value="under-authority" {{ request('status') == 'under-authority' ? 'selected' : '' }}>Pihak Berwenang</option>
+                                <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Dibatalkan</option>
                             </select>
                         </div>
+
 
                         <!-- City Filter -->
                         <div class="space-y-2">
@@ -147,7 +149,7 @@
                     <!-- Row 2 -->
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <!-- Assigned To Type Filter -->
-                        <div class="space-y-2">
+                        {{-- <div class="space-y-2">
                             <label for="assigned_to_type" class="block text-sm font-semibold text-gray-700">Tipe Penugasan</label>
                             <select name="assigned_to_type" id="assigned_to_type" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
                                 <option value="">Semua Tipe</option>
@@ -155,7 +157,7 @@
                                 <option value="team" {{ request('assigned_to_type') == 'team' ? 'selected' : '' }}>Team</option>
                                 <option value="admin" {{ request('assigned_to_type') == 'admin' ? 'selected' : '' }}>Admin</option>
                             </select>
-                        </div>
+                        </div> --}}
 
                         <!-- Search Filter -->
                         <div class="space-y-2">
@@ -263,9 +265,9 @@
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                                 Status
                             </th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                            {{-- <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                                 Tipe Penugasan
-                            </th>
+                            </th> --}}
                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                                 Tanggal Terjadwal
                             </th>
@@ -313,11 +315,11 @@
                                         {{ $statusLabels[$mission->status] ?? ucfirst($mission->status) }}
                                     </span>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                                {{-- <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                                     <span class="bg-gray-100 px-2 py-1 rounded-lg text-xs font-medium">
                                         {{ ucfirst($mission->assigned_to_type ?? '-') }}
                                     </span>
-                                </td>
+                                </td> --}}
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                                     {{ $mission->scheduled_date ? \Carbon\Carbon::parse($mission->scheduled_date)->format('d M Y') : '-' }}
                                 </td>

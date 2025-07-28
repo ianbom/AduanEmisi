@@ -106,9 +106,9 @@
                             <label for="content_type" class="block text-sm font-semibold text-gray-700">Tipe Konten</label>
                             <select name="content_type" id="content_type" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
                                 <option value="">Semua Tipe</option>
-                                <option value="article" {{ request('content_type') == 'article' ? 'selected' : '' }}>Artikel</option>
-                                <option value="news" {{ request('content_type') == 'news' ? 'selected' : '' }}>Berita</option>
-                                <option value="guide" {{ request('content_type') == 'guide' ? 'selected' : '' }}>Panduan</option>
+                                <option value="artikel" {{ request('content_type') == 'article' ? 'selected' : '' }}>Artikel</option>
+                                <option value="video" {{ request('content_type') == 'video' ? 'selected' : '' }}>Video</option>
+                                <option value="modul" {{ request('content_type') == 'modul' ? 'selected' : '' }}>Modul</option>
                             </select>
                         </div>
 
