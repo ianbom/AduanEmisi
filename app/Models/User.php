@@ -64,6 +64,13 @@ class User extends Authenticatable
         ];
     }
 
+     public function quizAttempt(){
+        return $this->hasMany(QuizAttempt::class);
+    }
+    public function quizAttemptAnswer(){
+        return $this->hasMany(QuizAttemptAnswer::class);
+    }
+
     public function reedems(){
         return $this->hasMany(Reedems::class);
     }
