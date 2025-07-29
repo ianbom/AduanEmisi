@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Merchandise;
 use App\Models\Point;
 use App\Models\Reedems;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class PointService
@@ -17,11 +18,11 @@ class PointService
         //
     }
 
-    public function increamentPoint($description, $pointType, $pointId, $amount){
-        $user = Auth::user();
+    public function increamentPoint($description, $pointType, $pointId, $amount, $userId){
+        $user = User::findOrFail($userId);
 
         Point::create([
-            'user_id' => $user->id,
+            'user_id' => $userId,
             'type' => 'increament',
             'description' => $description,
             'pointable_type' => $pointType,
@@ -29,12 +30,12 @@ class PointService
             'amount' => $amount,
         ]);
 
-         $user->increment('points_balance', $amount);
+        $user->increment('points_balance', $amount);
         return $user->fresh();
     }
 
-     public function decreamentPoint($description, $pointType, $pointId, $amount){
-        $user = Auth::user();
+     public function decreamentPoint($description, $pointType, $pointId, $amount, $userId){
+        $user = User::findOrFail($userId);
 
         Point::create([
             'user_id' => $user->id,
@@ -61,6 +62,6 @@ class PointService
             'tracking_number' => null
         ]);
 
-        $this->decreamentPoint('Penukaran merchandise', Merchandise::class, $data['merchandise_id'], $data['points_spent']);
+        $this->decreamentPoint('Penukaran merchandise', Merchandise::class, $data['merchandise_id'], $data['points_spent'], $user->id);
     }
 }

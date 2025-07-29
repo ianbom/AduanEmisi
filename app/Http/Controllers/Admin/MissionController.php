@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateMissionRequest;
 use App\Http\Requests\UpdateMissionRequest;
+use App\Jobs\NotificationJob;
 use App\Models\City;
 use App\Models\District;
 use App\Models\Mission;
@@ -14,16 +15,19 @@ use App\Models\MissionVolunteer;
 use App\Models\Province;
 use App\Models\Report;
 use App\Services\MissionServices;
+use App\Services\PointService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class MissionController extends Controller
 {
     protected $missionService;
+    protected $pointService;
 
-    public function __construct(MissionServices $missionService)
+    public function __construct(MissionServices $missionService, PointService $pointService)
     {
         $this->missionService = $missionService;
+        $this->pointService = $pointService;
     }
 
     public function store(CreateMissionRequest $request)
@@ -92,7 +96,7 @@ class MissionController extends Controller
 
             DB::commit();
             return redirect()
-                ->route('admin.missions.index')
+                ->back()
                 ->with('success', 'Misi berhasil diperbarui.');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -139,6 +143,33 @@ class MissionController extends Controller
             DB::rollBack();
             return response()->json(['err' => $th->getMessage()]);
         }
+    }
+
+    public function shareMissionPoint(Mission $mission){
+
+        $missionVolunteers = MissionVolunteer::where('mission_id', $mission->id)
+        ->where('participation_status', 'attended')->get();
+
+        DB::beginTransaction();
+        try {
+        $mission->update(['is_point_shared' => true]);
+        foreach ($missionVolunteers as $volunteer) {
+           $this->pointService->increamentPoint('Misi diseleaikan, selamat anda mendapatkan 60 point',
+            Mission::class, $mission->id, 100,$volunteer->user_id);
+            NotificationJob::dispatch('Misi Diselesaikan',
+            'Terimakasih telah menjadi bagian SobatBumi', $volunteer->user_id, 'Mission');
+        }
+
+        DB::commit();
+          return redirect()->back()->with('success', 'Point berhasil dikirimkan');
+        } catch (\Throwable $th) {
+           DB::rollBack();
+           return redirect()->back()->with('error', 'Terjadi kesalah ');
+        }
+
+
+
+
     }
 
 

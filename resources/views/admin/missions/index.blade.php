@@ -280,7 +280,7 @@
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
-                        @foreach($missions as $mission)
+                        @foreach($missions as $index => $mission)
                             <tr class="hover:bg-gray-50 transition-colors duration-150">
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
                                     <span class="bg-gray-100 px-2 py-1 rounded-lg">#{{ $mission->id }}</span>
@@ -328,13 +328,13 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                     <div class="flex items-center space-x-3">
-                                        <a href="{{ route('report.show', $mission->report_id) }}"
+                                        {{-- <a href="{{ route('report.show', $mission->report_id) }}"
                                            class="text-blue-600 hover:text-blue-800 transition-colors duration-150">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                                             </svg>
-                                        </a>
+                                        </a> --}}
                                         <a href="{{ route('admin.missions.edit', $mission->id) }}"
                                            class="text-green-600 hover:text-green-800 transition-colors duration-150">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -371,7 +371,9 @@
     $(document).ready(function() {
         // Initialize DataTable
         $('#missionsTable').DataTable({
-        });
+    order: [[ 5, 'desc' ]],
+    lengthMenu: [[10, 50, 100, -1], [10, 50, 100, "All"]]
+});
 
         // Toggle filter functionality
         $('#toggleFilters').click(function() {
