@@ -1,0 +1,1 @@
+import{j as m}from"./app-CoH15XZe.js";import{L as e}from"./login-form-BZl958Sq.js";import"./index-CJhcQlSm.js";import"./label-B0wQfWde.js";function o(){return m.jsx("div",{className:"flex min-h-svh flex-col items-center justify-center bg-muted p-6 md:p-10",children:m.jsx("div",{className:"w-full max-w-sm md:max-w-3xl",children:m.jsx(e,{})})})}export{o as default};

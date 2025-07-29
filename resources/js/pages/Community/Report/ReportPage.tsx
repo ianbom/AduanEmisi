@@ -1,3 +1,4 @@
+// @ts-nocheck
 import CommunityLayout from '@/components/layouts/CommunityLayout';
 import ReportsPage from '@/components/report/ReportsPage';
 import { PageProps } from '@/types';

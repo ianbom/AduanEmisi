@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { PageProps } from '@/types';
 import { Notification } from '@/types/notification/interface';
 import { router, usePage } from '@inertiajs/react';

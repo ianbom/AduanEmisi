@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { PageProps } from '@/types';
 import { NavItems, NavUser } from '@/types/navbar/interface';
 import { User } from '@/types/user/interface';

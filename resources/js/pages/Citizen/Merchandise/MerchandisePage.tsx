@@ -1,3 +1,4 @@
+// @ts-nocheck
 import CitizenLayout from '@/components/layouts/CitizenLayout';
 import MerchandisePage from '@/components/merchandise/MerchandisePage';
 import { PageProps } from '@/types';

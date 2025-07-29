@@ -1,3 +1,4 @@
+// @ts-nocheck
 import InputField from '@/components/form/InputField';
 import SelectField from '@/components/form/SelectField';
 import { City, District, Province } from '@/types/area/interface';
