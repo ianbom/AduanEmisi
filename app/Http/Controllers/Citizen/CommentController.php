@@ -20,15 +20,12 @@ class CommentController extends Controller
     {
 
         $data = $request->validated();
-        
+
         try {
             $comment = $this->commentService->createComment($data);
-
-            // Load relationships for response
             $comment->load(['user:id,name,email']);
 
-           return redirect()->back()->with('success', 'Komentar berhasil ditambahkan');
-
+            return redirect()->back()->with('success', 'Komentar berhasil ditambahkan');
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -49,7 +46,6 @@ class CommentController extends Controller
                     'replies' => $replies
                 ]
             ]);
-
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -79,7 +75,6 @@ class CommentController extends Controller
                     ]
                 ]
             ]);
-
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -87,5 +82,4 @@ class CommentController extends Controller
             ], 500);
         }
     }
-
 }

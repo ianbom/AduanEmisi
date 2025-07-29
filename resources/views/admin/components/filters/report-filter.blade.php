@@ -7,8 +7,9 @@
                             <select name="status" id="status" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
                                 <option value="">Semua Status</option>
                                 <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Menunggu</option>
-                                <option value="in_progress" {{ request('status') == 'in_progress' ? 'selected' : '' }}>Diproses</option>
+                                <option value="on-progress" {{ request('status') == 'on-progress' ? 'selected' : '' }}>Diproses</option>
                                 <option value="verified" {{ request('status') == 'verified' ? 'selected' : '' }}>Terverifikasi</option>
+                                 <option value="under-authority" {{ request('status') == 'under-authority' ? 'selected' : '' }}>Ditangani Pihak Berwenang</option>
                                 <option value="rejected" {{ request('status') == 'rejected' ? 'selected' : '' }}>Ditolak</option>
                             </select>
                         </div>
@@ -44,18 +45,23 @@
                         </div>
 
                         <!-- Category Filter -->
-                        <div class="space-y-2">
+                       <div class="space-y-2">
                             <label for="category" class="block text-sm font-semibold text-gray-700">Kategori</label>
                             <select name="category" id="category" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
                                 <option value="">Semua Kategori</option>
-                                <option value="infrastruktur" {{ request('category') == 'infrastruktur' ? 'selected' : '' }}>Infrastruktur</option>
-                                <option value="lingkungan" {{ request('category') == 'lingkungan' ? 'selected' : '' }}>Lingkungan</option>
-                                <option value="keamanan" {{ request('category') == 'keamanan' ? 'selected' : '' }}>Keamanan</option>
-                                <option value="kesehatan" {{ request('category') == 'kesehatan' ? 'selected' : '' }}>Kesehatan</option>
-                                <option value="pendidikan" {{ request('category') == 'pendidikan' ? 'selected' : '' }}>Pendidikan</option>
+                                <option value="sampah-plastik" {{ request('category') == 'sampah-plastik' ? 'selected' : '' }}>Sampah Plastik</option>
+                                <option value="pencemaran-air" {{ request('category') == 'pencemaran-air' ? 'selected' : '' }}>Pencemaran Air</option>
+                                <option value="pencemaran-udara" {{ request('category') == 'pencemaran-udara' ? 'selected' : '' }}>Pencemaran Udara</option>
+                                <option value="pencemaran-tanah" {{ request('category') == 'pencemaran-tanah' ? 'selected' : '' }}>Pencemaran Tanah</option>
+                                <option value="limbah-industri" {{ request('category') == 'limbah-industri' ? 'selected' : '' }}>Limbah Industri</option>
+                                <option value="emisi-gas-rumah-kaca" {{ request('category') == 'emisi-gas-rumah-kaca' ? 'selected' : '' }}>Emisi Gas Rumah Kaca</option>
+                                <option value="penggundulan-kebakaran-hutan" {{ request('category') == 'penggundulan-kebakaran-hutan' ? 'selected' : '' }}>Penggundulan / Kebakaran Hutan</option>
+                                <option value="naiknya-permukaan-air-laut" {{ request('category') == 'naiknya-permukaan-air-laut' ? 'selected' : '' }}>Naiknya Permukaan Air Laut</option>
+                                <option value="limbah-pertanian-peternakan" {{ request('category') == 'limbah-pertanian-peternakan' ? 'selected' : '' }}>Limbah Pertanian / Peternakan</option>
                                 <option value="lainnya" {{ request('category') == 'lainnya' ? 'selected' : '' }}>Lainnya</option>
                             </select>
                         </div>
+
                     </div>
 
                     <!-- Row 2 -->

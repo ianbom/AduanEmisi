@@ -28,9 +28,11 @@ class MissionController extends Controller
             $filters = $request->only(['content_type', 'search']);
             $perPage = $request->get('per_page', 15);
             $missions = $this->missionService->getMissions($filters, $perPage);
+            $provinces = Province::orderBy('name', 'asc')->get();
             return Inertia::render('Citizen/Mission/MissionPage', [
                 'missions' => $missions,
-                'myMissions' => false
+                'myMissions' => false,
+                'provinces' => $provinces
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -58,9 +60,11 @@ class MissionController extends Controller
             $perPage = $request->get('per_page', 15);
 
             $missions = $this->missionService->getMissionsJoined(Auth::user(), $filters, $perPage);
+               $provinces = Province::orderBy('name', 'asc')->get();
             return Inertia::render('Citizen/Mission/MissionPage', [
                 'missions' => $missions,
-                'myMissions' => true
+                'myMissions' => true,
+                'provinces' => $provinces
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -93,8 +97,7 @@ class MissionController extends Controller
             'is_leader' => $request->is_leader,
             'participation_status' => 'pending',
         ]);
-
-        return back()->with('success', 'Pendaftaran berhasil. Tunggu verifikasi admin.');
+        return back()->with('success', 'Anda berhasil mendaftar untuk misi ini. Tunggu persetujuan dari Admin.');
     }
     public function attendance(Request $request)
     {
@@ -110,7 +113,7 @@ class MissionController extends Controller
             ->where('is_leader', true)
             ->update(['participation_status' => 'attended']);
 
-        return response()->json(['message' => 'Presensi berhasil disimpan']);
+        return back()->with('success', 'Presensi berhasil disimpan.');
     }
     public function attend(Request $request)
     {
@@ -130,8 +133,7 @@ class MissionController extends Controller
         MissionVolunteer::where('mission_id', $request->mission_id)
             ->where('is_leader', true)
             ->update(['participation_status' => 'attended']);
-
-        return response()->json(['message' => 'Presensi berhasil diperbarui']);
+        return back()->with('success', 'Presensi berhasil disimpan.');
     }
     public function cancel(Mission $mission)
     {
@@ -149,7 +151,7 @@ class MissionController extends Controller
             'participation_status' => 'cancelled',
         ]);
 
-        return back()->with('success', 'Pendaftaran berhasil dibatalkan.');
+        return back()->with('success', 'Pendaftaran misi berhasil dibatalkan.');
     }
     public function uploadDocumentation(Request $request)
     {
@@ -172,7 +174,6 @@ class MissionController extends Controller
                 'content' => $request->content,
             ]);
         }
-
-        return response()->json(['message' => 'Upload berhasil']);
+        return back()->with('success', 'Dokumentasi misi berhasil diunggah.');
     }
 }

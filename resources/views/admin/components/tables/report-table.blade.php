@@ -119,7 +119,10 @@
     $(document).ready(function() {
         // Initialize DataTable
         $('#reportsTable').DataTable({
-
+            "lengthMenu": [
+                [10, 50, 100, -1],      // Nilai yang dikirim
+                [10, 50, 100, "Semua"] // Teks yang ditampilkan
+            ],
         });
 
         // Toggle filter functionality

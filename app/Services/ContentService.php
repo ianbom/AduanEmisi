@@ -22,6 +22,62 @@ class ContentService extends Service
         //
     }
 
+    public function getContentByFilter(array $filters = [])
+    {
+
+        $allowedFilters = [
+            'contents.title'         => 'like',
+            'contents.content_type'  => 'value',
+            'contents.created_at'    => 'date',
+            'users.name'             => 'like', 
+        ];
+
+        $selectColumns = [
+            'contents.*',
+            'users.name as author_name',
+        ];
+
+        // Query ke model Content
+        $query = Content::select($selectColumns)
+            ->join('users', 'contents.author_user_id', '=', 'users.id')
+            ->orderBy('contents.created_at', 'desc');
+
+        // Menerapkan filter ke query (asumsi method applyFilters sudah ada)
+        $query = $this->applyFilters($query, $filters, $allowedFilters);
+
+        // Eager load relasi 'author' untuk data lengkap di view
+        $query->with(['author']);
+
+        return $query->get();
+    }
+
+    public function buildFilter($request)
+    {
+        $filters = [];
+
+        // Filter berdasarkan pencarian (bisa untuk judul atau nama author)
+        if ($request->filled('search')) {
+            $filters['contents.title'] = $request->input('search');
+            // Jika ingin pencarian juga berlaku untuk nama author, uncomment baris di bawah
+            // $filters['users.name'] = $request->input('search');
+        }
+
+        // Filter berdasarkan tipe konten
+        if ($request->filled('content_type')) {
+            $filters['contents.content_type'] = $request->input('content_type');
+        }
+
+        // Filter berdasarkan rentang tanggal pembuatan
+        if ($request->filled('created_from') && $request->filled('created_to')) {
+            $filters['contents.created_at'] = [
+                'start' => $request->input('created_from'),
+                'end'   => $request->input('created_to')
+            ];
+        }
+
+        return $filters;
+    }
+
 
     public function createContent(array $data, int $authorId): Content
     {
@@ -34,9 +90,6 @@ class ContentService extends Service
                 'body' => $data['body'],
                 'content_type' => $data['content_type'] ?? null,
             ]);
-
-
-
             // Handle uploaded files
             if (isset($data['media']) && is_array($data['media']) && !empty($data['media'])) {
                 foreach ($data['media'] as $file) {
@@ -125,11 +178,14 @@ class ContentService extends Service
         $extension = strtolower($file->getClientOriginalExtension());
         $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'];
         $videoExtensions = ['mp4', 'mov', 'avi', 'mkv', 'wmv'];
+        $documentExtensions = ['pdf'];
 
         if (in_array($extension, $imageExtensions)) {
             return 'image';
         } elseif (in_array($extension, $videoExtensions)) {
             return 'video';
+        }elseif (in_array($extension, $documentExtensions)) {
+            return 'document';
         }
 
         return 'image'; // default fallback

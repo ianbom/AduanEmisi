@@ -5,12 +5,12 @@ namespace App\Models;
 use App\Models\User;
 use App\Models\Province;
 use App\Models\City;
-
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Report extends Model
 {
-
+    use HasFactory;
     protected $guarded = ['id'];
     protected $casts = [
         'verified_at' => 'datetime',
@@ -18,9 +18,11 @@ class Report extends Model
         'longitude' => 'decimal:7',
     ];
 
-    /**
-     * Get the user who reported this.
-     */
+    public function points()
+    {
+        // Parameter kedua ('pointable') harus cocok dengan nama yang Anda gunakan di `morphs()`
+        return $this->morphMany(Point::class, 'pointable');
+    }
     public function reporter()
     {
         return $this->belongsTo(User::class, 'reporter_id');

@@ -7,6 +7,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
+use App\Models\User;
 
 class IsProfileComplete
 {
@@ -22,8 +23,7 @@ class IsProfileComplete
             return $next($request);
         } else {
 
-            return redirect()->route('complete.profile');
+            return redirect()->route('profile.complete');
         }
-
     }
 }

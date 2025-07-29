@@ -17,8 +17,11 @@ import { router as Inertia } from '@inertiajs/react';
 import {
     ArrowLeft,
     Camera,
+    Eye,
+    EyeOff,
     FileVideo,
     Info,
+    Lock,
     MapPin,
     Upload,
     X,
@@ -45,6 +48,11 @@ interface PageProps {
 
 const EditProfilePage = ({ provinces, onBack, auth }: PageProps) => {
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+    const [showPasswordConfirmation, setShowPasswordConfirmation] =
+        useState(false);
+    const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+
     const [formData, setFormData] = useState({
         name: auth.user?.name || '',
         phone: auth.user?.phone || '',
@@ -52,6 +60,9 @@ const EditProfilePage = ({ provinces, onBack, auth }: PageProps) => {
         province_id: auth.user?.province_id?.toString() || '',
         city_id: auth.user?.city_id?.toString() || '',
         district_id: auth.user?.district_id?.toString() || '',
+        current_password: '',
+        password: '',
+        password_confirmation: '',
     });
 
     const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
@@ -119,9 +130,66 @@ const EditProfilePage = ({ provinces, onBack, auth }: PageProps) => {
         return true;
     };
 
+    // const handleSubmit = async (e: React.FormEvent) => {
+    //     e.preventDefault();
+    //     if (!validateForm()) return;
+    //     const data = new FormData();
+    //     data.append('name', formData.name);
+    //     data.append('phone', formData.phone);
+    //     data.append('address', formData.address);
+    //     data.append('province_id', formData.province_id);
+    //     data.append('city_id', formData.city_id);
+    //     data.append('district_id', formData.district_id);
+
+    //     if (uploadedFiles.length > 0) {
+    //         data.append('profile_url', uploadedFiles[0]);
+    //     }
+
+    //     if (formData.password) {
+    //         data.append('current_password', formData.current_password);
+    //         data.append('password', formData.password);
+    //         data.append(
+    //             'password_confirmation',
+    //             formData.password_confirmation,
+    //         );
+    //     }
+
+    //     // 🔍 DEBUG START
+    //     console.log('Uploaded file:', uploadedFiles[0]);
+    //     console.log('FormData entries:');
+    //     for (const pair of data.entries()) {
+    //         console.log(`${pair[0]}:`, pair[1]);
+    //     }
+    //     // 🔍 DEBUG END
+    //     setIsSubmitting(true);
+
+    //     try {
+    //         await Inertia.post('/update-profile', data, {
+    //             forceFormData: true,
+    //             onSuccess: () => {
+    //                 alert('Berhasil update!');
+    //                 Inertia.visit('/profile');
+    //             },
+    //         });
+    //     } catch (error: any) {
+    //         console.error(error);
+    //         if (error.response?.status === 422) {
+    //             const errors = error.response.data.errors;
+    //             alert(Object.values(errors).flat().join('\n'));
+    //         } else {
+    //             alert('Terjadi kesalahan. Silakan coba lagi.');
+    //         }
+    //     } finally {
+    //         setIsSubmitting(false);
+    //     }
+    // };
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
         if (!validateForm()) return;
+
+        setIsSubmitting(true);
+
         const data = new FormData();
         data.append('name', formData.name);
         data.append('phone', formData.phone);
@@ -133,34 +201,38 @@ const EditProfilePage = ({ provinces, onBack, auth }: PageProps) => {
         if (uploadedFiles.length > 0) {
             data.append('profile_url', uploadedFiles[0]);
         }
-        // 🔍 DEBUG START
-        console.log('Uploaded file:', uploadedFiles[0]);
-        console.log('FormData entries:');
-        for (const pair of data.entries()) {
-            console.log(`${pair[0]}:`, pair[1]);
-        }
-        // 🔍 DEBUG END
-        setIsSubmitting(true);
 
-        try {
-            await Inertia.post('/update-profile', data, {
-                forceFormData: true,
-                onSuccess: () => {
-                    alert('Berhasil update!');
-                    Inertia.visit('/profile');
-                },
-            });
-        } catch (error: any) {
-            console.error(error);
-            if (error.response?.status === 422) {
-                const errors = error.response.data.errors;
-                alert(Object.values(errors).flat().join('\n'));
-            } else {
-                alert('Terjadi kesalahan. Silakan coba lagi.');
-            }
-        } finally {
-            setIsSubmitting(false);
+        if (formData.password) {
+            data.append('current_password', formData.current_password);
+            data.append('password', formData.password);
+            data.append(
+                'password_confirmation',
+                formData.password_confirmation,
+            );
         }
+
+        Inertia.post('/update-profile', data, {
+            forceFormData: true,
+            onStart: () => setIsSubmitting(true),
+            onFinish: () => setIsSubmitting(false),
+            onSuccess: () => {
+                setFormData({
+                    name: '',
+                    phone: '',
+                    address: '',
+                    province_id: '',
+                    city_id: '',
+                    district_id: '',
+                    current_password: '',
+                    password: '',
+                    password_confirmation: '',
+                });
+                setUploadedFiles([]);
+            },
+            onError: (errors) => {
+                console.error('Form errors:', errors);
+            },
+        });
     };
 
     return (
@@ -391,97 +463,237 @@ const EditProfilePage = ({ provinces, onBack, auth }: PageProps) => {
                         </Card>
                     </div>
                 </div>
-
-                {/* Bagian Bawah: Alamat Pengguna - Full Width */}
-                <div className="w-full">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="flex items-center">
-                                <Camera
-                                    size={20}
-                                    className="mr-2 text-emerald-600"
-                                />
-                                Foto Profil Pengguna
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-6">
-                            <div className="rounded-lg border-2 border-dashed border-gray-300 p-8 text-center transition-colors hover:border-emerald-400">
-                                <input
-                                    type="file"
-                                    accept="image/*,video/*"
-                                    onChange={(e) =>
-                                        handleFileUpload(e.target.files)
-                                    }
-                                    className="hidden"
-                                    id="file-upload"
-                                    disabled={isSubmitting}
-                                />
-                                <label
-                                    htmlFor="file-upload"
-                                    className={`cursor-pointer ${isSubmitting ? 'cursor-not-allowed opacity-50' : ''}`}
-                                >
-                                    <Upload
-                                        size={48}
-                                        className="mx-auto mb-4 text-gray-400"
+                <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                    <div className="flex flex-col space-y-6">
+                        <Card className="flex h-full flex-col">
+                            <CardHeader>
+                                <CardTitle className="flex items-center">
+                                    <Lock
+                                        size={20}
+                                        className="mr-2 text-emerald-600"
                                     />
-                                    <p className="mb-2 text-lg font-medium text-gray-700">
-                                        Klik untuk mengunggah atau seret file ke
-                                        sini
-                                    </p>
-                                    <p className="text-sm text-gray-500">
-                                        PNG, JPG, JPEG hingga 2MB
-                                    </p>
-                                </label>
-                            </div>
-
-                            {/* File Previews */}
-                            {uploadedFiles.length > 0 && (
-                                <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-                                    {uploadedFiles.map((file, index) => (
-                                        <div
-                                            key={index}
-                                            className="group relative"
+                                    Kata Sandi
+                                </CardTitle>
+                                <p className="text-sm text-muted-foreground">
+                                    Kosongkan jika tidak ingin mengubah password
+                                </p>
+                            </CardHeader>
+                            <CardContent className="flex-1 space-y-6">
+                                <div className="space-y-2">
+                                    <Label htmlFor="current_password">
+                                        Password Saat Ini{' '}
+                                        <span className="text-red-500">*</span>
+                                    </Label>
+                                    <div className="relative">
+                                        <Input
+                                            id="current_password"
+                                            type={
+                                                showCurrentPassword
+                                                    ? 'text'
+                                                    : 'password'
+                                            }
+                                            placeholder="Masukkan password lama Anda"
+                                            value={formData.current_password}
+                                            onChange={(e) =>
+                                                handleInputChange(
+                                                    'current_password',
+                                                    e.target.value,
+                                                )
+                                            }
+                                            disabled={isSubmitting}
+                                            className="pr-10"
+                                        />
+                                        <button
+                                            type="button"
+                                            className="absolute inset-y-0 right-2 flex items-center text-gray-500"
+                                            onClick={() =>
+                                                setShowCurrentPassword(
+                                                    !showCurrentPassword,
+                                                )
+                                            }
                                         >
-                                            <div className="flex aspect-square items-center justify-center rounded-lg bg-gray-100">
-                                                {file.type.startsWith(
-                                                    'image/',
-                                                ) ? (
-                                                    <img
-                                                        src={URL.createObjectURL(
-                                                            file,
-                                                        )}
-                                                        alt={file.name}
-                                                        className="h-full w-full rounded-lg object-cover"
-                                                    />
-                                                ) : (
-                                                    <FileVideo
-                                                        size={24}
-                                                        className="text-gray-400"
-                                                    />
-                                                )}
-                                            </div>
-                                            <button
-                                                type="button"
-                                                onClick={() =>
-                                                    removeFile(index)
-                                                }
-                                                className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-white opacity-0 transition-opacity group-hover:opacity-100"
-                                                disabled={isSubmitting}
-                                            >
-                                                <X size={14} />
-                                            </button>
-                                            <p className="mt-1 truncate text-xs text-gray-500">
-                                                {file.name}
-                                            </p>
-                                        </div>
-                                    ))}
+                                            {showCurrentPassword ? (
+                                                <EyeOff size={18} />
+                                            ) : (
+                                                <Eye size={18} />
+                                            )}
+                                        </button>
+                                    </div>
                                 </div>
-                            )}
-                        </CardContent>
-                    </Card>
+                                <div className="space-y-2">
+                                    <Label htmlFor="password">
+                                        Password Baru
+                                        <span className="text-red-500">*</span>
+                                    </Label>
+                                    <div className="relative">
+                                        <Input
+                                            id="password"
+                                            type={
+                                                showPassword
+                                                    ? 'text'
+                                                    : 'password'
+                                            }
+                                            placeholder="Masukkan password baru Anda"
+                                            value={formData.password}
+                                            onChange={(e) =>
+                                                handleInputChange(
+                                                    'password',
+                                                    e.target.value,
+                                                )
+                                            }
+                                            disabled={isSubmitting}
+                                            className="pr-10"
+                                        />
+                                        <button
+                                            type="button"
+                                            className="absolute inset-y-0 right-2 flex items-center text-gray-500"
+                                            onClick={() =>
+                                                setShowPassword(!showPassword)
+                                            }
+                                        >
+                                            {showPassword ? (
+                                                <EyeOff size={18} />
+                                            ) : (
+                                                <Eye size={18} />
+                                            )}
+                                        </button>
+                                    </div>
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="password_confirmation">
+                                        Konfirmasi Password Baru
+                                        <span className="text-red-500">*</span>
+                                    </Label>
+                                    <div className="relative">
+                                        <Input
+                                            id="password_confirmation"
+                                            placeholder="Masukkan ulang password baru"
+                                            type={
+                                                showPasswordConfirmation
+                                                    ? 'text'
+                                                    : 'password'
+                                            }
+                                            value={
+                                                formData.password_confirmation
+                                            }
+                                            onChange={(e) =>
+                                                handleInputChange(
+                                                    'password_confirmation',
+                                                    e.target.value,
+                                                )
+                                            }
+                                            disabled={isSubmitting}
+                                            className="pr-10"
+                                        />
+                                        <button
+                                            type="button"
+                                            className="absolute inset-y-0 right-2 flex items-center text-gray-500"
+                                            onClick={() =>
+                                                setShowPasswordConfirmation(
+                                                    !showPasswordConfirmation,
+                                                )
+                                            }
+                                        >
+                                            {showPasswordConfirmation ? (
+                                                <EyeOff size={18} />
+                                            ) : (
+                                                <Eye size={18} />
+                                            )}
+                                        </button>
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </div>
+                    <div className="flex flex-col space-y-6">
+                        <Card className="flex h-full flex-col">
+                            <CardHeader>
+                                <CardTitle className="flex items-center">
+                                    <Camera
+                                        size={20}
+                                        className="mr-2 text-emerald-600"
+                                    />
+                                    Foto Profil Pengguna
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-6">
+                                <div className="rounded-lg border-2 border-dashed border-gray-300 p-8 text-center transition-colors hover:border-emerald-400">
+                                    <input
+                                        type="file"
+                                        accept="image/*,video/*"
+                                        onChange={(e) =>
+                                            handleFileUpload(e.target.files)
+                                        }
+                                        className="hidden"
+                                        id="file-upload"
+                                        disabled={isSubmitting}
+                                    />
+                                    <label
+                                        htmlFor="file-upload"
+                                        className={`cursor-pointer ${isSubmitting ? 'cursor-not-allowed opacity-50' : ''}`}
+                                    >
+                                        <Upload
+                                            size={48}
+                                            className="mx-auto mb-4 text-gray-400"
+                                        />
+                                        <p className="mb-2 text-lg font-medium text-gray-700">
+                                            Klik untuk mengunggah atau seret
+                                            file ke sini
+                                        </p>
+                                        <p className="text-sm text-gray-500">
+                                            PNG, JPG, JPEG hingga 2MB
+                                        </p>
+                                    </label>
+                                </div>
+
+                                {/* File Previews */}
+                                {uploadedFiles.length > 0 && (
+                                    <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+                                        {uploadedFiles.map((file, index) => (
+                                            <div
+                                                key={index}
+                                                className="group relative"
+                                            >
+                                                <div className="flex aspect-square items-center justify-center rounded-lg bg-gray-100">
+                                                    {file.type.startsWith(
+                                                        'image/',
+                                                    ) ? (
+                                                        <img
+                                                            src={URL.createObjectURL(
+                                                                file,
+                                                            )}
+                                                            alt={file.name}
+                                                            className="h-full w-full rounded-lg object-cover"
+                                                        />
+                                                    ) : (
+                                                        <FileVideo
+                                                            size={24}
+                                                            className="text-gray-400"
+                                                        />
+                                                    )}
+                                                </div>
+                                                <button
+                                                    type="button"
+                                                    onClick={() =>
+                                                        removeFile(index)
+                                                    }
+                                                    className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-white opacity-0 transition-opacity group-hover:opacity-100"
+                                                    disabled={isSubmitting}
+                                                >
+                                                    <X size={14} />
+                                                </button>
+                                                <p className="mt-1 truncate text-xs text-gray-500">
+                                                    {file.name}
+                                                </p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </CardContent>
+                        </Card>
+                    </div>
                 </div>
 
-                {/* Tombol Submit */}
                 <div className="flex flex-col justify-start gap-4 rounded-lg border border-gray-200 bg-white p-3 shadow-sm sm:flex-row">
                     <Button
                         type="button"

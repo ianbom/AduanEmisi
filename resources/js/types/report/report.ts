@@ -7,6 +7,7 @@ export interface Report {
     category: string;
     reporter?: User;
     description: string;
+    province_id: number;
     province: { name: string };
     city: { name: string };
     district: { name: string };
@@ -20,6 +21,8 @@ export interface Report {
     mission?: Mission;
     address: string;
     latitude: number;
+    completion_details: string;
     longitude: number;
     data: [];
+    is_donation: boolean;
 }

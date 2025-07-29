@@ -2,6 +2,7 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import {
     Select,
     SelectContent,
@@ -10,20 +11,43 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { City, District, Province } from '@/types/area/interface';
-import { getStatusColor } from '@/utils/reportStatusColor';
 
 import { Report } from '@/types/report';
+import { getCategoryLabel } from '@/utils/categoryReportLabel';
+import { formatDateOnly } from '@/utils/formatDate';
+import { getStatusColor } from '@/utils/reportStatusColor';
+import { getStatusLabel } from '@/utils/reportStatusLabel';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { Calendar, Eye, Filter, MapPin, TrendingUp } from 'lucide-react';
-import { useState } from 'react';
+
+import {
+    Calendar,
+    Eye,
+    Filter,
+    MapPin,
+    RefreshCcw,
+    Search,
+    SlidersHorizontal,
+    TrendingUp,
+} from 'lucide-react';
+
+import { useEffect, useState } from 'react';
 import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
+
 interface MapPageProps {
     reports: Report[];
     provinces: Province[];
     cities: City[];
     districts: District[];
     onViewReport: (id: number | string) => void;
+}
+
+interface FilterState {
+    category: string;
+    status: string;
+    province: string;
+    startDate: string;
+    endDate: string;
 }
 
 delete (L.Icon.Default.prototype as L.Icon.Default & { _getIconUrl?: unknown })
@@ -35,24 +59,139 @@ L.Icon.Default.mergeOptions({
     shadowUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-shadow.png',
 });
 
-const MapPage = ({
-    reports,
-    provinces,
-    cities,
-    districts,
-    onViewReport,
-}: MapPageProps) => {
+const MapPage = ({ reports, provinces, onViewReport }: MapPageProps) => {
     const [showFilters, setShowFilters] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [filteredReports, setFilteredReports] = useState<Report[]>(reports);
+
+    // State untuk semua filter
+    const [filters, setFilters] = useState<FilterState>({
+        category: 'semua',
+        status: 'semua',
+        province: 'semua',
+        startDate: '',
+        endDate: '',
+    });
+
+    // Function untuk mengupdate filter individual
+    const updateFilter = (key: keyof FilterState, value: string) => {
+        setFilters((prev) => ({
+            ...prev,
+            [key]: value,
+        }));
+    };
+
+    // Function untuk reset filter
+    const resetFilters = () => {
+        setFilters({
+            category: 'semua',
+            status: 'semua',
+            province: 'semua',
+            startDate: '',
+            endDate: '',
+        });
+        setSearchQuery('');
+    };
+
+    // Function untuk apply semua filter
+    useEffect(() => {
+        let processedReports = [...reports];
+
+        // Apply search filter
+        if (searchQuery.trim()) {
+            processedReports = processedReports.filter(
+                (report) =>
+                    report.title
+                        .toLowerCase()
+                        .includes(searchQuery.toLowerCase()) ||
+                    report.description
+                        ?.toLowerCase()
+                        .includes(searchQuery.toLowerCase()) ||
+                    report.address
+                        ?.toLowerCase()
+                        .includes(searchQuery.toLowerCase()),
+            );
+        }
+
+        // Apply category filter
+        if (filters.category !== 'semua') {
+            processedReports = processedReports.filter(
+                (report) =>
+                    report.category.toLowerCase() ===
+                    filters.category.toLowerCase(),
+            );
+        }
+
+        // Apply status filter
+        if (filters.status !== 'semua') {
+            processedReports = processedReports.filter(
+                (report) =>
+                    report.status.toLowerCase() ===
+                    filters.status.toLowerCase(),
+            );
+        }
+
+        // Apply province filter
+        if (filters.province !== 'semua') {
+            processedReports = processedReports.filter((report) =>
+                report.province?.name
+                    .toLowerCase()
+                    .includes(filters.province.toLowerCase()),
+            );
+        }
+
+        // Apply date range filter
+        if (filters.startDate) {
+            processedReports = processedReports.filter((report) => {
+                const reportDate = new Date(report.created_at);
+                const startDate = new Date(filters.startDate);
+                return reportDate >= startDate;
+            });
+        }
+
+        if (filters.endDate) {
+            processedReports = processedReports.filter((report) => {
+                const reportDate = new Date(report.created_at);
+                const endDate = new Date(filters.endDate);
+                endDate.setHours(23, 59, 59, 999);
+                return reportDate <= endDate;
+            });
+        }
+
+        setFilteredReports(processedReports);
+    }, [reports, searchQuery, filters]);
+
+    // Get unique categories from reports for dynamic options
+    const availableCategories = [
+        { label: 'Sampah Plastik', value: 'sampah-plastik' },
+        { label: 'Pencemaran Air', value: 'pencemaran-air' },
+        { label: 'Pencemaran Udara', value: 'pencemaran-udara' },
+        { label: 'Pencemaran Tanah', value: 'pencemaran-tanah' },
+        { label: 'Limbah Industri', value: 'limbah-industri' },
+        { label: 'Emisi Gas Rumah Kaca', value: 'emisi-gas-rumah-kaca' },
+        {
+            label: 'Penggundulan / Kebakaran Hutan',
+            value: 'penggundulan-kebakaran-hutan',
+        },
+        {
+            label: 'Naiknya Permukaan Air Laut',
+            value: 'naiknya-permukaan-air-laut',
+        },
+        {
+            label: 'Limbah Pertanian / Peternakan',
+            value: 'limbah-pertanian-peternakan',
+        },
+        { label: 'Lainnya', value: 'lainnya' },
+    ];
+    const hasActiveFilters =
+        searchQuery.trim() ||
+        filters.category !== 'semua' ||
+        filters.status !== 'semua' ||
+        filters.province !== 'semua' ||
+        filters.startDate ||
+        filters.endDate;
     return (
-        // <div className="flex h-screen">
         <div className="flex h-screen flex-col lg:flex-row">
-            {/* <div
-                className={`w-80 border-r border-gray-200 bg-white shadow-lg transition-transform duration-300 ${
-                    showFilters
-                        ? 'translate-x-0'
-                        : '-translate-x-full lg:translate-x-0'
-                } fixed z-30 h-full overflow-y-auto lg:relative`}
-            > */}
             <div
                 className={`bg-white shadow-lg transition-all duration-300 ${showFilters ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'} overflow-hidden lg:relative lg:max-h-full lg:w-80 lg:border-r lg:border-gray-200 lg:opacity-100`}
             >
@@ -63,7 +202,12 @@ const MapPage = ({
                                 size={20}
                                 className="mr-2 text-emerald-600"
                             />
-                            Filter
+                            Filter Peta Laporan
+                            {hasActiveFilters && (
+                                <span className="ml-2 inline-block rounded-full bg-emerald-100 px-2 py-1 text-xs text-emerald-600">
+                                    Aktif
+                                </span>
+                            )}
                         </h2>
                         <Button
                             variant="ghost"
@@ -74,21 +218,107 @@ const MapPage = ({
                             ×
                         </Button>
                     </div>
-                    {/* <div className="mb-6">
+
+                    {/* Search Bar */}
+                    <div className="mb-6">
                         <div className="relative">
-                            <Search className="absolute w-4 h-4 text-gray-400 left-3 top-3" />
+                            <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                             <Input
-                                placeholder="Cari lokasi..."
+                                placeholder="Cari laporan..."
                                 className="pl-10"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
                             />
                         </div>
-                    </div> */}
-                    <div className="mb-8 space-y-4">
+                    </div>
+
+                    {/* Active Filters Display */}
+                    {(filters.category !== 'semua' ||
+                        filters.status !== 'semua' ||
+                        filters.province !== 'semua' ||
+                        filters.startDate ||
+                        filters.endDate ||
+                        searchQuery) && (
+                        <div className="mb-4 flex flex-wrap gap-2">
+                            <span className="mb-1 text-xs font-medium text-gray-700">
+                                Filter aktif:
+                            </span>
+                            {searchQuery && (
+                                <Badge
+                                    variant="secondary"
+                                    className="flex items-center gap-1 text-xs"
+                                >
+                                    "{searchQuery}"
+                                    <button
+                                        onClick={() => setSearchQuery('')}
+                                        className="ml-1 text-xs"
+                                    >
+                                        ×
+                                    </button>
+                                </Badge>
+                            )}
+                            {filters.category !== 'semua' && (
+                                <Badge
+                                    variant="secondary"
+                                    className="flex items-center gap-1 text-xs"
+                                >
+                                    {filters.category}
+                                    <button
+                                        onClick={() =>
+                                            updateFilter('category', 'semua')
+                                        }
+                                        className="ml-1 text-xs"
+                                    >
+                                        ×
+                                    </button>
+                                </Badge>
+                            )}
+                            {filters.status !== 'semua' && (
+                                <Badge
+                                    variant="secondary"
+                                    className="flex items-center gap-1 text-xs"
+                                >
+                                    {getStatusLabel(filters.status)}
+                                    <button
+                                        onClick={() =>
+                                            updateFilter('status', 'semua')
+                                        }
+                                        className="ml-1 text-xs"
+                                    >
+                                        ×
+                                    </button>
+                                </Badge>
+                            )}
+                            {filters.province !== 'semua' && (
+                                <Badge
+                                    variant="secondary"
+                                    className="flex items-center gap-1 text-xs"
+                                >
+                                    {filters.province}
+                                    <button
+                                        onClick={() =>
+                                            updateFilter('province', 'semua')
+                                        }
+                                        className="ml-1 text-xs"
+                                    >
+                                        ×
+                                    </button>
+                                </Badge>
+                            )}
+                        </div>
+                    )}
+
+                    <div className="space-y-4">
                         <div className="space-y-2">
                             <label className="text-sm font-medium text-gray-700">
                                 Kategori Laporan
                             </label>
-                            <Select>
+                            <Select
+                                value={filters.category}
+                                onValueChange={(value) =>
+                                    updateFilter('category', value)
+                                }
+                            >
                                 <SelectTrigger>
                                     <SelectValue placeholder="Semua kategori" />
                                 </SelectTrigger>
@@ -96,15 +326,14 @@ const MapPage = ({
                                     <SelectItem value="semua">
                                         Semua Kategori
                                     </SelectItem>
-                                    <SelectItem value="pencemaran-air">
-                                        Pencemaran Air
-                                    </SelectItem>
-                                    <SelectItem value="pencemaran-laut">
-                                        Pencemaran Laut
-                                    </SelectItem>
-                                    <SelectItem value="kerusakan-hutan">
-                                        Kerusakan Hutan
-                                    </SelectItem>
+                                    {availableCategories.map((cat) => (
+                                        <SelectItem
+                                            key={cat.value}
+                                            value={cat.value}
+                                        >
+                                            {cat.label}
+                                        </SelectItem>
+                                    ))}
                                 </SelectContent>
                             </Select>
                         </div>
@@ -113,7 +342,12 @@ const MapPage = ({
                             <label className="text-sm font-medium text-gray-700">
                                 Status Laporan
                             </label>
-                            <Select>
+                            <Select
+                                value={filters.status}
+                                onValueChange={(value) =>
+                                    updateFilter('status', value)
+                                }
+                            >
                                 <SelectTrigger>
                                     <SelectValue placeholder="Semua status" />
                                 </SelectTrigger>
@@ -121,14 +355,23 @@ const MapPage = ({
                                     <SelectItem value="semua">
                                         Semua Status
                                     </SelectItem>
-                                    <SelectItem value="menunggu">
+                                    <SelectItem value="pending">
                                         Menunggu
                                     </SelectItem>
-                                    <SelectItem value="progress">
-                                        Dalam Progress
+                                    <SelectItem value="verified">
+                                        Terverifikasi
                                     </SelectItem>
-                                    <SelectItem value="selesai">
+                                    <SelectItem value="on-progress">
+                                        Sedang Diproses
+                                    </SelectItem>
+                                    <SelectItem value="rejected">
+                                        Ditolak
+                                    </SelectItem>
+                                    <SelectItem value="completed">
                                         Selesai
+                                    </SelectItem>
+                                    <SelectItem value="under-authority">
+                                        Ditangani Pihak Berwenang
                                     </SelectItem>
                                 </SelectContent>
                             </Select>
@@ -138,7 +381,12 @@ const MapPage = ({
                             <label className="text-sm font-medium text-gray-700">
                                 Provinsi
                             </label>
-                            <Select>
+                            <Select
+                                value={filters.province}
+                                onValueChange={(value) =>
+                                    updateFilter('province', value)
+                                }
+                            >
                                 <SelectTrigger>
                                     <SelectValue placeholder="Semua Provinsi" />
                                 </SelectTrigger>
@@ -149,7 +397,7 @@ const MapPage = ({
                                     {provinces.map((province) => (
                                         <SelectItem
                                             key={province.id}
-                                            value={province.id.toString()}
+                                            value={province.name}
                                         >
                                             {province.name}
                                         </SelectItem>
@@ -157,68 +405,48 @@ const MapPage = ({
                                 </SelectContent>
                             </Select>
                         </div>
-
-                        <div className="grid grid-cols-2 gap-2">
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium text-gray-700">
-                                    Kota
-                                </label>
-                                <Select>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Semua Kota" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="semua">
-                                            Semua Kota
-                                        </SelectItem>
-                                        {cities.map((city) => (
-                                            <SelectItem
-                                                key={city.id}
-                                                value={city.id.toString()}
-                                            >
-                                                {city.name}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            </div>
-
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium text-gray-700">
-                                    Kecamatan
-                                </label>
-                                <Select>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Semua Kecamatan" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="semua">
-                                            Semua Kecamatan
-                                        </SelectItem>
-                                        {districts.map((district) => (
-                                            <SelectItem
-                                                key={district.id}
-                                                value={district.id.toString()}
-                                            >
-                                                {district.name}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            </div>
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium text-gray-700">
+                                Tanggal Mulai
+                            </label>
+                            <input
+                                type="date"
+                                className="w-full rounded-md border border-gray-200 px-2 py-2"
+                                value={filters.startDate}
+                                onChange={(e) =>
+                                    updateFilter('startDate', e.target.value)
+                                }
+                            />
                         </div>
-
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium text-gray-700">
+                                Tanggal Selesai
+                            </label>
+                            <input
+                                type="date"
+                                className="w-full rounded-md border border-gray-200 px-2 py-2"
+                                value={filters.endDate}
+                                onChange={(e) =>
+                                    updateFilter('endDate', e.target.value)
+                                }
+                                min={filters.startDate}
+                            />
+                        </div>
                         <div className="flex space-x-2">
-                            <Button className="flex-1 bg-emerald-600 hover:bg-emerald-700">
-                                Terapkan Filter
-                            </Button>
-                            <Button variant="outline" className="flex-1">
+                            <Button
+                                variant="outline"
+                                className="flex w-full items-center justify-center gap-2"
+                                onClick={resetFilters}
+                                disabled={!hasActiveFilters}
+                            >
+                                <RefreshCcw className="h-4 w-4" />
                                 Reset Filter
                             </Button>
                         </div>
                     </div>
                 </div>
             </div>
+
             {/* Main Map Area */}
             <div className="relative flex-1">
                 <div className="p-4 lg:hidden">
@@ -241,7 +469,7 @@ const MapPage = ({
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     />
 
-                    {reports.map((report) => (
+                    {filteredReports.map((report) => (
                         <Marker
                             key={report.id}
                             position={[report.latitude, report.longitude]}
@@ -316,7 +544,7 @@ const MapPage = ({
                                             <Badge
                                                 className={`${getStatusColor(report.status)} text-xs font-medium shadow-sm`}
                                             >
-                                                {report.status}
+                                                {getStatusLabel(report.status)}
                                             </Badge>
                                         </div>
 
@@ -331,11 +559,12 @@ const MapPage = ({
 
                                     <div className="p-4">
                                         <div className="mb-2">
-                                            <Badge
-                                                variant="outline"
-                                                className="border-gray-200 bg-gray-50 text-xs font-medium text-gray-700"
-                                            >
-                                                {report.category}
+
+                                            <Badge className="border-gray-200 bg-gray-50 text-xs font-medium text-gray-700">
+                                                {getCategoryLabel(
+                                                    report.category,
+                                                )}
+
                                             </Badge>
                                         </div>
 
@@ -393,7 +622,7 @@ const MapPage = ({
                     <Card className="bg-white/90 shadow-lg backdrop-blur-sm">
                         <CardContent className="p-3 text-center">
                             <div className="text-sm font-medium text-gray-900">
-                                {reports.length} Laporan Ditemukan
+                                {filteredReports.length} Laporan Ditemukan
                             </div>
                             <div className="text-xs text-gray-600">
                                 Klik marker untuk lihat detail

@@ -21,6 +21,11 @@ class MissionVolunteer extends Model
         'awarded_at' => 'datetime',
     ];
 
+    public function points()
+    {
+        return $this->morphMany(Point::class, 'pointable');
+    }
+
     public function mission(): BelongsTo
     {
         return $this->belongsTo(Mission::class);

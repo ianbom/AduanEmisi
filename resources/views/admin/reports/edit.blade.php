@@ -266,6 +266,7 @@
                             @elseif($report->status === 'on-progress') bg-purple-100 text-purple-800
                             @elseif($report->status === 'rejected') bg-red-100 text-red-800
                             @elseif($report->status === 'completed') bg-green-100 text-green-800
+                            @elseif($report->status === 'under-authority') bg-orange-100 text-orange-800
                             @endif">
                             {{ ucfirst(str_replace('-', ' ', $report->status)) }}
                         </span>
@@ -364,6 +365,17 @@
                                 <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                             </svg>
                             Setujui & Verifikasi Laporan
+                        </button>
+                    </form>
+
+                    <form action="{{ route('admin.reports.underAuthority', $report->id) }}" method="POST">
+                        @csrf
+                        @method('PUT')
+                        <button type="submit" class="w-full inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                            </svg>
+                            Verifikasi Pihak Berwenang
                         </button>
                     </form>
 

@@ -53,10 +53,8 @@ class ReportController extends Controller
             ]);
             if (!Auth::check()) {
                 Log::warning('User not authenticated in store method');
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'User tidak terautentikasi'
-                ], 401);
+                return back()
+                    ->with('error', 'User tidak terautentikasi');
             }
 
             $report = $this->reportService->createReport($request->validated());
@@ -69,11 +67,9 @@ class ReportController extends Controller
                 'report'
             );
             DB::commit();
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Laporan berhasil dibuat',
-                'data' => $report
-            ], 201);
+            return redirect()
+                ->route('report')
+                ->with('success', 'Laporan berhasil dibuat');
         } catch (Exception $e) {
             DB::rollBack();
             Log::error('Error creating report', [
@@ -81,11 +77,14 @@ class ReportController extends Controller
                 'trace' => $e->getTraceAsString()
             ]);
 
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Gagal membuat laporan',
-                'error' => $e->getMessage()
-            ], 500);
+            // return response()->json([
+            //     'status' => 'error',
+            //     'message' => 'Gagal membuat laporan',
+            //     'error' => $e->getMessage()
+            // ], 500);
+            return back()
+                ->withInput() // kembalikan input user
+                ->with('error', 'Gagal membuat laporan: ' . $e->getMessage()); // ← flash message
         }
     }
     public function viewMyReportsPage()
@@ -94,10 +93,12 @@ class ReportController extends Controller
         $filters['reporter_id'] = Auth::id();
         $perPage = request()->get('per_page', 15);
         $reports = $this->reportService->getReports($filters, $perPage);
+        $provinces = Province::with('cities.districts')->orderBy('name', 'asc')->get();
 
         return Inertia::render('Citizen/Report/ReportsPage', [
             'reports' => $reports,
-            'myReports' => true
+            'myReports' => true,
+            'provinces' => $provinces
 
         ]);
     }
@@ -106,10 +107,12 @@ class ReportController extends Controller
         $filters = request()->only(['status', 'city_id', 'district_id', 'category', 'search']);
         $perPage = request()->get('per_page', 15);
         $reports = $this->reportService->getReports($filters, $perPage);
+        $provinces = Province::with('cities.districts')->orderBy('name', 'asc')->get();
 
         return Inertia::render('Citizen/Report/ReportsPage', [
             'reports' => $reports,
             'myReports' => false,
+            'provinces' => $provinces
         ]);
     }
 
@@ -150,7 +153,16 @@ class ReportController extends Controller
                 $myParticipation = $mission->volunteers
                     ->firstWhere('id', Auth::id());
             }
-            $confirmedLeader = $report->mission ? $report->mission->confirmedLeader() : null;
+            // $confirmedLeader = $report->mission ? $report->mission->confirmedLeader() : null;
+            $confirmedLeader = $report->mission
+                ? $report->mission->volunteers
+                ->filter(fn($v) => $v->pivot->is_leader && in_array($v->pivot->participation_status, ['confirmed', 'attended']))
+                ->map(fn($v) => [
+                    'id' => $v->id,
+                    'name' => $v->name,
+                ])->values()
+                : collect();
+
 
             $comments = $this->commentService->getCommentsByReport($id);
             $volunteers = $report->mission
@@ -167,6 +179,10 @@ class ReportController extends Controller
                 : collect();
 
             $volunteerCounts = $volunteers->count();
+
+            $donations = $this->reportService->getReportDonation($id);
+
+
             return Inertia::render('Citizen/Report/ReportDetailPage', [
                 'report' => $report,
                 'your_vote' => $report->votes()->where('user_id', Auth::id())->first()?->vote_type,
@@ -174,7 +190,9 @@ class ReportController extends Controller
                 'confirmedLeader' => $confirmedLeader,
                 'comments' => $comments,
                 'volunteers' => $volunteers,
-                'volunteerCounts' => $volunteerCounts
+                'volunteerCounts' => $volunteerCounts,
+                'donations' => $donations,
+
             ]);
         } catch (Exception $e) {
             return response()->json([
@@ -407,4 +425,6 @@ class ReportController extends Controller
             'your_vote' => $yourVote,
         ]);
     }
+
+
 }

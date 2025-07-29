@@ -76,7 +76,7 @@ class MissionController extends Controller
     {
         $usedReportIds = Mission::pluck('report_id');
 
-        $reports = Report::where('status', 'verified')
+        $reports = Report::whereIn('status', ['verified', 'under-authority'])
             ->whereNotIn('id', $usedReportIds)
             ->orderBy('title', 'asc')
             ->get();

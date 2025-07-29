@@ -8,36 +8,202 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { Province } from '@/types/area/interface';
 import { Report } from '@/types/report';
+import { getCategoryLabel } from '@/utils/categoryReportLabel';
 import { formatDateOnly } from '@/utils/formatDate';
 import { getStatusColor } from '@/utils/reportStatusColor';
+import { getStatusLabel } from '@/utils/reportStatusLabel';
 import { router as Inertia } from '@inertiajs/react';
 import {
     Calendar,
     Eye,
-    FileText,
-    Filter,
     MapPin,
     Plus,
+    RefreshCcw,
     Search,
+    SlidersHorizontal,
     ThumbsDown,
     ThumbsUp,
 } from 'lucide-react';
-import { useState } from 'react';
-import Badge from '../core/Badge';
+import { useEffect, useState } from 'react';
+import { Badge } from '../ui/badge';
+
 interface ReportsPageProps {
     reports: Report[];
+    provinces: Province[];
     myReports: boolean;
     onViewDetails: (id: number) => void;
     onCreateReport: () => void;
 }
+
+interface FilterState {
+    category: string;
+    status: string;
+    province: string;
+    startDate: string;
+    endDate: string;
+}
+
 const ReportsPage = ({
     reports,
+    provinces,
     myReports,
     onViewDetails,
     onCreateReport,
 }: ReportsPageProps) => {
     const [sortBy, setSortBy] = useState('newest');
+    const [searchQuery, setSearchQuery] = useState('');
+    const [filteredReports, setFilteredReports] = useState<Report[]>(reports);
+
+    // State untuk semua filter
+    const [filters, setFilters] = useState<FilterState>({
+        category: 'semua',
+        status: 'semua',
+        province: 'semua',
+        startDate: '',
+        endDate: '',
+    });
+
+    // Function untuk mengupdate filter individual
+    const updateFilter = (key: keyof FilterState, value: string) => {
+        setFilters((prev) => ({
+            ...prev,
+            [key]: value,
+        }));
+    };
+
+    // Function untuk reset filter
+    const resetFilters = () => {
+        setFilters({
+            category: 'semua',
+            status: 'semua',
+            province: 'semua',
+            startDate: '',
+            endDate: '',
+        });
+        setSearchQuery('');
+    };
+
+    // Function untuk apply semua filter dan sorting
+    useEffect(() => {
+        let processedReports = [...reports];
+
+        // Apply search filter
+        if (searchQuery.trim()) {
+            processedReports = processedReports.filter(
+                (report) =>
+                    report.title
+                        .toLowerCase()
+                        .includes(searchQuery.toLowerCase()) ||
+                    report.description
+                        ?.toLowerCase()
+                        .includes(searchQuery.toLowerCase()),
+            );
+        }
+
+        // Apply category filter
+        if (filters.category !== 'semua') {
+            processedReports = processedReports.filter(
+                (report) =>
+                    report.category.toLowerCase() ===
+                    filters.category.toLowerCase(),
+            );
+        }
+
+        // Apply status filter
+        if (filters.status !== 'semua') {
+            processedReports = processedReports.filter(
+                (report) =>
+                    report.status.toLowerCase() ===
+                    filters.status.toLowerCase(),
+            );
+        }
+
+        // Apply province filter
+        if (filters.province !== 'semua') {
+            processedReports = processedReports.filter((report) =>
+                report.province?.name
+                    .toLowerCase()
+                    .includes(filters.province.toLowerCase()),
+            );
+        }
+
+        // Apply date range filter
+        if (filters.startDate) {
+            processedReports = processedReports.filter((report) => {
+                const reportDate = new Date(report.created_at);
+                const startDate = new Date(filters.startDate);
+                return reportDate >= startDate;
+            });
+        }
+
+        if (filters.endDate) {
+            processedReports = processedReports.filter((report) => {
+                const reportDate = new Date(report.created_at);
+                const endDate = new Date(filters.endDate);
+                endDate.setHours(23, 59, 59, 999);
+                return reportDate <= endDate;
+            });
+        }
+
+        // Apply sorting
+        if (sortBy === 'newest') {
+            processedReports.sort(
+                (a, b) =>
+                    new Date(b.created_at).getTime() -
+                    new Date(a.created_at).getTime(),
+            );
+        } else if (sortBy === 'oldest') {
+            processedReports.sort(
+                (a, b) =>
+                    new Date(a.created_at).getTime() -
+                    new Date(b.created_at).getTime(),
+            );
+        } else if (sortBy === 'popular') {
+            processedReports.sort(
+                (a, b) => (b.upvotes_count || 0) - (a.upvotes_count || 0),
+            );
+        } else if (sortBy === 'status') {
+            processedReports.sort((a, b) => a.status.localeCompare(b.status));
+        } else if (sortBy === 'title') {
+            processedReports.sort((a, b) => a.title.localeCompare(b.title));
+        }
+
+        setFilteredReports(processedReports);
+    }, [reports, searchQuery, sortBy, filters]);
+
+    // Get unique categories from reports for dynamic options
+    const availableCategories = [
+        { label: 'Sampah Plastik', value: 'sampah-plastik' },
+        { label: 'Pencemaran Air', value: 'pencemaran-air' },
+        { label: 'Pencemaran Udara', value: 'pencemaran-udara' },
+        { label: 'Pencemaran Tanah', value: 'pencemaran-tanah' },
+        { label: 'Limbah Industri', value: 'limbah-industri' },
+        { label: 'Emisi Gas Rumah Kaca', value: 'emisi-gas-rumah-kaca' },
+        {
+            label: 'Penggundulan / Kebakaran Hutan',
+            value: 'penggundulan-kebakaran-hutan',
+        },
+        {
+            label: 'Naiknya Permukaan Air Laut',
+            value: 'naiknya-permukaan-air-laut',
+        },
+        {
+            label: 'Limbah Pertanian / Peternakan',
+            value: 'limbah-pertanian-peternakan',
+        },
+        { label: 'Lainnya', value: 'lainnya' },
+    ];
+
+    const hasActiveFilters =
+        searchQuery.trim() ||
+        filters.category !== 'semua' ||
+        filters.status !== 'semua' ||
+        filters.province !== 'semua' ||
+        filters.startDate ||
+        filters.endDate;
+
     return (
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
             <div className="mb-8 flex flex-col items-start justify-between md:flex-row md:items-center">
@@ -50,6 +216,9 @@ const ReportsPage = ({
                             ? 'Laporan yang dibuat oleh Anda'
                             : 'Temukan Laporan dan bergabung dalam aksi penyelamatan lingkungan'}
                     </p>
+                    {/* <p className="mt-1 text-sm text-gray-500">
+                        Menampilkan {filteredReports.length} dari {reports.length} laporan
+                    </p> */}
                 </div>
                 <Button
                     onClick={onCreateReport}
@@ -64,14 +233,22 @@ const ReportsPage = ({
             <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
                 {/* Filter Sidebar */}
                 <div className="lg:col-span-1">
-                    <Card className="sticky top-24">
+                    {/* <Card className="sticky top-24"> */}
+                    <Card className="sticky top-24 overflow-visible">
                         <CardHeader>
-                            <CardTitle className="flex items-center text-lg">
-                                <Filter
-                                    size={20}
-                                    className="mr-2 text-emerald-600"
-                                />
-                                Filter Laporan
+                            <CardTitle className="flex items-center justify-between text-lg">
+                                <div className="flex items-center">
+                                    <SlidersHorizontal
+                                        size={20}
+                                        className="mr-2 text-emerald-600"
+                                    />
+                                    Filter Laporan
+                                </div>
+                                {hasActiveFilters && (
+                                    <span className="rounded-full bg-emerald-100 px-2 py-1 text-xs text-emerald-600">
+                                        Aktif
+                                    </span>
+                                )}
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
@@ -79,7 +256,12 @@ const ReportsPage = ({
                                 <label className="text-sm font-medium text-gray-700">
                                     Kategori
                                 </label>
-                                <Select>
+                                <Select
+                                    value={filters.category}
+                                    onValueChange={(value) =>
+                                        updateFilter('category', value)
+                                    }
+                                >
                                     <SelectTrigger>
                                         <SelectValue placeholder="Pilih kategori" />
                                     </SelectTrigger>
@@ -87,15 +269,14 @@ const ReportsPage = ({
                                         <SelectItem value="semua">
                                             Semua Kategori
                                         </SelectItem>
-                                        <SelectItem value="pencemaran-air">
-                                            Pencemaran Air
-                                        </SelectItem>
-                                        <SelectItem value="pencemaran-laut">
-                                            Pencemaran Laut
-                                        </SelectItem>
-                                        <SelectItem value="kerusakan-hutan">
-                                            Kerusakan Hutan
-                                        </SelectItem>
+                                        {availableCategories.map((cat) => (
+                                            <SelectItem
+                                                key={cat.value}
+                                                value={cat.value}
+                                            >
+                                                {cat.label}
+                                            </SelectItem>
+                                        ))}
                                     </SelectContent>
                                 </Select>
                             </div>
@@ -104,7 +285,12 @@ const ReportsPage = ({
                                 <label className="text-sm font-medium text-gray-700">
                                     Status
                                 </label>
-                                <Select>
+                                <Select
+                                    value={filters.status}
+                                    onValueChange={(value) =>
+                                        updateFilter('status', value)
+                                    }
+                                >
                                     <SelectTrigger>
                                         <SelectValue placeholder="Pilih status" />
                                     </SelectTrigger>
@@ -112,14 +298,23 @@ const ReportsPage = ({
                                         <SelectItem value="semua">
                                             Semua Status
                                         </SelectItem>
-                                        <SelectItem value="menunggu">
+                                        <SelectItem value="pending">
                                             Menunggu
                                         </SelectItem>
-                                        <SelectItem value="progress">
-                                            Dalam Progress
+                                        <SelectItem value="verified">
+                                            Terverifikasi
                                         </SelectItem>
-                                        <SelectItem value="selesai">
+                                        <SelectItem value="on-progress">
+                                            Sedang Diproses
+                                        </SelectItem>
+                                        <SelectItem value="rejected">
+                                            Ditolak
+                                        </SelectItem>
+                                        <SelectItem value="completed">
                                             Selesai
+                                        </SelectItem>
+                                        <SelectItem value="under-authority">
+                                            Ditangani Pihak Berwenang
                                         </SelectItem>
                                     </SelectContent>
                                 </Select>
@@ -129,7 +324,12 @@ const ReportsPage = ({
                                 <label className="text-sm font-medium text-gray-700">
                                     Provinsi
                                 </label>
-                                <Select>
+                                <Select
+                                    value={filters.province}
+                                    onValueChange={(value) =>
+                                        updateFilter('province', value)
+                                    }
+                                >
                                     <SelectTrigger>
                                         <SelectValue placeholder="Pilih provinsi" />
                                     </SelectTrigger>
@@ -137,39 +337,55 @@ const ReportsPage = ({
                                         <SelectItem value="semua">
                                             Semua Provinsi
                                         </SelectItem>
-                                        <SelectItem value="bali">
-                                            Bali
-                                        </SelectItem>
-                                        <SelectItem value="jabar">
-                                            Jawa Barat
-                                        </SelectItem>
-                                        <SelectItem value="jakarta">
-                                            DKI Jakarta
-                                        </SelectItem>
+                                        {provinces?.map((province) => (
+                                            <SelectItem
+                                                key={province.id}
+                                                value={province.name}
+                                            >
+                                                {province.name}
+                                            </SelectItem>
+                                        ))}
                                     </SelectContent>
                                 </Select>
                             </div>
-
-                            <div className="grid grid-cols-2 gap-2">
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium text-gray-700">
-                                        Tanggal Mulai
-                                    </label>
-                                    <Input type="date" />
-                                </div>
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium text-gray-700">
-                                        Tanggal Selesai
-                                    </label>
-                                    <Input type="date" />
-                                </div>
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium text-gray-700">
+                                    Tanggal Mulai
+                                </label>
+                                <input
+                                    type="date"
+                                    className="w-full rounded-md border border-gray-200 px-2 py-2"
+                                    value={filters.startDate}
+                                    onChange={(e) =>
+                                        updateFilter(
+                                            'startDate',
+                                            e.target.value,
+                                        )
+                                    }
+                                />
                             </div>
-
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium text-gray-700">
+                                    Tanggal Selesai
+                                </label>
+                                <input
+                                    type="date"
+                                    className="w-full rounded-md border border-gray-200 px-2 py-2"
+                                    value={filters.endDate}
+                                    onChange={(e) =>
+                                        updateFilter('endDate', e.target.value)
+                                    }
+                                    min={filters.startDate}
+                                />
+                            </div>
                             <div className="space-y-2 pt-4">
-                                <Button className="w-full bg-emerald-600 hover:bg-emerald-700">
-                                    Terapkan Filter
-                                </Button>
-                                <Button variant="outline" className="w-full">
+                                <Button
+                                    variant="outline"
+                                    className="flex w-full items-center justify-center gap-2"
+                                    onClick={resetFilters}
+                                    disabled={!hasActiveFilters}
+                                >
+                                    <RefreshCcw className="h-4 w-4" />
                                     Reset Filter
                                 </Button>
                             </div>
@@ -190,11 +406,17 @@ const ReportsPage = ({
                                     <SelectItem value="newest">
                                         Terbaru
                                     </SelectItem>
+                                    <SelectItem value="oldest">
+                                        Terlama
+                                    </SelectItem>
                                     <SelectItem value="popular">
                                         Terpopuler
                                     </SelectItem>
                                     <SelectItem value="status">
                                         Status
+                                    </SelectItem>
+                                    <SelectItem value="title">
+                                        Judul A-Z
                                     </SelectItem>
                                 </SelectContent>
                             </Select>
@@ -205,13 +427,108 @@ const ReportsPage = ({
                             <Input
                                 placeholder="Cari laporan..."
                                 className="pl-10"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
                             />
                         </div>
                     </div>
-                    {reports.length > 0 ? (
+                    {/* Active Filters Display */}
+                    {(filters.category !== 'semua' ||
+                        filters.status !== 'semua' ||
+                        filters.province !== 'semua' ||
+                        filters.startDate ||
+                        filters.endDate ||
+                        searchQuery) && (
+                        <div className="mb-4 flex flex-wrap gap-2">
+                            <span className="mr-2 text-sm font-medium text-gray-700">
+                                Filter aktif:
+                            </span>
+                            {searchQuery && (
+                                <Badge
+                                    variant="secondary"
+                                    className="flex items-center gap-1"
+                                >
+                                    Pencarian: "{searchQuery}"
+                                    <button
+                                        onClick={() => setSearchQuery('')}
+                                        className="ml-1 text-xs"
+                                    >
+                                        ×
+                                    </button>
+                                </Badge>
+                            )}
+                            {filters.category !== 'semua' && (
+                                <Badge
+                                    variant="secondary"
+                                    className="flex items-center gap-1"
+                                >
+                                    Kategori: {filters.category}
+                                    <button
+                                        onClick={() =>
+                                            updateFilter('category', 'semua')
+                                        }
+                                        className="ml-1 text-xs"
+                                    >
+                                        ×
+                                    </button>
+                                </Badge>
+                            )}
+                            {filters.status !== 'semua' && (
+                                <Badge
+                                    variant="secondary"
+                                    className="flex items-center gap-1"
+                                >
+                                    Status: {filters.status}
+                                    <button
+                                        onClick={() =>
+                                            updateFilter('status', 'semua')
+                                        }
+                                        className="ml-1 text-xs"
+                                    >
+                                        ×
+                                    </button>
+                                </Badge>
+                            )}
+                            {filters.province !== 'semua' && (
+                                <Badge
+                                    variant="secondary"
+                                    className="flex items-center gap-1"
+                                >
+                                    Provinsi: {filters.province}
+                                    <button
+                                        onClick={() =>
+                                            updateFilter('province', 'semua')
+                                        }
+                                        className="ml-1 text-xs"
+                                    >
+                                        ×
+                                    </button>
+                                </Badge>
+                            )}
+                            {(filters.startDate || filters.endDate) && (
+                                <Badge
+                                    variant="secondary"
+                                    className="flex items-center gap-1"
+                                >
+                                    Tanggal: {filters.startDate || '...'} -{' '}
+                                    {filters.endDate || '...'}
+                                    <button
+                                        onClick={() => {
+                                            updateFilter('startDate', '');
+                                            updateFilter('endDate', '');
+                                        }}
+                                        className="ml-1 text-xs"
+                                    >
+                                        ×
+                                    </button>
+                                </Badge>
+                            )}
+                        </div>
+                    )}
+                    {filteredReports.length > 0 ? (
                         <>
                             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
-                                {reports.map((report: Report) => (
+                                {filteredReports.map((report: Report) => (
                                     <Card
                                         key={report.id}
                                         className="group cursor-pointer border-0 shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
@@ -257,26 +574,35 @@ const ReportsPage = ({
                                                 />
                                             )}
 
-                                            <div className="absolute right-3 top-3 flex items-center gap-2">
+                                            <div className="absolute right-3 top-3">
                                                 <Badge
                                                     className={getStatusColor(
                                                         report.status,
                                                     )}
                                                 >
-                                                    {report.status}
+                                                    {getStatusLabel(
+                                                        report.status,
+                                                    )}
                                                 </Badge>
-                                                {report.mission && (
+                                            </div>
+                                            {report.mission && (
+                                                <div className="absolute left-3 top-3">
                                                     <Badge className="bg-indigo-100 text-indigo-700">
                                                         Ada Misi
                                                     </Badge>
-                                                )}
-                                            </div>
+                                                </div>
+                                            )}
                                         </div>
 
                                         <CardContent className="p-4">
                                             <div className="mb-2">
-                                                <Badge className="border border-gray-400 bg-white text-gray-700">
-                                                    {report.category}
+                                                <Badge
+                                                    variant="outline"
+                                                    className="mb-2 text-xs"
+                                                >
+                                                    {getCategoryLabel(
+                                                        report.category,
+                                                    )}
                                                 </Badge>
                                             </div>
 
@@ -319,7 +645,7 @@ const ReportsPage = ({
                                                                 0}
                                                         </span>
                                                     </div>
-                                                    <div className="flex items-center text-sm font-medium text-rose-600">
+                                                    <div className="flex items-center text-sm font-medium text-red-600">
                                                         <ThumbsDown
                                                             size={14}
                                                             className="mr-1"
@@ -334,11 +660,12 @@ const ReportsPage = ({
 
                                             <Button
                                                 className="mt-auto w-full bg-amber-500 transition-colors duration-200 hover:bg-amber-700"
-                                                onClick={() =>
+                                                onClick={() => {
+                                                    // e.stopPropagation();
                                                     Inertia.visit(
                                                         `/report/${report.id}`,
-                                                    )
-                                                }
+                                                    );
+                                                }}
                                             >
                                                 <Eye
                                                     size={16}
@@ -350,34 +677,62 @@ const ReportsPage = ({
                                     </Card>
                                 ))}
                             </div>
-                            <div className="mt-8 text-center">
-                                <Button
-                                    variant="outline"
-                                    size="lg"
-                                    className="min-w-32"
-                                >
-                                    Muat Lebih Banyak
-                                </Button>
-                            </div>
                         </>
                     ) : (
                         <div className="flex w-full items-center justify-center">
                             <Card className="w-full px-8 py-32 text-center">
                                 <div className="mb-4 flex justify-center">
                                     <div className="rounded-full bg-gray-100 p-4">
-                                        <FileText
-                                            size={32}
+                                        <svg
                                             className="h-12 w-12 text-gray-400"
-                                        />
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth={2}
+                                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                                            />
+                                        </svg>
                                     </div>
                                 </div>
                                 <h3 className="mb-2 text-lg font-semibold text-gray-900">
-                                    Laporan Belum Tersedia
+                                    {searchQuery ||
+                                    filters.category !== 'semua' ||
+                                    filters.status !== 'semua' ||
+                                    filters.province !== 'semua' ||
+                                    filters.startDate ||
+                                    filters.endDate
+                                        ? 'Tidak Ada Laporan yang Sesuai Filter'
+                                        : 'Laporan Belum Tersedia'}
                                 </h3>
                                 <p className="text-sm text-gray-500">
-                                    Belum ada laporan yang tersedia saat ini.
-                                    Coba buat laporan baru.
+                                    {searchQuery ||
+                                    filters.category !== 'semua' ||
+                                    filters.status !== 'semua' ||
+                                    filters.province !== 'semua' ||
+                                    filters.startDate ||
+                                    filters.endDate
+                                        ? 'Coba ubah atau hapus beberapa filter untuk melihat lebih banyak laporan.'
+                                        : 'Belum ada laporan yang tersedia saat ini. Coba buat laporan baru.'}
                                 </p>
+                                {(searchQuery ||
+                                    filters.category !== 'semua' ||
+                                    filters.status !== 'semua' ||
+                                    filters.province !== 'semua' ||
+                                    filters.startDate ||
+                                    filters.endDate) && (
+                                    <Button
+                                        variant="outline"
+                                        className="mt-4"
+                                        onClick={resetFilters}
+                                    >
+                                        Reset Semua Filter
+                                    </Button>
+                                )}
                             </Card>
                         </div>
                     )}

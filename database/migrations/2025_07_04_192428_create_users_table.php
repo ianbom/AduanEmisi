@@ -21,9 +21,13 @@ return new class extends Migration
             $table->enum('role', ['citizen', 'community', 'admin', 'superadmin'])->default('citizen');
             $table->text('address')->nullable();
             $table->string('name');
+            $table->integer('points_balance')->default(0);
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
+            $table->string('password')->nullable();
+            $table->string('google_id')->nullable()->unique();
+            $table->string('google_token')->nullable();
+            $table->string('google_refresh_token')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

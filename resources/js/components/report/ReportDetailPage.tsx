@@ -5,15 +5,17 @@ import { Textarea } from '@/components/ui/textarea';
 import { Report } from '@/types/report';
 import { Comment } from '@/types/report/comment';
 import { User } from '@/types/user/interface';
+import { getCategoryLabel } from '@/utils/categoryReportLabel';
 import { formatFullDateTime } from '@/utils/formatDate';
 import { getStatusColor as getMissionStatusColor } from '@/utils/missionStatusColor';
+import { getMissionStatusLabel } from '@/utils/missionStatusLabel';
 import { getStatusColor } from '@/utils/reportStatusColor';
+import { getStatusLabel } from '@/utils/reportStatusLabel';
 import { router as Inertia, useForm } from '@inertiajs/react';
 import axios from 'axios';
 import {
     ArrowLeft,
     Calendar,
-    Heart,
     LocateFixed,
     MapPin,
     MessageCircle,
@@ -28,12 +30,21 @@ import Badge from '../core/Badge';
 import ImageWithPopup from '../core/ImageWithPopup';
 import AttendanceFormModal from '../mission/AttendanceFormModal';
 import CancelVolunteerModal from '../mission/CancelVolunteerModal';
+import ConfirmVolunteerAsCommunityModal from '../mission/ConfirmVolunteerAsCommunityModal';
 import ConfirmVolunteerModal from '../mission/ConfirmVolunteerModal';
 import UploadDocumentationModal from '../mission/UploadDocumentationModal';
 import CommentUploadCard from './InputCommentReport';
 
+import { Donation } from '@/types/report/donations';
+import { DonationCard } from './DonationCard';
+interface Leader {
+    id: number;
+    name: string;
+}
+
 interface ReportDetailPageProps {
     report: Report;
+    donations: Donation | null;
     myParticipation:
         | (User & {
               pivot: {
@@ -53,6 +64,7 @@ interface ReportDetailPageProps {
     volunteers: User[];
     volunteerCounts: number;
     your_vote: 'upvote' | 'dislike' | null;
+    user: User[] | null;
     onBack: () => void;
 }
 
@@ -64,12 +76,15 @@ const ReportDetailPage = ({
     comments,
     volunteers,
     volunteerCounts,
+    user,
     your_vote,
+    donations,
 }: ReportDetailPageProps) => {
     const [hasUpvoted, setHasUpvoted] = useState(your_vote === 'upvote');
     const [hasDownvoted, setHasDownvoted] = useState(your_vote === 'dislike');
     const [reportState, setReport] = useState(report);
     const [replying, setReplying] = useState<string | number | null>(null);
+    console.log(confirmedLeader);
     const {
         data: replyData,
         setData: setReplyData,
@@ -95,21 +110,32 @@ const ReportDetailPage = ({
         {} as Record<string, typeof report.mission.documentation>,
     );
     const docEntries = Object.entries(groupedDocs || {});
+    // const displayedDocs = showAllDocs
+    //     ? (docEntries ?? [])
+    //     : docEntries.slice(0, INITIAL_DOCS_COUNT);
+    // const hasMoreDocs = docEntries.length > INITIAL_DOCS_COUNT;
+    // const displayedComments = showAll
+    //     ? comments
+    //     : comments.slice(0, INITIAL_COMMENTS_COUNT);
     const displayedDocs = showAllDocs
-        ? docEntries
-        : docEntries.slice(0, INITIAL_DOCS_COUNT);
-    const hasMoreDocs = docEntries.length > INITIAL_DOCS_COUNT;
+        ? (docEntries ?? [])
+        : (docEntries ?? []).slice(0, INITIAL_DOCS_COUNT);
+    const hasMoreDocs = (docEntries ?? []).length > INITIAL_DOCS_COUNT;
     const displayedComments = showAll
-        ? comments
-        : comments.slice(0, INITIAL_COMMENTS_COUNT);
+        ? (comments ?? [])
+        : (comments ?? []).slice(0, INITIAL_COMMENTS_COUNT);
+
     const hasMoreComments = comments.length > INITIAL_COMMENTS_COUNT;
     const [openModalAttendance, setOpenModalAttendance] = useState(false);
     const [openCancelModal, setOpenCancelModal] = useState(false);
     const [openUploadModal, setOpenUploadModal] = useState(false);
     const [modalOpenRegister, setModalOpenRegister] = useState(false);
+    const [showCommunityModal, setShowCommunityModal] = useState(false);
     const [selectedRole, setSelectedRole] = useState<'ketua' | 'anggota'>(
         'anggota',
     );
+
+    console.log('donasi masuk:', donations);
 
     console.log('myParticipation:', myParticipation);
     console.log('ini komen', comments);
@@ -117,7 +143,9 @@ const ReportDetailPage = ({
         setSelectedRole(role);
         setModalOpenRegister(true);
     };
-
+    const handleOpenModalRegisterAsCommunity = () => {
+        setShowCommunityModal(true);
+    };
     const handleCancel = () => {
         Inertia.delete(route('volunteer.cancel', report.mission?.id), {
             preserveScroll: true,
@@ -133,7 +161,6 @@ const ReportDetailPage = ({
 
     const handleVote = async (type: 'upvote' | 'dislike') => {
         console.log('Handle Vote Triggered:', type);
-
         try {
             const response = await axios.post(`/reports/${report.id}/vote`, {
                 vote_type: type,
@@ -169,6 +196,24 @@ const ReportDetailPage = ({
             {
                 onSuccess: () => {
                     console.log('Berhasil mendaftar');
+                    console.log('myParticipation:', myParticipation);
+                },
+                onError: (errors) => {
+                    console.error(errors);
+                },
+            },
+        );
+    };
+    const handleConfirmRegisterAsCommunity = () => {
+        setShowCommunityModal(false);
+        Inertia.post(
+            `/join-missions/${report.mission?.id}`,
+            {
+                is_leader: true,
+            },
+            {
+                onSuccess: () => {
+                    console.log('Berhasil mendaftar sebagai komunitas');
                     console.log('myParticipation:', myParticipation);
                 },
                 onError: (errors) => {
@@ -224,14 +269,14 @@ const ReportDetailPage = ({
                                 <div className="flex-1">
                                     <div className="mb-3 flex flex-wrap gap-2">
                                         <Badge className="border border-gray-400 bg-white text-gray-700">
-                                            {report.category}
+                                            {getCategoryLabel(report.category)}
                                         </Badge>
                                         <Badge
                                             className={getStatusColor(
                                                 report.status,
                                             )}
                                         >
-                                            {report.status}
+                                            {getStatusLabel(report.status)}
                                         </Badge>
                                         {report.mission && (
                                             <Badge className="bg-indigo-100 text-indigo-700">
@@ -288,9 +333,9 @@ const ReportDetailPage = ({
                                                 className="mr-2 mt-0.5"
                                             />
                                             <span>
-                                                {report.district?.name} ,
+                                                {report.district?.name},{' '}
                                                 {report.city?.name},{' '}
-                                                {report.province?.name},{' '}
+                                                {report.province?.name}
                                             </span>
                                         </div>
                                     </div>
@@ -376,6 +421,74 @@ const ReportDetailPage = ({
                                     {reportState.dislikes_count}
                                 </button>
                             </div>
+                            {report.status === 'completed' && (
+                                <div className="mt-6 rounded-xl border-2 border-emerald-200 bg-gradient-to-br from-emerald-50 to-green-50 p-6 shadow-lg">
+                                    <div className="mb-4 flex items-center space-x-3">
+                                        <div>
+                                            <h3 className="text-xl font-bold text-emerald-800">
+                                                Laporan dan Misi Terkait
+                                                Selesai!
+                                            </h3>
+                                            <p className="text-sm font-medium text-emerald-600">
+                                                Detail penyelesaian
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div className="mb-4 inline-flex items-center rounded-full border border-emerald-300 bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-800">
+                                        <svg
+                                            className="mr-1 h-3 w-3"
+                                            fill="currentColor"
+                                            viewBox="0 0 20 20"
+                                        >
+                                            <path
+                                                fillRule="evenodd"
+                                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                                clipRule="evenodd"
+                                            />
+                                        </svg>
+                                        STATUS: COMPLETED
+                                    </div>
+                                    <div className="rounded-lg border border-emerald-100 bg-white/70 p-4">
+                                        <h4 className="mb-3 flex items-center font-semibold text-emerald-800">
+                                            <svg
+                                                className="mr-2 h-4 w-4"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                viewBox="0 0 24 24"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    strokeWidth={2}
+                                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                                                />
+                                            </svg>
+                                            Laporan Akhir:
+                                        </h4>
+                                        <div className="prose-sm prose max-w-none">
+                                            <p className="text-justify leading-relaxed text-gray-700">
+                                                {report.completion_details || (
+                                                    <span className="italic text-gray-500">
+                                                        Tidak ada detail laporan
+                                                        yang disertakan
+                                                    </span>
+                                                )}
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    {/* Footer with celebration elements */}
+                                    <div className="mt-4 flex items-center justify-between">
+                                        <div className="flex items-center space-x-2 text-emerald-600">
+                                            <span className="text-2xl">🎉</span>
+                                            <span className="text-sm font-medium">
+                                                Terima kasih atas kontribusi
+                                                pihak yang terlibat!
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
                         </CardContent>
                     </Card>
 
@@ -394,7 +507,9 @@ const ReportDetailPage = ({
                                             report.mission?.status,
                                         )}
                                     >
-                                        {report.mission?.status}
+                                        {getMissionStatusLabel(
+                                            report.mission?.status,
+                                        )}
                                     </Badge>
                                 </div>
                                 <h1 className="mb-4 text-3xl font-bold text-gray-900">
@@ -441,11 +556,23 @@ const ReportDetailPage = ({
                                         {report.mission.description}
                                     </p>
                                 </div>
-                                {report.mission?.volunteers && (
+
+                                {report.status === 'under-authority' ? (
+                                    <div className="my-6">
+                                        <Badge className="mb-3 bg-yellow-300 text-lg font-semibold text-black">
+                                            Misi Khusus Pihak Berwenang
+                                        </Badge>
+                                        <p className="text-gray-700">
+                                            Misi ini ditangani oleh otoritas
+                                            terkait dan tidak terbuka untuk
+                                            partisipasi umum.
+                                        </p>
+                                    </div>
+                                ) : report.mission?.volunteers ? (
                                     <div className="mb-6">
                                         <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2">
                                             <div>
-                                                <span className="text-gray-600">
+                                                {/* <span className="text-gray-600">
                                                     Ketua Tim:{' '}
                                                     {confirmedLeader
                                                         ? confirmedLeader.name
@@ -457,7 +584,33 @@ const ReportDetailPage = ({
                                                             ?.volunteers
                                                             ?.is_leader
                                                     }
+                                                </span> */}
+                                                <span className="font-medium text-gray-600">
+                                                    Ketua Tim:
                                                 </span>
+                                                {confirmedLeader.length > 0 ? (
+                                                    <ul className="ml-5 list-disc text-gray-700">
+                                                        {confirmedLeader.map(
+                                                            (
+                                                                leader: Leader,
+                                                            ) => (
+                                                                <li
+                                                                    key={
+                                                                        leader.id
+                                                                    }
+                                                                >
+                                                                    {
+                                                                        leader.name
+                                                                    }
+                                                                </li>
+                                                            ),
+                                                        )}
+                                                    </ul>
+                                                ) : (
+                                                    <span className="ml-2 text-gray-500">
+                                                        Belum ada
+                                                    </span>
+                                                )}
                                             </div>
                                             <div>
                                                 <span className="text-gray-600">
@@ -472,28 +625,47 @@ const ReportDetailPage = ({
                                                 </span>
                                             </div>
                                         </div>
+
                                         <div className="flex flex-col gap-3 sm:flex-row">
                                             {myParticipation == null && (
                                                 <>
-                                                    <Button
-                                                        onClick={() =>
-                                                            handleOpenModalRegister(
-                                                                'ketua',
-                                                            )
-                                                        }
-                                                    >
-                                                        Ikut sebagai Ketua Tim
-                                                    </Button>
-                                                    <Button
-                                                        variant="outline"
-                                                        onClick={() =>
-                                                            handleOpenModalRegister(
-                                                                'anggota',
-                                                            )
-                                                        }
-                                                    >
-                                                        Ikut sebagai Anggota
-                                                    </Button>
+                                                    {user?.role ===
+                                                    'community' ? (
+                                                        <Button
+                                                            variant="outline"
+                                                            className="bg-yellow-400 text-black hover:bg-black hover:text-yellow-400"
+                                                            onClick={
+                                                                handleOpenModalRegisterAsCommunity
+                                                            }
+                                                        >
+                                                            Daftar sebagai
+                                                            Komunitas
+                                                        </Button>
+                                                    ) : (
+                                                        <>
+                                                            <Button
+                                                                onClick={() =>
+                                                                    handleOpenModalRegister(
+                                                                        'ketua',
+                                                                    )
+                                                                }
+                                                            >
+                                                                Ikut sebagai
+                                                                Ketua Tim
+                                                            </Button>
+                                                            <Button
+                                                                variant="outline"
+                                                                onClick={() =>
+                                                                    handleOpenModalRegister(
+                                                                        'anggota',
+                                                                    )
+                                                                }
+                                                            >
+                                                                Ikut sebagai
+                                                                Anggota
+                                                            </Button>
+                                                        </>
+                                                    )}
                                                 </>
                                             )}
 
@@ -525,53 +697,64 @@ const ReportDetailPage = ({
                                                 }
                                                 role={selectedRole}
                                             />
-                                            <>
-                                                {myParticipation &&
-                                                    [
-                                                        'pending',
-                                                        'confirmed',
-                                                    ].includes(
-                                                        myParticipation.pivot
-                                                            .participation_status,
-                                                    ) && (
-                                                        <>
-                                                            <Button
-                                                                onClick={() =>
-                                                                    setOpenCancelModal(
-                                                                        true,
-                                                                    )
-                                                                }
-                                                                variant="destructive"
-                                                            >
-                                                                Batal Daftar
-                                                            </Button>
+                                            <ConfirmVolunteerAsCommunityModal
+                                                open={showCommunityModal}
+                                                onClose={() =>
+                                                    setShowCommunityModal(false)
+                                                }
+                                                onConfirm={
+                                                    handleConfirmRegisterAsCommunity
+                                                }
+                                            />
 
-                                                            <CancelVolunteerModal
-                                                                open={
-                                                                    openCancelModal
-                                                                }
-                                                                onClose={() =>
-                                                                    setOpenCancelModal(
-                                                                        false,
-                                                                    )
-                                                                }
-                                                                onConfirm={
-                                                                    handleCancel
-                                                                }
-                                                                is_leader={
-                                                                    myParticipation
-                                                                        .pivot
-                                                                        .is_leader
-                                                                }
-                                                            />
-                                                        </>
-                                                    )}
-                                            </>
+                                            {myParticipation &&
+                                                [
+                                                    'pending',
+                                                    'confirmed',
+                                                ].includes(
+                                                    myParticipation.pivot
+                                                        .participation_status,
+                                                ) && (
+                                                    <>
+                                                        <Button
+                                                            onClick={() =>
+                                                                setOpenCancelModal(
+                                                                    true,
+                                                                )
+                                                            }
+                                                            variant="destructive"
+                                                        >
+                                                            Batal Daftar
+                                                        </Button>
+                                                        <CancelVolunteerModal
+                                                            open={
+                                                                openCancelModal
+                                                            }
+                                                            onClose={() =>
+                                                                setOpenCancelModal(
+                                                                    false,
+                                                                )
+                                                            }
+                                                            onConfirm={
+                                                                handleCancel
+                                                            }
+                                                            is_leader={
+                                                                myParticipation
+                                                                    .pivot
+                                                                    .is_leader
+                                                            }
+                                                        />
+                                                    </>
+                                                )}
                                         </div>
+
                                         {myParticipation &&
                                             myParticipation.pivot
                                                 .participation_status !==
                                                 'cancelled' &&
+                                            myParticipation.pivot
+                                                .participation_status !==
+                                                'pending' &&
                                             myParticipation.pivot.is_leader && (
                                                 <Button
                                                     onClick={() =>
@@ -584,6 +767,7 @@ const ReportDetailPage = ({
                                                     Presensi Kehadiran
                                                 </Button>
                                             )}
+
                                         <AttendanceFormModal
                                             open={openModalAttendance}
                                             onClose={() =>
@@ -591,19 +775,30 @@ const ReportDetailPage = ({
                                             }
                                             missionId={report.mission?.id}
                                             teamLeader={
-                                                confirmedLeader?.name ??
-                                                'Belum ditentukan'
+                                                confirmedLeader &&
+                                                confirmedLeader.length > 0
+                                                    ? confirmedLeader
+                                                          .map(
+                                                              (
+                                                                  leader: Leader,
+                                                              ) => leader.name,
+                                                          )
+                                                          .join(', ')
+                                                    : 'Belum ditentukan'
                                             }
                                             members={volunteers}
                                         />
                                     </div>
-                                )}
-                                {/* Mission Documentation */}
+                                ) : null}
                                 {report.mission?.documentation && (
                                     <div>
-                                        <h3 className="mb-3 text-lg font-semibold">
-                                            Dokumentasi Misi
-                                        </h3>
+                                        {report.status !==
+                                            'under-authority' && (
+                                            <h3 className="mb-3 text-lg font-semibold">
+                                                Dokumentasi Misi
+                                            </h3>
+                                        )}
+
                                         {myParticipation &&
                                             myParticipation.pivot.is_leader &&
                                             ['confirmed', 'attended'].includes(
@@ -842,26 +1037,14 @@ const ReportDetailPage = ({
                     )}
 
                     {/* Donation Section */}
-                    <Card className="bg-gradient-to-r from-emerald-50 to-green-50">
-                        <CardContent className="p-6">
-                            <div className="text-center">
-                                <Heart className="mx-auto mb-4 h-12 w-12 text-emerald-600" />
-                                <h3 className="mb-2 text-xl font-semibold">
-                                    Donasi untuk Penanganan
-                                </h3>
-                                <p className="mb-4 text-gray-600">
-                                    Bantu penanganan masalah ini dengan
-                                    memberikan donasi
-                                </p>
-                                <Button
-                                    size="lg"
-                                    className="bg-emerald-600 hover:bg-emerald-700"
-                                >
-                                    Donasi Sekarang
-                                </Button>
-                            </div>
-                        </CardContent>
-                    </Card>
+                    {report.is_donation ? (
+                        <>
+                            <DonationCard
+                                donations={donations}
+                                reportId={report.id}
+                            />
+                        </>
+                    ) : null}
                 </div>
 
                 <div className="space-y-6">
@@ -1148,5 +1331,4 @@ const ReportDetailPage = ({
         </div>
     );
 };
-
 export default ReportDetailPage;

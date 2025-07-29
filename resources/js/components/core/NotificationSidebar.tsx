@@ -1,41 +1,49 @@
-// @ts-nocheck
-import { router, usePage } from '@inertiajs/react';
-import { AlertCircle, CheckCircle, Heart, Info, X } from 'lucide-react';
-import React from 'react';
 import { PageProps } from '@/types';
 import { Notification } from '@/types/notification/interface';
+import { router, usePage } from '@inertiajs/react';
+import { AlertCircle, CheckCircle, Heart, Info, Trash2, X } from 'lucide-react';
+import React from 'react';
 
-// --- Komponen UI Lokal ---
-const Card = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
-    <div className={`rounded-lg border bg-white shadow-sm ${className}`}>{children}</div>
-);
-
-const Button = ({ children, variant = 'ghost', size = 'sm', onClick, className = '' }: any) => {
-    const baseStyles = "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2";
-    const variantStyles = {
-        ghost: "hover:bg-gray-100 text-gray-600 hover:text-gray-900",
-        outline: "border border-gray-300 bg-white hover:bg-gray-50 text-gray-700"
+// ... komponen Button dan ScrollArea tetap sama ...
+const Button = ({
+    children,
+    variant = 'ghost',
+    size = 'sm',
+    onClick,
+    className = '',
+    ...props
+}: any) => {
+    const baseStyles =
+        'inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
+    const variantStyles: { [key: string]: string } = {
+        ghost: 'hover:bg-gray-100 text-gray-600 hover:text-gray-900',
+        outline:
+            'border border-gray-300 bg-white hover:bg-gray-50 text-gray-700',
     };
-    const sizeStyles = {
-        sm: "h-8 px-3 text-xs",
-        md: "h-10 px-4 py-2"
+    const sizeStyles: { [key: string]: string } = {
+        sm: 'h-8 px-3 text-xs',
+        md: 'h-10 px-4 py-2',
     };
 
     return (
         <button
             onClick={onClick}
-            className={`${baseStyles} ${variantStyles[variant] || variantStyles.ghost} ${sizeStyles[size] || sizeStyles.sm} ${className}`}
+            className={`${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${className}`}
+            {...props}
         >
             {children}
         </button>
     );
 };
 
-const ScrollArea = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
-    <div className={`overflow-y-auto ${className}`}>{children}</div>
-);
+const ScrollArea = ({
+    children,
+    className = '',
+}: {
+    children: React.ReactNode;
+    className?: string;
+}) => <div className={`overflow-y-auto ${className}`}>{children}</div>;
 
-// --- Interface untuk props sidebar ---
 interface NotificationSidebarProps {
     isOpen: boolean;
     onClose: () => void;
@@ -45,52 +53,112 @@ const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
     isOpen,
     onClose,
 }) => {
-    // Ambil data notifikasi dari shared props Inertia
     const { notifications: sharedNotifications } = usePage<PageProps>().props;
-
-    // Pastikan data ada dan akses dengan benar
     const notifications = sharedNotifications?.notifications || [];
     const unread_count = sharedNotifications?.unread_count || 0;
 
     const getIcon = (type: string | null) => {
         switch (type) {
             case 'report_update':
-                return <AlertCircle className="h-5 w-5 text-blue-500 flex-shrink-0" />;
+                return (
+                    <AlertCircle className="h-5 w-5 flex-shrink-0 text-blue-500" />
+                );
             case 'mission_assigned':
-                return <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />;
+                return (
+                    <CheckCircle className="h-5 w-5 flex-shrink-0 text-green-500" />
+                );
             case 'badge_earned':
-                return <Heart className="h-5 w-5 text-purple-500 flex-shrink-0" />;
+                return (
+                    <Heart className="h-5 w-5 flex-shrink-0 text-purple-500" />
+                );
             case 'donation_received':
-                return <Heart className="h-5 w-5 text-pink-500 flex-shrink-0" />;
+                return (
+                    <Heart className="h-5 w-5 flex-shrink-0 text-pink-500" />
+                );
             default:
-                return <Info className="h-5 w-5 text-gray-500 flex-shrink-0" />;
+                return <Info className="h-5 w-5 flex-shrink-0 text-gray-500" />;
         }
     };
 
-    // Fungsi untuk menandai notifikasi sebagai terbaca
-    const handleMarkAsRead = (e: React.MouseEvent, notificationId: string | number) => {
+    // SOLUSI 1: Tambahkan 'only' parameter untuk refresh data notifikasi
+    const handleMarkAsRead = (
+        e: React.MouseEvent,
+        notificationId: string | number,
+    ) => {
         e.preventDefault();
         e.stopPropagation();
 
-        // Pastikan route helper tersedia, atau gunakan URL langsung
-        const url = ` /read-notification/${notificationId}`;
-
-        router.put(url, {}, {
-            preserveScroll: true,
-            onSuccess: () => {
-                // Optional: tambahkan feedback atau refresh data
-                console.log('Notification marked as read');
+        router.put(
+            `/read-notification/${notificationId}`,
+            {},
+            {
+                preserveScroll: true,
+                only: ['notifications'], // Hanya refresh data notifications
+                onSuccess: () => {
+                    console.log(
+                        `Notifikasi ${notificationId} berhasil ditandai sebagai dibaca.`,
+                    );
+                },
+                onError: (errors) => {
+                    console.error(
+                        'Gagal menandai notifikasi sebagai dibaca:',
+                        errors,
+                    );
+                },
             },
-            onError: (errors) => {
-                console.error('Error marking notification as read:', errors);
-            }
-        });
+        );
     };
 
-    // Fungsi untuk navigasi ke halaman semua notifikasi
+    const handleDeleteNotification = (
+        e: React.MouseEvent,
+        notificationId: string | number,
+    ) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (
+            window.confirm('Apakah Anda yakin ingin menghapus notifikasi ini?')
+        ) {
+            router.delete(
+                route('notification.delete', { id: notificationId }),
+                {
+                    preserveScroll: true,
+                    only: ['notifications'], // Hanya refresh data notifications
+                    onSuccess: () => {
+                        console.log(
+                            `Notifikasi ${notificationId} berhasil dihapus.`,
+                        );
+                    },
+                    onError: (errors) => {
+                        console.error('Gagal menghapus notifikasi:', errors);
+                    },
+                },
+            );
+        }
+    };
+
     const handleViewAll = () => {
-        router.get('/notifications'); // Sesuaikan dengan route yang ada
-        onClose();
+        router.put(
+            route('notification.readAll'),
+            {},
+            {
+                preserveScroll: true,
+                only: ['notifications'], // Hanya refresh data notifications
+                onSuccess: () => {
+                    console.log(
+                        'Semua notifikasi berhasil ditandai sebagai dibaca.',
+                    );
+                    onClose();
+                },
+                onError: (errors) => {
+                    console.error(
+                        'Gagal menandai semua notifikasi sebagai terbaca:',
+                        errors,
+                    );
+                    onClose();
+                },
+            },
+        );
     };
 
     if (!isOpen) return null;
@@ -127,7 +195,7 @@ const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
                             {notifications.map((notification: Notification) => (
                                 <div
                                     key={notification.id}
-                                    className={`rounded-lg border p-3 transition-colors cursor-pointer hover:shadow-md ${
+                                    className={`group relative cursor-pointer rounded-lg border p-3 transition-colors hover:shadow-md ${
                                         !notification.is_read
                                             ? 'border-blue-200 bg-blue-50'
                                             : 'border-gray-200 bg-white hover:bg-gray-50'
@@ -136,21 +204,27 @@ const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
                                     <div className="flex items-start space-x-3">
                                         {getIcon(notification.type)}
                                         <div className="min-w-0 flex-1">
-                                            <h3 className={`text-sm font-medium ${
-                                                !notification.is_read ? 'text-gray-900' : 'text-gray-700'
-                                            }`}>
+                                            <h3
+                                                className={`text-sm font-medium ${
+                                                    !notification.is_read
+                                                        ? 'text-gray-900'
+                                                        : 'text-gray-700'
+                                                }`}
+                                            >
                                                 {notification.title}
                                             </h3>
                                             <p className="mt-1 text-sm text-gray-600">
                                                 {notification.body}
                                             </p>
                                             <p className="mt-2 text-xs text-gray-500">
-                                                {new Date(notification.created_at).toLocaleString('id-ID', {
+                                                {new Date(
+                                                    notification.created_at,
+                                                ).toLocaleString('id-ID', {
                                                     day: 'numeric',
                                                     month: 'long',
                                                     year: 'numeric',
                                                     hour: '2-digit',
-                                                    minute: '2-digit'
+                                                    minute: '2-digit',
                                                 })}
                                             </p>
                                             {!notification.is_read && (
@@ -158,21 +232,44 @@ const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
                                                     variant="ghost"
                                                     size="sm"
                                                     className="mt-2 h-auto p-0 text-xs font-semibold text-blue-600 hover:underline"
-                                                    onClick={(e) => handleMarkAsRead(e, notification.id)}
+                                                    onClick={(e) =>
+                                                        handleMarkAsRead(
+                                                            e,
+                                                            notification.id,
+                                                        )
+                                                    }
                                                 >
                                                     Tandai Sudah Dibaca
                                                 </Button>
                                             )}
                                         </div>
                                     </div>
+
+                                    {/* Tombol Hapus */}
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="absolute right-2 top-2 h-auto p-1 text-gray-400 opacity-0 transition-opacity hover:bg-red-50 hover:text-red-600 group-hover:opacity-100"
+                                        onClick={(e) =>
+                                            handleDeleteNotification(
+                                                e,
+                                                notification.id,
+                                            )
+                                        }
+                                        title="Hapus notifikasi"
+                                    >
+                                        <Trash2 className="h-4 w-4" />
+                                    </Button>
                                 </div>
                             ))}
                         </div>
                     ) : (
                         <div className="flex h-full items-center justify-center">
                             <div className="text-center">
-                                <Info className="h-12 w-12 text-gray-400 mx-auto mb-3" />
-                                <p className="text-sm text-gray-500 italic">Tidak ada notifikasi.</p>
+                                <Info className="mx-auto mb-3 h-12 w-12 text-gray-400" />
+                                <p className="text-sm italic text-gray-500">
+                                    Tidak ada notifikasi.
+                                </p>
                             </div>
                         </div>
                     )}

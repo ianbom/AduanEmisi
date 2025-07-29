@@ -2,16 +2,19 @@ import Navbar from '@/components/core/Navbar';
 import NotificationSidebar from '@/components/core/NotificationSidebar';
 import { PageProps } from '@/types';
 import { getProfileMenuContent } from '@/utils/profileMenuContent';
+import { showToast } from '@/utils/toast';
 import { router as Inertia, usePage } from '@inertiajs/react';
-import { ReactNode, useState } from 'react';
-import Footer from '../core/Footer';
+import { ReactNode, useEffect, useState } from 'react';
+import { Toaster } from 'sonner';
 import FloatingChat from '../chatbot/FloatingChat';
+import Footer from '../core/Footer';
 interface Props {
     children: ReactNode;
     currentPage: string;
 }
 
 export default function CitizenLayout({ children, currentPage }: Props) {
+    const { flash = {} } = usePage().props;
     const [isNotificationOpen, setIsNotificationOpen] = useState(false);
     const { auth } = usePage<PageProps>().props;
     const user = auth?.user;
@@ -21,7 +24,14 @@ export default function CitizenLayout({ children, currentPage }: Props) {
         { id: 'mission', label: 'Misi', key: 'mission' },
         { id: 'map', label: 'Peta', key: 'map' },
         { id: 'education', label: 'Konten Edukasi', key: 'education' },
+        { id: 'merchandise', label: 'Merchandise', key: 'merchandise' },
+         { id: 'quiz', label: 'Quiz', key: 'quiz' },
+
     ];
+    useEffect(() => {
+        console.log('Flash data di CitizenLayout:', flash);
+        showToast.handleFlash(flash);
+    }, [flash]);
     const handleNavigate = (page: string) => {
         Inertia.visit(`/${page}`);
     };
@@ -32,7 +42,6 @@ export default function CitizenLayout({ children, currentPage }: Props) {
             Inertia.visit(route('community.profile.show'));
         }
     };
-
     const handleLogoutClick = () => {
         Inertia.post(route('logout'));
     };
@@ -55,7 +64,9 @@ export default function CitizenLayout({ children, currentPage }: Props) {
                 isOpen={isNotificationOpen}
                 onClose={() => setIsNotificationOpen(false)}
             />
-            <FloatingChat/>
+            <FloatingChat />
+            <Toaster position="top-right" richColors closeButton />
+
             <Footer />
         </div>
     );

@@ -28,6 +28,10 @@ class User extends Authenticatable
         'province_id',
         'city_id',
         'district_id',
+        'google_id',
+        'google_token',
+        'google_refresh_token',
+        'role',
     ];
 
     protected $guarded = [
@@ -58,6 +62,17 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+     public function quizAttempt(){
+        return $this->hasMany(QuizAttempt::class);
+    }
+    public function quizAttemptAnswer(){
+        return $this->hasMany(QuizAttemptAnswer::class);
+    }
+
+    public function reedems(){
+        return $this->hasMany(Reedems::class);
     }
     public function province()
     {
@@ -215,6 +230,15 @@ class User extends Authenticatable
             }
         }
 
+
+        // Tambahan khusus untuk role community
+        if ($this->role === 'community') {
+            $community = $this->community;
+
+            if (!$community || empty($community->name) || empty($community->description)) {
+                return false;
+            }
+        }
 
         return true;
     }

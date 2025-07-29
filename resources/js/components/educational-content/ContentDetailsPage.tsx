@@ -3,9 +3,10 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Content } from '@/types/content';
+import { getContentTypeLabel } from '@/utils/contentTypeLabel';
 import { getTypeColor, getTypeIcon } from '@/utils/educationColor';
 import { formatFullDateTime } from '@/utils/formatDate';
-import { ArrowLeft, Download, FileText, Share2 } from 'lucide-react';
+import { ArrowLeft, FileText, Share2 } from 'lucide-react';
 import Badge from '../core/Badge';
 import ImageWithPopup from '../core/ImageWithPopup';
 import RenderHTML from '../RenderHtml';
@@ -13,7 +14,6 @@ interface ContentDetailsPageProps {
     content: Content;
     onBack: () => void;
 }
-
 const ContentDetailsPage = ({ content, onBack }: ContentDetailsPageProps) => {
     return (
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
@@ -47,7 +47,9 @@ const ContentDetailsPage = ({ content, onBack }: ContentDetailsPageProps) => {
                                     >
                                         <div className="flex items-center gap-1">
                                             {getTypeIcon(content.content_type)}
-                                            {content.content_type}
+                                            {getContentTypeLabel(
+                                                content.content_type,
+                                            )}
                                         </div>
                                     </Badge>
                                 </div>
@@ -64,7 +66,7 @@ const ContentDetailsPage = ({ content, onBack }: ContentDetailsPageProps) => {
                                     </div>
                                     <div className="flex items-center">
                                         <span>
-                                            Diunggah:
+                                            Diunggah:{' '}
                                             {formatFullDateTime(
                                                 content.created_at,
                                             )}
@@ -78,22 +80,12 @@ const ContentDetailsPage = ({ content, onBack }: ContentDetailsPageProps) => {
                                     <Share2 size={16} className="mr-2" />
                                     Bagikan
                                 </Button>
-                                {content.content_type === 'Modul PDF' && (
-                                    <Button
-                                        className="bg-emerald-600 hover:bg-emerald-700"
-                                        size="sm"
-                                    >
-                                        <Download size={16} className="mr-2" />
-                                        Unduh PDF
-                                    </Button>
-                                )}
                             </div>
                         </div>
-                        <CardContent className="py-4">
+                        <CardContent className="px-0 py-4">
                             <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2">
                                 {content.media?.map((mediaItem, index) => {
                                     const type = mediaItem.media_type;
-
                                     if (type === 'document') {
                                         return (
                                             <a
@@ -101,10 +93,10 @@ const ContentDetailsPage = ({ content, onBack }: ContentDetailsPageProps) => {
                                                 href={`/storage/${mediaItem.media_url}`}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="flex items-center space-x-4 rounded-lg border p-4 transition-colors hover:bg-gray-50"
+                                                className="flex flex-col space-y-2 rounded-lg border p-4 transition-colors hover:bg-gray-50 sm:flex-row sm:items-center sm:space-x-4 sm:space-y-0"
                                             >
-                                                <FileText className="h-14 w-14 text-emerald-600" />
-                                                <div>
+                                                <FileText className="mx-auto h-14 w-14 shrink-0 text-emerald-600 sm:mx-0" />
+                                                <div className="w-full text-center sm:w-0 sm:flex-1 sm:text-left">
                                                     <p className="truncate font-medium text-gray-900">
                                                         {mediaItem.media_url
                                                             ? mediaItem.media_url.replace(
@@ -113,7 +105,6 @@ const ContentDetailsPage = ({ content, onBack }: ContentDetailsPageProps) => {
                                                               )
                                                             : `Dokumen ${index + 1}`}
                                                     </p>
-
                                                     <p className="text-sm text-gray-500">
                                                         Modul PDF
                                                     </p>
@@ -121,7 +112,6 @@ const ContentDetailsPage = ({ content, onBack }: ContentDetailsPageProps) => {
                                             </a>
                                         );
                                     }
-
                                     return (
                                         <div
                                             key={index}
@@ -134,11 +124,6 @@ const ContentDetailsPage = ({ content, onBack }: ContentDetailsPageProps) => {
                                                     src={`/storage/${mediaItem.media_url}`}
                                                 />
                                             ) : (
-                                                // <img
-                                                //     src={`/storage/${mediaItem.media_url}`}
-                                                //     alt={`Media ${index + 1}`}
-                                                //     className="object-cover w-full h-full transition-transform duration-300 hover:scale-105"
-                                                // />
                                                 <ImageWithPopup
                                                     src={`/storage/${mediaItem.media_url}`}
                                                     alt={`Media ${index + 1}`}
@@ -158,49 +143,14 @@ const ContentDetailsPage = ({ content, onBack }: ContentDetailsPageProps) => {
                                 />
                             </div>
                         </CardContent>
-                        <p className="leading-relaxed text-gray-700">
+                        <div className="leading-relaxed text-gray-700">
+                            <h2 className="mb-4 text-2xl font-bold text-gray-900"></h2>
                             <RenderHTML
                                 htmlString={content.body}
-                                className="leading-relaxed text-gray-700"
+                                className="text-justify leading-relaxed text-gray-700"
                             />
-                        </p>
-                    </CardContent>
-                    {/* <CardContent>
-                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                            <div className="flex items-center p-4 space-x-4 transition-colors border rounded-lg cursor-pointer hover:bg-gray-50">
-                                <FileText
-                                    size={20}
-                                    className="object-cover rounded h-14 w-14 text-emerald-600"
-                                />
-                                <div className="flex-1">
-                                    <h4 className="font-medium text-gray-900">
-                                        Nugget Rebus
-                                    </h4>
-                                    <div className="flex items-center mt-1">
-                                        <span className="text-sm text-gray-500">
-                                            Modul PDF
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="flex items-center p-4 space-x-4 transition-colors border rounded-lg cursor-pointer hover:bg-gray-50">
-                                <FileText
-                                    size={20}
-                                    className="object-cover rounded h-14 w-14 text-emerald-600"
-                                />
-                                <div className="flex-1">
-                                    <h4 className="font-medium text-gray-900">
-                                        Nugget Rebus
-                                    </h4>
-                                    <div className="flex items-center mt-1">
-                                        <span className="text-sm text-gray-500">
-                                            Modul PDF
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
-                    </CardContent> */}
+                    </CardContent>
                 </Card>
             </div>
         </div>
