@@ -50,7 +50,7 @@ const QuizTakingRoute = () => {
                 onError: () => {
                     // Handle error jika route tidak tersedia
                     window.history.back();
-                }
+                },
             });
         }
     }, [quiz.is_active]);
@@ -61,26 +61,30 @@ const QuizTakingRoute = () => {
             Inertia.visit(route('quiz.index'), {
                 onError: () => {
                     window.history.back();
-                }
+                },
             });
         }
     }, [quiz.questions.length]);
 
     const handleSubmitQuiz = (answers: Record<number, number>) => {
         // Submit jawaban ke backend
-        Inertia.post(route('quiz.submit', { id: quiz.id }), {
-            answers: answers,
-        }, {
-            onSuccess: (page) => {
-                // Redirect ke halaman hasil atau kembali ke daftar quiz
-                // Backend bisa return redirect ke hasil quiz
+        Inertia.post(
+            route('quiz.submit', { id: quiz.id }),
+            {
+                answers: answers,
             },
-            onError: (errors) => {
-                console.error('Error submitting quiz:', errors);
-                // Handle error, mungkin tampilkan toast atau alert
+            {
+                onSuccess: (page) => {
+                    // Redirect ke halaman hasil atau kembali ke daftar quiz
+                    // Backend bisa return redirect ke hasil quiz
+                },
+                onError: (errors) => {
+                    console.error('Error submitting quiz:', errors);
+                    // Handle error, mungkin tampilkan toast atau alert
+                },
+                preserveState: false,
             },
-            preserveState: false,
-        });
+        );
     };
 
     const handleExitQuiz = () => {
@@ -88,7 +92,7 @@ const QuizTakingRoute = () => {
         Inertia.visit(route('quiz.index'), {
             onError: () => {
                 window.history.back();
-            }
+            },
         });
     };
 
@@ -96,12 +100,17 @@ const QuizTakingRoute = () => {
     useEffect(() => {
         const handleBeforeUnload = (e: BeforeUnloadEvent) => {
             e.preventDefault();
-            e.returnValue = 'Apakah Anda yakin ingin meninggalkan halaman? Jawaban Anda akan hilang.';
+            e.returnValue =
+                'Apakah Anda yakin ingin meninggalkan halaman? Jawaban Anda akan hilang.';
             return e.returnValue;
         };
 
         const handlePopState = (e: PopStateEvent) => {
-            if (confirm('Apakah Anda yakin ingin meninggalkan quiz? Jawaban Anda akan hilang.')) {
+            if (
+                confirm(
+                    'Apakah Anda yakin ingin meninggalkan quiz? Jawaban Anda akan hilang.',
+                )
+            ) {
                 // Allow navigation
                 return;
             } else {
@@ -131,7 +140,7 @@ const QuizTakingRoute = () => {
                 <div className="mx-auto max-w-4xl px-4 py-8">
                     <div className="flex items-center justify-center py-32">
                         <div className="text-center">
-                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto mb-4"></div>
+                            <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-emerald-600"></div>
                             <p className="text-gray-600">Memuat quiz...</p>
                         </div>
                     </div>
@@ -145,16 +154,17 @@ const QuizTakingRoute = () => {
         return (
             <CitizenLayout currentPage="quiz">
                 <div className="mx-auto max-w-4xl px-4 py-8">
-                    <div className="text-center py-32">
-                        <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                    <div className="py-32 text-center">
+                        <h2 className="mb-4 text-2xl font-bold text-gray-900">
                             Quiz Tidak Tersedia
                         </h2>
-                        <p className="text-gray-600 mb-8">
-                            Quiz ini sedang tidak aktif dan tidak dapat dikerjakan.
+                        <p className="mb-8 text-gray-600">
+                            Quiz ini sedang tidak aktif dan tidak dapat
+                            dikerjakan.
                         </p>
                         <button
                             onClick={() => window.history.back()}
-                            className="bg-emerald-600 text-white px-6 py-2 rounded-lg hover:bg-emerald-700"
+                            className="rounded-lg bg-emerald-600 px-6 py-2 text-white hover:bg-emerald-700"
                         >
                             Kembali
                         </button>

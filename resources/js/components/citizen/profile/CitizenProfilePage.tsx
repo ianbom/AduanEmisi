@@ -11,11 +11,19 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { cn } from '@/lib/utils';
+import { Donation } from '@/types/donation/interface';
 import { Report } from '@/types/report';
 import { Mission } from '@/types/report/mission';
 import { User } from '@/types/user/interface';
 import { getRarityColor } from '@/utils/badgeRarityColor';
+import { getStatusClass } from '@/utils/badgeStatusDonationColor';
 import { formatFullDateTime } from '@/utils/formatDate';
+import { getStatusColor as getMissionStatusColor } from '@/utils/missionStatusColor';
+import { getMissionStatusLabel } from '@/utils/missionStatusLabel';
+import { getStatusColor } from '@/utils/reportStatusColor';
+import { getStatusLabel } from '@/utils/reportStatusLabel';
+import { getStatusDonationLabel } from '@/utils/statusDonationLabel';
 import { Link, router } from '@inertiajs/react';
 import {
     ArrowRight,
@@ -41,6 +49,7 @@ interface CitizenProfilePageProps {
     myReportsCount: number;
     myMissions: Mission[];
     myMissionCounts: number;
+    myDonations: Donation[];
 }
 
 const CitizenProfilePage = ({
@@ -49,13 +58,16 @@ const CitizenProfilePage = ({
     myReportsCount,
     myMissions,
     myMissionCounts,
+    myDonations,
 }: CitizenProfilePageProps) => {
     const [activeTab, setActiveTab] = useState('reports');
     const [activeTabAchievements, setActiveTabAchievements] =
         useState('certificates');
+    const [activeTabPoints, setActiveTabPoints] = useState('all-points');
     console.log(myMissionCounts);
     console.log(myMissions);
     console.log(myReportsCount);
+    console.log(myDonations);
     const stats = [
         {
             label: 'LAPORAN DIBUAT',
@@ -74,6 +86,78 @@ const CitizenProfilePage = ({
             value: '20',
             icon: Trophy,
             color: 'text-purple-600',
+        },
+    ];
+    const dummyPoints = [
+        {
+            id: 1,
+            type: 'increment',
+            amount: 20,
+            description: 'Menyelesaikan Misi: Tanam Pohon',
+            created_at: '2025-07-25T14:30:00',
+        },
+        {
+            id: 2,
+            type: 'increment',
+            amount: 10,
+            description: 'Melaporkan Sampah Liar',
+            created_at: '2025-07-20T10:15:00',
+        },
+        {
+            id: 3,
+            type: 'increment',
+            amount: 50,
+            description: 'Menukarkan Merchandise - Tumbler',
+            created_at: '2025-07-10T09:00:00',
+        },
+        {
+            id: 4,
+            type: 'decrement',
+            amount: 15,
+            description: 'Penukaran: Kupon Diskon 15%',
+            created_at: '2025-07-11T16:45:00',
+        },
+        {
+            id: 5,
+            type: 'increment',
+            amount: 30,
+            description: 'Mengikuti Webinar: Lingkungan Bersih',
+            created_at: '2025-07-18T08:00:00',
+        },
+        {
+            id: 6,
+            type: 'decrement',
+            amount: 50,
+            description: 'Penukaran: Kaos Komunitas',
+            created_at: '2025-07-19T12:20:00',
+        },
+        {
+            id: 7,
+            type: 'increment',
+            amount: 5,
+            description: 'Mengisi Kuesioner Kepuasan Pengguna',
+            created_at: '2025-07-21T13:40:00',
+        },
+        {
+            id: 8,
+            type: 'increment',
+            amount: 40,
+            description: 'Mengikuti Kegiatan Bersih Sungai',
+            created_at: '2025-07-23T07:30:00',
+        },
+        {
+            id: 9,
+            type: 'decrement',
+            amount: 25,
+            description: 'Penukaran: Totebag SobatBumi',
+            created_at: '2025-07-24T09:15:00',
+        },
+        {
+            id: 10,
+            type: 'increment',
+            amount: 15,
+            description: 'Upload Bukti Aktivitas di Aplikasi',
+            created_at: '2025-07-26T10:50:00',
         },
     ];
 
@@ -311,13 +395,11 @@ const CitizenProfilePage = ({
                                         className={`h-8 w-8 ${stat.color} mx-auto mb-3`}
                                     />
                                     <div className="mb-1 text-3xl font-bold text-gray-900">
-                                        {stat.label === 'LAPORAN DIBUAT' &&
-                                            (stat.value ?? 0)}
+                                        {stat.value ?? 0}
                                     </div>
                                     <div className="text-sm text-gray-600">
                                         {stat.label}
                                     </div>
-
                                     {stat.label === 'LAPORAN DIBUAT' ? (
                                         myReportsCount === 0 ? (
                                             <Button
@@ -339,7 +421,7 @@ const CitizenProfilePage = ({
                                                 size="sm"
                                                 className="mt-2 text-xs"
                                                 onClick={() =>
-                                                    router.visit('/report')
+                                                    router.visit('/my-report')
                                                 }
                                             >
                                                 Lihat Semua
@@ -347,8 +429,7 @@ const CitizenProfilePage = ({
                                             </Button>
                                         )
                                     ) : stat.label === 'MISI DIIKUTI' ? (
-                                        myMissionCounts === 0 ||
-                                        myMissionCounts === undefined ? (
+                                        myMissionCounts === 0 ? (
                                             <Button
                                                 variant="ghost"
                                                 size="sm"
@@ -463,49 +544,76 @@ const CitizenProfilePage = ({
                             <TabsContent value="reports" className="mt-6">
                                 <div className="space-y-4">
                                     {myReports?.length > 0 ? (
-                                        myReports.map((report) => (
-                                            <Card key={report.id}>
-                                                <CardContent className="p-4">
-                                                    <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                                                        <div className="flex-1">
-                                                            <h3 className="font-semibold text-gray-900">
-                                                                {report.title}
-                                                            </h3>
-                                                            <p className="text-sm text-gray-600">
-                                                                {report.address}
-                                                            </p>
-                                                            <p className="mt-1 text-xs text-gray-500">
-                                                                {formatFullDateTime(
-                                                                    report.created_at,
-                                                                )}
-                                                            </p>
-                                                        </div>
-                                                        <div className="flex items-center gap-3 self-start">
-                                                            <Badge
-                                                                variant={
-                                                                    report.status ===
-                                                                    'Completed'
-                                                                        ? 'default'
-                                                                        : 'secondary'
-                                                                }
-                                                            >
-                                                                {report.status}
-                                                            </Badge>
-                                                            <Link
-                                                                href={`/report/${report.id}`}
-                                                            >
-                                                                <Button
-                                                                    variant="outline"
-                                                                    size="sm"
-                                                                >
-                                                                    Lihat Detail
-                                                                </Button>
-                                                            </Link>
-                                                        </div>
-                                                    </div>
-                                                </CardContent>
-                                            </Card>
-                                        ))
+                                        <>
+                                            {myReports
+                                                .slice(0, 5)
+                                                .map((report) => (
+                                                    <Card key={report.id}>
+                                                        <CardContent className="p-4">
+                                                            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                                                                <div className="flex-1">
+                                                                    <h3 className="font-semibold text-gray-900">
+                                                                        {
+                                                                            report.title
+                                                                        }
+                                                                    </h3>
+                                                                    <p className="text-sm text-gray-600">
+                                                                        {
+                                                                            report.address
+                                                                        }
+                                                                    </p>
+                                                                    <p className="mt-1 text-xs text-gray-500">
+                                                                        Laporan
+                                                                        dibuat:{' '}
+                                                                        {formatFullDateTime(
+                                                                            report.created_at,
+                                                                        )}
+                                                                    </p>
+                                                                </div>
+                                                                <div className="flex items-center gap-3 self-start">
+                                                                    <Badge
+                                                                        className={getStatusColor(
+                                                                            report.status,
+                                                                        )}
+                                                                    >
+                                                                        {getStatusLabel(
+                                                                            report.status,
+                                                                        )}
+                                                                    </Badge>
+                                                                    <Link
+                                                                        href={`/report/${report.id}`}
+                                                                    >
+                                                                        <Button
+                                                                            variant="outline"
+                                                                            size="sm"
+                                                                        >
+                                                                            Lihat
+                                                                            Detail
+                                                                        </Button>
+                                                                    </Link>
+                                                                </div>
+                                                            </div>
+                                                        </CardContent>
+                                                    </Card>
+                                                ))}
+                                            {myReports.length > 5 && (
+                                                <div className="flex justify-center pt-4">
+                                                    <Link href="/my-report">
+                                                        <Button
+                                                            variant="outline"
+                                                            className="flex items-center gap-2"
+                                                        >
+                                                            <FileText
+                                                                size={16}
+                                                            />
+                                                            Lihat Semua (
+                                                            {myReports.length}{' '}
+                                                            Laporan)
+                                                        </Button>
+                                                    </Link>
+                                                </div>
+                                            )}
+                                        </>
                                     ) : (
                                         <div className="py-8 text-center">
                                             <FileText className="mx-auto mb-4 h-12 w-12 text-gray-400" />
@@ -516,57 +624,82 @@ const CitizenProfilePage = ({
                                     )}
                                 </div>
                             </TabsContent>
-
                             <TabsContent value="missions" className="mt-6">
                                 <div className="space-y-4">
-                                    {myMissions.length > 0 ? (
-                                        myMissions.map((mission) => (
-                                            <Card key={mission.id}>
-                                                <CardContent className="p-4">
-                                                    <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                                                        <div className="flex-1">
-                                                            <h3 className="font-semibold text-gray-900">
-                                                                {mission.title}
-                                                            </h3>
-                                                            <p className="text-sm text-gray-600">
-                                                                Peran:{' '}
-                                                                {mission.pivot
-                                                                    ?.is_leader
-                                                                    ? 'Ketua Tim'
-                                                                    : 'Anggota Tim'}
-                                                            </p>
-                                                            <p className="mt-1 text-xs text-gray-500">
-                                                                {formatFullDateTime(
-                                                                    mission.created_at,
-                                                                )}
-                                                            </p>
-                                                        </div>
-                                                        <div className="flex items-center gap-3 self-start">
-                                                            <Badge
-                                                                variant={
-                                                                    mission.status ===
-                                                                    'Completed'
-                                                                        ? 'default'
-                                                                        : 'secondary'
-                                                                }
-                                                            >
-                                                                {mission.status}
-                                                            </Badge>
-                                                            <Link
-                                                                href={`/report/${mission.id}`}
-                                                            >
-                                                                <Button
-                                                                    variant="outline"
-                                                                    size="sm"
-                                                                >
-                                                                    Lihat Detail
-                                                                </Button>
-                                                            </Link>
-                                                        </div>
-                                                    </div>
-                                                </CardContent>
-                                            </Card>
-                                        ))
+                                    {myMissions?.length > 0 ? (
+                                        <>
+                                            {myMissions
+                                                .slice(0, 5)
+                                                .map((mission) => (
+                                                    <Card key={mission.id}>
+                                                        <CardContent className="p-4">
+                                                            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                                                                <div className="flex-1">
+                                                                    <h3 className="font-semibold text-gray-900">
+                                                                        {
+                                                                            mission.title
+                                                                        }
+                                                                    </h3>
+                                                                    <p className="text-sm text-gray-600">
+                                                                        Peran:{' '}
+                                                                        {mission
+                                                                            .pivot
+                                                                            ?.is_leader
+                                                                            ? 'Ketua Tim'
+                                                                            : 'Anggota Tim'}
+                                                                    </p>
+                                                                    <p className="mt-1 text-xs text-gray-500">
+                                                                        Misi
+                                                                        dibuat:{' '}
+                                                                        {formatFullDateTime(
+                                                                            mission.created_at,
+                                                                        )}
+                                                                    </p>
+                                                                </div>
+                                                                <div className="flex items-center gap-3 self-start">
+                                                                    <Badge
+                                                                        className={getMissionStatusColor(
+                                                                            mission.status,
+                                                                        )}
+                                                                    >
+                                                                        {getMissionStatusLabel(
+                                                                            mission.status,
+                                                                        )}
+                                                                    </Badge>
+                                                                    <Link
+                                                                        href={`/report/${mission.id}`}
+                                                                    >
+                                                                        <Button
+                                                                            variant="outline"
+                                                                            size="sm"
+                                                                        >
+                                                                            Lihat
+                                                                            Detail
+                                                                        </Button>
+                                                                    </Link>
+                                                                </div>
+                                                            </div>
+                                                        </CardContent>
+                                                    </Card>
+                                                ))}
+                                            {myMissions.length > 5 && (
+                                                <div className="flex justify-center pt-4">
+                                                    <Link href="/my-mission">
+                                                        <Button
+                                                            variant="outline"
+                                                            className="flex items-center gap-2"
+                                                        >
+                                                            <Target size={16} />
+                                                            Lihat Semua (
+                                                            {
+                                                                myReports.length
+                                                            }{' '}
+                                                            Misi)
+                                                        </Button>
+                                                    </Link>
+                                                </div>
+                                            )}
+                                        </>
                                     ) : (
                                         <div className="py-8 text-center">
                                             <Target className="mx-auto mb-4 h-12 w-12 text-gray-400" />
@@ -577,14 +710,322 @@ const CitizenProfilePage = ({
                                     )}
                                 </div>
                             </TabsContent>
-
                             <TabsContent value="donations" className="mt-6">
-                                <div className="py-8 text-center">
-                                    <Heart className="mx-auto mb-4 h-12 w-12 text-gray-400" />
-                                    <p className="text-gray-600">
-                                        Belum ada riwayat donasi
-                                    </p>
+                                <div className="space-y-4">
+                                    {myDonations?.length > 0 ? (
+                                        <>
+                                            {myDonations
+                                                .slice(0, 5)
+                                                .map((donation) => (
+                                                    <Card key={donation.id}>
+                                                        <CardContent className="p-4">
+                                                            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                                                                <div className="flex-1">
+                                                                    <h3 className="font-semibold text-gray-900">
+                                                                        {
+                                                                            donation
+                                                                                .report
+                                                                                ?.title
+                                                                        }
+                                                                    </h3>
+                                                                    <p className="text-sm text-gray-600">
+                                                                        {
+                                                                            donation.transaction_id
+                                                                        }
+                                                                    </p>
+                                                                    <p className="mt-1 text-xs text-gray-500">
+                                                                        Waktu
+                                                                        donasi:{' '}
+                                                                        {formatFullDateTime(
+                                                                            donation.created_at,
+                                                                        )}
+                                                                    </p>
+                                                                </div>
+                                                                <div className="flex flex-col items-end gap-1 self-start">
+                                                                    <Badge
+                                                                        className={getStatusClass(
+                                                                            donation.status,
+                                                                        )}
+                                                                    >
+                                                                        {getStatusDonationLabel(
+                                                                            donation.status,
+                                                                        )}
+                                                                    </Badge>
+                                                                    <p className="text-xl font-semibold text-emerald-600">
+                                                                        Rp.{' '}
+                                                                        {
+                                                                            donation.amount
+                                                                        }
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                        </CardContent>
+                                                    </Card>
+                                                ))}
+                                            {myDonations.length > 5 && (
+                                                <div className="flex justify-center pt-4">
+                                                    <Link href="/my-donations">
+                                                        <Button
+                                                            variant="outline"
+                                                            className="flex items-center gap-2"
+                                                        >
+                                                            <Heart size={16} />
+                                                            Lihat Semua (
+                                                            {
+                                                                myDonations.length
+                                                            }{' '}
+                                                            Donasi)
+                                                        </Button>
+                                                    </Link>
+                                                </div>
+                                            )}
+                                        </>
+                                    ) : (
+                                        <div className="py-8 text-center">
+                                            <Heart className="mx-auto mb-4 h-12 w-12 text-gray-400" />
+                                            <p className="text-gray-600">
+                                                Belum ada riwayat donasi
+                                            </p>
+                                        </div>
+                                    )}
                                 </div>
+                            </TabsContent>
+                        </Tabs>
+                    </CardContent>
+                </Card>
+                {/* Detailed Activity Point Tabs */}
+                <Card className="mb-8">
+                    <CardHeader className="flex flex-row items-center justify-between">
+                        <CardTitle>Riwayat Poin</CardTitle>
+                        <div className="inline-flex items-center gap-1.5 rounded-md bg-yellow-100 px-2 py-2.5 text-xs font-medium text-yellow-800">
+                            Poin Saat Ini:
+                            <Star className="h-4 w-4 text-yellow-500" />
+                            {user?.points_balance || 0} Poin
+                        </div>
+                    </CardHeader>
+                    <CardContent>
+                        <Tabs
+                            value={activeTabPoints}
+                            onValueChange={setActiveTabPoints}
+                        >
+                            <TabsList className="hidden w-full grid-cols-3 md:grid">
+                                <TabsTrigger value="all-points">
+                                    Semua
+                                </TabsTrigger>
+                                <TabsTrigger value="increment-points">
+                                    Increment
+                                </TabsTrigger>
+                                <TabsTrigger value="decrement-points">
+                                    Decrement
+                                </TabsTrigger>
+                            </TabsList>
+                            <div className="mb-4 md:hidden">
+                                <Select
+                                    value={activeTabPoints}
+                                    onValueChange={setActiveTabPoints}
+                                >
+                                    <SelectTrigger className="w-full">
+                                        <SelectValue placeholder="Pilih aktivitas" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="all-points">
+                                            Semua
+                                        </SelectItem>
+                                        <SelectItem value="increment-points">
+                                            Increment
+                                        </SelectItem>
+                                        <SelectItem value="decrement-points">
+                                            Decrement
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <TabsContent value="all-points" className="mt-6">
+                                {dummyPoints.length === 0 ? (
+                                    <div className="flex flex-col items-center justify-center py-12 text-center">
+                                        <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
+                                            <svg
+                                                className="h-8 w-8 text-gray-400"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                viewBox="0 0 24 24"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    strokeWidth={2}
+                                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                                                />
+                                            </svg>
+                                        </div>
+                                        <h3 className="mb-2 text-lg font-medium text-gray-900">
+                                            Data tidak ditemukan
+                                        </h3>
+                                        <p className="text-sm text-gray-500">
+                                            Belum ada riwayat poin yang tersedia
+                                        </p>
+                                    </div>
+                                ) : (
+                                    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+                                        {dummyPoints.map((point) => (
+                                            <Card
+                                                key={point.id}
+                                                className={cn(
+                                                    'p-3 shadow-sm transition-colors',
+                                                    point.type === 'increment'
+                                                        ? 'border-emerald-200 bg-emerald-50/50 hover:bg-emerald-50'
+                                                        : 'border-red-200 bg-red-50/50 hover:bg-red-50',
+                                                )}
+                                            >
+                                                <CardContent className="p-0">
+                                                    <div
+                                                        className={cn(
+                                                            'mb-1 text-sm font-semibold',
+                                                            point.type ===
+                                                                'increment'
+                                                                ? 'text-emerald-600'
+                                                                : 'text-red-600',
+                                                        )}
+                                                    >
+                                                        {point.type ===
+                                                        'increment'
+                                                            ? '+'
+                                                            : '-'}
+                                                        {point.amount} poin
+                                                    </div>
+                                                    <p className="text-xs text-gray-700">
+                                                        {point.description}
+                                                    </p>
+                                                    <p className="mt-1 text-[10px] text-gray-400">
+                                                        {formatFullDateTime(
+                                                            point.created_at,
+                                                        )}
+                                                    </p>
+                                                </CardContent>
+                                            </Card>
+                                        ))}
+                                    </div>
+                                )}
+                            </TabsContent>
+
+                            <TabsContent
+                                value="increment-points"
+                                className="mt-6"
+                            >
+                                {dummyPoints.filter(
+                                    (p) => p.type === 'increment',
+                                ).length === 0 ? (
+                                    <div className="flex flex-col items-center justify-center py-12 text-center">
+                                        <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100">
+                                            <svg
+                                                className="h-8 w-8 text-emerald-400"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                viewBox="0 0 24 24"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    strokeWidth={2}
+                                                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                                                />
+                                            </svg>
+                                        </div>
+                                        <h3 className="mb-2 text-lg font-medium text-gray-900">
+                                            Data tidak ditemukan
+                                        </h3>
+                                        <p className="text-sm text-gray-500">
+                                            Belum ada riwayat penambahan poin
+                                        </p>
+                                    </div>
+                                ) : (
+                                    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+                                        {dummyPoints
+                                            .filter(
+                                                (p) => p.type === 'increment',
+                                            )
+                                            .map((point) => (
+                                                <Card
+                                                    key={point.id}
+                                                    className="border-emerald-200 bg-emerald-50/50 p-3 shadow-sm transition-colors hover:bg-emerald-50"
+                                                >
+                                                    <CardContent className="p-0">
+                                                        <div className="mb-1 text-sm font-semibold text-emerald-600">
+                                                            +{point.amount} poin
+                                                        </div>
+                                                        <p className="text-xs text-gray-700">
+                                                            {point.description}
+                                                        </p>
+                                                        <p className="mt-1 text-[10px] text-gray-400">
+                                                            {formatFullDateTime(
+                                                                point.created_at,
+                                                            )}
+                                                        </p>
+                                                    </CardContent>
+                                                </Card>
+                                            ))}
+                                    </div>
+                                )}
+                            </TabsContent>
+
+                            <TabsContent
+                                value="decrement-points"
+                                className="mt-6"
+                            >
+                                {dummyPoints.filter(
+                                    (p) => p.type === 'decrement',
+                                ).length === 0 ? (
+                                    <div className="flex flex-col items-center justify-center py-12 text-center">
+                                        <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
+                                            <svg
+                                                className="h-8 w-8 text-red-400"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                viewBox="0 0 24 24"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    strokeWidth={2}
+                                                    d="M20 12H4"
+                                                />
+                                            </svg>
+                                        </div>
+                                        <h3 className="mb-2 text-lg font-medium text-gray-900">
+                                            Data tidak ditemukan
+                                        </h3>
+                                        <p className="text-sm text-gray-500">
+                                            Belum ada riwayat pengurangan poin
+                                        </p>
+                                    </div>
+                                ) : (
+                                    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+                                        {dummyPoints
+                                            .filter(
+                                                (p) => p.type === 'decrement',
+                                            )
+                                            .map((point) => (
+                                                <Card
+                                                    key={point.id}
+                                                    className="border-red-200 bg-red-50/50 p-3 shadow-sm transition-colors hover:bg-red-50"
+                                                >
+                                                    <CardContent className="p-0">
+                                                        <div className="mb-1 text-sm font-semibold text-red-600">
+                                                            -{point.amount} poin
+                                                        </div>
+                                                        <p className="text-xs text-gray-700">
+                                                            {point.description}
+                                                        </p>
+                                                        <p className="mt-1 text-[10px] text-gray-400">
+                                                            {formatFullDateTime(
+                                                                point.created_at,
+                                                            )}
+                                                        </p>
+                                                    </CardContent>
+                                                </Card>
+                                            ))}
+                                    </div>
+                                )}
                             </TabsContent>
                         </Tabs>
                     </CardContent>

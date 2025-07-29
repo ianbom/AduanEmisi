@@ -1,6 +1,7 @@
 import CitizenProfilePage from '@/components/citizen/profile/CitizenProfilePage';
 import CitizenLayout from '@/components/layouts/CitizenLayout';
 import { PageProps } from '@/types';
+import { Donation } from '@/types/donation/interface';
 import { Report } from '@/types/report';
 import { Mission } from '@/types/report/mission';
 import { User } from '@/types/user/interface';
@@ -11,6 +12,7 @@ interface ProfilePageRouteProps {
     myReportsCount: number;
     myMissions: Mission[];
     myMissionCounts: number;
+    myDonations: Donation[];
     [key: string]: unknown;
 }
 const ProfilePageRoute = () => {
@@ -20,6 +22,7 @@ const ProfilePageRoute = () => {
     const myReportsCount = props.myReportsCount;
     const myMissions = props.myMissions;
     const myMissionCounts = props.myMissionCounts;
+    const myDonations = props.myDonations;
 
     return (
         <CitizenLayout currentPage="profile">
@@ -29,6 +32,7 @@ const ProfilePageRoute = () => {
                 myReportsCount={myReportsCount}
                 myMissions={myMissions}
                 myMissionCounts={myMissionCounts}
+                myDonations={myDonations}
             />
         </CitizenLayout>
     );

@@ -1,7 +1,3 @@
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -12,15 +8,18 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
 import {
-    CheckCircle,
-    XCircle,
-    Clock,
-    Trophy,
+    AlertTriangle,
     ArrowLeft,
     ArrowRight,
+    CheckCircle,
+    Clock,
     Flag,
-    AlertTriangle,
+    Star,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
@@ -66,7 +65,9 @@ const QuizTakingPage = ({
     timeLimit = 30,
 }: QuizTakingPageProps) => {
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-    const [selectedAnswers, setSelectedAnswers] = useState<Record<number, number>>({});
+    const [selectedAnswers, setSelectedAnswers] = useState<
+        Record<number, number>
+    >({});
     const [timeRemaining, setTimeRemaining] = useState(timeLimit * 60); // in seconds
     const [showExitDialog, setShowExitDialog] = useState(false);
     const [showSubmitDialog, setShowSubmitDialog] = useState(false);
@@ -75,7 +76,8 @@ const QuizTakingPage = ({
     const currentQuestion = quiz.questions[currentQuestionIndex];
     const totalQuestions = quiz.questions.length;
     const answeredQuestions = Object.keys(selectedAnswers).length;
-    const progressPercentage = ((currentQuestionIndex + 1) / totalQuestions) * 100;
+    const progressPercentage =
+        ((currentQuestionIndex + 1) / totalQuestions) * 100;
 
     // Timer countdown
     useEffect(() => {
@@ -158,8 +160,8 @@ const QuizTakingPage = ({
     };
 
     const getTimeColor = () => {
-        if (timeRemaining > 300) return 'text-green-600'; // > 5 minutes
-        if (timeRemaining > 60) return 'text-yellow-600'; // > 1 minute
+        if (timeRemaining > 300) return 'text-green-600';
+        if (timeRemaining > 60) return 'text-yellow-600';
         return 'text-red-600'; // <= 1 minute
     };
 
@@ -199,22 +201,12 @@ const QuizTakingPage = ({
                         <ArrowLeft className="mr-2 h-4 w-4" />
                         Keluar
                     </Button>
-                    <div>
-                        <h1 className="text-xl font-bold text-gray-900">{quiz.title}</h1>
-                        <div className="flex items-center space-x-2">
-                            <Badge className={getDifficultyColor(quiz.difficulty)}>
-                                {getDifficultyLabel(quiz.difficulty)}
-                            </Badge>
-                            <div className="flex items-center text-sm text-emerald-600">
-                                <Trophy size={14} className="mr-1" />
-                                {quiz.points_reward} poin
-                            </div>
-                        </div>
-                    </div>
                 </div>
 
                 <div className="flex items-center space-x-4">
-                    <div className={`flex items-center font-mono text-lg font-bold ${getTimeColor()}`}>
+                    <div
+                        className={`flex items-center font-mono text-lg font-bold ${getTimeColor()}`}
+                    >
                         <Clock className="mr-2 h-5 w-5" />
                         {formatTime(timeRemaining)}
                     </div>
@@ -231,15 +223,59 @@ const QuizTakingPage = ({
 
             {/* Progress */}
             <div className="mb-6">
+                <div className="relative mb-2 overflow-hidden rounded-lg bg-gradient-to-r from-emerald-500 to-emerald-600 px-4 py-4 shadow-lg">
+                    <div className="relative z-10 flex items-start justify-between p-5">
+                        <div className="mr-4 min-w-0 flex-1">
+                            <h1 className="mb-2 line-clamp-2 text-2xl font-bold leading-tight text-white">
+                                {quiz.title}
+                            </h1>
+                            <div className="flex flex-wrap items-center gap-2">
+                                <Badge
+                                    className={`${getDifficultyColor(quiz.difficulty)} shadow-sm`}
+                                >
+                                    {getDifficultyLabel(quiz.difficulty)}
+                                </Badge>
+                                <Badge className="flex items-center gap-1 bg-yellow-100 text-yellow-800">
+                                    <Star
+                                        size={12}
+                                        className="text-yellow-500"
+                                    />
+                                    {quiz.points_reward} Poin
+                                </Badge>
+                            </div>
+                        </div>
+
+                        <div className="flex-shrink-0">
+                            <div className="flex h-16 w-16 items-center justify-center rounded-xl border border-white/30 bg-white/20 backdrop-blur-sm">
+                                <svg
+                                    className="h-8 w-8 text-white"
+                                    fill="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path d="M9 21c0 .5.4 1 1 1h4c.6 0 1-.5 1-1v-1H9v1zm3-19C8.1 2 5 5.1 5 9c0 2.4 1.2 4.5 3 5.7V17c0 .5.4 1 1 1h6c.6 0 1-.5 1-1v-2.3c1.8-1.2 3-3.3 3-5.7 0-3.9-3.1-7-7-7z" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div className="mb-2 flex items-center justify-between text-sm text-gray-600">
                     <span>
-                        Pertanyaan {currentQuestionIndex + 1} dari {totalQuestions}
+                        Pertanyaan {currentQuestionIndex + 1} dari{' '}
+                        {totalQuestions}
                     </span>
                     <span>
                         {answeredQuestions} dari {totalQuestions} terjawab
                     </span>
                 </div>
-                <Progress value={progressPercentage} className="h-2" />
+                {/* <Progress
+                    color="emerald-600"
+                    value={progressPercentage}
+                    className="h-2"
+                /> */}
+                <Progress
+                    value={progressPercentage}
+                    className="h-2 [&>div]:bg-emerald-600"
+                />
             </div>
 
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
@@ -247,7 +283,9 @@ const QuizTakingPage = ({
                 <div className="lg:col-span-1">
                     <Card className="sticky top-6">
                         <CardHeader>
-                            <CardTitle className="text-lg">Navigasi Soal</CardTitle>
+                            <CardTitle className="text-lg">
+                                Navigasi Soal
+                            </CardTitle>
                         </CardHeader>
                         <CardContent>
                             <div className="grid grid-cols-5 gap-2 lg:grid-cols-4">
@@ -257,10 +295,10 @@ const QuizTakingPage = ({
                                         onClick={() => goToQuestion(index)}
                                         className={`aspect-square rounded border-2 text-sm font-medium transition-colors ${
                                             currentQuestionIndex === index
-                                                ? 'border-emerald-500 bg-emerald-50 text-emerald-700'
+                                                ? 'border-sky-500 bg-sky-100 text-sky-700'
                                                 : selectedAnswers[question.id]
-                                                ? 'border-green-500 bg-green-50 text-green-700'
-                                                : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300'
+                                                  ? 'border-green-500 bg-green-100 text-green-700'
+                                                  : 'border-gray-300 bg-gray-100 text-gray-700 hover:border-gray-400'
                                         }`}
                                     >
                                         {index + 1}
@@ -268,16 +306,17 @@ const QuizTakingPage = ({
                                 ))}
                             </div>
                             <div className="mt-4 space-y-2 text-xs text-gray-600">
+                                <p>Keterangan:</p>
                                 <div className="flex items-center">
-                                    <div className="mr-2 h-3 w-3 rounded border-2 border-emerald-500 bg-emerald-50"></div>
+                                    <div className="mr-2 h-3 w-3 rounded border-2 border-sky-500 bg-sky-100"></div>
                                     Soal saat ini
                                 </div>
                                 <div className="flex items-center">
-                                    <div className="mr-2 h-3 w-3 rounded border-2 border-green-500 bg-green-50"></div>
+                                    <div className="mr-2 h-3 w-3 rounded border-2 border-green-500 bg-green-100"></div>
                                     Sudah dijawab
                                 </div>
                                 <div className="flex items-center">
-                                    <div className="mr-2 h-3 w-3 rounded border-2 border-gray-200 bg-white"></div>
+                                    <div className="mr-2 h-3 w-3 rounded border-2 border-gray-300 bg-gray-100"></div>
                                     Belum dijawab
                                 </div>
                             </div>
@@ -287,24 +326,27 @@ const QuizTakingPage = ({
 
                 {/* Main Question */}
                 <div className="lg:col-span-3">
-                    <Card>
+                    <Card className="bg-emerald-100">
                         <CardHeader>
-                            <CardTitle className="text-lg">
+                            <CardTitle className="text-xl text-emerald-800">
                                 Pertanyaan {currentQuestionIndex + 1}
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-6">
                             {/* Question Text */}
                             <div className="space-y-4">
-                                <p className="text-lg leading-relaxed text-gray-900">
+                                <p className="text-2xl font-semibold leading-relaxed text-gray-900">
                                     {currentQuestion.question_text}
                                 </p>
                                 {currentQuestion.question_image_url && (
                                     <div className="flex justify-center">
                                         <img
-                                            src={currentQuestion.question_image_url.startsWith('/storage/')
-                                                ? currentQuestion.question_image_url
-                                                : `/storage/${currentQuestion.question_image_url}`
+                                            src={
+                                                currentQuestion.question_image_url.startsWith(
+                                                    '/storage/',
+                                                )
+                                                    ? currentQuestion.question_image_url
+                                                    : `/storage/${currentQuestion.question_image_url}`
                                             }
                                             alt="Question illustration"
                                             className="max-h-64 rounded-lg border"
@@ -314,45 +356,70 @@ const QuizTakingPage = ({
                             </div>
 
                             {/* Answer Options */}
-                            <div className="space-y-3">
-                                {currentQuestion.answers.map((answer, index) => (
-                                    <button
-                                        key={answer.id}
-                                        onClick={() => handleAnswerSelect(answer.id)}
-                                        className={`w-full rounded-lg border-2 p-4 text-left transition-all ${
-                                            selectedAnswers[currentQuestion.id] === answer.id
-                                                ? 'border-emerald-500 bg-emerald-50'
-                                                : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50'
-                                        }`}
-                                    >
-                                        <div className="flex items-start space-x-3">
-                                            <div
-                                                className={`mt-1 flex h-6 w-6 items-center justify-center rounded-full border-2 text-sm font-medium ${
-                                                    selectedAnswers[currentQuestion.id] === answer.id
-                                                        ? 'border-emerald-500 bg-emerald-500 text-white'
-                                                        : 'border-gray-300 bg-white text-gray-600'
-                                                }`}
-                                            >
-                                                {String.fromCharCode(65 + index)}
+                            {/* <div className="space-y-3"> */}
+                            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                                {currentQuestion.answers.map(
+                                    (answer, index) => (
+                                        <button
+                                            key={answer.id}
+                                            onClick={() =>
+                                                handleAnswerSelect(answer.id)
+                                            }
+                                            className={`w-full rounded-lg border-2 p-4 text-left transition-all ${
+                                                selectedAnswers[
+                                                    currentQuestion.id
+                                                ] === answer.id
+                                                    ? 'border-emerald-700 bg-emerald-700'
+                                                    : 'border-emerald-200 bg-white hover:scale-105 hover:border-emerald-300 hover:bg-gray-50'
+                                            }`}
+                                        >
+                                            <div className="flex items-start space-x-3">
+                                                <div
+                                                    className={`mt-1 flex h-6 w-6 items-center justify-center rounded-md border-2 p-4 text-sm font-bold ${
+                                                        selectedAnswers[
+                                                            currentQuestion.id
+                                                        ] === answer.id
+                                                            ? 'border-emerald-200 bg-emerald-200 text-emerald-900'
+                                                            : 'border-emerald-200 bg-white text-emerald-700'
+                                                    }`}
+                                                >
+                                                    {String.fromCharCode(
+                                                        65 + index,
+                                                    )}
+                                                </div>
+                                                <div className="flex-1">
+                                                    {answer.image_url && (
+                                                        <img
+                                                            src={
+                                                                answer.image_url.startsWith(
+                                                                    '/storage/',
+                                                                )
+                                                                    ? answer.image_url
+                                                                    : `/storage/${answer.image_url}`
+                                                            }
+                                                            alt={`Option ${String.fromCharCode(65 + index)}`}
+                                                            className="mb-2 max-h-32 rounded"
+                                                        />
+                                                    )}
+                                                    {answer.answer_text && (
+                                                        <p
+                                                            className={`font-medium ${
+                                                                selectedAnswers[
+                                                                    currentQuestion
+                                                                        .id
+                                                                ] === answer.id
+                                                                    ? 'text-white'
+                                                                    : 'text-black'
+                                                            }`}
+                                                        >
+                                                            {answer.answer_text}
+                                                        </p>
+                                                    )}
+                                                </div>
                                             </div>
-                                            <div className="flex-1">
-                                                {answer.answer_text && (
-                                                    <p className="text-gray-900">{answer.answer_text}</p>
-                                                )}
-                                                {answer.image_url && (
-                                                    <img
-                                                        src={answer.image_url.startsWith('/storage/')
-                                                            ? answer.image_url
-                                                            : `/storage/${answer.image_url}`
-                                                        }
-                                                        alt={`Option ${String.fromCharCode(65 + index)}`}
-                                                        className="mt-2 max-h-32 rounded border"
-                                                    />
-                                                )}
-                                            </div>
-                                        </div>
-                                    </button>
-                                ))}
+                                        </button>
+                                    ),
+                                )}
                             </div>
 
                             {/* Navigation Buttons */}
@@ -368,7 +435,9 @@ const QuizTakingPage = ({
 
                                 {currentQuestionIndex === totalQuestions - 1 ? (
                                     <Button
-                                        onClick={() => setShowSubmitDialog(true)}
+                                        onClick={() =>
+                                            setShowSubmitDialog(true)
+                                        }
                                         className="bg-emerald-600 hover:bg-emerald-700"
                                         disabled={answeredQuestions === 0}
                                     >
@@ -399,8 +468,9 @@ const QuizTakingPage = ({
                             Keluar dari Quiz?
                         </AlertDialogTitle>
                         <AlertDialogDescription>
-                            Apakah Anda yakin ingin keluar? Semua jawaban yang sudah Anda pilih akan hilang
-                            dan tidak dapat dikembalikan.
+                            Apakah Anda yakin ingin keluar? Semua jawaban yang
+                            sudah Anda pilih akan hilang dan tidak dapat
+                            dikembalikan.
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
@@ -416,7 +486,10 @@ const QuizTakingPage = ({
             </AlertDialog>
 
             {/* Submit Dialog */}
-            <AlertDialog open={showSubmitDialog} onOpenChange={setShowSubmitDialog}>
+            <AlertDialog
+                open={showSubmitDialog}
+                onOpenChange={setShowSubmitDialog}
+            >
                 <AlertDialogContent>
                     <AlertDialogHeader>
                         <AlertDialogTitle className="flex items-center">
@@ -425,14 +498,22 @@ const QuizTakingPage = ({
                         </AlertDialogTitle>
                         <AlertDialogDescription>
                             <div className="space-y-2">
-                                <p>Anda telah menjawab {answeredQuestions} dari {totalQuestions} pertanyaan.</p>
+                                <p>
+                                    Anda telah menjawab {answeredQuestions} dari{' '}
+                                    {totalQuestions} pertanyaan.
+                                </p>
                                 {answeredQuestions < totalQuestions && (
                                     <p className="text-amber-600">
                                         <AlertTriangle className="mr-1 inline h-4 w-4" />
-                                        {totalQuestions - answeredQuestions} pertanyaan belum dijawab dan akan dianggap salah.
+                                        {totalQuestions - answeredQuestions}{' '}
+                                        pertanyaan belum dijawab dan akan
+                                        dianggap salah.
                                     </p>
                                 )}
-                                <p>Apakah Anda yakin ingin menyelesaikan quiz ini?</p>
+                                <p>
+                                    Apakah Anda yakin ingin menyelesaikan quiz
+                                    ini?
+                                </p>
                             </div>
                         </AlertDialogDescription>
                     </AlertDialogHeader>

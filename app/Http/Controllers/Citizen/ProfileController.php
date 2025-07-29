@@ -16,6 +16,8 @@ use App\Models\Report;
 use Throwable;
 use Inertia\Inertia;
 use Pest\Plugins\Profile;
+use App\Models\Donation;
+use App\Models\Point;
 
 class ProfileController extends Controller
 {
@@ -29,13 +31,14 @@ class ProfileController extends Controller
     public function showProfile()
     {
         $user = User::with('province', 'city', 'district')->find(Auth::id());
-
         $myReports = Report::with(['reporter'])->where('reporter_id', $user->id)->get();
         $myReportCount = Report::where('reporter_id', $user->id)->count();
         // $myMissions = $user->volunteeredMissions()->with('pivot')->get();
         $myMissions = $user->volunteeredMissions; // otomatis get()
         $myMissionCounts = $myMissions->count(); // hitung dari hasil atas
-
+        $myDonations = Donation::with('report')
+            ->where('user_id', $user->id)
+            ->latest()->get();
         // $myMissionCounts = $user->volunteeredMissions()->count();
 
         return Inertia::render('Citizen/Profile/ProfilePage', [
@@ -46,6 +49,7 @@ class ProfileController extends Controller
             'myReportsCount' => $myReportCount,
             'myMissions' => $myMissions,
             'myMissionCounts' => $myMissionCounts,
+            'myDonations' => $myDonations
         ]);
     }
 
