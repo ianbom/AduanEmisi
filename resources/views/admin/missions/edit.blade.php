@@ -38,11 +38,16 @@
                     <select name="report_id" id="report_id"
                             class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                         <option value="">-- Select Report --</option>
+                        <option value="{{ $mission->report_id }}"
+                                {{ old('report_id', $mission->report_id) == $mission->report_id ? 'selected' : '' }}>
+                                {{ $mission->report->title }}
+                            </option>
                         @foreach($reports as $report)
                             <option value="{{ $report->id }}"
                                 {{ old('report_id', $mission->report_id) == $report->id ? 'selected' : '' }}>
                                 {{ $report->title }}
                             </option>
+
                         @endforeach
                     </select>
                     @error('report_id')
@@ -259,106 +264,156 @@
 
         <!-- Bagian Tambahan: Volunteers, Communities, Documentation -->
     <div class="space-y-6">
+
+          @if($mission->status === 'completed')
+                <form action="{{ route('admin.reports.update', $mission->report_id) }}" method="POST">
+                    @csrf
+                    @method('PUT')
+
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-semibold text-gray-700 mb-4 flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600 mr-2" fill="none"
+                                 viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            Detail Penyelesaian Misi
+                        </h2>
+
+                        <div class="space-y-2">
+                            <label for="completion_details" class="block text-sm font-medium text-gray-700">
+                                Catatan Penyelesaian (Hasil, Kendala, dll.)
+                            </label>
+                            <textarea
+                                name="completion_details"
+                                id="completion_details"
+                                rows="6"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                placeholder="Contoh: Misi berjalan lancar, berhasil mengumpulkan 50kg sampah plastik. Kendala utama adalah akses ke lokasi yang sulit dijangkau."
+                            >{{ old('completion_details', $mission->report->completion_details) }}</textarea>
+
+                            @error('completion_details')
+                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                            @enderror
+
+                            <p class="text-xs text-gray-500">
+                                Informasi ini akan ditampilkan kepada publik di halaman detail misi.
+                            </p>
+                        </div>
+
+                        <input type="number" name="completed_by_user_id" value="{{ auth()->user()->id }}" hidden>
+                        <input type="text" name="status" value="completed" hidden>
+
+                        <div class="mt-4">
+                            <button type="submit"
+                                    class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 transition duration-200">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none"
+                                     viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                          d="M5 13l4 4L19 7"/>
+                                </svg>
+                                Simpan Detail Penyelesaian
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            @endif
+
+
+
+
+
+
         <!-- Volunteers Section -->
-        <div class="bg-white rounded-lg shadow-md p-6">
-            <h2 class="text-xl font-semibold text-gray-700 mb-4">Volunteers</h2>
+       <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-semibold text-gray-700">Volunteers</h2>
+
+                @if (!$mission->is_point_shared)
+                    <form action="{{ route('admin.missions.sharePoint', $mission->id) }}" method="POST">
+                        @csrf
+                        @method('PUT')
+                        <button type="submit" class="px-4 py-2 bg-emerald-600 text-white rounded-md text-sm font-medium hover:bg-emerald-700 transition">
+                            Bagikan Point
+                        </button>
+                    </form>
+                @endif
+            </div>
 
             @if($volunteers->count() > 0)
                 <div class="overflow-x-auto">
-                    <table id="volunteerTable" class="min-w-full table-auto border-collapse">
-                        <thead>
-                            <tr class="bg-gray-50">
-                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b">
-                                    No
-                                </th>
-                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b">
-                                    Name
-                                </th>
-                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b">
-                                    Role
-                                </th>
-                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b">
-                                    Status
-                                </th>
-                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b">
-                                    Leader
-                                </th>
-                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b">
-                                    Sertifikat
-                                </th>
-                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b">
-                                    Action
-                                </th>
+                    <table id="volunteerTable" class="min-w-full table-auto border border-gray-200 rounded-md overflow-hidden">
+                        <thead class="bg-gray-100 text-gray-700 text-sm font-semibold uppercase">
+                            <tr>
+                                <th class="px-4 py-3 text-left">No</th>
+                                <th class="px-4 py-3 text-left">Name</th>
+                                <th class="px-4 py-3 text-left">Role</th>
+                                <th class="px-4 py-3 text-left">Status</th>
+                                <th class="px-4 py-3 text-left">Leader</th>
+                                <th class="px-4 py-3 text-left">Sertifikat</th>
+                                <th class="px-4 py-3 text-left">Action</th>
                             </tr>
                         </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
+                        <tbody class="bg-white divide-y divide-gray-200 text-sm">
                             @foreach($volunteers as $volunteer)
-                                <tr class="hover:bg-gray-50 transition-colors duration-150">
-                                    <td class="px-4 py-4 whitespace-nowrap">
-                                        {{ $volunteer->id }}
-                                    </td>
-                                    <td class="px-4 py-4 whitespace-nowrap">
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-3">{{ $volunteer->id }}</td>
+
+                                    <td class="px-4 py-3">
                                         <div class="flex items-center">
                                             @if($volunteer->is_leader)
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-yellow-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 00-2-2H5z" />
                                                 </svg>
                                             @endif
-                                            <p class="font-medium text-gray-900">{{ $volunteer->user->name }}</p>
+                                            <span class="font-medium text-gray-900">{{ $volunteer->user->name }}</span>
                                         </div>
                                     </td>
-                                    <td class="px-4 py-4 whitespace-nowrap">
-                                        {{ $volunteer->user->role }}
-                                    </td>
-                                    <td class="px-4 py-4 whitespace-nowrap">
-                                        <span class="px-2 py-1 text-xs font-medium rounded-full capitalize
-                                            @if($volunteer->participation_status === 'confirmed')
-                                                bg-green-100 text-green-800
-                                            @elseif($volunteer->participation_status === 'pending')
-                                                bg-yellow-100 text-yellow-800
-                                            @elseif($volunteer->participation_status === 'cancelled')
-                                                bg-red-100 text-red-800
-                                            @else
-                                                bg-blue-100 text-blue-800
-                                            @endif
-                                        ">
+
+                                    <td class="px-4 py-3">{{ $volunteer->user->role }}</td>
+
+                                    <td class="px-4 py-3">
+                                        <span class="px-2 py-1 rounded-full text-xs font-medium capitalize
+                                            @if($volunteer->participation_status === 'confirmed') bg-green-100 text-green-800
+                                            @elseif($volunteer->participation_status === 'pending') bg-yellow-100 text-yellow-800
+                                            @elseif($volunteer->participation_status === 'cancelled') bg-red-100 text-red-800
+                                            @else bg-blue-100 text-blue-800 @endif">
                                             {{ $volunteer->participation_status }}
                                         </span>
                                     </td>
-                                    <td class="px-4 py-4 whitespace-nowrap">
+
+                                    <td class="px-4 py-3">
                                         @if($volunteer->is_leader)
-                                            <span class="px-3 py-1 bg-yellow-200 text-yellow-800 text-xs font-bold rounded-full">
-                                                LEADER
-                                            </span>
+                                            <span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-bold rounded-full">LEADER</span>
                                         @else
-                                            <span class="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">
-                                                MEMBER
+                                            <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">MEMBER</span>
+                                        @endif
+                                    </td>
+
+                                    <td class="px-4 py-3">
+                                        @if($volunteer->certificate_url)
+                                            <a href="{{ asset('storage/' . $volunteer->certificate_url) }}" target="_blank"
+                                               class="inline-flex items-center px-3 py-1 bg-green-100 text-green-800 text-xs font-semibold rounded-full hover:bg-green-200 transition">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                </svg>
+                                                Lihat
+                                            </a>
+                                        @elseif($volunteer->participation_status == 'attended')
+                                            <span class="px-3 py-1 bg-yellow-100 text-yellow-800 text-xs font-semibold rounded-full">
+                                                Belum Dibuat
                                             </span>
                                         @endif
                                     </td>
-                                      <td class="px-4 py-4 whitespace-nowrap text-sm">
-                                    {{-- INI BAGIAN YANG DIPERBAIKI --}}
-                                    @if($volunteer->certificate_url)
-                                        <a href="{{ asset('storage/' . $volunteer->certificate_url) }}" target="_blank"
-                                           class="inline-flex items-center px-3 py-1 bg-green-100 text-green-800 text-xs font-semibold rounded-full hover:bg-green-200 transition-colors">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                            </svg>
-                                            Lihat
-                                        </a>
-                                    @elseif($volunteer->participation_status == 'attended')
-                                        <span class="px-3 py-1 bg-yellow-100 text-yellow-800 text-xs font-semibold rounded-full">
-                                            Belum Dibuat
-                                        </span>
-                                    @endif
-                                </td>
-                                    <td class="px-4 py-4 whitespace-nowrap">
+
+                                    <td class="px-4 py-3">
                                         <button
                                             onclick="openEditModal({{ $volunteer->id }}, '{{ $volunteer->user->name }}', '{{ $volunteer->participation_status }}', {{ $volunteer->is_leader ? 'true' : 'false' }})"
-                                            class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-150">
-                                            <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                            class="inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition">
+                                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                             </svg>
                                             Edit
                                         </button>
@@ -371,12 +426,14 @@
             @else
                 <div class="text-center py-8">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-400 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
                     </svg>
                     <p class="text-gray-500 italic">No volunteers assigned to this mission.</p>
                 </div>
             @endif
         </div>
+
 
                <!-- Section: Generate Certificate -->
         <div class="bg-white rounded-lg shadow-md overflow-hidden">
@@ -449,35 +506,8 @@
             @endif
         </div>
 
-        <!-- Documentation Section -->
-        {{-- <div class="bg-white rounded-lg shadow-md p-6">
-            <h2 class="text-xl font-semibold text-gray-700 mb-4">Documentation</h2>
-            @if($missionDocumentations->count() > 0)
-                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                    @foreach($missionDocumentations as $doc)
-                        <div class="aspect-square bg-gray-200 rounded-md overflow-hidden hover:shadow-lg transition-shadow duration-200">
-                            @if($doc->media_type === 'image')
-                                <img src="{{ $doc->media_url }}" alt="Documentation" class="w-full h-full object-cover cursor-pointer">
-                            @else
-                                <div class="w-full h-full flex items-center justify-center bg-gray-800 cursor-pointer">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" viewBox="0 0 20 20" fill="currentColor">
-                                        <path d="M2 6a2 2 0 012-2h6a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" />
-                                        <path d="M10 6l4 4-4 4" />
-                                    </svg>
-                                </div>
-                            @endif
-                        </div>
-                    @endforeach
-                </div>
-            @else
-                <div class="text-center py-8">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-400 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
-                    <p class="text-gray-500 italic">No documentation available for this mission.</p>
-                </div>
-            @endif
-        </div> --}}
+
+
     </div>
 </div>
 

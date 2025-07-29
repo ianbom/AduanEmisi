@@ -28,6 +28,7 @@ return new class extends Migration
             $table->timestamp('scheduled_date')->nullable();
             $table->timestamp('completed_at')->nullable();
             $table->enum('assigned_to_type', ['community', 'volunteer'])->nullable();
+            $table->boolean('is_point_shared')->default(false);
             $table->foreignId('assigned_volunteer_id')->nullable()->constrained('users')->onDelete('set null'); // Jika ditugaskan ke individu
             $table->timestamps();
         });

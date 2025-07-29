@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\ReedemsController as AdmReedemsController;
 use App\Http\Controllers\ChatBotController;
 use App\Http\Controllers\Auth\GoogleAuthController;
 
@@ -148,6 +149,7 @@ Route::prefix('community')->as('community.')->middleware(['auth'])->group(functi
 Route::prefix('admin')->as('admin.')->middleware(['auth',])->group(function () {
     Route::resource('missions', AdmMissionController::class);
     Route::put('missions/update/volunteer/{missionVolunteer}', [AdmMissionController::class, 'updateStatusVolunteer'])->name('update.volunteerStatus');
+    Route::put('missions/share-point/{mission}', [AdmMissionController::class, 'shareMissionPoint'])->name('missions.sharePoint');
 
     Route::resource('reports', AdmReportController::class);
     Route::put('reject-report/{report}', [AdmReportController::class, 'rejectReport'])->name('reports.reject');
@@ -167,7 +169,7 @@ Route::prefix('admin')->as('admin.')->middleware(['auth',])->group(function () {
     Route::resource('dashboard', AdmDashboardController::class);
     Route::resource('merchandise', AdmMerchandiseController::class);
     Route::resource('quizzes', AdmQuizController::class);
-
+    Route::resource('redeems', AdmReedemsController::class);
     Route::resource('chatbot', ChatBotController::class);
 });
 
