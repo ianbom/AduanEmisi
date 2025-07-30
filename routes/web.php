@@ -101,6 +101,9 @@ Route::prefix('')->middleware(['auth', 'isProfileComplete'])->group(function () 
     Route::resource('merchandise', CtzMerchandiseController::class);
     Route::get('/my-merchandise', [CtzMerchandiseController::class, 'viewMyMerchandise'])->name('my-merchandise');
     Route::resource('quiz', CtzQuizController::class);
+    Route::post('quiz-submit/{quiz}', [CtzQuizController::class, 'submit'])->name('quiz.submit');
+    Route::get('quiz-result', [CtzQuizController::class, 'result'])->name('quiz.result');
+
 
     Route::get('/leaderboard', function () {
         return Inertia::render('Citizen/Leaderboard/LeaderBoardPage');

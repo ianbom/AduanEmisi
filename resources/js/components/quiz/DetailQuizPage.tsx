@@ -20,8 +20,12 @@ import {
     Clock,
     Flag,
     Star,
+    Loader2,
+    Award,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { router } from '@inertiajs/react';
+import { useForm } from '@inertiajs/react';
 
 interface Answer {
     id: number;
@@ -53,15 +57,11 @@ interface Quiz {
 
 interface QuizTakingPageProps {
     quiz: Quiz;
-    onSubmitQuiz: (answers: Record<number, number>) => void;
-    onExitQuiz: () => void;
     timeLimit?: number; // in minutes
 }
 
 const QuizTakingPage = ({
     quiz,
-    onSubmitQuiz,
-    onExitQuiz,
     timeLimit = 30,
 }: QuizTakingPageProps) => {
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -73,14 +73,30 @@ const QuizTakingPage = ({
     const [showSubmitDialog, setShowSubmitDialog] = useState(false);
     const [isQuizFinished, setIsQuizFinished] = useState(false);
 
+    // Inertia form untuk submit quiz
+    const { data, setData, post, processing, errors, reset } = useForm({
+        answers: {} as Record<string, number>
+    });
+
     const currentQuestion = quiz.questions[currentQuestionIndex];
     const totalQuestions = quiz.questions.length;
     const answeredQuestions = Object.keys(selectedAnswers).length;
     const progressPercentage =
         ((currentQuestionIndex + 1) / totalQuestions) * 100;
 
+    // Update form data ketika selectedAnswers berubah
+    useEffect(() => {
+        const formattedAnswers: Record<string, number> = {};
+        Object.entries(selectedAnswers).forEach(([questionId, answerId]) => {
+            formattedAnswers[questionId] = answerId;
+        });
+        setData('answers', formattedAnswers);
+    }, [selectedAnswers, setData]);
+
     // Timer countdown
     useEffect(() => {
+        if (isQuizFinished || processing) return;
+
         const timer = setInterval(() => {
             setTimeRemaining((prev) => {
                 if (prev <= 1) {
@@ -92,7 +108,7 @@ const QuizTakingPage = ({
         }, 1000);
 
         return () => clearInterval(timer);
-    }, []);
+    }, [isQuizFinished, processing]);
 
     const formatTime = (seconds: number) => {
         const minutes = Math.floor(seconds / 60);
@@ -151,12 +167,33 @@ const QuizTakingPage = ({
 
     const handleSubmitQuiz = () => {
         setIsQuizFinished(true);
-        onSubmitQuiz(selectedAnswers);
+        setShowSubmitDialog(false);
+
+        // Submit menggunakan Inertia
+        post(route('quiz.submit', quiz.id), {
+            onSuccess: (page) => {
+                // Redirect ke halaman result atau tampilkan notifikasi sukses
+                console.log('Quiz submitted successfully:', page.props);
+                // Bisa redirect ke halaman hasil quiz
+                // router.visit(route('quiz.result', quiz.id));
+            },
+            onError: (errors) => {
+                console.error('Error submitting quiz:', errors);
+                setIsQuizFinished(false);
+                // Tampilkan error message jika perlu
+                alert('Terjadi kesalahan saat mengirim jawaban. Silakan coba lagi.');
+            },
+            onFinish: () => {
+                // Reset form jika perlu
+                // reset();
+            }
+        });
     };
 
     const handleExitQuiz = () => {
         setShowExitDialog(false);
-        onExitQuiz();
+        // Redirect kembali ke halaman quiz list atau dashboard
+        router.visit(route('quiz.index'));
     };
 
     const getTimeColor = () => {
@@ -172,15 +209,44 @@ const QuizTakingPage = ({
                     <CardContent className="py-12">
                         <div className="mb-6">
                             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
-                                <CheckCircle className="h-8 w-8 text-green-600" />
+                                {processing ? (
+                                    <Loader2 className="h-8 w-8 animate-spin text-green-600" />
+                                ) : (
+                                    <CheckCircle className="h-8 w-8 text-green-600" />
+                                )}
                             </div>
                             <h2 className="mb-2 text-2xl font-bold text-gray-900">
-                                Quiz Selesai!
+                                {processing ? 'Mengirim Jawaban...' : 'Quiz Selesai!'}
                             </h2>
                             <p className="text-gray-600">
-                                Jawaban Anda sedang diproses...
+                                {processing
+                                    ? 'Sedang memproses jawaban Anda...'
+                                    : 'Jawaban Anda telah berhasil dikirim!'
+                                }
                             </p>
                         </div>
+                        {errors && Object.keys(errors).length > 0 && (
+                            <div className="mt-4 rounded-lg bg-red-50 p-4 text-red-700">
+                                <p className="font-medium">Terjadi kesalahan:</p>
+                                <ul className="mt-2 list-disc list-inside text-sm">
+                                    {Object.entries(errors).map(([key, error]) => (
+                                        <li key={key}>{error}</li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
+
+                         <div className="mt-8">
+                            <Button
+                                size="lg"
+                                className="bg-emerald-600 hover:bg-emerald-700"
+
+                            >
+                                <Award className="mr-2 h-5 w-5" />
+                                Lihat Skor Saya
+                            </Button>
+                        </div>
+
                     </CardContent>
                 </Card>
             </div>
@@ -197,6 +263,7 @@ const QuizTakingPage = ({
                         size="sm"
                         onClick={() => setShowExitDialog(true)}
                         className="flex items-center"
+                        disabled={processing}
                     >
                         <ArrowLeft className="mr-2 h-4 w-4" />
                         Keluar
@@ -213,9 +280,13 @@ const QuizTakingPage = ({
                     <Button
                         onClick={() => setShowSubmitDialog(true)}
                         className="bg-emerald-600 hover:bg-emerald-700"
-                        disabled={answeredQuestions === 0}
+                        disabled={answeredQuestions === 0 || processing}
                     >
-                        <Flag className="mr-2 h-4 w-4" />
+                        {processing ? (
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        ) : (
+                            <Flag className="mr-2 h-4 w-4" />
+                        )}
                         Selesai
                     </Button>
                 </div>
@@ -267,11 +338,6 @@ const QuizTakingPage = ({
                         {answeredQuestions} dari {totalQuestions} terjawab
                     </span>
                 </div>
-                {/* <Progress
-                    color="emerald-600"
-                    value={progressPercentage}
-                    className="h-2"
-                /> */}
                 <Progress
                     value={progressPercentage}
                     className="h-2 [&>div]:bg-emerald-600"
@@ -293,7 +359,8 @@ const QuizTakingPage = ({
                                     <button
                                         key={question.id}
                                         onClick={() => goToQuestion(index)}
-                                        className={`aspect-square rounded border-2 text-sm font-medium transition-colors ${
+                                        disabled={processing}
+                                        className={`aspect-square rounded border-2 text-sm font-medium transition-colors disabled:opacity-50 ${
                                             currentQuestionIndex === index
                                                 ? 'border-sky-500 bg-sky-100 text-sky-700'
                                                 : selectedAnswers[question.id]
@@ -356,7 +423,6 @@ const QuizTakingPage = ({
                             </div>
 
                             {/* Answer Options */}
-                            {/* <div className="space-y-3"> */}
                             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                                 {currentQuestion.answers.map(
                                     (answer, index) => (
@@ -365,7 +431,8 @@ const QuizTakingPage = ({
                                             onClick={() =>
                                                 handleAnswerSelect(answer.id)
                                             }
-                                            className={`w-full rounded-lg border-2 p-4 text-left transition-all ${
+                                            disabled={processing}
+                                            className={`w-full rounded-lg border-2 p-4 text-left transition-all disabled:opacity-50 ${
                                                 selectedAnswers[
                                                     currentQuestion.id
                                                 ] === answer.id
@@ -427,7 +494,7 @@ const QuizTakingPage = ({
                                 <Button
                                     variant="outline"
                                     onClick={goToPreviousQuestion}
-                                    disabled={currentQuestionIndex === 0}
+                                    disabled={currentQuestionIndex === 0 || processing}
                                 >
                                     <ArrowLeft className="mr-2 h-4 w-4" />
                                     Sebelumnya
@@ -439,15 +506,20 @@ const QuizTakingPage = ({
                                             setShowSubmitDialog(true)
                                         }
                                         className="bg-emerald-600 hover:bg-emerald-700"
-                                        disabled={answeredQuestions === 0}
+                                        disabled={answeredQuestions === 0 || processing}
                                     >
-                                        <Flag className="mr-2 h-4 w-4" />
+                                        {processing ? (
+                                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                        ) : (
+                                            <Flag className="mr-2 h-4 w-4" />
+                                        )}
                                         Selesaikan Quiz
                                     </Button>
                                 ) : (
                                     <Button
                                         onClick={goToNextQuestion}
                                         className="bg-emerald-600 hover:bg-emerald-700"
+                                        disabled={processing}
                                     >
                                         Selanjutnya
                                         <ArrowRight className="ml-2 h-4 w-4" />
@@ -474,10 +546,11 @@ const QuizTakingPage = ({
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                        <AlertDialogCancel>Batal</AlertDialogCancel>
+                        <AlertDialogCancel disabled={processing}>Batal</AlertDialogCancel>
                         <AlertDialogAction
                             onClick={handleExitQuiz}
                             className="bg-red-600 hover:bg-red-700"
+                            disabled={processing}
                         >
                             Ya, Keluar
                         </AlertDialogAction>
@@ -518,12 +591,20 @@ const QuizTakingPage = ({
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                        <AlertDialogCancel>Batal</AlertDialogCancel>
+                        <AlertDialogCancel disabled={processing}>Batal</AlertDialogCancel>
                         <AlertDialogAction
                             onClick={handleSubmitQuiz}
                             className="bg-emerald-600 hover:bg-emerald-700"
+                            disabled={processing}
                         >
-                            Ya, Selesaikan
+                            {processing ? (
+                                <>
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    Mengirim...
+                                </>
+                            ) : (
+                                'Ya, Selesaikan'
+                            )}
                         </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>

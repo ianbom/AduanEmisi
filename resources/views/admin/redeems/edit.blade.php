@@ -71,17 +71,31 @@
                             </h3>
 
                             <!-- Logistic Provider -->
-                            <div class="space-y-2">
+                           <div class="space-y-2">
                                 <label for="logistic" class="block text-sm font-semibold text-gray-700">Pilih Kurir</label>
                                 <select name="logistic" id="logistic" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
                                     <option value="">Pilih Kurir</option>
-                                    <option value="JNE" {{ $redeems->logistic == 'JNE' ? 'selected' : '' }}>JNE - Jalur Nugraha Ekakurir</option>
-                                    <option value="J&T" {{ $redeems->logistic == 'J&T' ? 'selected' : '' }}>J&T Express</option>
-                                    <option value="SiCepat" {{ $redeems->logistic == 'SiCepat' ? 'selected' : '' }}>SiCepat Express</option>
-                                    <option value="Pos Indonesia" {{ $redeems->logistic == 'Pos Indonesia' ? 'selected' : '' }}>Pos Indonesia</option>
-                                    <option value="Tiki" {{ $redeems->logistic == 'Tiki' ? 'selected' : '' }}>Tiki (Titipan Kilat)</option>
-                                    <option value="Anteraja" {{ $redeems->logistic == 'Anteraja' ? 'selected' : '' }}>AnterAja</option>
-                                    <option value="Lion Parcel" {{ $redeems->logistic == 'Lion Parcel' ? 'selected' : '' }}>Lion Parcel</option>
+                                    <option value="JNE" {{ old('logistic', $redeems->logistic) == 'JNE' ? 'selected' : '' }}>
+                                        JNE - Jalur Nugraha Ekakurir
+                                    </option>
+                                    <option value="J&T" {{ old('logistic', $redeems->logistic) == 'J&T' ? 'selected' : '' }}>
+                                        J&T Express
+                                    </option>
+                                    <option value="SiCepat" {{ old('logistic', $redeems->logistic) == 'SiCepat' ? 'selected' : '' }}>
+                                        SiCepat Express
+                                    </option>
+                                    <option value="Pos Indonesia" {{ old('logistic', $redeems->logistic) == 'Pos Indonesia' ? 'selected' : '' }}>
+                                        Pos Indonesia
+                                    </option>
+                                    <option value="Tiki" {{ old('logistic', $redeems->logistic) == 'Tiki' ? 'selected' : '' }}>
+                                        Tiki (Titipan Kilat)
+                                    </option>
+                                    <option value="Anteraja" {{ old('logistic', $redeems->logistic) == 'Anteraja' ? 'selected' : '' }}>
+                                        AnterAja
+                                    </option>
+                                    <option value="Lion Parcel" {{ old('logistic', $redeems->logistic) == 'Lion Parcel' ? 'selected' : '' }}>
+                                        Lion Parcel
+                                    </option>
                                 </select>
                                 @error('logistic')
                                     <p class="text-red-500 text-sm">{{ $message }}</p>
