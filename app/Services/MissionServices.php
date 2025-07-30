@@ -211,8 +211,8 @@ class MissionServices extends Service
         $query = Mission::select($selectColumns)
             ->join('districts', 'missions.district_id', '=', 'districts.id')
             // ->join('kota', 'users.id_kota' , '=', 'kota.id_kota')
-            ->join('cities', 'missions.city_id', '=', 'cities.id')
-            ->orderBy('missions.id', 'desc');
+            ->join('cities', 'missions.city_id', '=', 'cities.id');
+
 
         $query = $this->applyFilters($query, $filters, $allowedFilters);
 
@@ -398,7 +398,7 @@ class MissionServices extends Service
                 $filePath = $data['thumbnail_url']->storeAs('missions', $fileName, 'public');
                 $data['thumbnail_url'] = $filePath;
             } else {
-                $data['thumbnail_url'] = $mission->icon_url;
+                $data['thumbnail_url'] = $mission->thumbnail_url;
             }
 
             if ($data['status'] === 'completed' && !$mission->completed_at) {
@@ -406,6 +406,11 @@ class MissionServices extends Service
             } elseif ($data['status'] !== 'completed') {
                 $data['completed_at'] = null;
             }
+
+            if (!isset($data['report_id'])) {
+                $data['report_id'] = $mission->report_id;
+            }
+
 
             // Clear assigned_volunteer_id if assigned_to_type is not 'volunteer'
             // if ($data['assigned_to_type'] !== 'volunteer') {

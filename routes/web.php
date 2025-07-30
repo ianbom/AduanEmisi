@@ -1,8 +1,9 @@
 <?php
 
+use App\Http\Controllers\Admin\ReedemsController as AdmReedemsController;
 use App\Http\Controllers\ChatBotController;
 use App\Http\Controllers\Auth\GoogleAuthController;
-
+use App\Http\Controllers\LeaderboardController;
 use App\Http\Controllers\Citizen\NotificationController;
 use App\Http\Controllers\Admin\BadgeController as AdmBadgeController;
 use App\Http\Controllers\Admin\CertificateController as AdmCertificateController;
@@ -96,14 +97,16 @@ Route::prefix('')->middleware(['auth', 'isProfileComplete'])->group(function () 
     // Route untuk keperluan yang berkaitan dengan Konten Edukasi
     Route::get('/education', [CtzContentController::class, 'index'])->name('content.index');
     Route::get('/education/{id}', [CtzContentController::class, 'show'])->name('content.show');
-
+    // Route untuk keperluan yang berkaitan dengan Merchandise
     Route::resource('merchandise', CtzMerchandiseController::class);
     Route::get('/my-merchandise', [CtzMerchandiseController::class, 'viewMyMerchandise'])->name('my-merchandise');
+    // Route untuk keperluan yang berkaitan dengan Quiz
     Route::resource('quiz', CtzQuizController::class);
+    Route::get('/my-quiz-attempt', [CtzQuizController::class, 'viewMyQuiz'])->name('my-quiz');
+    Route::post('quiz-submit/{quiz}', [CtzQuizController::class, 'submit'])->name('quiz.submit');
+    Route::get('quiz-result', [CtzQuizController::class, 'result'])->name('quiz.result');
 
-    Route::get('/leaderboard', function () {
-        return Inertia::render('Citizen/Leaderboard/LeaderBoardPage');
-    });
+    Route::get('/leaderboard', [LeaderboardController::class, 'index'])->name('leaderboard.index');
 });
 
 
@@ -148,6 +151,7 @@ Route::prefix('community')->as('community.')->middleware(['auth'])->group(functi
 Route::prefix('admin')->as('admin.')->middleware(['auth',])->group(function () {
     Route::resource('missions', AdmMissionController::class);
     Route::put('missions/update/volunteer/{missionVolunteer}', [AdmMissionController::class, 'updateStatusVolunteer'])->name('update.volunteerStatus');
+    Route::put('missions/share-point/{mission}', [AdmMissionController::class, 'shareMissionPoint'])->name('missions.sharePoint');
 
     Route::resource('reports', AdmReportController::class);
     Route::put('reject-report/{report}', [AdmReportController::class, 'rejectReport'])->name('reports.reject');
@@ -161,14 +165,15 @@ Route::prefix('admin')->as('admin.')->middleware(['auth',])->group(function () {
 
     Route::resource('users', AdmUserController::class);
 
-    Route::get('certificate/generate', [AdmCertificateController::class, 'generateCertificate'])->name('certificate.generate');
+    Route::get('certificates/generate', [AdmCertificateController::class, 'generateCertificate'])->name('certificate.generate');
     Route::post('/missions/certificates/generate', [AdmCertificateController::class, 'generate'])->name('missions.certificates.generate');
     Route::resource('certificates', AdmCertificateController::class);
     Route::resource('dashboard', AdmDashboardController::class);
     Route::resource('merchandise', AdmMerchandiseController::class);
     Route::resource('quizzes', AdmQuizController::class);
-
+    Route::resource('redeems', AdmReedemsController::class);
     Route::resource('chatbot', ChatBotController::class);
+    Route::get('test', [ChatBotController::class, 'testQuery']);
 });
 
 

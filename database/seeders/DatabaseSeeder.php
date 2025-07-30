@@ -18,9 +18,10 @@ class DatabaseSeeder extends Seeder
         $this->call([
             UserSeeder::class,
             ProvinceSeeder::class,
-            ReportSeeder::class,
-            MissionSeeder::class,
-            ContentSeeder::class
+            // ReportSeeder::class,
+            // MissionSeeder::class,
+            // ContentSeeder::class,
+            CertificationSeeder::class
         ]);
     }
 }

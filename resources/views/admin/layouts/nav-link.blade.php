@@ -156,6 +156,21 @@
                         Users
                     </a>
                 </li>
+
+                <li>
+                    {{-- Redeems --}}
+                    <a href="{{ route('admin.redeems.index') }}"
+                        class="group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold {{ request()->routeIs('admin.redeems.*') ? 'bg-emerald-800 text-white' : 'text-emerald-100 hover:text-white hover:bg-emerald-800' }}">
+                        <svg class="size-6 shrink-0 {{ request()->routeIs('admin.redeems.*') ? 'text-white' : 'text-emerald-300 group-hover:text-white' }}"
+                            fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                            aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M20 12v8a2 2 0 01-2 2H6a2 2 0 01-2-2v-8m16 0H4m16 0V9a2 2 0 00-2-2h-3m-4 0H6a2 2 0 00-2 2v3m6-5a2.5 2.5 0 115 0c0 1.38-1.12 2.5-2.5 2.5H12m0 0H9.5A2.5 2.5 0 1112 7z" />
+                        </svg>
+                        Redeems
+                    </a>
+                </li>
+
             </ul>
         </li>
         <li class="mt-auto -mx-6">
