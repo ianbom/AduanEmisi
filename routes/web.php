@@ -3,7 +3,7 @@
 use App\Http\Controllers\Admin\ReedemsController as AdmReedemsController;
 use App\Http\Controllers\ChatBotController;
 use App\Http\Controllers\Auth\GoogleAuthController;
-
+use App\Http\Controllers\LeaderboardController;
 use App\Http\Controllers\Citizen\NotificationController;
 use App\Http\Controllers\Admin\BadgeController as AdmBadgeController;
 use App\Http\Controllers\Admin\CertificateController as AdmCertificateController;
@@ -97,14 +97,14 @@ Route::prefix('')->middleware(['auth', 'isProfileComplete'])->group(function () 
     // Route untuk keperluan yang berkaitan dengan Konten Edukasi
     Route::get('/education', [CtzContentController::class, 'index'])->name('content.index');
     Route::get('/education/{id}', [CtzContentController::class, 'show'])->name('content.show');
-
+    // Route untuk keperluan yang berkaitan dengan Merchandise
     Route::resource('merchandise', CtzMerchandiseController::class);
     Route::get('/my-merchandise', [CtzMerchandiseController::class, 'viewMyMerchandise'])->name('my-merchandise');
+    // Route untuk keperluan yang berkaitan dengan Quiz
     Route::resource('quiz', CtzQuizController::class);
+    Route::get('/my-quiz-attempt', [CtzQuizController::class, 'viewMyQuiz'])->name('my-quiz');
 
-    Route::get('/leaderboard', function () {
-        return Inertia::render('Citizen/Leaderboard/LeaderBoardPage');
-    });
+    Route::get('/leaderboard', [LeaderboardController::class, 'index'])->name('leaderboard.index');
 });
 
 

@@ -13,6 +13,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
 import { Donation } from '@/types/donation/interface';
+import { Point } from '@/types/reedem/point';
 import { Report } from '@/types/report';
 import { Mission } from '@/types/report/mission';
 import { User } from '@/types/user/interface';
@@ -50,6 +51,7 @@ interface CitizenProfilePageProps {
     myMissions: Mission[];
     myMissionCounts: number;
     myDonations: Donation[];
+    myPoints: Point[];
 }
 
 const CitizenProfilePage = ({
@@ -59,15 +61,17 @@ const CitizenProfilePage = ({
     myMissions,
     myMissionCounts,
     myDonations,
+    myPoints,
 }: CitizenProfilePageProps) => {
     const [activeTab, setActiveTab] = useState('reports');
     const [activeTabAchievements, setActiveTabAchievements] =
         useState('certificates');
     const [activeTabPoints, setActiveTabPoints] = useState('all-points');
-    console.log(myMissionCounts);
-    console.log(myMissions);
-    console.log(myReportsCount);
-    console.log(myDonations);
+    // console.log(myMissionCounts);
+    // console.log(myMissions);
+    // console.log(myReportsCount);
+    // console.log(myDonations);
+    // console.log(`myPoints : ${myPoints}`);
     const stats = [
         {
             label: 'LAPORAN DIBUAT',
@@ -88,79 +92,6 @@ const CitizenProfilePage = ({
             color: 'text-purple-600',
         },
     ];
-    const dummyPoints = [
-        {
-            id: 1,
-            type: 'increment',
-            amount: 20,
-            description: 'Menyelesaikan Misi: Tanam Pohon',
-            created_at: '2025-07-25T14:30:00',
-        },
-        {
-            id: 2,
-            type: 'increment',
-            amount: 10,
-            description: 'Melaporkan Sampah Liar',
-            created_at: '2025-07-20T10:15:00',
-        },
-        {
-            id: 3,
-            type: 'increment',
-            amount: 50,
-            description: 'Menukarkan Merchandise - Tumbler',
-            created_at: '2025-07-10T09:00:00',
-        },
-        {
-            id: 4,
-            type: 'decrement',
-            amount: 15,
-            description: 'Penukaran: Kupon Diskon 15%',
-            created_at: '2025-07-11T16:45:00',
-        },
-        {
-            id: 5,
-            type: 'increment',
-            amount: 30,
-            description: 'Mengikuti Webinar: Lingkungan Bersih',
-            created_at: '2025-07-18T08:00:00',
-        },
-        {
-            id: 6,
-            type: 'decrement',
-            amount: 50,
-            description: 'Penukaran: Kaos Komunitas',
-            created_at: '2025-07-19T12:20:00',
-        },
-        {
-            id: 7,
-            type: 'increment',
-            amount: 5,
-            description: 'Mengisi Kuesioner Kepuasan Pengguna',
-            created_at: '2025-07-21T13:40:00',
-        },
-        {
-            id: 8,
-            type: 'increment',
-            amount: 40,
-            description: 'Mengikuti Kegiatan Bersih Sungai',
-            created_at: '2025-07-23T07:30:00',
-        },
-        {
-            id: 9,
-            type: 'decrement',
-            amount: 25,
-            description: 'Penukaran: Totebag SobatBumi',
-            created_at: '2025-07-24T09:15:00',
-        },
-        {
-            id: 10,
-            type: 'increment',
-            amount: 15,
-            description: 'Upload Bukti Aktivitas di Aplikasi',
-            created_at: '2025-07-26T10:50:00',
-        },
-    ];
-
     const badges = [
         {
             id: 1,
@@ -841,7 +772,7 @@ const CitizenProfilePage = ({
                                 </Select>
                             </div>
                             <TabsContent value="all-points" className="mt-6">
-                                {dummyPoints.length === 0 ? (
+                                {myPoints.length === 0 ? (
                                     <div className="flex flex-col items-center justify-center py-12 text-center">
                                         <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
                                             <svg
@@ -867,7 +798,7 @@ const CitizenProfilePage = ({
                                     </div>
                                 ) : (
                                     <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-                                        {dummyPoints.map((point) => (
+                                        {myPoints.map((point) => (
                                             <Card
                                                 key={point.id}
                                                 className={cn(
@@ -912,9 +843,8 @@ const CitizenProfilePage = ({
                                 value="increment-points"
                                 className="mt-6"
                             >
-                                {dummyPoints.filter(
-                                    (p) => p.type === 'increment',
-                                ).length === 0 ? (
+                                {myPoints.filter((p) => p.type === 'increment')
+                                    .length === 0 ? (
                                     <div className="flex flex-col items-center justify-center py-12 text-center">
                                         <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100">
                                             <svg
@@ -940,7 +870,7 @@ const CitizenProfilePage = ({
                                     </div>
                                 ) : (
                                     <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-                                        {dummyPoints
+                                        {myPoints
                                             .filter(
                                                 (p) => p.type === 'increment',
                                             )
@@ -972,9 +902,8 @@ const CitizenProfilePage = ({
                                 value="decrement-points"
                                 className="mt-6"
                             >
-                                {dummyPoints.filter(
-                                    (p) => p.type === 'decrement',
-                                ).length === 0 ? (
+                                {myPoints.filter((p) => p.type === 'decrement')
+                                    .length === 0 ? (
                                     <div className="flex flex-col items-center justify-center py-12 text-center">
                                         <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
                                             <svg
@@ -1000,7 +929,7 @@ const CitizenProfilePage = ({
                                     </div>
                                 ) : (
                                     <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-                                        {dummyPoints
+                                        {myPoints
                                             .filter(
                                                 (p) => p.type === 'decrement',
                                             )

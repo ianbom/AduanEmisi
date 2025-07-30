@@ -23,7 +23,7 @@ class PointService
 
         Point::create([
             'user_id' => $userId,
-            'type' => 'increament',
+            'type' => 'increment',
             'description' => $description,
             'pointable_type' => $pointType,
             'pointable_id' => $pointId,
@@ -39,7 +39,7 @@ class PointService
 
         Point::create([
             'user_id' => $user->id,
-            'type' => 'decreament',
+            'type' => 'decrement',
             'description' => $description,
             'pointable_type' => $pointType,
             'pointable_id' => $pointId,
