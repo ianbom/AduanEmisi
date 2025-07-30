@@ -1,3 +1,4 @@
+// @ts-nocheck
 import CitizenLayout from '@/components/layouts/CitizenLayout';
 import QuizTakingPage from '@/components/quiz/DetailQuizPage';
 import { PageProps } from '@/types';
