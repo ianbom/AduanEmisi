@@ -1070,10 +1070,7 @@ const ReportDetailPage = ({
                                             <div className="flex space-x-4">
                                                 <Avatar className="h-10 w-10 ring-2 ring-gray-100">
                                                     <AvatarImage
-                                                        src={
-                                                            comment.user
-                                                                .profile_url
-                                                        }
+                                                        src={`/storage/${comment.user.profile_url}`}
                                                         className="object-cover"
                                                     />
                                                     <AvatarFallback className="bg-emerald-100 font-semibold text-emerald-700">
@@ -1135,11 +1132,7 @@ const ReportDetailPage = ({
                                                                         >
                                                                             <Avatar className="h-7 w-7 ring-1 ring-gray-200">
                                                                                 <AvatarImage
-                                                                                    src={
-                                                                                        reply
-                                                                                            .user
-                                                                                            .profile_url
-                                                                                    }
+                                                                                    src={`/storage/${reply.user.profile_url}`}
                                                                                     className="object-cover"
                                                                                 />
                                                                                 <AvatarFallback className="bg-emerald-50 text-xs font-medium text-emerald-600">

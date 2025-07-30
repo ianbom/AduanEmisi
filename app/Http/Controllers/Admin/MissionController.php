@@ -150,9 +150,14 @@ class MissionController extends Controller
         $missionVolunteers = MissionVolunteer::where('mission_id', $mission->id)
         ->where('participation_status', 'attended')->get();
 
+        if ($mission->is_point_shared) {
+        return redirect()->back()->with('info', 'Poin untuk misi ini sudah pernah dibagikan sebelumnya.');
+    }
+
         DB::beginTransaction();
         try {
         $mission->update(['is_point_shared' => true]);
+
         foreach ($missionVolunteers as $volunteer) {
            $this->pointService->increamentPoint('Misi diseleaikan, selamat anda mendapatkan 60 point',
             Mission::class, $mission->id, 100,$volunteer->user_id);
@@ -166,10 +171,6 @@ class MissionController extends Controller
            DB::rollBack();
            return redirect()->back()->with('error', 'Terjadi kesalah ');
         }
-
-
-
-
     }
 
 

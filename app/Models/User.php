@@ -127,12 +127,18 @@ class User extends Authenticatable
         return $this->hasMany(Report::class, 'completed_by_user_id');
     }
 
-    /**
-     * The badges that belong to the user.
-     */
+    public function missionVolunteers()
+    {
+        return $this->hasMany(MissionVolunteer::class);
+    }
     public function badges()
     {
         return $this->belongsToMany(Badge::class, 'user_badges');
+    }
+
+    public function userBadges()
+    {
+        return $this->hasMany(UserBadge::class);
     }
 
     /**

@@ -103,6 +103,8 @@ Route::prefix('')->middleware(['auth', 'isProfileComplete'])->group(function () 
     // Route untuk keperluan yang berkaitan dengan Quiz
     Route::resource('quiz', CtzQuizController::class);
     Route::get('/my-quiz-attempt', [CtzQuizController::class, 'viewMyQuiz'])->name('my-quiz');
+    Route::post('quiz-submit/{quiz}', [CtzQuizController::class, 'submit'])->name('quiz.submit');
+    Route::get('quiz-result', [CtzQuizController::class, 'result'])->name('quiz.result');
 
     Route::get('/leaderboard', [LeaderboardController::class, 'index'])->name('leaderboard.index');
 });
@@ -163,7 +165,7 @@ Route::prefix('admin')->as('admin.')->middleware(['auth',])->group(function () {
 
     Route::resource('users', AdmUserController::class);
 
-    Route::get('certificate/generate', [AdmCertificateController::class, 'generateCertificate'])->name('certificate.generate');
+    Route::get('certificates/generate', [AdmCertificateController::class, 'generateCertificate'])->name('certificate.generate');
     Route::post('/missions/certificates/generate', [AdmCertificateController::class, 'generate'])->name('missions.certificates.generate');
     Route::resource('certificates', AdmCertificateController::class);
     Route::resource('dashboard', AdmDashboardController::class);
@@ -171,6 +173,7 @@ Route::prefix('admin')->as('admin.')->middleware(['auth',])->group(function () {
     Route::resource('quizzes', AdmQuizController::class);
     Route::resource('redeems', AdmReedemsController::class);
     Route::resource('chatbot', ChatBotController::class);
+    Route::get('test', [ChatBotController::class, 'testQuery']);
 });
 
 

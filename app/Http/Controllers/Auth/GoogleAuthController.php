@@ -22,12 +22,12 @@ class GoogleAuthController extends Controller
         try {
             $googleUser = Socialite::driver('google')->user();
 
-            $existUser = User::all();
+            // $existUser = User::all();
 
-            if ($googleUser->email == $existUser->email) {
-            Auth::login($googleUser);
-            return redirect('/homepage');
-            }
+            // if ($googleUser->email == $existUser->email) {
+            // Auth::login($googleUser);
+            // return redirect('/homepage');
+            // }
 
             $user = User::updateOrCreate(
                 [
