@@ -7,30 +7,40 @@ use App\Models\Quiz;
 use App\Models\QuizAttempt;
 use App\services\QuizService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Auth;
+
 
 class QuizController extends Controller
 {
     protected $quizService;
 
-    public function __construct(QuizService $quizService){
+    public function __construct(QuizService $quizService)
+    {
         $this->quizService = $quizService;
     }
 
-
-    public function index(){
+    public function index()
+    {
         $quizzes = Quiz::where('is_active', true)->get();
 
         return Inertia::render('Citizen/Quiz/QuizPage', ['quizzes' => $quizzes]);
     }
 
-    public function show(Quiz $quiz){
+    public function show(Quiz $quiz)
+    {
         $quiz = Quiz::with('questions.answers')->findOrFail($quiz->id);
         return Inertia::render('Citizen/Quiz/DetailQuizPage', ['quiz' => $quiz]);
     }
-
-     public function submit(Request $request, Quiz $quiz)
+    public function viewMyQuiz()
+    {
+        $user = Auth::user();
+        $redeems = $user->reedems()->with('merchandise')->latest()->get();
+        return Inertia::render('Citizen/Quiz/MyQuizPage', [
+            'redeems' => $redeems
+        ]);
+    }
+    public function submit(Request $request, Quiz $quiz)
     {
         // Validasi input
         $validated = $request->validate([
@@ -43,7 +53,7 @@ class QuizController extends Controller
 
         // Panggil service untuk melakukan semua pekerjaan berat
         $newAttempt = $this->quizService->calculateAndStoreAttempt($quiz, $user, $submittedAnswers);
-        
+
 
         return redirect()->back()->with('success', 'Quiz diselesaikan');
     }

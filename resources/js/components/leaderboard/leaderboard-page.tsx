@@ -1,6 +1,14 @@
 'use client';
 
-import { Award, FileText, Heart, Medal, Shield, Trophy } from 'lucide-react';
+import {
+    Award,
+    FileText,
+    Heart,
+    Medal,
+    Shield,
+    Target,
+    Trophy,
+} from 'lucide-react';
 import { useState } from 'react';
 // import Image from "next/image"
 
@@ -460,7 +468,7 @@ export default function LeaderboardPage(
                     {/* Top 3 Mission Volunteers */}
                     <div className="mb-12">
                         <div className="mb-6 flex items-center justify-center">
-                            <Shield className="mr-2 h-6 w-6 text-emerald-600" />
+                            <Target className="mr-2 h-6 w-6 text-emerald-600" />
                             <h3 className="text-2xl font-semibold text-emerald-700">
                                 Top 3 Pengguna dengan Misi Terbanyak
                             </h3>

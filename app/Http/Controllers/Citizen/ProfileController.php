@@ -33,14 +33,15 @@ class ProfileController extends Controller
         $user = User::with('province', 'city', 'district')->find(Auth::id());
         $myReports = Report::with(['reporter'])->where('reporter_id', $user->id)->get();
         $myReportCount = Report::where('reporter_id', $user->id)->count();
-        // $myMissions = $user->volunteeredMissions()->with('pivot')->get();
-        $myMissions = $user->volunteeredMissions; // otomatis get()
-        $myMissionCounts = $myMissions->count(); // hitung dari hasil atas
+        $myMissions = $user->volunteeredMissions;
+        $myMissionCounts = $myMissions->count();
         $myDonations = Donation::with('report')
             ->where('user_id', $user->id)
             ->latest()->get();
-        // $myMissionCounts = $user->volunteeredMissions()->count();
-
+        $myPoints = Point::with('pointable')
+            ->where('user_id', $user->id)
+            ->orderByDesc('created_at')
+            ->get();
         return Inertia::render('Citizen/Profile/ProfilePage', [
             'auth' => [
                 'user' => $user,
@@ -49,7 +50,8 @@ class ProfileController extends Controller
             'myReportsCount' => $myReportCount,
             'myMissions' => $myMissions,
             'myMissionCounts' => $myMissionCounts,
-            'myDonations' => $myDonations
+            'myDonations' => $myDonations,
+            'myPoints' => $myPoints
         ]);
     }
 

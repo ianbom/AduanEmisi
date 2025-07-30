@@ -7,6 +7,7 @@ import { User } from '@/types/user/interface';
 import {
     FileText,
     Heart,
+    Lightbulb,
     LogOut,
     ShoppingBag,
     Star,
@@ -84,6 +85,15 @@ export function getProfileMenuContent({
             >
                 <ShoppingBag className="h-4 w-4" />
                 <span>Merchandise Saya</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+                onClick={() =>
+                    (location.href = `${routePrefix}/my-merchandise`)
+                }
+                className="flex cursor-pointer items-center gap-2"
+            >
+                <Lightbulb className="h-4 w-4" />
+                <span>Kuis yang Dikerjakan</span>
             </DropdownMenuItem>
             {/* <DropdownMenuLabel className="px-3 py-1.5 text-xs font-medium uppercase tracking-wider text-gray-500">
                 PENGHARGAAN

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('points', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users', 'id')->cascadeOnDelete();
-            $table->enum('type', ['increament', 'decreament']);
+            $table->enum('type', ['increment', 'decrement']);
             $table->integer('amount');
             $table->string('description');
             $table->morphs('pointable');

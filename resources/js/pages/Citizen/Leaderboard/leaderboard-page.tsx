@@ -1,344 +1,550 @@
-import React, { useState } from "react"
-import { FileText, Shield, Heart, Trophy, Medal, Award } from "lucide-react"
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { formatCurrency } from '@/utils/formatCurrency';
+import { FileText, Heart, Target } from 'lucide-react';
+import React, { useState } from 'react';
 
-// TypeScript interfaces
 interface LeaderboardUser {
-  id: number
-  name: string
-  profile_url: string | null
-  reports_count?: number
-  missions_count?: number
-  total_donation?: number
+    id: number;
+    name: string;
+    profile_url: string | null;
+    reports_count?: number;
+    missions_count?: number;
+    total_donation?: number;
 }
 
 interface LeaderboardPageProps {
-  // Data for the Top 3 Podiums
-  top3Reporters?: LeaderboardUser[]
-  top3MissionVolunteers?: LeaderboardUser[]
-  top3Donors?: LeaderboardUser[]
+    // Data for the Top 3 Podiums
+    top3Reporters?: LeaderboardUser[];
+    top3MissionVolunteers?: LeaderboardUser[];
+    top3Donors?: LeaderboardUser[];
 
-  // Data for the Top 10 Lists
-  top10Reporters?: LeaderboardUser[]
-  top10MissionVolunteers?: LeaderboardUser[]
-  top10Donors?: LeaderboardUser[]
+    // Data for the Top 10 Lists
+    top10Reporters?: LeaderboardUser[];
+    top10MissionVolunteers?: LeaderboardUser[];
+    top10Donors?: LeaderboardUser[];
 }
 
 // Mock data for demonstration
 const mockData: Required<LeaderboardPageProps> = {
-  top3Reporters: [
-    { id: 1, name: "Sari Wijaya", profile_url: null, reports_count: 58 },
-    { id: 2, name: "Budi Santoso", profile_url: null, reports_count: 45 },
-    { id: 3, name: "Maya Putri", profile_url: null, reports_count: 38 },
-  ],
-  top3MissionVolunteers: [
-    { id: 4, name: "Ahmad Rahman", profile_url: null, missions_count: 12 },
-    { id: 5, name: "Dewi Lestari", profile_url: null, missions_count: 10 },
-    { id: 6, name: "Rizki Pratama", profile_url: null, missions_count: 8 },
-  ],
-  top3Donors: [
-    { id: 7, name: "Indira Sari", profile_url: null, total_donation: 5000000 },
-    { id: 8, name: "Fajar Nugroho", profile_url: null, total_donation: 3500000 },
-    { id: 9, name: "Lia Permata", profile_url: null, total_donation: 2800000 },
-  ],
-  top10Reporters: [
-    { id: 1, name: "Sari Wijaya", profile_url: null, reports_count: 58 },
-    { id: 2, name: "Budi Santoso", profile_url: null, reports_count: 45 },
-    { id: 3, name: "Maya Putri", profile_url: null, reports_count: 38 },
-    { id: 10, name: "Andi Wijaya", profile_url: null, reports_count: 32 },
-    { id: 11, name: "Nina Sari", profile_url: null, reports_count: 28 },
-    { id: 12, name: "Doni Pratama", profile_url: null, reports_count: 25 },
-    { id: 13, name: "Rini Lestari", profile_url: null, reports_count: 22 },
-    { id: 14, name: "Hadi Kusuma", profile_url: null, reports_count: 19 },
-    { id: 15, name: "Sinta Dewi", profile_url: null, reports_count: 16 },
-    { id: 16, name: "Yoga Pratama", profile_url: null, reports_count: 14 },
-  ],
-  top10MissionVolunteers: [
-    { id: 4, name: "Ahmad Rahman", profile_url: null, missions_count: 12 },
-    { id: 5, name: "Dewi Lestari", profile_url: null, missions_count: 10 },
-    { id: 6, name: "Rizki Pratama", profile_url: null, missions_count: 8 },
-    { id: 17, name: "Lina Sari", profile_url: null, missions_count: 7 },
-    { id: 18, name: "Bayu Adi", profile_url: null, missions_count: 6 },
-    { id: 19, name: "Citra Dewi", profile_url: null, missions_count: 5 },
-    { id: 20, name: "Eko Susanto", profile_url: null, missions_count: 5 },
-    { id: 21, name: "Fitri Handayani", profile_url: null, missions_count: 4 },
-    { id: 22, name: "Gilang Ramadan", profile_url: null, missions_count: 4 },
-    { id: 23, name: "Hesti Pratiwi", profile_url: null, missions_count: 3 },
-  ],
-  top10Donors: [
-    { id: 7, name: "Indira Sari", profile_url: null, total_donation: 5000000 },
-    { id: 8, name: "Fajar Nugroho", profile_url: null, total_donation: 3500000 },
-    { id: 9, name: "Lia Permata", profile_url: null, total_donation: 2800000 },
-    { id: 24, name: "Irwan Setiawan", profile_url: null, total_donation: 2500000 },
-    { id: 25, name: "Jihan Aulia", profile_url: null, total_donation: 2200000 },
-    { id: 26, name: "Krisna Wijaya", profile_url: null, total_donation: 1800000 },
-    { id: 27, name: "Laras Sari", profile_url: null, total_donation: 1500000 },
-    { id: 28, name: "Maulana Yusuf", profile_url: null, total_donation: 1200000 },
-    { id: 29, name: "Nadia Putri", profile_url: null, total_donation: 1000000 },
-    { id: 30, name: "Omar Faruq", profile_url: null, total_donation: 800000 },
-  ],
-}
+    top3Reporters: [
+        { id: 1, name: 'Sari Wijaya', profile_url: null, reports_count: 58 },
+        { id: 2, name: 'Budi Santoso', profile_url: null, reports_count: 45 },
+        { id: 3, name: 'Maya Putri', profile_url: null, reports_count: 38 },
+    ],
+    top3MissionVolunteers: [
+        { id: 4, name: 'Ahmad Rahman', profile_url: null, missions_count: 12 },
+        { id: 5, name: 'Dewi Lestari', profile_url: null, missions_count: 10 },
+        { id: 6, name: 'Rizki Pratama', profile_url: null, missions_count: 8 },
+    ],
+    top3Donors: [
+        {
+            id: 7,
+            name: 'Indira Sari',
+            profile_url: null,
+            total_donation: 5000000,
+        },
+        {
+            id: 8,
+            name: 'Fajar Nugroho',
+            profile_url: null,
+            total_donation: 3500000,
+        },
+        {
+            id: 9,
+            name: 'Lia Permata',
+            profile_url: null,
+            total_donation: 2800000,
+        },
+    ],
+    top10Reporters: [
+        { id: 1, name: 'Sari Wijaya', profile_url: null, reports_count: 58 },
+        { id: 2, name: 'Budi Santoso', profile_url: null, reports_count: 45 },
+        { id: 3, name: 'Maya Putri', profile_url: null, reports_count: 38 },
+        { id: 10, name: 'Andi Wijaya', profile_url: null, reports_count: 32 },
+        { id: 11, name: 'Nina Sari', profile_url: null, reports_count: 28 },
+        { id: 12, name: 'Doni Pratama', profile_url: null, reports_count: 25 },
+        { id: 13, name: 'Rini Lestari', profile_url: null, reports_count: 22 },
+        { id: 14, name: 'Hadi Kusuma', profile_url: null, reports_count: 19 },
+        { id: 15, name: 'Sinta Dewi', profile_url: null, reports_count: 16 },
+        { id: 16, name: 'Yoga Pratama', profile_url: null, reports_count: 14 },
+    ],
+    top10MissionVolunteers: [
+        { id: 4, name: 'Ahmad Rahman', profile_url: null, missions_count: 12 },
+        { id: 5, name: 'Dewi Lestari', profile_url: null, missions_count: 10 },
+        { id: 6, name: 'Rizki Pratama', profile_url: null, missions_count: 8 },
+        { id: 17, name: 'Lina Sari', profile_url: null, missions_count: 7 },
+        { id: 18, name: 'Bayu Adi', profile_url: null, missions_count: 6 },
+        { id: 19, name: 'Citra Dewi', profile_url: null, missions_count: 5 },
+        { id: 20, name: 'Eko Susanto', profile_url: null, missions_count: 5 },
+        {
+            id: 21,
+            name: 'Fitri Handayani',
+            profile_url: null,
+            missions_count: 4,
+        },
+        {
+            id: 22,
+            name: 'Gilang Ramadan',
+            profile_url: null,
+            missions_count: 4,
+        },
+        { id: 23, name: 'Hesti Pratiwi', profile_url: null, missions_count: 3 },
+    ],
+    top10Donors: [
+        {
+            id: 7,
+            name: 'Indira Sari',
+            profile_url: null,
+            total_donation: 5000000,
+        },
+        {
+            id: 8,
+            name: 'Fajar Nugroho',
+            profile_url: null,
+            total_donation: 3500000,
+        },
+        {
+            id: 9,
+            name: 'Lia Permata',
+            profile_url: null,
+            total_donation: 2800000,
+        },
+        {
+            id: 24,
+            name: 'Irwan Setiawan',
+            profile_url: null,
+            total_donation: 2500000,
+        },
+        {
+            id: 25,
+            name: 'Jihan Aulia',
+            profile_url: null,
+            total_donation: 2200000,
+        },
+        {
+            id: 26,
+            name: 'Krisna Wijaya',
+            profile_url: null,
+            total_donation: 1800000,
+        },
+        {
+            id: 27,
+            name: 'Laras Sari',
+            profile_url: null,
+            total_donation: 1500000,
+        },
+        {
+            id: 28,
+            name: 'Maulana Yusuf',
+            profile_url: null,
+            total_donation: 1200000,
+        },
+        {
+            id: 29,
+            name: 'Nadia Putri',
+            profile_url: null,
+            total_donation: 1000000,
+        },
+        {
+            id: 30,
+            name: 'Omar Faruq',
+            profile_url: null,
+            total_donation: 800000,
+        },
+    ],
+};
 
 const LeaderBoard: React.FC<LeaderboardPageProps> = (props = {}) => {
-  const [activeTab, setActiveTab] = useState<"reports" | "missions" | "donations">("reports")
+    const [mobileActiveTab, setMobileActiveTab] = useState<
+        'reports' | 'missions' | 'donations'
+    >('reports');
 
-  // Merge props with mock data, prioritizing props
-  const data = {
-    top3Reporters: props.top3Reporters || mockData.top3Reporters,
-    top3MissionVolunteers: props.top3MissionVolunteers || mockData.top3MissionVolunteers,
-    top3Donors: props.top3Donors || mockData.top3Donors,
-    top10Reporters: props.top10Reporters || mockData.top10Reporters,
-    top10MissionVolunteers: props.top10MissionVolunteers || mockData.top10MissionVolunteers,
-    top10Donors: props.top10Donors || mockData.top10Donors,
-  }
+    const data = {
+        top3Reporters: props.top3Reporters || mockData.top3Reporters,
+        top3MissionVolunteers:
+            props.top3MissionVolunteers || mockData.top3MissionVolunteers,
+        top3Donors: props.top3Donors || mockData.top3Donors,
+        top10Reporters: props.top10Reporters || mockData.top10Reporters,
+        top10MissionVolunteers:
+            props.top10MissionVolunteers || mockData.top10MissionVolunteers,
+        top10Donors: props.top10Donors || mockData.top10Donors,
+    };
 
-  const formatCurrency = (amount: number): string => {
-    return new Intl.NumberFormat("id-ID", {
-      style: "currency",
-      currency: "IDR",
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(amount)
-  }
+    const PodiumCard: React.FC<{
+        user: LeaderboardUser;
+        rank: number;
+        metric: string;
+        category: 'reports' | 'missions' | 'donations';
+        isMobile?: boolean;
+    }> = ({ user, rank, metric, isMobile = false }) => {
+        const getCardStyle = (rank: number) => {
+            switch (rank) {
+                case 1:
+                    return {
+                        height: isMobile ? '120px' : '400px',
+                        className:
+                            'bg-gradient-to-b from-yellow-400 to-yellow-600 border-yellow-500',
+                    };
+                case 2:
+                    return {
+                        height: isMobile ? '120px' : '320px',
+                        className:
+                            'bg-gradient-to-b from-gray-300 to-gray-500 border-gray-400',
+                    };
+                case 3:
+                    return {
+                        height: isMobile ? '120px' : '280px',
+                        className:
+                            'bg-gradient-to-b from-orange-400 to-orange-600 border-orange-500',
+                    };
+                default:
+                    return {
+                        height: isMobile ? '120px' : '320px',
+                        className:
+                            'bg-gradient-to-b from-gray-300 to-gray-500 border-gray-400',
+                    };
+            }
+        };
 
-  const getRankIcon = (rank: number): JSX.Element => {
-    switch (rank) {
-      case 1:
-        return <Trophy className="w-8 h-8 text-yellow-500" />
-      case 2:
-        return <Medal className="w-8 h-8 text-gray-400" />
-      case 3:
-        return <Award className="w-8 h-8 text-amber-600" />
-      default:
-        return <span className="text-2xl font-bold text-emerald-600">#{rank}</span>
-    }
-  }
+        const cardStyle = getCardStyle(rank);
 
-  const getRankEmoji = (rank: number): string => {
-    switch (rank) {
-      case 1:
-        return "🥇"
-      case 2:
-        return "🥈"
-      case 3:
-        return "🥉"
-      default:
-        return `#${rank}`
-    }
-  }
+        if (isMobile) {
+            return (
+                <div
+                    className={`relative flex transform items-center rounded-xl border-2 p-4 shadow-lg transition-all duration-300 ${cardStyle.className}`}
+                    style={{ height: cardStyle.height }}
+                >
+                    <div className="mr-4 flex items-center justify-center">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-white/50 bg-white/30">
+                            <span className="text-xl font-bold text-white">
+                                {rank}
+                            </span>
+                        </div>
+                    </div>
+                    <div className="flex flex-1 items-center">
+                        <div className="mr-4 flex h-16 w-16 items-center justify-center rounded-full border-4 border-white bg-white shadow-lg">
+                            <span className="text-xl text-gray-600">👤</span>
+                        </div>
+                        <div className="text-left">
+                            <h3 className="mb-1 text-lg font-bold text-white">
+                                {user.name}
+                            </h3>
+                            <p className="text-sm font-semibold text-white/90">
+                                {metric}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
 
-  const getPodiumCardStyle = (rank: number): string => {
-    switch (rank) {
-      case 1:
-        return "bg-gradient-to-br from-yellow-400 to-yellow-600 border-yellow-500"
-      case 2:
-        return "bg-gradient-to-br from-gray-300 to-gray-500 border-gray-400"
-      case 3:
-        return "bg-gradient-to-br from-amber-500 to-amber-700 border-amber-600"
-      default:
-        return "bg-white border-gray-200"
-    }
-  }
+        return (
+            <div
+                className={`relative flex transform flex-col justify-between rounded-xl border-2 p-6 shadow-lg transition-all duration-300 hover:scale-105 ${cardStyle.className}`}
+                style={{ height: cardStyle.height }}
+            >
+                <div className="flex justify-center">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-white/50 bg-white/30">
+                        <span className="text-xl font-bold text-white">
+                            {rank}
+                        </span>
+                    </div>
+                </div>
+                <div className="flex flex-1 flex-col justify-center text-center">
+                    <div className="relative mb-4">
+                        <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full border-4 border-white bg-white shadow-lg">
+                            <span className="text-2xl text-gray-600">👤</span>
+                        </div>
+                    </div>
+                    <h3 className="mb-2 text-lg font-bold text-white">
+                        {user.name}
+                    </h3>
+                </div>
+                <div className="text-center">
+                    <p className="font-semibold text-white/90">{metric}</p>
+                </div>
+            </div>
+        );
+    };
 
-  const PodiumCard: React.FC<{
-    user: LeaderboardUser
-    rank: number
-    metric: string
-    category: "reports" | "missions" | "donations"
-  }> = ({ user, rank, metric }) => (
-    <div
-      className={`relative p-6 rounded-xl shadow-lg border-2 transform hover:scale-105 transition-all duration-300 ${getPodiumCardStyle(rank)}`}
-    >
-      <div className="text-center">
-        <div className="text-4xl mb-3">{getRankEmoji(rank)}</div>
-        <div className="relative mb-4">
-          <div className="w-20 h-20 bg-white rounded-full mx-auto border-4 border-white shadow-lg flex items-center justify-center">
-            <span className="text-2xl text-gray-600">👤</span>
-          </div>
+    const LeaderboardRow: React.FC<{
+        user: LeaderboardUser;
+        rank: number;
+        category: 'reports' | 'missions' | 'donations';
+    }> = ({ user, rank, category }) => {
+        let metric = '';
+        switch (category) {
+            case 'reports':
+                metric = `${user.reports_count || 0} Laporan`;
+                break;
+            case 'missions':
+                metric = `${user.missions_count || 0} Misi`;
+                break;
+            case 'donations':
+                metric = formatCurrency(user.total_donation || 0);
+                break;
+        }
+
+        return (
+            <div
+                className="flex items-center justify-between rounded-lg border border-green-100 p-4 shadow-sm transition-shadow duration-200 hover:shadow-md"
+                style={{
+                    backgroundImage:
+                        'linear-gradient(to right, #047857, #059669, #10b981)',
+                }}
+            >
+                <div className="flex items-center space-x-4">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-white/50 bg-white/30">
+                        <span className="text-xl font-bold text-white">
+                            {rank}
+                        </span>
+                    </div>
+                    <div className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-emerald-200 bg-gray-200">
+                        <span className="text-sm text-gray-600">👤</span>
+                    </div>
+                    <div>
+                        <h4 className="font-semibold text-white">
+                            {user.name}
+                        </h4>
+                    </div>
+                </div>
+                <div className="text-right">
+                    <p className="font-extrabold text-white">{metric}</p>
+                </div>
+            </div>
+        );
+    };
+
+    const TabContent: React.FC<{
+        top3Users: LeaderboardUser[];
+        top10Users: LeaderboardUser[];
+        category: 'reports' | 'missions' | 'donations';
+        metricFormatter: (user: LeaderboardUser) => string;
+    }> = ({ top3Users, top10Users, category, metricFormatter }) => (
+        <div>
+            <div className="mb-12 hidden md:block">
+                <div className="mx-auto flex max-w-5xl items-end justify-center gap-6">
+                    {top3Users[1] && (
+                        <div className="max-w-xs flex-1">
+                            <PodiumCard
+                                user={top3Users[1]}
+                                rank={2}
+                                metric={metricFormatter(top3Users[1])}
+                                category={category}
+                            />
+                        </div>
+                    )}
+                    {top3Users[0] && (
+                        <div className="max-w-xs flex-1">
+                            <PodiumCard
+                                user={top3Users[0]}
+                                rank={1}
+                                metric={metricFormatter(top3Users[0])}
+                                category={category}
+                            />
+                        </div>
+                    )}
+                    {top3Users[2] && (
+                        <div className="max-w-xs flex-1">
+                            <PodiumCard
+                                user={top3Users[2]}
+                                rank={3}
+                                metric={metricFormatter(top3Users[2])}
+                                category={category}
+                            />
+                        </div>
+                    )}
+                </div>
+            </div>
+            <div className="mb-8 space-y-4 md:hidden">
+                {top3Users.map((user, index) => (
+                    <PodiumCard
+                        key={user.id}
+                        user={user}
+                        rank={index + 1}
+                        metric={metricFormatter(user)}
+                        category={category}
+                        isMobile={true}
+                    />
+                ))}
+            </div>
+            <div className="space-y-4">
+                <h3 className="mb-4 text-xl font-bold text-gray-800">
+                    Peringkat Lainnya
+                </h3>
+                {top10Users.slice(3).map((user, index) => (
+                    <LeaderboardRow
+                        key={user.id}
+                        user={user}
+                        rank={index + 4}
+                        category={category}
+                    />
+                ))}
+            </div>
         </div>
-        <h3 className="font-bold text-lg text-white mb-2">{user.name}</h3>
-        <p className="text-white/90 font-semibold">{metric}</p>
-      </div>
-    </div>
-  )
+    );
 
-  const LeaderboardRow: React.FC<{
-    user: LeaderboardUser
-    rank: number
-    category: "reports" | "missions" | "donations"
-  }> = ({ user, rank, category }) => {
-    let metric = ""
-    switch (category) {
-      case "reports":
-        metric = `${user.reports_count || 0} Laporan`
-        break
-      case "missions":
-        metric = `${user.missions_count || 0} Misi`
-        break
-      case "donations":
-        metric = formatCurrency(user.total_donation || 0)
-        break
-    }
+    const tabOptions = [
+        { value: 'reports', label: 'Laporan Terbanyak', icon: FileText },
+        { value: 'missions', label: 'Misi Terbanyak', icon: Target },
+        { value: 'donations', label: 'Donasi Terbanyak', icon: Heart },
+    ];
 
     return (
-      <div className="flex items-center justify-between p-4 bg-white rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-200">
-        <div className="flex items-center space-x-4">
-          <div className="flex items-center justify-center w-10 h-10">{getRankIcon(rank)}</div>
-          <div className="w-10 h-10 bg-gray-200 rounded-full border-2 border-emerald-200 flex items-center justify-center">
-            <span className="text-sm text-gray-600">👤</span>
-          </div>
-          <div>
-            <h4 className="font-semibold text-gray-900">{user.name}</h4>
-          </div>
+        <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-green-100 px-4 py-8">
+            <div className="mx-auto max-w-7xl">
+                <div className="mb-8 md:mb-12">
+                    <h1 className="mb-4 text-3xl font-bold text-emerald-800 md:text-4xl lg:text-5xl">
+                        🌍 Pahlawan Bumi
+                    </h1>
+                    <p className="max-w-2xl text-lg text-emerald-700 md:text-xl">
+                        Apresiasi untuk para kontributor paling berpengaruh di
+                        SobatBumi.
+                    </p>
+                </div>
+
+                <div className="rounded-2xl bg-transparent">
+                    <div className="hidden md:block">
+                        <Tabs defaultValue="reports" className="w-full">
+                            <TabsList className="mb-8 w-full grid-cols-3 bg-transparent md:mb-16 md:grid">
+                                {tabOptions.map((tab) => {
+                                    const Icon = tab.icon;
+                                    return (
+                                        <TabsTrigger
+                                            key={tab.value}
+                                            value={tab.value}
+                                            className="mr-5 flex items-center gap-2 rounded-md bg-white py-3 text-base transition-all duration-200 hover:text-green-600 data-[state=active]:bg-emerald-600 data-[state=active]:font-bold data-[state=active]:text-white md:text-lg"
+                                        >
+                                            <Icon className="h-4 w-4" />
+                                            <span className="hidden sm:inline">
+                                                {tab.label}
+                                            </span>
+                                            <span className="sm:hidden">
+                                                {tab.value === 'reports'
+                                                    ? 'Laporan'
+                                                    : tab.value === 'missions'
+                                                      ? 'Misi'
+                                                      : 'Donasi'}
+                                            </span>
+                                        </TabsTrigger>
+                                    );
+                                })}
+                            </TabsList>
+
+                            <TabsContent value="reports" className="mt-6">
+                                <TabContent
+                                    top3Users={data.top3Reporters}
+                                    top10Users={data.top10Reporters}
+                                    category="reports"
+                                    metricFormatter={(user) =>
+                                        `${user.reports_count || 0} Laporan Terverifikasi`
+                                    }
+                                />
+                            </TabsContent>
+
+                            <TabsContent value="missions" className="mt-6">
+                                <TabContent
+                                    top3Users={data.top3MissionVolunteers}
+                                    top10Users={data.top10MissionVolunteers}
+                                    category="missions"
+                                    metricFormatter={(user) =>
+                                        `${user.missions_count || 0} Misi Diikuti`
+                                    }
+                                />
+                            </TabsContent>
+
+                            <TabsContent value="donations" className="mt-6">
+                                <TabContent
+                                    top3Users={data.top3Donors}
+                                    top10Users={data.top10Donors}
+                                    category="donations"
+                                    metricFormatter={(user) =>
+                                        `${formatCurrency(user.total_donation || 0)} Terkumpul`
+                                    }
+                                />
+                            </TabsContent>
+                        </Tabs>
+                    </div>
+
+                    <div className="md:hidden">
+                        <div className="mb-8">
+                            <Select
+                                value={mobileActiveTab}
+                                onValueChange={(value) =>
+                                    setMobileActiveTab(
+                                        value as
+                                            | 'reports'
+                                            | 'missions'
+                                            | 'donations',
+                                    )
+                                }
+                            >
+                                <SelectTrigger className="w-full bg-white py-6 text-lg">
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {tabOptions.map((tab) => {
+                                        const Icon = tab.icon;
+                                        return (
+                                            <SelectItem
+                                                key={tab.value}
+                                                value={tab.value}
+                                            >
+                                                <div className="flex items-center gap-2">
+                                                    <Icon className="h-4 w-4" />
+                                                    {tab.label}
+                                                </div>
+                                            </SelectItem>
+                                        );
+                                    })}
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        <div className="mt-6">
+                            {mobileActiveTab === 'reports' && (
+                                <TabContent
+                                    top3Users={data.top3Reporters}
+                                    top10Users={data.top10Reporters}
+                                    category="reports"
+                                    metricFormatter={(user) =>
+                                        `${user.reports_count || 0} Laporan Terverifikasi`
+                                    }
+                                />
+                            )}
+                            {mobileActiveTab === 'missions' && (
+                                <TabContent
+                                    top3Users={data.top3MissionVolunteers}
+                                    top10Users={data.top10MissionVolunteers}
+                                    category="missions"
+                                    metricFormatter={(user) =>
+                                        `${user.missions_count || 0} Misi Diikuti`
+                                    }
+                                />
+                            )}
+                            {mobileActiveTab === 'donations' && (
+                                <TabContent
+                                    top3Users={data.top3Donors}
+                                    top10Users={data.top10Donors}
+                                    category="donations"
+                                    metricFormatter={(user) =>
+                                        `${formatCurrency(user.total_donation || 0)} Terkumpul`
+                                    }
+                                />
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div className="text-right">
-          <p className="font-bold text-emerald-600">{metric}</p>
-        </div>
-      </div>
-    )
-  }
+    );
+};
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-green-100 py-8 px-4">
-      <div className="max-w-7xl mx-auto">
-        {/* Main Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-emerald-800 mb-4">🌍 Pahlawan Bumi</h1>
-          <p className="text-xl text-emerald-600 max-w-2xl mx-auto">
-            Apresiasi untuk para kontributor paling berpengaruh di SobatBumi.
-          </p>
-        </div>
-
-        {/* Section 1: Podium Pahlawan */}
-        <div className="mb-16">
-          <h2 className="text-3xl font-bold text-center text-emerald-800 mb-8">🏆 Podium Pahlawan</h2>
-
-          {/* Top 3 Reporters */}
-          <div className="mb-12">
-            <div className="flex items-center justify-center mb-6">
-              <FileText className="w-6 h-6 text-emerald-600 mr-2" />
-              <h3 className="text-2xl font-semibold text-emerald-700">Top 3 Pengguna dengan Laporan Terbanyak</h3>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-              {data.top3Reporters.map((user, index) => (
-                <PodiumCard
-                  key={user.id}
-                  user={user}
-                  rank={index + 1}
-                  metric={`${user.reports_count || 0} Laporan Terverifikasi`}
-                  category="reports"
-                />
-              ))}
-            </div>
-          </div>
-
-          {/* Top 3 Mission Volunteers */}
-          <div className="mb-12">
-            <div className="flex items-center justify-center mb-6">
-              <Shield className="w-6 h-6 text-emerald-600 mr-2" />
-              <h3 className="text-2xl font-semibold text-emerald-700">Top 3 Pengguna dengan Misi Terbanyak</h3>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-              {data.top3MissionVolunteers.map((user, index) => (
-                <PodiumCard
-                  key={user.id}
-                  user={user}
-                  rank={index + 1}
-                  metric={`${user.missions_count || 0} Misi Diikuti`}
-                  category="missions"
-                />
-              ))}
-            </div>
-          </div>
-
-          {/* Top 3 Donors */}
-          <div className="mb-12">
-            <div className="flex items-center justify-center mb-6">
-              <Heart className="w-6 h-6 text-emerald-600 mr-2" />
-              <h3 className="text-2xl font-semibold text-emerald-700">Top 3 Pengguna dengan Donasi Terbanyak</h3>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-              {data.top3Donors.map((user, index) => (
-                <PodiumCard
-                  key={user.id}
-                  user={user}
-                  rank={index + 1}
-                  metric={`${formatCurrency(user.total_donation || 0)} Terkumpul`}
-                  category="donations"
-                />
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Section 2: Daftar Peringkat */}
-        <div className="bg-white rounded-2xl shadow-xl p-8">
-          <h2 className="text-3xl font-bold text-center text-emerald-800 mb-8">📊 Daftar Peringkat</h2>
-
-          {/* Tabs */}
-          <div className="flex flex-wrap justify-center mb-8 border-b border-gray-200">
-            <button
-              onClick={() => setActiveTab("reports")}
-              className={`flex items-center px-6 py-3 font-semibold transition-colors duration-200 border-b-2 ${
-                activeTab === "reports"
-                  ? "text-emerald-600 border-emerald-600"
-                  : "text-gray-500 border-transparent hover:text-emerald-500"
-              }`}
-            >
-              <FileText className="w-5 h-5 mr-2" />
-              Laporan Terbanyak
-            </button>
-            <button
-              onClick={() => setActiveTab("missions")}
-              className={`flex items-center px-6 py-3 font-semibold transition-colors duration-200 border-b-2 ${
-                activeTab === "missions"
-                  ? "text-emerald-600 border-emerald-600"
-                  : "text-gray-500 border-transparent hover:text-emerald-500"
-              }`}
-            >
-              <Shield className="w-5 h-5 mr-2" />
-              Misi Terbanyak
-            </button>
-            <button
-              onClick={() => setActiveTab("donations")}
-              className={`flex items-center px-6 py-3 font-semibold transition-colors duration-200 border-b-2 ${
-                activeTab === "donations"
-                  ? "text-emerald-600 border-emerald-600"
-                  : "text-gray-500 border-transparent hover:text-emerald-500"
-              }`}
-            >
-              <Heart className="w-5 h-5 mr-2" />
-              Donasi Terbanyak
-            </button>
-          </div>
-
-          {/* Tab Content */}
-          <div className="space-y-4">
-            {activeTab === "reports" && (
-              <div>
-                {data.top10Reporters.map((user, index) => (
-                  <LeaderboardRow key={user.id} user={user} rank={index + 1} category="reports" />
-                ))}
-              </div>
-            )}
-            {activeTab === "missions" && (
-              <div>
-                {data.top10MissionVolunteers.map((user, index) => (
-                  <LeaderboardRow key={user.id} user={user} rank={index + 1} category="missions" />
-                ))}
-              </div>
-            )}
-            {activeTab === "donations" && (
-              <div>
-                {data.top10Donors.map((user, index) => (
-                  <LeaderboardRow key={user.id} user={user} rank={index + 1} category="donations" />
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-export default LeaderBoard
+export default LeaderBoard;
