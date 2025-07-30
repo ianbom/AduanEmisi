@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('mission_id')->nullable()->constrained('missions')->onDelete('set null');
             $table->string('title');
             $table->string('certificate_url');
+            $table->string('code');
             $table->timestamps();
         });
     }

@@ -101,6 +101,9 @@ Route::prefix('')->middleware(['auth', 'isProfileComplete'])->group(function () 
     Route::resource('merchandise', CtzMerchandiseController::class);
     Route::get('/my-merchandise', [CtzMerchandiseController::class, 'viewMyMerchandise'])->name('my-merchandise');
     Route::resource('quiz', CtzQuizController::class);
+    Route::post('quiz-submit/{quiz}', [CtzQuizController::class, 'submit'])->name('quiz.submit');
+    Route::get('quiz-result', [CtzQuizController::class, 'result'])->name('quiz.result');
+
 
     Route::get('/leaderboard', function () {
         return Inertia::render('Citizen/Leaderboard/LeaderBoardPage');
@@ -163,7 +166,7 @@ Route::prefix('admin')->as('admin.')->middleware(['auth',])->group(function () {
 
     Route::resource('users', AdmUserController::class);
 
-    Route::get('certificate/generate', [AdmCertificateController::class, 'generateCertificate'])->name('certificate.generate');
+    Route::get('certificates/generate', [AdmCertificateController::class, 'generateCertificate'])->name('certificate.generate');
     Route::post('/missions/certificates/generate', [AdmCertificateController::class, 'generate'])->name('missions.certificates.generate');
     Route::resource('certificates', AdmCertificateController::class);
     Route::resource('dashboard', AdmDashboardController::class);
@@ -171,6 +174,7 @@ Route::prefix('admin')->as('admin.')->middleware(['auth',])->group(function () {
     Route::resource('quizzes', AdmQuizController::class);
     Route::resource('redeems', AdmReedemsController::class);
     Route::resource('chatbot', ChatBotController::class);
+    Route::get('test', [ChatBotController::class, 'testQuery']);
 });
 
 
