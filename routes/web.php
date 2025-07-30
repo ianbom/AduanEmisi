@@ -163,7 +163,7 @@ Route::prefix('admin')->as('admin.')->middleware(['auth',])->group(function () {
 
     Route::resource('users', AdmUserController::class);
 
-    Route::get('certificate/generate', [AdmCertificateController::class, 'generateCertificate'])->name('certificate.generate');
+    Route::get('certificates/generate', [AdmCertificateController::class, 'generateCertificate'])->name('certificate.generate');
     Route::post('/missions/certificates/generate', [AdmCertificateController::class, 'generate'])->name('missions.certificates.generate');
     Route::resource('certificates', AdmCertificateController::class);
     Route::resource('dashboard', AdmDashboardController::class);
@@ -171,6 +171,7 @@ Route::prefix('admin')->as('admin.')->middleware(['auth',])->group(function () {
     Route::resource('quizzes', AdmQuizController::class);
     Route::resource('redeems', AdmReedemsController::class);
     Route::resource('chatbot', ChatBotController::class);
+    Route::get('test', [ChatBotController::class, 'testQuery']);
 });
 
 

@@ -25,11 +25,13 @@ class CertificateController extends Controller
         $this->certificateService = $certificateService;
     }
 
-    public function generateCertificate($volunteers, $title, $date){
+    public function generateCertificate(){
 
         $pdf = Pdf::loadView('admin.certificate.template.template_1');
         $pdf->setPaper('a4', 'landscape');
         return $pdf->download('certificate'.'.pdf');
+
+        // return view('admin.certificate.template.template_1');
 
     }
 
