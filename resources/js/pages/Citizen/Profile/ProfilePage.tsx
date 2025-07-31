@@ -6,6 +6,8 @@ import { Point } from '@/types/reedem/point';
 import { Report } from '@/types/report';
 import { Mission } from '@/types/report/mission';
 import { User } from '@/types/user/interface';
+import { UserBadge } from '@/types/user/user-badge';
+import { UserCertificate } from '@/types/user/user-certificate';
 import { usePage } from '@inertiajs/react';
 interface ProfilePageRouteProps {
     myReports: Report[];
@@ -15,6 +17,8 @@ interface ProfilePageRouteProps {
     myDonations: Donation[];
     myPoints: Point[];
     [key: string]: unknown;
+     myBadges: UserBadge;
+    myCertificates: UserCertificate;
 }
 const ProfilePageRoute = () => {
     const { props } = usePage<PageProps<ProfilePageRouteProps>>();
@@ -25,6 +29,12 @@ const ProfilePageRoute = () => {
     const myMissionCounts = props.myMissionCounts;
     const myDonations = props.myDonations;
     const myPoints = props.myPoints;
+        const myBadges = props.myBadges;
+    const myCertificates = props.myCertificates;
+
+    console.log('Bagde:', myBadges);
+    console.log('Sertif:', myCertificates);
+
     return (
         <CitizenLayout currentPage="profile">
             <CitizenProfilePage
@@ -35,6 +45,8 @@ const ProfilePageRoute = () => {
                 myMissions={myMissions}
                 myMissionCounts={myMissionCounts}
                 myDonations={myDonations}
+                myBadges={myBadges}
+                myCertificates={myCertificates}
             />
         </CitizenLayout>
     );

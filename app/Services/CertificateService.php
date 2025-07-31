@@ -39,7 +39,7 @@ class CertificateService
         try {
             foreach ($volunteers as $volunteer) {
 
-                $pdf = Pdf::loadView('admin.certificate.template.template_2', [
+                $pdf = Pdf::loadView('admin.certificate.template.template_1', [
                     'volunteerName'    => $volunteer->user->name,
                     'missionTitle'     => $mission->title,
                     'certificateTitle' => $certificateTitle,
