@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Province;
 use App\Models\Report;
+use App\Models\UserBadge;
+use App\Models\UserCertificate;
 use Throwable;
 use Inertia\Inertia;
 
@@ -35,6 +37,8 @@ class ProfileController extends Controller
         $myMissions = $user->volunteeredMissions; // otomatis get()
         $myMissionCounts = $myMissions->count(); // hitung dari hasil atas
         // $myMissionCounts = $user->volunteeredMissions()->count();
+        $myCertificates = UserCertificate::where('user_id', $user->id)->get();
+        $myBadges = UserBadge::where('user_id', $user->id)->get();
         return Inertia::render('Community/Profile/ProfilePage', [
             'auth' => [
                 'user' => $user,
@@ -43,6 +47,8 @@ class ProfileController extends Controller
             'myReportsCount' => $myReportCount,
             'myMissions' => $myMissions,
             'myMissionCounts' => $myMissionCounts,
+            'myCertificates' => $myCertificates,
+            'myBadges' => $myBadges,
         ]);
     }
     public function editProfile()
