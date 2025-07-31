@@ -32,149 +32,157 @@ interface LeaderboardPageProps {
 }
 
 // Mock data for demonstration
-const mockData: Required<LeaderboardPageProps> = {
-    top3Reporters: [
-        { id: 1, name: 'Sari Wijaya', profile_url: null, reports_count: 58 },
-        { id: 2, name: 'Budi Santoso', profile_url: null, reports_count: 45 },
-        { id: 3, name: 'Maya Putri', profile_url: null, reports_count: 38 },
-    ],
-    top3MissionVolunteers: [
-        { id: 4, name: 'Ahmad Rahman', profile_url: null, missions_count: 12 },
-        { id: 5, name: 'Dewi Lestari', profile_url: null, missions_count: 10 },
-        { id: 6, name: 'Rizki Pratama', profile_url: null, missions_count: 8 },
-    ],
-    top3Donors: [
-        {
-            id: 7,
-            name: 'Indira Sari',
-            profile_url: null,
-            total_donation: 5000000,
-        },
-        {
-            id: 8,
-            name: 'Fajar Nugroho',
-            profile_url: null,
-            total_donation: 3500000,
-        },
-        {
-            id: 9,
-            name: 'Lia Permata',
-            profile_url: null,
-            total_donation: 2800000,
-        },
-    ],
-    top10Reporters: [
-        { id: 1, name: 'Sari Wijaya', profile_url: null, reports_count: 58 },
-        { id: 2, name: 'Budi Santoso', profile_url: null, reports_count: 45 },
-        { id: 3, name: 'Maya Putri', profile_url: null, reports_count: 38 },
-        { id: 10, name: 'Andi Wijaya', profile_url: null, reports_count: 32 },
-        { id: 11, name: 'Nina Sari', profile_url: null, reports_count: 28 },
-        { id: 12, name: 'Doni Pratama', profile_url: null, reports_count: 25 },
-        { id: 13, name: 'Rini Lestari', profile_url: null, reports_count: 22 },
-        { id: 14, name: 'Hadi Kusuma', profile_url: null, reports_count: 19 },
-        { id: 15, name: 'Sinta Dewi', profile_url: null, reports_count: 16 },
-        { id: 16, name: 'Yoga Pratama', profile_url: null, reports_count: 14 },
-    ],
-    top10MissionVolunteers: [
-        { id: 4, name: 'Ahmad Rahman', profile_url: null, missions_count: 12 },
-        { id: 5, name: 'Dewi Lestari', profile_url: null, missions_count: 10 },
-        { id: 6, name: 'Rizki Pratama', profile_url: null, missions_count: 8 },
-        { id: 17, name: 'Lina Sari', profile_url: null, missions_count: 7 },
-        { id: 18, name: 'Bayu Adi', profile_url: null, missions_count: 6 },
-        { id: 19, name: 'Citra Dewi', profile_url: null, missions_count: 5 },
-        { id: 20, name: 'Eko Susanto', profile_url: null, missions_count: 5 },
-        {
-            id: 21,
-            name: 'Fitri Handayani',
-            profile_url: null,
-            missions_count: 4,
-        },
-        {
-            id: 22,
-            name: 'Gilang Ramadan',
-            profile_url: null,
-            missions_count: 4,
-        },
-        { id: 23, name: 'Hesti Pratiwi', profile_url: null, missions_count: 3 },
-    ],
-    top10Donors: [
-        {
-            id: 7,
-            name: 'Indira Sari',
-            profile_url: null,
-            total_donation: 5000000,
-        },
-        {
-            id: 8,
-            name: 'Fajar Nugroho',
-            profile_url: null,
-            total_donation: 3500000,
-        },
-        {
-            id: 9,
-            name: 'Lia Permata',
-            profile_url: null,
-            total_donation: 2800000,
-        },
-        {
-            id: 24,
-            name: 'Irwan Setiawan',
-            profile_url: null,
-            total_donation: 2500000,
-        },
-        {
-            id: 25,
-            name: 'Jihan Aulia',
-            profile_url: null,
-            total_donation: 2200000,
-        },
-        {
-            id: 26,
-            name: 'Krisna Wijaya',
-            profile_url: null,
-            total_donation: 1800000,
-        },
-        {
-            id: 27,
-            name: 'Laras Sari',
-            profile_url: null,
-            total_donation: 1500000,
-        },
-        {
-            id: 28,
-            name: 'Maulana Yusuf',
-            profile_url: null,
-            total_donation: 1200000,
-        },
-        {
-            id: 29,
-            name: 'Nadia Putri',
-            profile_url: null,
-            total_donation: 1000000,
-        },
-        {
-            id: 30,
-            name: 'Omar Faruq',
-            profile_url: null,
-            total_donation: 800000,
-        },
-    ],
-};
+// const mockData: Required<LeaderboardPageProps> = {
+//     top3Reporters: [
+//         { id: 1, name: 'Sari Wijaya', profile_url: null, reports_count: 58 },
+//         { id: 2, name: 'Budi Santoso', profile_url: null, reports_count: 45 },
+//         { id: 3, name: 'Maya Putri', profile_url: null, reports_count: 38 },
+//     ],
+//     top3MissionVolunteers: [
+//         { id: 4, name: 'Ahmad Rahman', profile_url: null, missions_count: 12 },
+//         { id: 5, name: 'Dewi Lestari', profile_url: null, missions_count: 10 },
+//         { id: 6, name: 'Rizki Pratama', profile_url: null, missions_count: 8 },
+//     ],
+//     top3Donors: [
+//         {
+//             id: 7,
+//             name: 'Indira Sari',
+//             profile_url: null,
+//             total_donation: 5000000,
+//         },
+//         {
+//             id: 8,
+//             name: 'Fajar Nugroho',
+//             profile_url: null,
+//             total_donation: 3500000,
+//         },
+//         {
+//             id: 9,
+//             name: 'Lia Permata',
+//             profile_url: null,
+//             total_donation: 2800000,
+//         },
+//     ],
+//     top10Reporters: [
+//         { id: 1, name: 'Sari Wijaya', profile_url: null, reports_count: 58 },
+//         { id: 2, name: 'Budi Santoso', profile_url: null, reports_count: 45 },
+//         { id: 3, name: 'Maya Putri', profile_url: null, reports_count: 38 },
+//         { id: 10, name: 'Andi Wijaya', profile_url: null, reports_count: 32 },
+//         { id: 11, name: 'Nina Sari', profile_url: null, reports_count: 28 },
+//         { id: 12, name: 'Doni Pratama', profile_url: null, reports_count: 25 },
+//         { id: 13, name: 'Rini Lestari', profile_url: null, reports_count: 22 },
+//         { id: 14, name: 'Hadi Kusuma', profile_url: null, reports_count: 19 },
+//         { id: 15, name: 'Sinta Dewi', profile_url: null, reports_count: 16 },
+//         { id: 16, name: 'Yoga Pratama', profile_url: null, reports_count: 14 },
+//     ],
+//     top10MissionVolunteers: [
+//         { id: 4, name: 'Ahmad Rahman', profile_url: null, missions_count: 12 },
+//         { id: 5, name: 'Dewi Lestari', profile_url: null, missions_count: 10 },
+//         { id: 6, name: 'Rizki Pratama', profile_url: null, missions_count: 8 },
+//         { id: 17, name: 'Lina Sari', profile_url: null, missions_count: 7 },
+//         { id: 18, name: 'Bayu Adi', profile_url: null, missions_count: 6 },
+//         { id: 19, name: 'Citra Dewi', profile_url: null, missions_count: 5 },
+//         { id: 20, name: 'Eko Susanto', profile_url: null, missions_count: 5 },
+//         {
+//             id: 21,
+//             name: 'Fitri Handayani',
+//             profile_url: null,
+//             missions_count: 4,
+//         },
+//         {
+//             id: 22,
+//             name: 'Gilang Ramadan',
+//             profile_url: null,
+//             missions_count: 4,
+//         },
+//         { id: 23, name: 'Hesti Pratiwi', profile_url: null, missions_count: 3 },
+//     ],
+//     top10Donors: [
+//         {
+//             id: 7,
+//             name: 'Indira Sari',
+//             profile_url: null,
+//             total_donation: 5000000,
+//         },
+//         {
+//             id: 8,
+//             name: 'Fajar Nugroho',
+//             profile_url: null,
+//             total_donation: 3500000,
+//         },
+//         {
+//             id: 9,
+//             name: 'Lia Permata',
+//             profile_url: null,
+//             total_donation: 2800000,
+//         },
+//         {
+//             id: 24,
+//             name: 'Irwan Setiawan',
+//             profile_url: null,
+//             total_donation: 2500000,
+//         },
+//         {
+//             id: 25,
+//             name: 'Jihan Aulia',
+//             profile_url: null,
+//             total_donation: 2200000,
+//         },
+//         {
+//             id: 26,
+//             name: 'Krisna Wijaya',
+//             profile_url: null,
+//             total_donation: 1800000,
+//         },
+//         {
+//             id: 27,
+//             name: 'Laras Sari',
+//             profile_url: null,
+//             total_donation: 1500000,
+//         },
+//         {
+//             id: 28,
+//             name: 'Maulana Yusuf',
+//             profile_url: null,
+//             total_donation: 1200000,
+//         },
+//         {
+//             id: 29,
+//             name: 'Nadia Putri',
+//             profile_url: null,
+//             total_donation: 1000000,
+//         },
+//         {
+//             id: 30,
+//             name: 'Omar Faruq',
+//             profile_url: null,
+//             total_donation: 800000,
+//         },
+//     ],
+// };
 
 const LeaderBoard: React.FC<LeaderboardPageProps> = (props = {}) => {
     const [mobileActiveTab, setMobileActiveTab] = useState<
         'reports' | 'missions' | 'donations'
     >('reports');
 
+    // const data = {
+    //     top3Reporters: props.top3Reporters || mockData.top3Reporters,
+    //     top3MissionVolunteers:
+    //         props.top3MissionVolunteers || mockData.top3MissionVolunteers,
+    //     top3Donors: props.top3Donors || mockData.top3Donors,
+    //     top10Reporters: props.top10Reporters || mockData.top10Reporters,
+    //     top10MissionVolunteers:
+    //         props.top10MissionVolunteers || mockData.top10MissionVolunteers,
+    //     top10Donors: props.top10Donors || mockData.top10Donors,
+    // };
     const data = {
-        top3Reporters: props.top3Reporters || mockData.top3Reporters,
-        top3MissionVolunteers:
-            props.top3MissionVolunteers || mockData.top3MissionVolunteers,
-        top3Donors: props.top3Donors || mockData.top3Donors,
-        top10Reporters: props.top10Reporters || mockData.top10Reporters,
-        top10MissionVolunteers:
-            props.top10MissionVolunteers || mockData.top10MissionVolunteers,
-        top10Donors: props.top10Donors || mockData.top10Donors,
+        top3Reporters: props.top3Reporters || [],
+        top3MissionVolunteers: props.top3MissionVolunteers || [],
+        top3Donors: props.top3Donors || [],
+        top10Reporters: props.top10Reporters || [],
+        top10MissionVolunteers: props.top10MissionVolunteers || [],
+        top10Donors: props.top10Donors || [],
     };
 
     const PodiumCard: React.FC<{

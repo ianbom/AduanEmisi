@@ -106,7 +106,8 @@ Route::prefix('')->middleware(['auth', 'isProfileComplete'])->group(function () 
     Route::post('quiz-submit/{quiz}', [CtzQuizController::class, 'submit'])->name('quiz.submit');
     Route::get('quiz-result', [CtzQuizController::class, 'result'])->name('quiz.result');
 
-    Route::get('/leaderboard', [LeaderboardController::class, 'index'])->name('leaderboard.index');
+    Route::get('/leaderboard-1', [LeaderboardController::class, 'index'])->name('leaderboard.index');
+    Route::get('/leaderboard', [LeaderboardController::class, 'indexLeaderboard'])->name('leaderboard.indexLeaderboard');
 });
 
 

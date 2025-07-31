@@ -11,10 +11,10 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { City, District, Province } from '@/types/area/interface';
+import { formatFullDateTime } from '@/utils/formatDate';
 
 import { Report } from '@/types/report';
 import { getCategoryLabel } from '@/utils/categoryReportLabel';
-import { formatDateOnly } from '@/utils/formatDate';
 import { getStatusColor } from '@/utils/reportStatusColor';
 import { getStatusLabel } from '@/utils/reportStatusLabel';
 import L from 'leaflet';
@@ -27,8 +27,7 @@ import {
     MapPin,
     RefreshCcw,
     Search,
-    SlidersHorizontal,
-    TrendingUp,
+    ThumbsUp,
 } from 'lucide-react';
 
 import { useEffect, useState } from 'react';
@@ -559,12 +558,10 @@ const MapPage = ({ reports, provinces, onViewReport }: MapPageProps) => {
 
                                     <div className="p-4">
                                         <div className="mb-2">
-
                                             <Badge className="border-gray-200 bg-gray-50 text-xs font-medium text-gray-700">
                                                 {getCategoryLabel(
                                                     report.category,
                                                 )}
-
                                             </Badge>
                                         </div>
 
@@ -588,10 +585,14 @@ const MapPage = ({ reports, provinces, onViewReport }: MapPageProps) => {
                                                     size={12}
                                                     className="mr-1"
                                                 />
-                                                <span>{report.created_at}</span>
+                                                <span>
+                                                    {formatFullDateTime(
+                                                        report.created_at,
+                                                    )}
+                                                </span>
                                             </div>
                                             <div className="flex items-center text-emerald-600">
-                                                <TrendingUp
+                                                <ThumbsUp
                                                     size={12}
                                                     className="mr-1"
                                                 />
