@@ -12,20 +12,19 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
+import { router, useForm } from '@inertiajs/react';
 import {
     AlertTriangle,
     ArrowLeft,
     ArrowRight,
+    Award,
     CheckCircle,
     Clock,
     Flag,
-    Star,
     Loader2,
-    Award,
+    Star,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { router } from '@inertiajs/react';
-import { useForm } from '@inertiajs/react';
 
 interface Answer {
     id: number;
@@ -60,10 +59,7 @@ interface QuizTakingPageProps {
     timeLimit?: number; // in minutes
 }
 
-const QuizTakingPage = ({
-    quiz,
-    timeLimit = 30,
-}: QuizTakingPageProps) => {
+const QuizTakingPage = ({ quiz, timeLimit = 30 }: QuizTakingPageProps) => {
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [selectedAnswers, setSelectedAnswers] = useState<
         Record<number, number>
@@ -75,7 +71,7 @@ const QuizTakingPage = ({
 
     // Inertia form untuk submit quiz
     const { data, setData, post, processing, errors, reset } = useForm({
-        answers: {} as Record<string, number>
+        answers: {} as Record<string, number>,
     });
 
     const currentQuestion = quiz.questions[currentQuestionIndex];
@@ -181,12 +177,14 @@ const QuizTakingPage = ({
                 console.error('Error submitting quiz:', errors);
                 setIsQuizFinished(false);
                 // Tampilkan error message jika perlu
-                alert('Terjadi kesalahan saat mengirim jawaban. Silakan coba lagi.');
+                alert(
+                    'Terjadi kesalahan saat mengirim jawaban. Silakan coba lagi.',
+                );
             },
             onFinish: () => {
                 // Reset form jika perlu
                 // reset();
-            }
+            },
         });
     };
 
@@ -216,37 +214,41 @@ const QuizTakingPage = ({
                                 )}
                             </div>
                             <h2 className="mb-2 text-2xl font-bold text-gray-900">
-                                {processing ? 'Mengirim Jawaban...' : 'Quiz Selesai!'}
+                                {processing
+                                    ? 'Mengirim Jawaban...'
+                                    : 'Quiz Selesai!'}
                             </h2>
                             <p className="text-gray-600">
                                 {processing
                                     ? 'Sedang memproses jawaban Anda...'
-                                    : 'Jawaban Anda telah berhasil dikirim!'
-                                }
+                                    : 'Jawaban Anda telah berhasil dikirim!'}
                             </p>
                         </div>
                         {errors && Object.keys(errors).length > 0 && (
                             <div className="mt-4 rounded-lg bg-red-50 p-4 text-red-700">
-                                <p className="font-medium">Terjadi kesalahan:</p>
-                                <ul className="mt-2 list-disc list-inside text-sm">
-                                    {Object.entries(errors).map(([key, error]) => (
-                                        <li key={key}>{error}</li>
-                                    ))}
+                                <p className="font-medium">
+                                    Terjadi kesalahan:
+                                </p>
+                                <ul className="mt-2 list-inside list-disc text-sm">
+                                    {Object.entries(errors).map(
+                                        ([key, error]) => (
+                                            <li key={key}>{error}</li>
+                                        ),
+                                    )}
                                 </ul>
                             </div>
                         )}
 
-                         <div className="mt-8">
+                        <div className="mt-8">
                             <Button
                                 size="lg"
                                 className="bg-emerald-600 hover:bg-emerald-700"
-
+                                onClick={() => router.visit(route('my-quiz'))}
                             >
                                 <Award className="mr-2 h-5 w-5" />
                                 Lihat Skor Saya
                             </Button>
                         </div>
-
                     </CardContent>
                 </Card>
             </div>
@@ -494,7 +496,9 @@ const QuizTakingPage = ({
                                 <Button
                                     variant="outline"
                                     onClick={goToPreviousQuestion}
-                                    disabled={currentQuestionIndex === 0 || processing}
+                                    disabled={
+                                        currentQuestionIndex === 0 || processing
+                                    }
                                 >
                                     <ArrowLeft className="mr-2 h-4 w-4" />
                                     Sebelumnya
@@ -506,7 +510,10 @@ const QuizTakingPage = ({
                                             setShowSubmitDialog(true)
                                         }
                                         className="bg-emerald-600 hover:bg-emerald-700"
-                                        disabled={answeredQuestions === 0 || processing}
+                                        disabled={
+                                            answeredQuestions === 0 ||
+                                            processing
+                                        }
                                     >
                                         {processing ? (
                                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -546,7 +553,9 @@ const QuizTakingPage = ({
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                        <AlertDialogCancel disabled={processing}>Batal</AlertDialogCancel>
+                        <AlertDialogCancel disabled={processing}>
+                            Batal
+                        </AlertDialogCancel>
                         <AlertDialogAction
                             onClick={handleExitQuiz}
                             className="bg-red-600 hover:bg-red-700"
@@ -591,7 +600,9 @@ const QuizTakingPage = ({
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                        <AlertDialogCancel disabled={processing}>Batal</AlertDialogCancel>
+                        <AlertDialogCancel disabled={processing}>
+                            Batal
+                        </AlertDialogCancel>
                         <AlertDialogAction
                             onClick={handleSubmitQuiz}
                             className="bg-emerald-600 hover:bg-emerald-700"

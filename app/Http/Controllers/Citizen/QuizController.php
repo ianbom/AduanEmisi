@@ -35,9 +35,9 @@ class QuizController extends Controller
     public function viewMyQuiz()
     {
         $user = Auth::user();
-        $redeems = $user->reedems()->with('merchandise')->latest()->get();
+        $myQuizAttempts = $user->quizAttempt()->with('quiz')->latest()->get();
         return Inertia::render('Citizen/Quiz/MyQuizPage', [
-            'redeems' => $redeems
+            'myQuizAttempts' => $myQuizAttempts
         ]);
     }
     public function submit(Request $request, Quiz $quiz)

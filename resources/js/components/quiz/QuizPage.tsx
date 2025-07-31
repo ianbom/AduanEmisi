@@ -8,15 +8,14 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { router as Inertia } from '@inertiajs/react';
 import {
+    Clock,
+    Play,
+    RefreshCcw,
     Search,
     SlidersHorizontal,
-    RefreshCcw,
-    Play,
-    Trophy,
-    Clock,
     Target,
+    Trophy,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Badge } from '../ui/badge';
@@ -114,11 +113,11 @@ const QuizzesPage = ({
         if (filters.status !== 'semua') {
             if (filters.status === 'aktif') {
                 processedQuizzes = processedQuizzes.filter(
-                    (quiz) => quiz.is_active
+                    (quiz) => quiz.is_active,
                 );
             } else if (filters.status === 'nonaktif') {
                 processedQuizzes = processedQuizzes.filter(
-                    (quiz) => !quiz.is_active
+                    (quiz) => !quiz.is_active,
                 );
             }
         }
@@ -127,14 +126,14 @@ const QuizzesPage = ({
         if (filters.minPoints) {
             const minPoints = parseInt(filters.minPoints);
             processedQuizzes = processedQuizzes.filter(
-                (quiz) => quiz.points_reward >= minPoints
+                (quiz) => quiz.points_reward >= minPoints,
             );
         }
 
         if (filters.maxPoints) {
             const maxPoints = parseInt(filters.maxPoints);
             processedQuizzes = processedQuizzes.filter(
-                (quiz) => quiz.points_reward <= maxPoints
+                (quiz) => quiz.points_reward <= maxPoints,
             );
         }
 
@@ -152,13 +151,13 @@ const QuizzesPage = ({
                     new Date(b.created_at).getTime(),
             );
         } else if (sortBy === 'points') {
-            processedQuizzes.sort(
-                (a, b) => b.points_reward - a.points_reward,
-            );
+            processedQuizzes.sort((a, b) => b.points_reward - a.points_reward);
         } else if (sortBy === 'difficulty') {
             const difficultyOrder = { mudah: 1, sedang: 2, sulit: 3 };
             processedQuizzes.sort(
-                (a, b) => difficultyOrder[a.difficulty] - difficultyOrder[b.difficulty]
+                (a, b) =>
+                    difficultyOrder[a.difficulty] -
+                    difficultyOrder[b.difficulty],
             );
         } else if (sortBy === 'title') {
             processedQuizzes.sort((a, b) => a.title.localeCompare(b.title));
@@ -208,7 +207,8 @@ const QuizzesPage = ({
                         Daftar Kuis
                     </h1>
                     <p className="text-gray-600">
-                        Asah pengetahuan lingkungan Anda dan dapatkan poin reward
+                        Asah pengetahuan lingkungan Anda dan dapatkan poin
+                        reward
                     </p>
                 </div>
                 {canCreate && onCreateQuiz && (
@@ -310,7 +310,10 @@ const QuizzesPage = ({
                                     placeholder="0"
                                     value={filters.minPoints}
                                     onChange={(e) =>
-                                        updateFilter('minPoints', e.target.value)
+                                        updateFilter(
+                                            'minPoints',
+                                            e.target.value,
+                                        )
                                     }
                                 />
                             </div>
@@ -324,7 +327,10 @@ const QuizzesPage = ({
                                     placeholder="100"
                                     value={filters.maxPoints}
                                     onChange={(e) =>
-                                        updateFilter('maxPoints', e.target.value)
+                                        updateFilter(
+                                            'maxPoints',
+                                            e.target.value,
+                                        )
                                     }
                                 />
                             </div>
@@ -413,7 +419,8 @@ const QuizzesPage = ({
                                     variant="secondary"
                                     className="flex items-center gap-1"
                                 >
-                                    Kesulitan: {getDifficultyLabel(filters.difficulty)}
+                                    Kesulitan:{' '}
+                                    {getDifficultyLabel(filters.difficulty)}
                                     <button
                                         onClick={() =>
                                             updateFilter('difficulty', 'semua')
@@ -445,7 +452,8 @@ const QuizzesPage = ({
                                     variant="secondary"
                                     className="flex items-center gap-1"
                                 >
-                                    Poin: {filters.minPoints || '0'} - {filters.maxPoints || '∞'}
+                                    Poin: {filters.minPoints || '0'} -{' '}
+                                    {filters.maxPoints || '∞'}
                                     <button
                                         onClick={() => {
                                             updateFilter('minPoints', '');
@@ -471,9 +479,12 @@ const QuizzesPage = ({
                                     <div className="relative overflow-hidden rounded-t-lg">
                                         {quiz.thumbnail_url ? (
                                             <img
-                                                src={quiz.thumbnail_url.startsWith('/storage/')
-                                                    ? quiz.thumbnail_url
-                                                    : `/storage/${quiz.thumbnail_url}`
+                                                src={
+                                                    quiz.thumbnail_url.startsWith(
+                                                        '/storage/',
+                                                    )
+                                                        ? quiz.thumbnail_url
+                                                        : `/storage/${quiz.thumbnail_url}`
                                                 }
                                                 alt={quiz.title}
                                                 className="h-48 w-full object-cover transition-transform duration-300 group-hover:scale-105"
@@ -486,9 +497,13 @@ const QuizzesPage = ({
 
                                         <div className="absolute right-3 top-3">
                                             <Badge
-                                                className={getDifficultyColor(quiz.difficulty)}
+                                                className={getDifficultyColor(
+                                                    quiz.difficulty,
+                                                )}
                                             >
-                                                {getDifficultyLabel(quiz.difficulty)}
+                                                {getDifficultyLabel(
+                                                    quiz.difficulty,
+                                                )}
                                             </Badge>
                                         </div>
 
@@ -514,15 +529,25 @@ const QuizzesPage = ({
 
                                         <div className="mb-4 flex items-center justify-between">
                                             <div className="flex items-center text-sm text-emerald-600">
-                                                <Trophy size={14} className="mr-1" />
+                                                <Trophy
+                                                    size={14}
+                                                    className="mr-1"
+                                                />
                                                 <span className="font-medium">
                                                     {quiz.points_reward} poin
                                                 </span>
                                             </div>
                                             <div className="flex items-center text-sm text-gray-500">
-                                                <Clock size={14} className="mr-1" />
+                                                <Clock
+                                                    size={14}
+                                                    className="mr-1"
+                                                />
                                                 <span>
-                                                    {new Date(quiz.created_at).toLocaleDateString('id-ID')}
+                                                    {new Date(
+                                                        quiz.created_at,
+                                                    ).toLocaleDateString(
+                                                        'id-ID',
+                                                    )}
                                                 </span>
                                             </div>
                                         </div>
@@ -536,7 +561,9 @@ const QuizzesPage = ({
                                             disabled={!quiz.is_active}
                                         >
                                             <Play size={16} className="mr-2" />
-                                            {quiz.is_active ? 'Mulai Kuis' : 'Kuis Non-aktif'}
+                                            {quiz.is_active
+                                                ? 'Mulai Kuis'
+                                                : 'Kuis Non-aktif'}
                                         </Button>
                                     </CardContent>
                                 </Card>

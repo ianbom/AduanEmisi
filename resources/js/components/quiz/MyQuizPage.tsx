@@ -10,6 +10,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { QuizAttempt } from '@/types/quiz/attempt';
 import { User } from '@/types/user/interface';
 import { formatFullDateTime } from '@/utils/formatDate';
 import { getDifficultyColor } from '@/utils/quiz/getDifficultyColor';
@@ -26,116 +27,17 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 
-interface QuizAttempt {
-    id: number;
-    score: number;
-    created_at: string;
-    total_questions: number;
-    quiz: {
-        id: number;
-        title: string;
-        difficulty: 'mudah' | 'sedang' | 'sulit';
-        point: number;
-        total_questions: number;
-    };
-}
-
 interface MyQuizPageProps {
     auth: {
         user: User;
     };
-    quizzes: QuizAttempt[];
+    myQuizAttempts: QuizAttempt[];
 }
 
-const MyQuizPage = ({ quizzes = [] }: MyQuizPageProps) => {
-    const dummyQuizzes = [
-        {
-            id: 1,
-            score: 85,
-            created_at: '2025-07-15T10:00:00Z',
-            quiz: {
-                id: 1,
-                title: 'Kuis Dasar Lingkungan Hidup',
-                difficulty: 'mudah',
-                point: 10,
-            },
-            total_questions: 20,
-        },
-        {
-            id: 2,
-            score: 100,
-            created_at: '2025-07-20T14:30:00Z',
-            quiz: {
-                id: 2,
-                title: 'Kuis Perubahan Iklim dan Dampaknya',
-                difficulty: 'sedang',
-                point: 150,
-            },
-            total_questions: 25,
-        },
-        {
-            id: 3,
-            score: 76,
-            created_at: '2025-07-10T08:45:00Z',
-            quiz: {
-                id: 3,
-                title: 'Kuis Energi Terbarukan',
-                difficulty: 'sulit',
-                point: 20,
-            },
-            total_questions: 30,
-        },
-        {
-            id: 4,
-            score: 92,
-            created_at: '2025-07-25T16:20:00Z',
-            quiz: {
-                id: 4,
-                title: 'Kuis Pengelolaan Sampah',
-                difficulty: 'sedang',
-                point: 15,
-            },
-            total_questions: 22,
-        },
-        {
-            id: 5,
-            score: 68,
-            created_at: '2025-07-12T11:15:00Z',
-            quiz: {
-                id: 5,
-                title: 'Kuis Konservasi Air',
-                difficulty: 'mudah',
-                point: 120,
-            },
-            total_questions: 15,
-        },
-        {
-            id: 6,
-            score: 100,
-            created_at: '2025-07-12T11:15:00Z',
-            quiz: {
-                id: 6,
-                title: 'Kuis Konservasi Tanah',
-                difficulty: 'sedang',
-                point: 100,
-            },
-            total_questions: 8,
-        },
-        {
-            id: 7,
-            score: 22,
-            created_at: '2025-07-12T11:15:00Z',
-            quiz: {
-                id: 7,
-                title: 'Kuis Konservasi Udara',
-                difficulty: 'sedang',
-                point: 100,
-            },
-            total_questions: 8,
-        },
-    ];
-
-    const displayQuizzes = quizzes.length > 0 ? quizzes : dummyQuizzes;
+const MyQuizPage = ({ myQuizAttempts }: MyQuizPageProps) => {
+    console.log('myQuizAttempts:', myQuizAttempts);
+    const displayQuizzes =
+        myQuizAttempts.length > 0 ? myQuizAttempts : myQuizAttempts;
 
     const [searchQuery, setSearchQuery] = useState('');
     const [categoryFilter, setCategoryFilter] = useState('all');
@@ -179,8 +81,8 @@ const MyQuizPage = ({ quizzes = [] }: MyQuizPageProps) => {
     };
 
     return (
-        <div className="px-4 py-8 mx-auto max-w-7xl sm:px-6 lg:px-8">
-            <div className="flex flex-col justify-between gap-4 mb-8 sm:flex-row sm:items-center">
+        <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+            <div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
                 <div>
                     <h1 className="mb-1 text-2xl font-bold text-gray-900 sm:text-3xl">
                         Riwayat Kuis Yang Dikerjakan
@@ -190,7 +92,7 @@ const MyQuizPage = ({ quizzes = [] }: MyQuizPageProps) => {
                         Kerjakan ulang kuis untuk meningkatkan skor dan
                         mendapatkan poin!
                     </p>
-                    <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
+                    <div className="mt-2 flex items-center gap-4 text-sm text-gray-500">
                         <span>
                             Total Kuis Dikerjakan: {displayQuizzes.length}
                         </span>
@@ -201,7 +103,7 @@ const MyQuizPage = ({ quizzes = [] }: MyQuizPageProps) => {
                                     (acc, quiz) => acc + quiz.score,
                                     0,
                                 ) / displayQuizzes.length,
-                            )}
+                            ) || 0}
                         </span>
                         <span>
                             Perfect Score:{' '}
@@ -248,7 +150,7 @@ const MyQuizPage = ({ quizzes = [] }: MyQuizPageProps) => {
                             onClick={resetFilters}
                             disabled={!hasActiveFilters}
                         >
-                            <RefreshCcw className="w-4 h-4 mr-2" />
+                            <RefreshCcw className="mr-2 h-4 w-4" />
                             Reset Filter
                         </Button>
                     </div>
@@ -331,12 +233,12 @@ const MyQuizPage = ({ quizzes = [] }: MyQuizPageProps) => {
                         <CardContent className="p-6">
                             <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                                 <div className="flex-1">
-                                    <div className="flex items-start justify-between mb-3">
+                                    <div className="mb-3 flex items-start justify-between">
                                         <div>
                                             <h3 className="mb-2 text-xl font-semibold text-gray-800">
                                                 {attempt.quiz.title}
                                             </h3>
-                                            <div className="flex items-center gap-2 mb-2">
+                                            <div className="mb-2 flex items-center gap-2">
                                                 {attempt.quiz.difficulty && (
                                                     <Badge
                                                         className={`text-xs ${getDifficultyColor(attempt.quiz.difficulty)}`}
@@ -369,7 +271,7 @@ const MyQuizPage = ({ quizzes = [] }: MyQuizPageProps) => {
 
                                     <div className="grid grid-cols-2 gap-4 text-sm text-gray-600 lg:grid-cols-3">
                                         <div className="flex items-center gap-2">
-                                            <Clock className="w-4 h-4 text-emerald-600" />
+                                            <Clock className="h-4 w-4 text-emerald-600" />
                                             <span>
                                                 {formatFullDateTime(
                                                     attempt.created_at,
@@ -378,7 +280,7 @@ const MyQuizPage = ({ quizzes = [] }: MyQuizPageProps) => {
                                         </div>
                                         {attempt.total_questions && (
                                             <div className="flex items-center gap-2">
-                                                <Lightbulb className="w-4 h-4 text-yellow-600" />
+                                                <Lightbulb className="h-4 w-4 text-yellow-600" />
                                                 <span>
                                                     Soal:{' '}
                                                     {attempt.total_questions}{' '}
@@ -388,9 +290,10 @@ const MyQuizPage = ({ quizzes = [] }: MyQuizPageProps) => {
                                         )}
                                         {attempt.score === 100 && (
                                             <div className="flex items-center gap-2">
-                                                <Trophy className="w-4 h-4 text-purple-600" />
+                                                <Trophy className="h-4 w-4 text-purple-600" />
                                                 <span>
-                                                    Poin: +{attempt.quiz.point}
+                                                    Poin: +
+                                                    {attempt.quiz.points_reward}
                                                 </span>
                                             </div>
                                         )}
@@ -399,9 +302,9 @@ const MyQuizPage = ({ quizzes = [] }: MyQuizPageProps) => {
 
                                 <div className="flex flex-col items-end gap-3 lg:min-w-[200px]">
                                     <div className="text-right">
-                                        <div className="flex items-center gap-2 mb-1">
+                                        <div className="mb-1 flex items-center gap-2">
                                             {attempt.score === 100 && (
-                                                <CheckCircle className="w-5 h-5 text-green-600" />
+                                                <CheckCircle className="h-5 w-5 text-green-600" />
                                             )}
                                             <p
                                                 className={`text-3xl font-bold ${getScoreColor(attempt.score)}`}
@@ -425,14 +328,14 @@ const MyQuizPage = ({ quizzes = [] }: MyQuizPageProps) => {
                                             className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700"
                                             size="sm"
                                         >
-                                            <RotateCcw className="w-4 h-4" />
+                                            <RotateCcw className="h-4 w-4" />
                                             Kerjakan Ulang
                                         </Button>
                                     )}
 
                                     {attempt.score === 100 && (
                                         <div className="flex items-center gap-2 text-sm font-medium text-green-600">
-                                            <CheckCircle className="w-4 h-4" />
+                                            <CheckCircle className="h-4 w-4" />
                                             Skor Sempurna!
                                         </div>
                                     )}
@@ -445,7 +348,7 @@ const MyQuizPage = ({ quizzes = [] }: MyQuizPageProps) => {
                 {filteredQuizzes.length === 0 && (
                     <Card>
                         <CardContent className="flex flex-col items-center py-12 text-center">
-                            <Lightbulb className="w-12 h-12 mb-4 text-gray-400" />
+                            <Lightbulb className="mb-4 h-12 w-12 text-gray-400" />
                             <h3 className="mb-2 text-lg font-medium text-gray-900">
                                 Tidak ada kuis ditemukan
                             </h3>
@@ -459,7 +362,7 @@ const MyQuizPage = ({ quizzes = [] }: MyQuizPageProps) => {
                                     variant="outline"
                                     onClick={resetFilters}
                                 >
-                                    <RefreshCcw className="w-4 h-4 mr-2" />
+                                    <RefreshCcw className="mr-2 h-4 w-4" />
                                     Reset Filter
                                 </Button>
                             ) : (

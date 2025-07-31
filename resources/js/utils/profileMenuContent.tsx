@@ -88,7 +88,7 @@ export function getProfileMenuContent({
             </DropdownMenuItem>
             <DropdownMenuItem
                 onClick={() =>
-                    (location.href = `${routePrefix}/my-merchandise`)
+                    (location.href = `${routePrefix}/my-quiz-attempt`)
                 }
                 className="flex cursor-pointer items-center gap-2"
             >
