@@ -571,26 +571,13 @@ const ReportDetailPage = ({
                                     </div>
                                 ) : report.mission?.volunteers ? (
                                     <div className="mb-6">
-                                        <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+                                        {/* <div className="grid grid-cols-1 gap-4 mb-4 md:grid-cols-2">
                                             <div>
-                                                {/* <span className="text-gray-600">
-                                                    Ketua Tim:{' '}
-                                                    {confirmedLeader
-                                                        ? confirmedLeader.name
-                                                        : 'Belum ada'}
-                                                </span>
-                                                <span className="font-medium">
-                                                    {
-                                                        report.mission
-                                                            ?.volunteers
-                                                            ?.is_leader
-                                                    }
-                                                </span> */}
                                                 <span className="font-medium text-gray-600">
                                                     Ketua Tim:
                                                 </span>
                                                 {confirmedLeader.length > 0 ? (
-                                                    <ul className="ml-5 list-disc text-gray-700">
+                                                    <ul className="ml-5 text-gray-700 list-disc">
                                                         {confirmedLeader.map(
                                                             (
                                                                 leader: Leader,
@@ -625,8 +612,110 @@ const ReportDetailPage = ({
                                                     orang
                                                 </span>
                                             </div>
-                                        </div>
+                                        </div> */}
+                                        <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2">
+                                            {/* Ketua Tim Card */}
+                                            <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+                                                <div className="mb-3 flex items-center gap-2">
+                                                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-100">
+                                                        <svg
+                                                            className="h-4 w-4 text-emerald-600"
+                                                            fill="none"
+                                                            stroke="currentColor"
+                                                            viewBox="0 0 24 24"
+                                                        >
+                                                            <path
+                                                                strokeLinecap="round"
+                                                                strokeLinejoin="round"
+                                                                strokeWidth={2}
+                                                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                                                            />
+                                                        </svg>
+                                                    </div>
+                                                    <h3 className="font-semibold text-gray-800">
+                                                        Ketua Tim
+                                                    </h3>
+                                                </div>
 
+                                                {confirmedLeader.length > 0 ? (
+                                                    <div className="space-y-2">
+                                                        {confirmedLeader.map(
+                                                            (
+                                                                leader: Leader,
+                                                            ) => (
+                                                                <div
+                                                                    key={
+                                                                        leader.id
+                                                                    }
+                                                                    className="flex items-center gap-2 rounded-md bg-emerald-50 px-3 py-2"
+                                                                >
+                                                                    <div className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-200 text-xs font-medium text-emerald-700">
+                                                                        {leader.name
+                                                                            .charAt(
+                                                                                0,
+                                                                            )
+                                                                            .toUpperCase()}
+                                                                    </div>
+                                                                    <span className="text-sm text-gray-700">
+                                                                        {
+                                                                            leader.name
+                                                                        }
+                                                                    </span>
+                                                                </div>
+                                                            ),
+                                                        )}
+                                                    </div>
+                                                ) : (
+                                                    <div className="flex items-center gap-2 text-gray-500">
+                                                        <div className="h-4 w-4 rounded-full border-2 border-dashed border-gray-300"></div>
+                                                        <span className="text-sm">
+                                                            Belum ada ketua tim
+                                                        </span>
+                                                    </div>
+                                                )}
+                                            </div>
+
+                                            {/* Anggota Tim Card */}
+                                            <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+                                                <div className="mb-3 flex items-center gap-2">
+                                                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100">
+                                                        <svg
+                                                            className="h-4 w-4 text-blue-600"
+                                                            fill="none"
+                                                            stroke="currentColor"
+                                                            viewBox="0 0 24 24"
+                                                        >
+                                                            <path
+                                                                strokeLinecap="round"
+                                                                strokeLinejoin="round"
+                                                                strokeWidth={2}
+                                                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                                                            />
+                                                        </svg>
+                                                    </div>
+                                                    <h3 className="font-semibold text-gray-800">
+                                                        Anggota Tim
+                                                    </h3>
+                                                </div>
+
+                                                <div className="flex items-center justify-between">
+                                                    <div>
+                                                        <span className="text-2xl font-bold text-blue-600">
+                                                            {volunteerCounts ||
+                                                                0}
+                                                        </span>
+                                                        <span className="ml-1 text-sm text-gray-600">
+                                                            orang
+                                                        </span>
+                                                    </div>
+                                                    <div className="rounded-full bg-blue-50 px-3 py-1">
+                                                        <span className="text-xs font-medium text-blue-700">
+                                                            Bergabung
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                         <div className="flex flex-col gap-3 sm:flex-row">
                                             {myParticipation == null && (
                                                 <>
@@ -748,26 +837,23 @@ const ReportDetailPage = ({
                                                     </>
                                                 )}
                                         </div>
-
                                         {myParticipation &&
-                                            myParticipation.pivot
-                                                .participation_status !==
-                                                'cancelled' &&
-                                            myParticipation.pivot
-                                                .participation_status !==
-                                                'pending' &&
-                                            myParticipation.pivot.is_leader && (
-                                                <Button
-                                                    onClick={() =>
-                                                        setOpenModalAttendance(
-                                                            true,
-                                                        )
-                                                    }
-                                                    className="my-2 bg-sky-600 hover:bg-sky-700"
-                                                >
-                                                    Presensi Kehadiran
-                                                </Button>
-                                            )}
+                                        myParticipation.pivot
+                                            .participation_status !==
+                                            'cancelled' &&
+                                        myParticipation.pivot
+                                            .participation_status !==
+                                            'pending' &&
+                                        myParticipation.pivot.is_leader ? (
+                                            <Button
+                                                onClick={() =>
+                                                    setOpenModalAttendance(true)
+                                                }
+                                                className="my-2 bg-sky-600 hover:bg-sky-700"
+                                            >
+                                                Presensi Kehadiran
+                                            </Button>
+                                        ) : null}
 
                                         <AttendanceFormModal
                                             open={openModalAttendance}
@@ -799,36 +885,39 @@ const ReportDetailPage = ({
                                                 Dokumentasi Misi
                                             </h3>
                                         )}
-
                                         {myParticipation &&
-                                            myParticipation.pivot.is_leader &&
-                                            ['confirmed', 'attended'].includes(
-                                                myParticipation.pivot
-                                                    .participation_status,
-                                            ) && (
-                                                <>
-                                                    <Button
-                                                        onClick={() =>
-                                                            setOpenUploadModal(
-                                                                true,
-                                                            )
-                                                        }
-                                                    >
-                                                        Upload Dokumentasi
-                                                    </Button>
-                                                    <UploadDocumentationModal
-                                                        open={openUploadModal}
-                                                        onClose={() =>
-                                                            setOpenUploadModal(
-                                                                false,
-                                                            )
-                                                        }
-                                                        missionId={
-                                                            report.mission?.id
-                                                        }
-                                                    />
-                                                </>
-                                            )}
+                                        myParticipation.pivot.is_leader &&
+                                        ['confirmed', 'attended'].includes(
+                                            myParticipation.pivot
+                                                .participation_status,
+                                        ) ? (
+                                            <>
+                                                <Button
+                                                    onClick={() =>
+                                                        setOpenUploadModal(true)
+                                                    }
+                                                >
+                                                    Upload Dokumentasi
+                                                </Button>
+                                                <UploadDocumentationModal
+                                                    open={openUploadModal}
+                                                    onClose={() =>
+                                                        setOpenUploadModal(
+                                                            false,
+                                                        )
+                                                    }
+                                                    missionId={
+                                                        report.mission?.id
+                                                    }
+                                                />
+                                            </>
+                                        ) : (
+                                            <p className="text-sm italic text-gray-500">
+                                                Dokumentasi hanya dapat diunggah
+                                                oleh ketua tim.
+                                            </p>
+                                        )}
+
                                         <div className="space-y-6">
                                             <div
                                                 className={`space-y-6 ${showAllDocs ? 'max-h-96 overflow-y-auto pr-2' : ''}`}

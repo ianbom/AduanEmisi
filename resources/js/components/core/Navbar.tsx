@@ -3,7 +3,7 @@ import { PageProps } from '@/types';
 import { NavItems, NavUser } from '@/types/navbar/interface';
 import { User } from '@/types/user/interface';
 import { usePage } from '@inertiajs/react';
-import { Bell, Menu, X } from 'lucide-react';
+import { Bell, Medal, Menu, ShoppingBag, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Badge } from '../ui/badge';
 import ProfileMenuDropdown from './ProfileDropdown';
@@ -58,6 +58,17 @@ const Navbar = ({
         setIsMobileMenuOpen(false);
     };
 
+    const getIconForNavItem = (key: string) => {
+        switch (key) {
+            case 'leaderboard':
+                return Medal;
+            case 'merchandise':
+                return ShoppingBag;
+            default:
+                return null;
+        }
+    };
+
     return (
         <>
             <nav className="fixed left-0 right-0 top-0 z-50 border-b border-emerald-100 bg-white/95 shadow-sm backdrop-blur-md">
@@ -80,24 +91,53 @@ const Navbar = ({
                         </div>
 
                         <div className="hidden space-x-1 md:flex">
-                            {navItems.map((item) => (
-                                <button
-                                    key={item.id}
-                                    onClick={() => onNavigate(item.key)}
-                                    className={`rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200 ${
-                                        currentPage === item.key
-                                            ? 'bg-emerald-100 text-emerald-700 shadow-sm'
-                                            : 'text-gray-600 hover:bg-emerald-50 hover:text-emerald-600'
-                                    }`}
-                                >
-                                    {item.label}
-                                </button>
-                            ))}
+                            {navItems
+                                .filter((item) => item.showOnDesktop)
+                                .map((item) => (
+                                    <button
+                                        key={item.id}
+                                        onClick={() => onNavigate(item.key)}
+                                        className={`rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200 ${
+                                            currentPage === item.key
+                                                ? 'bg-emerald-100 text-emerald-700 shadow-sm'
+                                                : 'text-gray-600 hover:bg-emerald-50 hover:text-emerald-600'
+                                        }`}
+                                    >
+                                        {item.label}
+                                    </button>
+                                ))}
                         </div>
+
                         <div className="flex items-center space-x-2">
+                            {navItems
+                                .filter(
+                                    (item) =>
+                                        !item.showOnDesktop &&
+                                        getIconForNavItem(item.key),
+                                )
+                                .map((item) => {
+                                    const IconComponent = getIconForNavItem(
+                                        item.key,
+                                    );
+                                    return IconComponent ? (
+                                        <button
+                                            key={item.id}
+                                            onClick={() => onNavigate(item.key)}
+                                            className={`relative hidden rounded-lg p-2 transition-colors md:block ${
+                                                currentPage === item.key
+                                                    ? 'bg-emerald-100 text-emerald-600'
+                                                    : 'text-gray-500 hover:bg-emerald-50 hover:text-emerald-600'
+                                            }`}
+                                            title={item.label}
+                                        >
+                                            <IconComponent size={20} />
+                                        </button>
+                                    ) : null;
+                                })}
                             <button
                                 onClick={onNotificationClick}
                                 className="relative rounded-lg p-2 text-gray-500 transition-colors hover:bg-emerald-50 hover:text-emerald-600"
+                                title="Notifikasi"
                             >
                                 <Bell size={20} />
                                 {unreadCount > 0 && (
@@ -110,8 +150,6 @@ const Navbar = ({
                                 user={user as User}
                                 menuItems={profileMenuContent}
                             />
-
-                            {/* Mobile menu toggle */}
                             <button
                                 onClick={() =>
                                     setIsMobileMenuOpen(!isMobileMenuOpen)
@@ -136,8 +174,6 @@ const Navbar = ({
                     onClick={() => setIsMobileMenuOpen(false)}
                 />
             )}
-
-            {/* Mobile Sidebar */}
             <div
                 className={`fixed left-0 top-0 z-50 h-full w-64 transform bg-white shadow-xl transition-transform duration-300 ease-in-out md:hidden ${
                     isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
@@ -170,23 +206,29 @@ const Navbar = ({
                             <X size={20} />
                         </button>
                     </div>
+
                     <div className="flex-1 overflow-y-auto p-4">
                         <nav className="space-y-2">
-                            {navItems.map((item) => (
-                                <button
-                                    key={item.id}
-                                    onClick={() => handleNavItemClick(item.key)}
-                                    className={`flex w-full items-center rounded-lg px-4 py-3 text-left text-sm font-medium transition-all duration-200 ${
-                                        currentPage === item.key
-                                            ? 'bg-emerald-100 text-emerald-700 shadow-sm'
-                                            : 'text-gray-600 hover:bg-emerald-50 hover:text-emerald-600'
-                                    }`}
-                                >
-                                    {item.label}
-                                </button>
-                            ))}
+                            {navItems
+                                .filter((item) => item.showOnMobile)
+                                .map((item) => (
+                                    <button
+                                        key={item.id}
+                                        onClick={() =>
+                                            handleNavItemClick(item.key)
+                                        }
+                                        className={`flex w-full items-center rounded-lg px-4 py-3 text-left text-sm font-medium transition-all duration-200 ${
+                                            currentPage === item.key
+                                                ? 'bg-emerald-100 text-emerald-700 shadow-sm'
+                                                : 'text-gray-600 hover:bg-emerald-50 hover:text-emerald-600'
+                                        }`}
+                                    >
+                                        {item.label}
+                                    </button>
+                                ))}
                         </nav>
                     </div>
+
                     {user && (
                         <div className="border-t border-emerald-100 p-4">
                             <div className="flex items-center space-x-3">

@@ -16,7 +16,6 @@
                         </svg>
                     </button>
                 </div>
-                {{-- PERUBAHAN: Latar belakang hijau dan padding di sini --}}
                 <div
                     class="flex flex-col px-6 pb-4 overflow-y-auto bg-gradient-to-b from-emerald-700 to-emerald-900 grow gap-y-5">
                     <div class="flex items-center h-16 shrink-0">
@@ -32,17 +31,26 @@
     {{-- Static sidebar for desktop --}}
     <div class="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
         {{-- PERUBAHAN: Latar belakang hijau dan padding di sini --}}
-        <div class="flex flex-col px-6 overflow-y-auto bg-gradient-to-b from-emerald-700 to-emerald-900 grow gap-y-5">
+        <div class="flex flex-col px-6 overflow-y-auto bg-gradient-to-b from-emerald-600 to-emerald-800 grow gap-y-5">
             <div class="flex items-center h-16 shrink-0">
-                <img class="w-auto h-8" src="/LogoSobatBumi.png" alt="Sobat Bumi">
-                <span class="ml-3 font-semibold text-white">Admin Sobat Bumi</span>
+                <div class="p-1 border border-white rounded-md bg-white/70 backdrop-blur-sm">
+                    <img class="w-auto h-8" src="/LogoSobatBumi.png" alt="Sobat Bumi">
+                </div>
+                <span class="ml-3 font-bold text-white">
+                    Admin
+                </span>
+                <span
+                    class="ml-1 font-bold text-transparent bg-clip-text bg-gradient-to-r from-lime-200 via-emerald-300 to-green-500">
+                    SobatBumi
+                </span>
             </div>
+
             @include('admin.layouts.nav-link')
         </div>
     </div>
 
     {{-- Header untuk mobile --}}
-    <div class="sticky top-0 z-40 flex items-center px-4 py-4 bg-white shadow-sm gap-x-6 sm:px-6 lg:hidden">
+    {{-- <div class="sticky top-0 z-40 flex items-center px-4 py-4 bg-white shadow-sm gap-x-6 sm:px-6 lg:hidden">
         <button id="open-sidebar-btn" type="button" class="-m-2.5 p-2.5 text-gray-700 lg:hidden">
             <span class="sr-only">Open sidebar</span>
             <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
@@ -57,7 +65,7 @@
                 src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
                 alt="">
         </a>
-    </div>
+    </div> --}}
 
     {{-- Main content area --}}
     <main class="lg:pl-72">

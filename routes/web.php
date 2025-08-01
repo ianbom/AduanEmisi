@@ -158,6 +158,7 @@ Route::prefix('admin')->as('admin.')->group(function () {
     Route::put('reject-report/{report}', [AdmReportController::class, 'rejectReport'])->name('reports.reject');
     Route::put('accept-report/{report}', [AdmReportController::class, 'acceptReport'])->name('reports.accept');
     Route::put('authority-report/{report}', [AdmReportController::class, 'underAuthority'])->name('reports.underAuthority');
+    Route::put('{id}/toggle-donation', [AdmReportController::class, 'toggleDonation'])->name('reports.toggle-donation');
 
     Route::resource('contents', AdmContentController::class);
     Route::delete('content-media/{contentMedia}', [AdmContentController::class, 'deleteMedia'])->name('delete.contentMedia');

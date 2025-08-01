@@ -5,16 +5,16 @@
 @include('admin.components.notification')
 
 <div class="min-h-screen bg-gray-50">
-    <div class="container mx-auto px-4 py-8">
+    <div class="container px-4 py-8 mx-auto">
         <!-- Header Section -->
         <div class="mb-8">
             <div class="flex items-center justify-between">
                 <div>
-                    <h1 class="text-3xl font-bold text-gray-900 mb-2">Manajemen Redeem</h1>
-                    <p class="text-gray-600 text-lg">Kelola dan pantau semua permintaan penukaran merchandise</p>
+                    <h1 class="mb-2 text-3xl font-bold text-gray-900">Manajemen Redeem</h1>
+                    <p class="text-lg text-gray-600">Kelola dan pantau semua permintaan penukaran merchandise</p>
                 </div>
-                <div class="hidden md:flex items-center space-x-4">
-                    <div class="bg-white px-4 py-2 rounded-lg shadow-sm">
+                <div class="items-center hidden space-x-4 md:flex">
+                    <div class="px-4 py-2 bg-white rounded-lg shadow-sm">
                         <div class="flex items-center space-x-2">
                             <div class="w-3 h-3 bg-green-500 rounded-full"></div>
                             <span class="text-sm font-medium text-gray-700">System Active</span>
@@ -25,8 +25,8 @@
         </div>
 
         <!-- Quick Stats Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
-            <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+        <div class="grid grid-cols-1 gap-6 mb-8 md:grid-cols-5">
+            <div class="p-6 bg-white border border-gray-100 shadow-sm rounded-xl">
                 <div class="flex items-center">
                     <div class="p-3 bg-blue-100 rounded-lg">
                         <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -40,7 +40,7 @@
                 </div>
             </div>
 
-            <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+            <div class="p-6 bg-white border border-gray-100 shadow-sm rounded-xl">
                 <div class="flex items-center">
                     <div class="p-3 bg-yellow-100 rounded-lg">
                         <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -54,7 +54,7 @@
                 </div>
             </div>
 
-            <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+            <div class="p-6 bg-white border border-gray-100 shadow-sm rounded-xl">
                 <div class="flex items-center">
                     <div class="p-3 bg-orange-100 rounded-lg">
                         <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -68,7 +68,7 @@
                 </div>
             </div>
 
-            <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+            <div class="p-6 bg-white border border-gray-100 shadow-sm rounded-xl">
                 <div class="flex items-center">
                     <div class="p-3 bg-blue-100 rounded-lg">
                         <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -82,7 +82,7 @@
                 </div>
             </div>
 
-            <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+            <div class="p-6 bg-white border border-gray-100 shadow-sm rounded-xl">
                 <div class="flex items-center">
                     <div class="p-3 bg-green-100 rounded-lg">
                         <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -98,11 +98,11 @@
         </div>
 
         <!-- Filter Section -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 mb-8">
+        <div class="mb-8 bg-white border border-gray-100 shadow-sm rounded-xl">
             <div class="p-6 border-b border-gray-100">
                 <div class="flex items-center justify-between">
                     <h2 class="text-xl font-semibold text-gray-800">Filter Redeem</h2>
-                    <button type="button" id="toggleFilters" class="text-blue-600 hover:text-blue-800 font-medium">
+                    <button type="button" id="toggleFilters" class="font-medium text-blue-600 hover:text-blue-800">
                         <span class="hidden md:inline">Sembunyikan Filter</span>
                         <svg class="w-5 h-5 md:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
@@ -114,11 +114,11 @@
             <div id="filterForm" class="p-6" style="display: none;">
                 <form method="GET" action="{{ route('admin.redeems.index') }}" class="space-y-6">
                     <!-- Row 1 -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
                         <!-- Status Filter -->
                         <div class="space-y-2">
                             <label for="status" class="block text-sm font-semibold text-gray-700">Status</label>
-                            <select name="status" id="status" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
+                            <select name="status" id="status" class="w-full px-4 py-3 transition-all duration-200 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                                 <option value="">Semua Status</option>
                                 <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
                                 <option value="processing" {{ request('status') == 'processing' ? 'selected' : '' }}>Processing</option>
@@ -134,8 +134,8 @@
                             <div class="relative">
                                 <input type="text" name="search" id="search" value="{{ request('search') }}"
                                        placeholder="Cari berdasarkan nama user atau merchandise..."
-                                       class="w-full px-4 py-3 pl-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
-                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                       class="w-full px-4 py-3 pl-10 transition-all duration-200 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                                     <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                                 </div>
                             </div>
@@ -144,7 +144,7 @@
                         <!-- Logistic Filter -->
                         <div class="space-y-2">
                             <label for="logistic" class="block text-sm font-semibold text-gray-700">Logistik</label>
-                            <select name="logistic" id="logistic" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
+                            <select name="logistic" id="logistic" class="w-full px-4 py-3 transition-all duration-200 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                                 <option value="">Semua Logistik</option>
                                 <option value="JNE" {{ request('logistic') == 'JNE' ? 'selected' : '' }}>JNE</option>
                                 <option value="J&T" {{ request('logistic') == 'J&T' ? 'selected' : '' }}>J&T</option>
@@ -156,15 +156,15 @@
                     </div>
 
                     <!-- Row 2 -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
                         <!-- Date Range Filter -->
                         <div class="space-y-2">
                             <label class="block text-sm font-semibold text-gray-700">Rentang Tanggal</label>
                             <div class="grid grid-cols-2 gap-3">
                                 <input type="date" name="date_from" value="{{ request('date_from') }}"
-                                       class="px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
+                                       class="px-4 py-3 transition-all duration-200 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                                 <input type="date" name="date_to" value="{{ request('date_to') }}"
-                                       class="px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
+                                       class="px-4 py-3 transition-all duration-200 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                             </div>
                         </div>
 
@@ -173,18 +173,18 @@
                             <label class="block text-sm font-semibold text-gray-700">Rentang Poin</label>
                             <div class="grid grid-cols-2 gap-3">
                                 <input type="number" name="points_min" value="{{ request('points_min') }}" placeholder="Min poin"
-                                       class="px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
+                                       class="px-4 py-3 transition-all duration-200 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                                 <input type="number" name="points_max" value="{{ request('points_max') }}" placeholder="Max poin"
-                                       class="px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
+                                       class="px-4 py-3 transition-all duration-200 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                             </div>
                         </div>
                     </div>
 
                     <!-- Action Buttons -->
-                    <div class="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4 pt-6 border-t border-gray-100">
-                        <a href="{{ route('admin.redeems.index') }}" class="px-6 py-3 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 font-medium text-center">Reset Filter</a>
-                        <button type="submit" class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium">Terapkan Filter</button>
-                        <button type="button" id="exportRedeems" class="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium inline-flex items-center">
+                    <div class="flex flex-col justify-end pt-6 space-y-3 border-t border-gray-100 sm:flex-row sm:space-y-0 sm:space-x-4">
+                        <a href="{{ route('admin.redeems.index') }}" class="px-6 py-3 font-medium text-center text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200">Reset Filter</a>
+                        <button type="submit" class="px-6 py-3 font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700">Terapkan Filter</button>
+                        <button type="button" id="exportRedeems" class="inline-flex items-center px-6 py-3 font-medium text-white bg-green-600 rounded-lg hover:bg-green-700">
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                             Export Data
                         </button>
@@ -194,29 +194,29 @@
         </div>
 
         <!-- Redeems Table -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-            <div class="overflow-x-auto p-6">
+        <div class="overflow-hidden bg-white border border-gray-100 shadow-sm rounded-xl">
+            <div class="p-6 overflow-x-auto">
                 <table id="redeemsTable" class="min-w-full" style="width:100%">
                     <thead class="bg-gray-50">
                         <tr>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">ID</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">User</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Merchandise</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Poin</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Logistik</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Resi</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Tanggal</th>
-                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Aksi</th>
+                            <th class="px-6 py-4 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase">ID</th>
+                            <th class="px-6 py-4 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase">User</th>
+                            <th class="px-6 py-4 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase">Merchandise</th>
+                            <th class="px-6 py-4 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase">Poin</th>
+                            <th class="px-6 py-4 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase">Status</th>
+                            <th class="px-6 py-4 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase">Logistik</th>
+                            <th class="px-6 py-4 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase">Resi</th>
+                            <th class="px-6 py-4 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase">Tanggal</th>
+                            <th class="px-6 py-4 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
                         @foreach($redeems as $redeem)
                             <tr class="hover:bg-gray-50">
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold">#{{ $redeem->id }}</td>
+                                <td class="px-6 py-4 text-sm font-semibold whitespace-nowrap">#{{ $redeem->id }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex items-center">
-                                        <div class="h-10 w-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold">
+                                        <div class="flex items-center justify-center w-10 h-10 font-semibold text-white rounded-full bg-gradient-to-r from-blue-500 to-purple-600">
                                             {{ substr($redeem->user->name, 0, 1) }}
                                         </div>
                                         <div class="ml-3">
@@ -228,9 +228,9 @@
                                 <td class="px-6 py-4">
                                     <div class="flex items-center">
                                         @if($redeem->merchandise->image_url)
-                                            <img src="{{ Storage::url($redeem->merchandise->image_url) }}" alt="Merchandise" class="h-12 w-12 rounded-lg object-cover">
+                                            <img src="{{ Storage::url($redeem->merchandise->image_url) }}" alt="Merchandise" class="object-cover w-12 h-12 rounded-lg">
                                         @else
-                                            <div class="h-12 w-12 bg-gray-200 rounded-lg flex items-center justify-center">
+                                            <div class="flex items-center justify-center w-12 h-12 bg-gray-200 rounded-lg">
                                                 <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
                                             </div>
                                         @endif
@@ -240,7 +240,7 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-orange-600">{{ number_format($redeem->points_spent) }}</td>
+                                <td class="px-6 py-4 text-sm font-semibold text-orange-600 whitespace-nowrap">{{ number_format($redeem->points_spent) }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     @php
                                         $statusColors = [
@@ -255,18 +255,18 @@
                                         {{ ucfirst($redeem->status) }}
                                     </span>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                <td class="px-6 py-4 text-sm whitespace-nowrap">
                                     {{ $redeem->logistic ?? '-' }}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-mono">
+                                <td class="px-6 py-4 font-mono text-sm whitespace-nowrap">
                                     @if($redeem->tracking_number)
-                                        <span class="bg-gray-100 px-2 py-1 rounded text-xs">{{ $redeem->tracking_number }}</span>
+                                        <span class="px-2 py-1 text-xs bg-gray-100 rounded">{{ $redeem->tracking_number }}</span>
                                     @else
                                         <span class="text-gray-400">-</span>
                                     @endif
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm">{{ $redeem->created_at->format('d M Y') }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <td class="px-6 py-4 text-sm whitespace-nowrap">{{ $redeem->created_at->format('d M Y') }}</td>
+                                <td class="px-6 py-4 text-sm font-medium whitespace-nowrap">
                                     <div class="flex items-center space-x-3">
                                         <a href="{{ route('admin.redeems.show', $redeem->id) }}" class="text-blue-600 hover:text-blue-800" title="Lihat Detail">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
@@ -295,13 +295,13 @@
 </div>
 
 <!-- Status Update Modal -->
-<div id="statusModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full" style="display: none;">
-    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+<div id="statusModal" class="fixed inset-0 w-full h-full overflow-y-auto bg-gray-600 bg-opacity-50" style="display: none;">
+    <div class="relative p-5 mx-auto bg-white border rounded-md shadow-lg top-20 w-96">
         <div class="mt-3 text-center">
             <h3 class="text-lg font-medium text-gray-900">Update Status Redeem</h3>
             <form id="statusUpdateForm" class="mt-4">
                 <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                    <label class="block mb-2 text-sm font-medium text-gray-700">Status</label>
                     <select id="newStatus" class="w-full px-3 py-2 border border-gray-300 rounded-md">
                         <option value="pending">Pending</option>
                         <option value="processing">Processing</option>
@@ -311,16 +311,16 @@
                     </select>
                 </div>
                 <div class="mb-4" id="logisticField">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Logistik</label>
+                    <label class="block mb-2 text-sm font-medium text-gray-700">Logistik</label>
                     <input type="text" id="logistic" class="w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="e.g. JNE, J&T, SiCepat">
                 </div>
                 <div class="mb-4" id="trackingField">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Nomor Resi</label>
+                    <label class="block mb-2 text-sm font-medium text-gray-700">Nomor Resi</label>
                     <input type="text" id="trackingNumber" class="w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="Masukkan nomor resi">
                 </div>
                 <div class="flex justify-end space-x-3">
-                    <button type="button" id="closeModal" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">Batal</button>
-                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Update</button>
+                    <button type="button" id="closeModal" class="px-4 py-2 text-gray-700 bg-gray-300 rounded-md hover:bg-gray-400">Batal</button>
+                    <button type="submit" class="px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700">Update</button>
                 </div>
             </form>
         </div>

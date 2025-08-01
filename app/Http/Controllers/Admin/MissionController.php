@@ -159,8 +159,8 @@ class MissionController extends Controller
         $mission->update(['is_point_shared' => true]);
 
         foreach ($missionVolunteers as $volunteer) {
-           $this->pointService->increamentPoint('Misi diseleaikan, selamat anda mendapatkan 60 point',
-            Mission::class, $mission->id, 100,$volunteer->user_id);
+           $this->pointService->increamentPoint('Misi diselesaikan, selamat anda mendapatkan 60 point',
+            Mission::class, $mission->id, 60,$volunteer->user_id);
             NotificationJob::dispatch('Misi Diselesaikan',
             'Terimakasih telah menjadi bagian SobatBumi', $volunteer->user_id, 'Mission');
         }
