@@ -40,3 +40,4 @@ Route::middleware('auth:sanctum')->group(function () {
  Route::post('/donate/report/{id}', [DonationController::class, 'donateReport']);
  Route::post('chatbot/send', [ChatBotController::class, 'send'])->name('chatbot.send');
 
+ Route::post('payment-callback', [DonationController::class, 'callBackAfterPayment']);

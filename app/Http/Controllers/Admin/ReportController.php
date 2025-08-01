@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Jobs\NotificationJob;
 use App\Models\City;
 use App\Models\District;
+use App\Models\Donation;
+use App\Models\Mission;
 use App\Models\Report;
 use App\Services\PointService;
 use App\Services\ReportService;
@@ -45,7 +47,9 @@ class ReportController extends Controller
 
     public function edit(Report $report)
     {
-        return view('admin.reports.edit', ['report' => $report]);
+        $donations = Donation::where('report_id', $report->id)->where('status', 'paid')->get();
+        $mission = Mission::where('report_id', $report->id)->first();
+        return view('admin.reports.edit', ['report' => $report, 'donations' => $donations, 'mission' => $mission]);
     }
 
     public function acceptReport(Report $report, Request $request)
@@ -55,7 +59,7 @@ class ReportController extends Controller
         try {
             $this->pointSerivce->increamentPoint('Verifikasi Laporan, selamat anda mendapatkan 100 point',
             Report::class, $report->id, 100,$report->reporter_id);
-            NotificationJob::dispatch('Laporan Diverifiakasi', 'Laporan kamu telah diverifikasi oleh admin', $report->reporter_id, 'Report');
+            NotificationJob::dispatch('Laporan Diverifikasi', 'Laporan kamu telah diverifikasi oleh admin', $report->reporter_id, 'Report');
 
             $assignedType = $request->input('assigned_type', 'community');
             $report = $this->reportService->updateStatus(
@@ -109,7 +113,7 @@ class ReportController extends Controller
         try {
              $this->pointSerivce->increamentPoint('Verifikasi Laporan',
             Report::class, $report->id, 100,$report->reporter_id);
-            NotificationJob::dispatch('Laporan Diverifiakasi', 'Laporan kamu telah diverifikasi oleh admin', $report->reporter_id, 'Report');
+            NotificationJob::dispatch('Laporan Diverifikasi', 'Laporan kamu telah diverifikasi oleh admin', $report->reporter_id, 'Report');
             $assignedType = $request->input('assigned_type', 'community');
             $report = $this->reportService->updateStatus(
                 $report->id,
@@ -140,5 +144,22 @@ class ReportController extends Controller
             return response()->json(['err' => $th->getMessage()]);
         }
     }
+
+    public function toggleDonation(Request $request, $id)
+{
+    try {
+        $report = Report::findOrFail($id);
+
+        $report->is_donation = !$report->is_donation;
+        $report->save();
+
+        $status = $report->is_donation ? 'diaktifkan' : 'dinonaktifkan';
+
+        return redirect()->back()->with('success', "Status donasi berhasil {$status}.");
+
+    } catch (\Exception $e) {
+        return redirect()->back()->with('error', 'Terjadi kesalahan saat mengubah status donasi.');
+    }
+}
 
 }
