@@ -19,14 +19,62 @@ export default function CitizenLayout({ children, currentPage }: Props) {
     const { auth } = usePage<PageProps>().props;
     const user = auth?.user;
     const navItems = [
-        { id: 'homepage', label: 'Beranda', key: 'homepage' },
-        { id: 'report', label: 'Laporan', key: 'report' },
-        { id: 'mission', label: 'Misi', key: 'mission' },
-        { id: 'map', label: 'Peta', key: 'map' },
-        { id: 'education', label: 'Konten Edukasi', key: 'education' },
-        { id: 'merchandise', label: 'Merchandise', key: 'merchandise' },
-         { id: 'quiz', label: 'Quiz', key: 'quiz' },
-
+        {
+            id: 'homepage',
+            label: 'Beranda',
+            key: 'homepage',
+            showOnMobile: true,
+            showOnDesktop: true,
+        },
+        {
+            id: 'report',
+            label: 'Laporan',
+            key: 'report',
+            showOnMobile: true,
+            showOnDesktop: true,
+        },
+        {
+            id: 'mission',
+            label: 'Misi',
+            key: 'mission',
+            showOnMobile: true,
+            showOnDesktop: true,
+        },
+        {
+            id: 'map',
+            label: 'Peta',
+            key: 'map',
+            showOnMobile: true,
+            showOnDesktop: true,
+        },
+        {
+            id: 'education',
+            label: 'Konten Edukasi',
+            key: 'education',
+            showOnMobile: true,
+            showOnDesktop: true,
+        },
+        {
+            id: 'quiz',
+            label: 'Quiz',
+            key: 'quiz',
+            showOnMobile: true,
+            showOnDesktop: true,
+        },
+        {
+            id: 'leaderboard',
+            label: 'Leaderboard',
+            key: 'leaderboard',
+            showOnMobile: true,
+            showOnDesktop: false,
+        },
+        {
+            id: 'merchandise',
+            label: 'Merchandise',
+            key: 'merchandise',
+            showOnMobile: true,
+            showOnDesktop: false,
+        },
     ];
     useEffect(() => {
         console.log('Flash data di CitizenLayout:', flash);

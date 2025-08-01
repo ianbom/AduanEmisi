@@ -16,18 +16,18 @@
     }
 </style>
 
-<div class="container mx-auto px-4 py-8">
-    <div class="max-w-4xl mx-auto">
+<div class="container px-4 py-4 mx-auto">
+    <div class="mx-auto max-w-7xl">
         <!-- Header -->
         <div class="mb-8">
-            <h1 class="text-3xl font-bold text-gray-900 mb-2">Edit Konten</h1>
+            <h1 class="mb-2 text-3xl font-bold text-gray-900">Edit Konten</h1>
             <p class="text-gray-600">Edit konten dengan media pendukung</p>
         </div>
 
         @include('admin.components.notification')
 
         <!-- Form Card -->
-        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+        <div class="overflow-hidden bg-white rounded-lg shadow-md">
             <form action="{{ route('admin.contents.update', $content->id) }}" method="POST" enctype="multipart/form-data" id="contentForm">
                 @csrf
                 @method('PUT')
@@ -35,7 +35,7 @@
                 <div class="p-6 space-y-6">
                     <!-- Title -->
                     <div>
-                        <label for="title" class="block text-sm font-medium text-gray-700 mb-2">
+                        <label for="title" class="block mb-2 text-sm font-medium text-gray-700">
                             Judul <span class="text-red-500">*</span>
                         </label>
                         <input type="text"
@@ -55,7 +55,7 @@
 
                     <!-- Content Type -->
                     <div>
-                        <label for="content_type" class="block text-sm font-medium text-gray-700 mb-2">
+                        <label for="content_type" class="block mb-2 text-sm font-medium text-gray-700">
                             Tipe Konten
                         </label>
                         <select id="content_type"
@@ -73,7 +73,7 @@
 
                     <!-- Body -->
                     <div>
-                        <label for="body" class="block text-sm font-medium text-gray-700 mb-2">
+                        <label for="body" class="block mb-2 text-sm font-medium text-gray-700">
                             Konten <span class="text-red-500">*</span>
                         </label>
                         <textarea id="body"
@@ -92,10 +92,10 @@
 
                     <!-- Media Upload -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                        <label class="block mb-2 text-sm font-medium text-gray-700">
                             Tambah Media Baru
                         </label>
-                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors" id="dropZone">
+                        <div class="p-6 text-center transition-colors border-2 border-gray-300 border-dashed rounded-lg hover:border-gray-400" id="dropZone">
                             <input type="file"
                                    id="mediaInput"
                                    name="media[]"
@@ -104,10 +104,10 @@
                                    class="hidden"
                                    onchange="handleFileSelect(this)">
                             <div class="cursor-pointer" onclick="document.getElementById('mediaInput').click()">
-                                <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                                <svg class="w-12 h-12 mx-auto mb-4 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
                                     <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
                                 </svg>
-                                <p class="text-gray-600 mb-2">Klik untuk upload atau drag & drop file baru</p>
+                                <p class="mb-2 text-gray-600">Klik untuk upload atau drag & drop file baru</p>
                                 <p class="text-sm text-gray-500">Gambar: JPG, PNG, GIF, SVG, WebP (max 10MB)</p>
                                 <p class="text-sm text-gray-500">Video: MP4, MOV, AVI, MKV, WMV (max 10MB)</p>
                                 <p class="text-sm text-gray-500">Dokumen: PDF (max 10MB)</p>
@@ -115,14 +115,14 @@
                         </div>
 
                         <!-- New File Preview -->
-                        <div id="filePreview" class="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+                        <div id="filePreview" class="grid grid-cols-1 gap-4 mt-4 md:grid-cols-2 lg:grid-cols-3"></div>
 
                         <!-- Upload Progress -->
-                        <div id="uploadProgress" class="mt-4 hidden">
-                            <div class="bg-gray-200 rounded-full h-2">
-                                <div class="bg-blue-600 h-2 rounded-full transition-all duration-300" style="width: 0%" id="progressBar"></div>
+                        <div id="uploadProgress" class="hidden mt-4">
+                            <div class="h-2 bg-gray-200 rounded-full">
+                                <div class="h-2 transition-all duration-300 bg-blue-600 rounded-full" style="width: 0%" id="progressBar"></div>
                             </div>
-                            <p class="text-sm text-gray-600 mt-1">Memproses file... <span id="progressText">0%</span></p>
+                            <p class="mt-1 text-sm text-gray-600">Memproses file... <span id="progressText">0%</span></p>
                         </div>
 
                         @error('media')
@@ -135,26 +135,26 @@
                 </div>
 
                 <!-- Form Footer -->
-                <div class="bg-gray-50 px-6 py-4 flex justify-between">
+                <div class="flex justify-between px-6 py-4 bg-gray-50">
                     <div class="flex space-x-3">
                         <a href="{{ route('admin.contents.index') }}"
-                           class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+                           class="px-4 py-2 text-sm font-medium text-gray-700 transition-colors border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                             Kembali
                         </a>
                         <a href="{{ route('admin.contents.show', $content->id) }}"
-                           class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+                           class="px-4 py-2 text-sm font-medium text-gray-700 transition-colors border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                             Lihat Detail
                         </a>
                     </div>
                     <div class="flex space-x-3">
-                        <button type="button" onclick="resetForm()" class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+                        <button type="button" onclick="resetForm()" class="px-4 py-2 text-sm font-medium text-gray-700 transition-colors border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                             Reset
                         </button>
                         <button type="submit"
                                 id="submitBtn"
-                                class="px-4 py-2 bg-blue-600 border border-transparent rounded-md text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                                class="px-4 py-2 text-sm font-medium text-white transition-colors bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed">
                             <span id="submitText">Update Konten</span>
-                            <svg id="submitLoader" class="animate-spin -ml-1 mr-3 h-4 w-4 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <svg id="submitLoader" class="hidden w-4 h-4 mr-3 -ml-1 text-white animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>
@@ -165,50 +165,50 @@
 
             @if($content->media && $content->media->count() > 0)
             <div class="p-6 space-y-6">
-                <label class="block text-sm font-medium text-gray-700 mb-2">
+                <label class="block mb-2 text-sm font-medium text-gray-700">
                     Media Saat Ini
                 </label>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4" id="existingMedia">
+                <div class="grid grid-cols-1 gap-4 mb-4 md:grid-cols-2 lg:grid-cols-3" id="existingMedia">
                     @foreach($content->media as $media)
                     <form action="{{ route('admin.delete.contentMedia', $media->id) }}" method="POST">
                         @csrf
                         @method('DELETE')
 
-                        <div class="relative bg-gray-100 rounded-lg p-4 border hover:shadow-md transition-shadow" data-media-id="{{ $media->id }}">
+                        <div class="relative p-4 transition-shadow bg-gray-100 border rounded-lg hover:shadow-md" data-media-id="{{ $media->id }}">
                             @if($media->media_type === 'image')
                             <div class="relative">
-                                <img src="{{ Storage::url($media->media_url) }}" class="w-full h-24 object-cover rounded mb-2" alt="Media">
-                                <div class="absolute top-1 left-1 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded">
+                                <img src="{{ Storage::url($media->media_url) }}" class="object-cover w-full h-24 mb-2 rounded" alt="Media">
+                                <div class="absolute px-2 py-1 text-xs text-white bg-black bg-opacity-50 rounded top-1 left-1">
                                     IMG
                                 </div>
                             </div>
                             @elseif($media->media_type === 'video')
                             <div class="relative">
-                                <div class="w-full h-24 bg-gray-200 rounded flex items-center justify-center mb-2">
+                                <div class="flex items-center justify-center w-full h-24 mb-2 bg-gray-200 rounded">
                                     <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
                                     </svg>
                                 </div>
-                                <div class="absolute top-1 left-1 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded">
+                                <div class="absolute px-2 py-1 text-xs text-white bg-black bg-opacity-50 rounded top-1 left-1">
                                     VID
                                 </div>
                             </div>
                             @elseif($media->media_type === 'document')
                             <div class="relative">
-                                <div class="w-full h-24 bg-red-100 rounded flex items-center justify-center mb-2">
+                                <div class="flex items-center justify-center w-full h-24 mb-2 bg-red-100 rounded">
                                     <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                     </svg>
                                 </div>
-                                <div class="absolute top-1 left-1 bg-red-500 text-white text-xs px-2 py-1 rounded">
+                                <div class="absolute px-2 py-1 text-xs text-white bg-red-500 rounded top-1 left-1">
                                     PDF
                                 </div>
                             </div>
                             @endif
-                            <p class="text-sm text-gray-600 truncate font-medium">{{ basename($media->media_url) }}</p>
+                            <p class="text-sm font-medium text-gray-600 truncate">{{ basename($media->media_url) }}</p>
                             <p class="text-xs text-gray-500">{{ ucfirst($media->media_type) }}</p>
                             <button type="submit"
-                                    class="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600 transition-colors"
+                                    class="absolute flex items-center justify-center w-6 h-6 text-xs text-white transition-colors bg-red-500 rounded-full top-2 right-2 hover:bg-red-600"
                                     onclick="return confirm('Apakah Anda yakin ingin menghapus ini?');">
                                 ×
                             </button>
@@ -253,7 +253,7 @@
                 console.error('Terjadi error saat inisialisasi CKEditor:', error);
             });
     });
-    
+
 let selectedFiles = [];
 let deletedMediaIds = [];
 const maxFileSize = 10 * 1024 * 1024; // 10MB
@@ -383,14 +383,14 @@ function handleFileSelect(input) {
             reader.onload = function(e) {
                 fileItem.innerHTML = `
                     <div class="relative">
-                        <img src="${e.target.result}" class="w-full h-24 object-cover rounded mb-2">
-                        <div class="absolute top-1 left-1 bg-green-500 text-white text-xs px-2 py-1 rounded">
+                        <img src="${e.target.result}" class="object-cover w-full h-24 mb-2 rounded">
+                        <div class="absolute px-2 py-1 text-xs text-white bg-green-500 rounded top-1 left-1">
                             NEW
                         </div>
                     </div>
-                    <p class="text-sm text-gray-600 truncate font-medium">${file.name}</p>
+                    <p class="text-sm font-medium text-gray-600 truncate">${file.name}</p>
                     <p class="text-xs text-gray-500">${formatFileSize(file.size)}</p>
-                    <button type="button" onclick="removeFile(${index})" class="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600 transition-colors">
+                    <button type="button" onclick="removeFile(${index})" class="absolute flex items-center justify-center w-6 h-6 text-xs text-white transition-colors bg-red-500 rounded-full top-2 right-2 hover:bg-red-600">
                         ×
                     </button>
                 `;
@@ -401,18 +401,18 @@ function handleFileSelect(input) {
         } else if (fileType === 'video') {
             fileItem.innerHTML = `
                 <div class="relative">
-                    <div class="w-full h-24 bg-gray-200 rounded flex items-center justify-center mb-2">
+                    <div class="flex items-center justify-center w-full h-24 mb-2 bg-gray-200 rounded">
                         <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
                         </svg>
                     </div>
-                    <div class="absolute top-1 left-1 bg-green-500 text-white text-xs px-2 py-1 rounded">
+                    <div class="absolute px-2 py-1 text-xs text-white bg-green-500 rounded top-1 left-1">
                         NEW
                     </div>
                 </div>
-                <p class="text-sm text-gray-600 truncate font-medium">${file.name}</p>
+                <p class="text-sm font-medium text-gray-600 truncate">${file.name}</p>
                 <p class="text-xs text-gray-500">${formatFileSize(file.size)}</p>
-                <button type="button" onclick="removeFile(${index})" class="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600 transition-colors">
+                <button type="button" onclick="removeFile(${index})" class="absolute flex items-center justify-center w-6 h-6 text-xs text-white transition-colors bg-red-500 rounded-full top-2 right-2 hover:bg-red-600">
                     ×
                 </button>
             `;
@@ -421,18 +421,18 @@ function handleFileSelect(input) {
         } else if (fileType === 'document') {
             fileItem.innerHTML = `
                 <div class="relative">
-                    <div class="w-full h-24 bg-red-100 rounded flex items-center justify-center mb-2">
+                    <div class="flex items-center justify-center w-full h-24 mb-2 bg-red-100 rounded">
                         <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                         </svg>
                     </div>
-                    <div class="absolute top-1 left-1 bg-green-500 text-white text-xs px-2 py-1 rounded">
+                    <div class="absolute px-2 py-1 text-xs text-white bg-green-500 rounded top-1 left-1">
                         NEW
                     </div>
                 </div>
-                <p class="text-sm text-gray-600 truncate font-medium">${file.name}</p>
+                <p class="text-sm font-medium text-gray-600 truncate">${file.name}</p>
                 <p class="text-xs text-gray-500">${formatFileSize(file.size)}</p>
-                <button type="button" onclick="removeFile(${index})" class="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600 transition-colors">
+                <button type="button" onclick="removeFile(${index})" class="absolute flex items-center justify-center w-6 h-6 text-xs text-white transition-colors bg-red-500 rounded-full top-2 right-2 hover:bg-red-600">
                     ×
                 </button>
             `;
@@ -523,14 +523,14 @@ function refreshPreview() {
             reader.onload = function(e) {
                 fileItem.innerHTML = `
                     <div class="relative">
-                        <img src="${e.target.result}" class="w-full h-24 object-cover rounded mb-2">
-                        <div class="absolute top-1 left-1 bg-green-500 text-white text-xs px-2 py-1 rounded">
+                        <img src="${e.target.result}" class="object-cover w-full h-24 mb-2 rounded">
+                        <div class="absolute px-2 py-1 text-xs text-white bg-green-500 rounded top-1 left-1">
                             NEW
                         </div>
                     </div>
-                    <p class="text-sm text-gray-600 truncate font-medium">${file.name}</p>
+                    <p class="text-sm font-medium text-gray-600 truncate">${file.name}</p>
                     <p class="text-xs text-gray-500">${formatFileSize(file.size)}</p>
-                    <button type="button" onclick="removeFile(${newIndex})" class="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600 transition-colors">
+                    <button type="button" onclick="removeFile(${newIndex})" class="absolute flex items-center justify-center w-6 h-6 text-xs text-white transition-colors bg-red-500 rounded-full top-2 right-2 hover:bg-red-600">
                         ×
                     </button>
                 `;
@@ -539,18 +539,18 @@ function refreshPreview() {
         } else if (fileType === 'video') {
             fileItem.innerHTML = `
                 <div class="relative">
-                    <div class="w-full h-24 bg-gray-200 rounded flex items-center justify-center mb-2">
+                    <div class="flex items-center justify-center w-full h-24 mb-2 bg-gray-200 rounded">
                         <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
                         </svg>
                     </div>
-                    <div class="absolute top-1 left-1 bg-green-500 text-white text-xs px-2 py-1 rounded">
+                    <div class="absolute px-2 py-1 text-xs text-white bg-green-500 rounded top-1 left-1">
                         NEW
                     </div>
                 </div>
-                <p class="text-sm text-gray-600 truncate font-medium">${file.name}</p>
+                <p class="text-sm font-medium text-gray-600 truncate">${file.name}</p>
                 <p class="text-xs text-gray-500">${formatFileSize(file.size)}</p>
-                <button type="button" onclick="removeFile(${newIndex})" class="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600 transition-colors">
+                <button type="button" onclick="removeFile(${newIndex})" class="absolute flex items-center justify-center w-6 h-6 text-xs text-white transition-colors bg-red-500 rounded-full top-2 right-2 hover:bg-red-600">
                     ×
                 </button>
             `;

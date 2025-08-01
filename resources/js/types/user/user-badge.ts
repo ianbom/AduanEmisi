@@ -1,5 +1,4 @@
-import { Badge } from "../badge/interface";
-import { User } from "./interface";
+import { Badge } from '../badge/interface';
 
 export interface UserBadge {
     id: number;

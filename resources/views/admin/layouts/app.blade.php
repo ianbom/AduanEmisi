@@ -18,7 +18,7 @@
 
 </head>
 
-<body class="bg-gray-100">
+<body class="bg-emerald-50">
     <div>
         {{-- @include('admin.layouts.header') --}}
         @include('admin.layouts.sidebar')

@@ -64,14 +64,17 @@ class User extends Authenticatable
         ];
     }
 
-     public function quizAttempt(){
+    public function quizAttempt()
+    {
         return $this->hasMany(QuizAttempt::class);
     }
-    public function quizAttemptAnswer(){
+    public function quizAttemptAnswer()
+    {
         return $this->hasMany(QuizAttemptAnswer::class);
     }
 
-    public function reedems(){
+    public function reedems()
+    {
         return $this->hasMany(Reedems::class);
     }
     public function province()
@@ -163,6 +166,13 @@ class User extends Authenticatable
     public function donations()
     {
         return $this->hasMany(Donation::class);
+    }
+
+    /**
+     * Get the paid donations made by the user.
+     */ public function paidDonations()
+    {
+        return $this->hasMany(Donation::class)->where('status', 'paid');
     }
 
     /**

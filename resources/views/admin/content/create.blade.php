@@ -1,143 +1,143 @@
 @extends('admin.layouts.app')
 
 @section('content')
-<style>
-    /* Mengatur tinggi minimal editor */
-    .ck-editor__editable_inline {
-        min-height: 300px;
-    }
-    /* Mengembalikan style list default di dalam konten editor, karena Tailwind me-resetnya */
-    .ck-content ul,
-    .ck-content ol {
-        list-style: revert;
-        margin: revert;
-        padding: revert;
-    }
-</style>
+    <style>
+        /* Mengatur tinggi minimal editor */
+        .ck-editor__editable_inline {
+            min-height: 300px;
+        }
 
-<div class="container px-4 py-8 mx-auto">
-    <div class="max-w-4xl mx-auto">
-        <!-- Header -->
-        <div class="mb-8">
-            <h1 class="mb-2 text-3xl font-bold text-gray-900">Buat Konten Baru</h1>
-            <p class="text-gray-600">Buat konten baru dengan editor modern dan media pendukung.</p>
-        </div>
+        /* Mengembalikan style list default di dalam konten editor, karena Tailwind me-resetnya */
+        .ck-content ul,
+        .ck-content ol {
+            list-style: revert;
+            margin: revert;
+            padding: revert;
+        }
+    </style>
 
-        @include('admin.components.notification')
+    <div class="container px-4 py-4 mx-auto">
+        <div class="mx-auto max-w-7xl">
+            <!-- Header -->
+            <div class="mb-8">
+                <h1 class="mb-2 text-3xl font-bold text-gray-900">Buat Konten Baru</h1>
+                <p class="text-gray-600">Buat konten baru dengan editor modern dan media pendukung.</p>
+            </div>
 
-        <!-- Form Card -->
-        <div class="overflow-hidden bg-white rounded-lg shadow-md">
-            <form action="{{ route('admin.contents.store') }}" method="POST" enctype="multipart/form-data" id="contentForm">
-                @csrf
+            @include('admin.components.notification')
 
-                <div class="p-6 space-y-6">
-                    <!-- Title -->
-                    <div>
-                        <label for="title" class="block mb-2 text-sm font-medium text-gray-700">
-                            Judul <span class="text-red-500">*</span>
-                        </label>
-                        <input type="text"
-                               id="title"
-                               name="title"
-                               value="{{ old('title') }}"
-                               class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('title') border-red-500 @enderror"
-                               placeholder="Masukkan judul konten"
-                               maxlength="255">
-                        @error('title')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
+            <!-- Form Card -->
+            <div class="overflow-hidden bg-white rounded-lg shadow-md">
+                <form action="{{ route('admin.contents.store') }}" method="POST" enctype="multipart/form-data"
+                    id="contentForm">
+                    @csrf
 
-                    <!-- Content Type -->
-                    <div>
-                        <label for="content_type" class="block mb-2 text-sm font-medium text-gray-700">
-                            Tipe Konten
-                        </label>
-                        <select id="content_type"
-                                name="content_type"
+                    <div class="p-6 space-y-6">
+                        <!-- Title -->
+                        <div>
+                            <label for="title" class="block mb-2 text-sm font-medium text-gray-700">
+                                Judul <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" id="title" name="title" value="{{ old('title') }}"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('title') border-red-500 @enderror"
+                                placeholder="Masukkan judul konten" maxlength="255">
+                            @error('title')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <!-- Content Type -->
+                        <div>
+                            <label for="content_type" class="block mb-2 text-sm font-medium text-gray-700">
+                                Tipe Konten
+                            </label>
+                            <select id="content_type" name="content_type"
                                 class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('content_type') border-red-500 @enderror">
-                            <option value="">Pilih tipe konten</option>
-                             <option value="artikel" {{ old('content_type') == 'artikel' ? 'selected' : '' }}>Artikel</option>
-                            <option value="video" {{ old('content_type') == 'video' ? 'selected' : '' }}>Video</option>
-                            <option value="modul" {{ old('content_type') == 'modul' ? 'selected' : '' }}>Modul</option>
-                        </select>
-                        @error('content_type')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <!-- Body with CKEditor -->
-                    <div>
-                        <label for="body" class="block mb-2 text-sm font-medium text-gray-700">
-                            Konten <span class="text-red-500">*</span>
-                        </label>
-                        {{-- Textarea ini akan diubah menjadi CKEditor oleh JavaScript --}}
-                        <textarea id="body"
-                                  name="body"
-                                  rows="10"
-                                  class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('body') border-red-500 @enderror"
-                                  placeholder="Tulis konten di sini...">{{ old('body') }}</textarea>
-                        @error('body')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <!-- Media Upload -->
-                    <div>
-                        <label class="block mb-2 text-sm font-medium text-gray-700">
-                            Media Pendukung
-                        </label>
-                        <div class="p-6 text-center transition-colors border-2 border-gray-300 border-dashed rounded-lg hover:border-gray-400" id="dropZone">
-                            <input type="file"
-                                   id="mediaInput"
-                                   name="media[]"
-                                   multiple
-                                   accept="image/*,video/*,application/pdf,.pdf"
-                                   class="hidden"
-                                   onchange="handleFileSelect(this)">
-                            <div class="cursor-pointer" onclick="document.getElementById('mediaInput').click()">
-                                <svg class="w-12 h-12 mx-auto mb-4 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
-                                    <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-                                </svg>
-                                <p class="mb-2 text-gray-600">Klik untuk upload atau drag & drop file</p>
-                                <p class="text-sm text-gray-500">Gambar: JPG, PNG, GIF, SVG, WebP (max 10MB)</p>
-                                <p class="text-sm text-gray-500">Video: MP4, MOV, AVI, MKV, WMV (max 10MB)</p>
-                                <p class="text-sm text-gray-500">Dokumen: PDF (max 10MB)</p>
-                            </div>
+                                <option value="">Pilih tipe konten</option>
+                                <option value="artikel" {{ old('content_type') == 'artikel' ? 'selected' : '' }}>Artikel
+                                </option>
+                                <option value="video" {{ old('content_type') == 'video' ? 'selected' : '' }}>Video</option>
+                                <option value="modul" {{ old('content_type') == 'modul' ? 'selected' : '' }}>Modul</option>
+                            </select>
+                            @error('content_type')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
                         </div>
 
-                        <!-- File Preview -->
-                        <div id="filePreview" class="grid grid-cols-1 gap-4 mt-4 md:grid-cols-2 lg:grid-cols-3"></div>
-
-                        <!-- Upload Progress -->
-                        <div id="uploadProgress" class="hidden mt-4">
-                            <div class="h-2 bg-gray-200 rounded-full">
-                                <div class="h-2 transition-all duration-300 bg-blue-600 rounded-full" style="width: 0%" id="progressBar"></div>
-                            </div>
-                            <p class="mt-1 text-sm text-gray-600">Memproses file... <span id="progressText">0%</span></p>
+                        <!-- Body with CKEditor -->
+                        <div>
+                            <label for="body" class="block mb-2 text-sm font-medium text-gray-700">
+                                Konten <span class="text-red-500">*</span>
+                            </label>
+                            {{-- Textarea ini akan diubah menjadi CKEditor oleh JavaScript --}}
+                            <textarea id="body" name="body" rows="10"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('body') border-red-500 @enderror"
+                                placeholder="Tulis konten di sini...">{{ old('body') }}</textarea>
+                            @error('body')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
                         </div>
 
-                        @error('media')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                        @error('media.*')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-               
-                </div>
+                        <!-- Media Upload -->
+                        <div>
+                            <label class="block mb-2 text-sm font-medium text-gray-700">
+                                Media Pendukung
+                            </label>
+                            <div class="p-6 text-center transition-colors border-2 border-gray-300 border-dashed rounded-lg hover:border-gray-400"
+                                id="dropZone">
+                                <input type="file" id="mediaInput" name="media[]" multiple
+                                    accept="image/*,video/*,application/pdf,.pdf" class="hidden"
+                                    onchange="handleFileSelect(this)">
+                                <div class="cursor-pointer" onclick="document.getElementById('mediaInput').click()">
+                                    <svg class="w-12 h-12 mx-auto mb-4 text-gray-400" stroke="currentColor" fill="none"
+                                        viewBox="0 0 48 48">
+                                        <path
+                                            d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                                    </svg>
+                                    <p class="mb-2 text-gray-600">Klik untuk upload atau drag & drop file</p>
+                                    <p class="text-sm text-gray-500">Gambar: JPG, PNG, GIF, SVG, WebP (max 10MB)</p>
+                                    <p class="text-sm text-gray-500">Video: MP4, MOV, AVI, MKV, WMV (max 10MB)</p>
+                                    <p class="text-sm text-gray-500">Dokumen: PDF (max 10MB)</p>
+                                </div>
+                            </div>
 
-                <!-- Form Footer -->
-                <div class="flex justify-end px-6 py-4 space-x-3 bg-gray-50">
-                    <a href="{{ route('admin.contents.index') }}" class="px-4 py-2 text-sm font-medium text-gray-700 transition-colors border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">Batal</a>
-                    <button type="submit" id="submitBtn" class="px-4 py-2 text-sm font-medium text-white transition-colors bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed">
-                        <span>Simpan Konten</span>
-                    </button>
-                </div>
-            </form>
+                            <!-- File Preview -->
+                            <div id="filePreview" class="grid grid-cols-1 gap-4 mt-4 md:grid-cols-2 lg:grid-cols-3"></div>
+
+                            <!-- Upload Progress -->
+                            <div id="uploadProgress" class="hidden mt-4">
+                                <div class="h-2 bg-gray-200 rounded-full">
+                                    <div class="h-2 transition-all duration-300 bg-blue-600 rounded-full" style="width: 0%"
+                                        id="progressBar"></div>
+                                </div>
+                                <p class="mt-1 text-sm text-gray-600">Memproses file... <span id="progressText">0%</span>
+                                </p>
+                            </div>
+
+                            @error('media')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                            @error('media.*')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                    </div>
+
+                    <!-- Form Footer -->
+                    <div class="flex justify-end px-6 py-4 space-x-3 bg-gray-50">
+                        <a href="{{ route('admin.contents.index') }}"
+                            class="px-4 py-2 text-sm font-medium text-gray-700 transition-colors border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">Batal</a>
+                        <button type="submit" id="submitBtn"
+                            class="px-4 py-2 text-sm font-medium text-white transition-colors bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                            <span>Simpan Konten</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-</div>
 @endsection
 
 @push('scripts')
@@ -145,28 +145,28 @@
 
 
     <script>
-         document.addEventListener('DOMContentLoaded', function() {
-        ClassicEditor
-            .create(document.querySelector('#body'), {
-                // Konfigurasi toolbar bisa ditambahkan di sini jika perlu
-                toolbar: {
-                    items: [
-                        'heading', '|',
-                        'bold', 'italic', 'underline', '|',
-                        'link', 'bulletedList', 'numberedList', '|',
-                        'blockQuote', 'insertTable', '|',
-                        'undo', 'redo'
-                    ]
-                },
-                language: 'id' // Menggunakan bahasa Indonesia jika tersedia
-            })
-            .then(editor => {
-                console.log('CKEditor berhasil diinisialisasi.', editor);
-            })
-            .catch(error => {
-                console.error('Terjadi error saat inisialisasi CKEditor:', error);
-            });
-    });
+        document.addEventListener('DOMContentLoaded', function() {
+            ClassicEditor
+                .create(document.querySelector('#body'), {
+                    // Konfigurasi toolbar bisa ditambahkan di sini jika perlu
+                    toolbar: {
+                        items: [
+                            'heading', '|',
+                            'bold', 'italic', 'underline', '|',
+                            'link', 'bulletedList', 'numberedList', '|',
+                            'blockQuote', 'insertTable', '|',
+                            'undo', 'redo'
+                        ]
+                    },
+                    language: 'id' // Menggunakan bahasa Indonesia jika tersedia
+                })
+                .then(editor => {
+                    console.log('CKEditor berhasil diinisialisasi.', editor);
+                })
+                .catch(error => {
+                    console.error('Terjadi error saat inisialisasi CKEditor:', error);
+                });
+        });
 
 
         let selectedFiles = [];
@@ -558,7 +558,8 @@
 
                             // Update character counters
                             document.getElementById('titleCount').textContent = (draftData.title || '').length;
-                            document.getElementById('bodyCount').textContent = (draftData.body || '').length.toLocaleString();
+                            document.getElementById('bodyCount').textContent = (draftData.body || '').length
+                                .toLocaleString();
                         }
                     }
                 } catch (e) {

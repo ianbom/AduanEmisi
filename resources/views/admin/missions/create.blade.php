@@ -1,11 +1,11 @@
 @extends('admin.layouts.app')
 
 @section('content')
-<div class="max-w mx-auto px-4 py-8">
-    <div class="bg-white rounded-lg shadow-md p-6">
+<div class="px-4 py-8 mx-auto max-w">
+    <div class="p-6 bg-white rounded-lg shadow-lg">
         <div class="mb-6">
             <h1 class="text-2xl font-bold text-gray-900">Buat Misi Baru</h1>
-            <p class="text-gray-600 mt-2">Lengkapi form di bawah untuk membuat misi baru</p>
+            <p class="mt-2 text-gray-600">Lengkapi form di bawah untuk membuat misi baru</p>
         </div>
 
         <form action="{{ route('admin.missions.store') }}" method="POST" id="missionForm" enctype="multipart/form-data">
@@ -13,7 +13,7 @@
 
             <!-- Report Selection -->
             <div class="mb-6">
-                <label for="report_id" class="block text-sm font-medium text-gray-700 mb-2">
+                <label for="report_id" class="block mb-2 text-sm font-medium text-gray-700">
                     Pilih Report (Opsional)
                 </label>
                 <select name="report_id" id="report_id"
@@ -38,10 +38,10 @@
             </div>
 
             <!-- Mission Details -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div class="grid grid-cols-1 gap-6 mb-6 md:grid-cols-2">
                 <!-- Title -->
                 <div class="md:col-span-2">
-                    <label for="title" class="block text-sm font-medium text-gray-700 mb-2">
+                    <label for="title" class="block mb-2 text-sm font-medium text-gray-700">
                         Judul Misi <span class="text-red-500">*</span>
                     </label>
                     <input type="text" name="title" id="title" value="{{ old('title') }}"
@@ -54,7 +54,7 @@
 
                 <!-- Description -->
                 <div class="md:col-span-2">
-                    <label for="description" class="block text-sm font-medium text-gray-700 mb-2">
+                    <label for="description" class="block mb-2 text-sm font-medium text-gray-700">
                         Deskripsi Misi <span class="text-red-500">*</span>
                     </label>
                     <textarea name="description" id="description" rows="4"
@@ -67,7 +67,7 @@
 
                  <!-- Image Upload Field -->
             <div class="mb-6">
-                <label for="thumbnail_url" class="block text-sm font-medium text-gray-700 mb-2">
+                <label for="thumbnail_url" class="block mb-2 text-sm font-medium text-gray-700">
                    Thumbnail
                 </label>
                 <div class="flex items-center justify-center w-full">
@@ -82,8 +82,8 @@
                             <p class="text-xs text-gray-500">PNG, JPG, GIF, SVG (MAX. 2MB)</p>
                         </div>
                         <div class="hidden" id="image-preview">
-                            <img id="preview-img" class="max-w-full max-h-48 rounded-lg" alt="Preview">
-                            <p class="mt-2 text-sm text-gray-600 text-center" id="file-name"></p>
+                            <img id="preview-img" class="max-w-full rounded-lg max-h-48" alt="Preview">
+                            <p class="mt-2 text-sm text-center text-gray-600" id="file-name"></p>
                         </div>
                         <input
                             id="thumbnail_url"
@@ -102,7 +102,7 @@
 
                 <!-- Scheduled Date -->
                 <div>
-                    <label for="scheduled_date" class="block text-sm font-medium text-gray-700 mb-2">
+                    <label for="scheduled_date" class="block mb-2 text-sm font-medium text-gray-700">
                         Tanggal Terjadwal
                     </label>
                     <input type="datetime-local" name="scheduled_date" id="scheduled_date"
@@ -119,56 +119,56 @@
 
             <!-- Location Information (from Report) -->
             <div class="mb-6">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">Informasi Lokasi</h3>
-                <div class="bg-gray-50 p-4 rounded-md">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <h3 class="mb-4 text-lg font-semibold text-gray-900">Informasi Lokasi</h3>
+                <div class="p-4 rounded-md bg-gray-50">
+                    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                         <!-- Province -->
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Provinsi</label>
+                            <label class="block mb-1 text-sm font-medium text-gray-700">Provinsi</label>
                             <input type="text" id="province_display" readonly
-                                   class="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md text-gray-600"
+                                   class="w-full px-3 py-2 text-gray-600 bg-gray-100 border border-gray-300 rounded-md"
                                    placeholder="Pilih report untuk mengisi lokasi">
                             <input type="hidden" name="province_id" id="province_id" value="{{ old('province_id') }}">
                         </div>
 
                         <!-- City -->
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Kota</label>
+                            <label class="block mb-1 text-sm font-medium text-gray-700">Kota</label>
                             <input type="text" id="city_display" readonly
-                                   class="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md text-gray-600"
+                                   class="w-full px-3 py-2 text-gray-600 bg-gray-100 border border-gray-300 rounded-md"
                                    placeholder="Pilih report untuk mengisi lokasi">
                             <input type="hidden" name="city_id" id="city_id" value="{{ old('city_id') }}">
                         </div>
 
                         <!-- District -->
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Kecamatan</label>
+                            <label class="block mb-1 text-sm font-medium text-gray-700">Kecamatan</label>
                             <input type="text" id="district_display" readonly
-                                   class="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md text-gray-600"
+                                   class="w-full px-3 py-2 text-gray-600 bg-gray-100 border border-gray-300 rounded-md"
                                    placeholder="Pilih report untuk mengisi lokasi">
                             <input type="hidden" name="district_id" id="district_id" value="{{ old('district_id') }}">
                         </div>
 
                         <!-- Address -->
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Alamat</label>
+                            <label class="block mb-1 text-sm font-medium text-gray-700">Alamat</label>
                             <input type="text" name="address" id="address" value="{{ old('address') }}"
-                                   class="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md text-gray-600"
+                                   class="w-full px-3 py-2 text-gray-600 bg-gray-100 border border-gray-300 rounded-md"
                                    placeholder="Alamat akan diisi otomatis">
                         </div>
 
                         <!-- Coordinates -->
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Latitude</label>
+                            <label class="block mb-1 text-sm font-medium text-gray-700">Latitude</label>
                             <input type="number" step="any" name="latitude" id="latitude" value="{{ old('latitude') }}"
-                                   class="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md text-gray-600"
+                                   class="w-full px-3 py-2 text-gray-600 bg-gray-100 border border-gray-300 rounded-md"
                                    placeholder="Koordinat latitude">
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Longitude</label>
+                            <label class="block mb-1 text-sm font-medium text-gray-700">Longitude</label>
                             <input type="number" step="any" name="longitude" id="longitude" value="{{ old('longitude') }}"
-                                   class="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md text-gray-600"
+                                   class="w-full px-3 py-2 text-gray-600 bg-gray-100 border border-gray-300 rounded-md"
                                    placeholder="Koordinat longitude">
                         </div>
                     </div>
@@ -178,11 +178,11 @@
             <!-- Action Buttons -->
             <div class="flex justify-end space-x-3">
                 <a href="{{ route('admin.missions.index') }}"
-                   class="px-6 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500">
+                   class="px-6 py-2 text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500">
                     Batal
                 </a>
                 <button type="submit"
-                        class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        class="px-6 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
                     Buat Misi
                 </button>
             </div>
