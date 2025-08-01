@@ -303,6 +303,7 @@
 
                         <input type="number" name="completed_by_user_id" value="{{ auth()->user()->id }}" hidden>
                         <input type="text" name="status" value="completed" hidden>
+                        <input type="number" name="is_donation" value="0" hidden>
 
                         <div class="mt-4">
                             <button type="submit"

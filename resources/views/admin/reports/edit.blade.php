@@ -132,123 +132,187 @@
             </div>
             @endif
 
-            <!-- Create Mission Form -->
-            {{-- <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <!-- Donation Management -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <div class="flex items-center justify-between mb-6">
-                    <h2 class="text-lg font-semibold text-gray-900">Buat Misi Berdasarkan Laporan</h2>
-                    <button id="toggleMissionForm" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-colors">
-                        <span id="toggleText">Buat Misi</span>
-                    </button>
-                </div>
+                    <h2 class="text-lg font-semibold text-gray-900">Manajemen Donasi</h2>
 
-                <div id="missionForm" class="hidden">
-                    <form action="{{ route('admin.missions.store') }}" method="POST" class="space-y-6">
+                    <form action="{{ route('admin.reports.toggle-donation', $report->id) }}" method="POST" class="inline-block">
                         @csrf
-                        <input type="hidden" name="report_id" value="{{ $report->id }}">
-                        <input type="hidden" name="province_id" value="{{ $report->province_id }}">
-                        <input type="hidden" name="city_id" value="{{ $report->city_id }}">
-                        <input type="hidden" name="district_id" value="{{ $report->district_id }}">
-                        <input type="hidden" name="latitude" value="{{ $report->latitude }}">
-                        <input type="hidden" name="longitude" value="{{ $report->longitude }}">
-                        <input type="hidden" name="address" value="{{ $report->address }}">
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div class="md:col-span-2">
-                                <label for="title" class="block text-sm font-medium text-gray-700 mb-2">Judul Misi</label>
-                                <input type="text"
-                                       id="title"
-                                       name="title"
-                                       value="{{ old('title', 'Misi: ' . $report->title) }}"
-                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                                       placeholder="Masukkan judul misi">
-                            </div>
-
-                            <div class="md:col-span-2">
-                                <label for="description" class="block text-sm font-medium text-gray-700 mb-2">Deskripsi Misi</label>
-                                <textarea id="description"
-                                          name="description"
-                                          rows="4"
-                                          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                                          placeholder="Jelaskan detail misi yang akan dilakukan">{{ old('description') }}</textarea>
-                            </div>
-
-                            <div>
-                                <label for="assigned_to_type" class="block text-sm font-medium text-gray-700 mb-2">Ditugaskan Kepada</label>
-                                <select id="assigned_to_type"
-                                        name="assigned_to_type"
-                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
-                                    <option value="">Pilih jenis penugasan</option>
-                                    <option value="community" {{ old('assigned_to_type') === 'community' ? 'selected' : '' }}>Komunitas</option>
-                                    <option value="volunteer" {{ old('assigned_to_type') === 'volunteer' ? 'selected' : '' }}>Volunteer</option>
-                                </select>
-                            </div>
-
-                            <div id="volunteerSelect" class="hidden">
-                                <label for="assigned_volunteer_id" class="block text-sm font-medium text-gray-700 mb-2">Pilih Volunteer</label>
-                                <select id="assigned_volunteer_id"
-                                        name="assigned_volunteer_id"
-                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
-                                    <option value="">Pilih volunteer</option>
-                                    @foreach($volunteers ?? [] as $volunteer)
-                                        <option value="{{ $volunteer->id }}" {{ old('assigned_volunteer_id') == $volunteer->id ? 'selected' : '' }}>
-                                            {{ $volunteer->name }} ({{ $volunteer->email }})
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <div>
-                                <label for="scheduled_date" class="block text-sm font-medium text-gray-700 mb-2">Tanggal Terjadwal</label>
-                                <input type="datetime-local"
-                                       id="scheduled_date"
-                                       name="scheduled_date"
-                                       value="{{ old('scheduled_date') }}"
-                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
-                            </div>
-
-                            <div>
-                                <label for="status" class="block text-sm font-medium text-gray-700 mb-2">Status</label>
-                                <select id="status"
-                                        name="status"
-                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
-                                    <option value="open" {{ old('status') === 'open' ? 'selected' : '' }}>Open</option>
-                                    <option value="on-progress" {{ old('status') === 'on-progress' ? 'selected' : '' }}>On Progress</option>
-                                    <option value="completed" {{ old('status') === 'completed' ? 'selected' : '' }}>Completed</option>
-                                    <option value="cancelled" {{ old('status') === 'cancelled' ? 'selected' : '' }}>Cancelled</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <!-- Location Information Display -->
-                        <div class="bg-gray-50 rounded-lg p-4">
-                            <h3 class="text-sm font-medium text-gray-900 mb-2">Lokasi Misi (Dari Laporan)</h3>
-                            <div class="text-sm text-gray-600 space-y-1">
-                                <p><strong>Provinsi:</strong> {{ $report->province->name ?? 'Tidak diketahui' }}</p>
-                                <p><strong>Kota:</strong> {{ $report->city->name }}</p>
-                                <p><strong>Kecamatan:</strong> {{ $report->district->name }}</p>
-                                @if($report->address)
-                                <p><strong>Alamat:</strong> {{ $report->address }}</p>
-                                @endif
-                                @if($report->latitude && $report->longitude)
-                                <p><strong>Koordinat:</strong> {{ $report->latitude }}, {{ $report->longitude }}</p>
-                                @endif
-                            </div>
-                        </div>
-
-                        <div class="flex items-center justify-end space-x-3 pt-4 border-t border-gray-200">
-                            <button type="button"
-                                    id="cancelMission"
-                                    class="px-4 py-2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-lg transition-colors">
-                                Batal
-                            </button>
-                            <button type="submit"
-                                    class="px-6 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors">
-                                Buat Misi
-                            </button>
-                        </div>
+                        @method('PUT')
+                        <button type="submit"
+                                class="px-4 py-2 rounded-lg text-sm font-medium transition-colors
+                                {{ $report->is_donation
+                                    ? 'bg-red-500 hover:bg-red-600 text-white'
+                                    : 'bg-green-500 hover:bg-green-600 text-white' }}">
+                            {{ $report->is_donation ? 'Nonaktifkan Donasi' : 'Aktifkan Donasi' }}
+                        </button>
                     </form>
                 </div>
-            </div> --}}
+                 @if ($report->is_donation)
+                        <span class="text-sm text-green-600 font-medium">Donasi Aktif</span>
+                    @else
+                        <span class="text-sm text-red-600 font-medium">Donasi Non Aktif</span>
+                    @endif
+
+                @if($donations->count() > 0)
+                <div class="space-y-6">
+                    <!-- Donation Statistics -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bg-green-50 p-4 rounded-lg">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0">
+                                    <svg class="h-8 w-8 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                                    </svg>
+                                </div>
+                                <div class="ml-5 w-0 flex-1">
+                                    <dl>
+                                        <dt class="text-sm font-medium text-gray-500 truncate">Total Donasi</dt>
+                                        <dd class="text-lg font-medium text-gray-900">
+                                            Rp {{ number_format($report->donations->where('status', 'paid')->sum('amount'), 0, ',', '.') }}
+                                        </dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-blue-50 p-4 rounded-lg">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0">
+                                    <svg class="h-8 w-8 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                    </svg>
+                                </div>
+                                <div class="ml-5 w-0 flex-1">
+                                    <dl>
+                                        <dt class="text-sm font-medium text-gray-500 truncate">Total Transaksi</dt>
+                                        <dd class="text-lg font-medium text-gray-900">
+                                            {{ $report->donations->where('status', 'paid')->count() }} transaksi
+                                        </dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-yellow-50 p-4 rounded-lg">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0">
+                                    <svg class="h-8 w-8 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
+                                <div class="ml-5 w-0 flex-1">
+                                    <dl>
+                                        <dt class="text-sm font-medium text-gray-500 truncate">Pending</dt>
+                                        <dd class="text-lg font-medium text-gray-900">
+                                            {{ $report->donations->where('status', 'pending')->count() }} transaksi
+                                        </dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+                @else
+                <div class="text-center py-12">
+                    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L18.364 5.636M5.636 18.364l12.728-12.728" />
+                    </svg>
+                    <h3 class="mt-2 text-sm font-medium text-gray-900">Donasi Tidak Aktif</h3>
+                    <p class="mt-1 text-sm text-gray-500">Aktifkan donasi untuk memungkinkan user berdonasi pada laporan ini.</p>
+                </div>
+                @endif
+                   <!-- Donations DataTable -->
+                    @if($donations->count() > 0)
+                    <div class="overflow-hidden">
+                        <h3 class="text-md font-semibold text-gray-900 mb-4">Daftar Donatur</h3>
+                        <div class="overflow-x-auto">
+                            <table id="donationsTable" class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Donatur
+                                        </th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Jumlah
+                                        </th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Status
+                                        </th>
+
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Tanggal
+                                        </th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Transaction ID
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    @foreach($donations->sortByDesc('created_at') as $donation)
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center">
+                                                <div class="flex-shrink-0 h-10 w-10">
+                                                    <div class="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
+                                                        <span class="text-sm font-medium text-gray-700">
+                                                            {{ substr($donation->user->name, 0, 1) }}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="ml-4">
+                                                    <div class="text-sm font-medium text-gray-900">
+                                                        {{ $donation->user->name }}
+                                                    </div>
+                                                    <div class="text-sm text-gray-500">
+                                                        {{ $donation->user->email }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm font-medium text-gray-900">
+                                                Rp {{ number_format($donation->amount, 0, ',', '.') }}
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full
+                                                @if($donation->status === 'paid') bg-green-100 text-green-800
+                                                @elseif($donation->status === 'pending') bg-yellow-100 text-yellow-800
+                                                @elseif($donation->status === 'cancelled') bg-red-100 text-red-800
+                                                @elseif($donation->status === 'expired') bg-gray-100 text-gray-800
+                                                @endif">
+                                                {{ ucfirst($donation->status) }}
+                                            </span>
+                                        </td>
+
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            {{ $donation->created_at->format('d M Y, H:i') }}
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            {{ $donation->transaction_id ?? '-' }}
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    @else
+                    <div class="text-center py-12">
+                        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                        </svg>
+                        <h3 class="mt-2 text-sm font-medium text-gray-900">Belum ada donasi</h3>
+                        <p class="mt-1 text-sm text-gray-500">Donasi akan muncul di sini setelah ada yang berdonasi.</p>
+                    </div>
+                    @endif
+            </div>
+
+
         </div>
 
         <!-- Sidebar -->
@@ -269,6 +333,14 @@
                             @elseif($report->status === 'under-authority') bg-orange-100 text-orange-800
                             @endif">
                             {{ ucfirst(str_replace('-', ' ', $report->status)) }}
+                        </span>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-gray-700">Status Donasi</span>
+                        <span class="px-3 py-1 rounded-full text-sm font-medium
+                            {{ $report->is_donation ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' }}">
+                            {{ $report->is_donation ? 'Aktif' : 'Nonaktif' }}
                         </span>
                     </div>
 
@@ -327,30 +399,9 @@
                 </div>
             </div>
 
-            <!-- Staff Information -->
-            {{-- @if($report->verified_by_user_id || $report->completed_by_user_id)
-            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <h2 class="text-lg font-semibold text-gray-900 mb-4">Staff</h2>
 
-                <div class="space-y-4">
-                    @if($report->verifiedByUser)
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Diverifikasi oleh</label>
-                        <p class="text-gray-900">{{ $report->verifiedByUser->name }}</p>
-                    </div>
-                    @endif
 
-                    @if($report->completedByUser)
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Diselesaikan oleh</label>
-                        <p class="text-gray-900">{{ $report->completedByUser->name }}</p>
-                    </div>
-                    @endif
-                </div>
-            </div>
-            @endif --}}
-
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <h2 class="text-lg font-semibold text-gray-900 mb-4">Tindakan Admin</h2>
 
             {{-- Tampilkan tombol hanya jika status laporan masih 'pending' --}}
@@ -414,12 +465,27 @@
             @endif
         </div>
 
+        @if ($mission)
+                <a href="{{ route('admin.missions.edit', $mission->id) }}"
+                   class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition">
+                    Lihat Misi
+                </a>
+        @endif
+
+
+
         </div>
     </div>
 </div>
 @endsection
 
 @section('scripts')
+<!-- DataTables CSS & JS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.tailwindcss.min.css">
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.tailwindcss.min.js"></script>
+
 <script>
     // Script untuk lightbox gambar
     document.addEventListener('DOMContentLoaded', function() {
@@ -451,49 +517,33 @@
             img.style.cursor = 'pointer';
         });
 
-        // Script untuk toggle mission form
-        const toggleBtn = document.getElementById('toggleMissionForm');
-        const missionForm = document.getElementById('missionForm');
-        const toggleText = document.getElementById('toggleText');
-        const cancelBtn = document.getElementById('cancelMission');
-
-        toggleBtn.addEventListener('click', function() {
-            if (missionForm.classList.contains('hidden')) {
-                missionForm.classList.remove('hidden');
-                toggleText.textContent = 'Sembunyikan Form';
-                toggleBtn.classList.remove('bg-green-500', 'hover:bg-green-600');
-                toggleBtn.classList.add('bg-gray-500', 'hover:bg-gray-600');
-            } else {
-                missionForm.classList.add('hidden');
-                toggleText.textContent = 'Buat Misi';
-                toggleBtn.classList.remove('bg-gray-500', 'hover:bg-gray-600');
-                toggleBtn.classList.add('bg-green-500', 'hover:bg-green-600');
+        // Initialize DataTable for donations
+        $('#donationsTable').DataTable({
+            "pageLength": 10,
+            "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+            "order": [[4, "desc"]], // Sort by date column descending
+            "columnDefs": [
+                { "orderable": false, "targets": [0] } // Disable sorting for donatur column
+            ],
+            "language": {
+                "search": "Cari:",
+                "lengthMenu": "Tampilkan _MENU_ entri",
+                "info": "Menampilkan _START_ sampai _END_ dari _TOTAL_ entri",
+                "infoEmpty": "Menampilkan 0 sampai 0 dari 0 entri",
+                "infoFiltered": "(difilter dari _MAX_ total entri)",
+                "paginate": {
+                    "first": "Pertama",
+                    "last": "Terakhir",
+                    "next": "Selanjutnya",
+                    "previous": "Sebelumnya"
+                },
+                "emptyTable": "Tidak ada data yang tersedia dalam tabel",
+                "zeroRecords": "Tidak ditemukan data yang sesuai"
             }
         });
 
-        cancelBtn.addEventListener('click', function() {
-            missionForm.classList.add('hidden');
-            toggleText.textContent = 'Buat Misi';
-            toggleBtn.classList.remove('bg-gray-500', 'hover:bg-gray-600');
-            toggleBtn.classList.add('bg-green-500', 'hover:bg-green-600');
-        });
 
-        // Script untuk menampilkan volunteer select
-        const assignedToType = document.getElementById('assigned_to_type');
-        const volunteerSelect = document.getElementById('volunteerSelect');
 
-        assignedToType.addEventListener('change', function() {
-            if (this.value === 'volunteer') {
-                volunteerSelect.classList.remove('hidden');
-            } else {
-                volunteerSelect.classList.add('hidden');
-            }
-        });
-
-        // Trigger change event on page load if volunteer is selected
-        if (assignedToType.value === 'volunteer') {
-            volunteerSelect.classList.remove('hidden');
-        }
     });
 </script>
 @endsection

@@ -75,7 +75,6 @@ class MissionController extends Controller
     }
 
 
-
     public function join(Request $request, $missionId)
     {
         $request->validate([
