@@ -29,7 +29,7 @@ class ContentService extends Service
             'contents.title'         => 'like',
             'contents.content_type'  => 'value',
             'contents.created_at'    => 'date',
-            'users.name'             => 'like', 
+            'users.name'             => 'like',
         ];
 
         $selectColumns = [
@@ -191,7 +191,7 @@ class ContentService extends Service
         return 'image'; // default fallback
     }
 
-    public function updateContent(int $contentId, array $data, int $authorId): Content
+    public function updateContent(int $contentId, array $data): Content
     {
         try {
             DB::beginTransaction();
@@ -199,10 +199,6 @@ class ContentService extends Service
             // Find the content
             $content = Content::findOrFail($contentId);
 
-            // Check if user is authorized to update this content
-            if ($content->author_user_id !== $authorId) {
-                throw new Exception('Anda tidak memiliki izin untuk mengupdate konten ini');
-            }
 
             // Update content data
             $content->update([

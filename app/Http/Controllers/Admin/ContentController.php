@@ -67,7 +67,7 @@ class ContentController extends Controller
             $content = $this->contentService->updateContent(
                 $content->id,
                 $request->validated(),
-                Auth::id()
+
             );
 
             return redirect()
