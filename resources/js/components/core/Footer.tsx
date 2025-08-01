@@ -6,9 +6,14 @@ const Footer = () => {
             <div className="relative z-10 mx-auto max-w-7xl px-4 py-16">
                 <div className="mb-12 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
                     <div className="lg:col-span-2">
-                        <div className="mb-6 flex items-center gap-3">
+                        <div className="mb-6 flex items-start gap-4">
+                            <img
+                                src="/assets/images/sobatbumibnw.png"
+                                alt="SobatBumi"
+                                className="h-12 w-12 object-contain"
+                            />
                             <div>
-                                <h3 className="text-2xl font-bold">
+                                <h3 className="text-2xl font-bold text-white">
                                     SobatBumi
                                 </h3>
                                 <p className="text-sm text-slate-200">
@@ -17,11 +22,13 @@ const Footer = () => {
                                 </p>
                             </div>
                         </div>
-                        <p className="mb-6 max-w-md leading-relaxed text-slate-50">
-                            SobatBumi merupakan platform kolaboratif untuk
-                            pelaporan isu lingkungan, partisipasi misi sosial,
-                            edukasi, dan donasi. Ayo ambil bagian dalam langkah
-                            nyata menyelamatkan bumi.
+
+                        <p className="mb-6 max-w-md text-justify leading-relaxed text-slate-50">
+                            SobatBumi adalah platform digital untuk
+                            berpartisipasi dalam misi sosial dan lingkungan.
+                            Kamu bisa bergabung dalam kegiatan, mengumpulkan
+                            poin, mengasah wawasan lewat konten edukasi dan
+                            kuis, serta menukar poin dengan merchandise menarik.
                         </p>
                         <div className="flex gap-4">
                             <a
@@ -49,7 +56,7 @@ const Footer = () => {
                         <ul className="space-y-3">
                             <li>
                                 <a
-                                    href="#"
+                                    href="/report"
                                     className="text-slate-300 transition-colors hover:text-white"
                                 >
                                     Laporan
@@ -57,7 +64,7 @@ const Footer = () => {
                             </li>
                             <li>
                                 <a
-                                    href="#"
+                                    href="/mission"
                                     className="text-slate-300 transition-colors hover:text-white"
                                 >
                                     Misi
@@ -65,7 +72,7 @@ const Footer = () => {
                             </li>
                             <li>
                                 <a
-                                    href="#"
+                                    href="/map"
                                     className="text-slate-300 transition-colors hover:text-white"
                                 >
                                     Peta
@@ -73,10 +80,18 @@ const Footer = () => {
                             </li>
                             <li>
                                 <a
-                                    href="#"
+                                    href="/education"
                                     className="text-slate-300 transition-colors hover:text-white"
                                 >
                                     Konten Edukasi
+                                </a>
+                            </li>
+                            <li>
+                                <a
+                                    href="/quiz"
+                                    className="text-slate-300 transition-colors hover:text-white"
+                                >
+                                    Quiz
                                 </a>
                             </li>
                         </ul>
@@ -91,12 +106,22 @@ const Footer = () => {
                             </li>
                             <li>
                                 <p className="text-slate-300 transition-colors hover:text-white">
-                                    Review Laporan
+                                    Verifikasi dan Tindak Lanjut Laporan
                                 </p>
                             </li>
                             <li>
                                 <p className="text-slate-300 transition-colors hover:text-white">
-                                    Verifikasi Sukarelawan
+                                    Aksi Peduli Lingkungan
+                                </p>
+                            </li>
+                            <li>
+                                <p className="text-slate-300 transition-colors hover:text-white">
+                                    Penukaran Merchandise
+                                </p>
+                            </li>
+                            <li>
+                                <p className="text-slate-300 transition-colors hover:text-white">
+                                    Edukasi Berupa Kuis dan Konten
                                 </p>
                             </li>
                         </ul>

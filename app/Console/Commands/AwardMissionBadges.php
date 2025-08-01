@@ -26,7 +26,7 @@ class AwardMissionBadges extends Command
     /**
      * Execute the console command.
      */
-     public function handle()
+    public function handle()
     {
         $this->info('Memulai pengecekan untuk lencana penyelesaian 5 misi...');
 
@@ -43,8 +43,8 @@ class AwardMissionBadges extends Command
 
             $query->where('participation_status', 'attended');
         }])
-        ->having('mission_volunteers_count', '>=', 5)
-        ->get();
+            ->having('mission_volunteers_count', '>=', 1)
+            ->get();
 
         if ($eligibleUsers->isEmpty()) {
             $this->info('Tidak ada pengguna baru yang memenuhi syarat untuk lencana ini.');

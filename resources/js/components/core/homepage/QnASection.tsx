@@ -7,26 +7,29 @@ import { useState } from 'react';
 
 const faqs = [
     {
-        question: 'Bagaimana cara mendaftar sebagai penjual di platform ini?',
-        answer: 'Anda dapat menjadi penjual dengan mengisi formulir registrasi toko yang tersedia di platform kami. Setelah itu, tim admin akan memverifikasi data Anda sebelum akun penjual siap digunakan.',
+        question: 'Apa itu SobatBumi?',
+        answer: 'SobatBumi adalah platform digital untuk berpartisipasi dalam misi sosial dan lingkungan. Kamu bisa bergabung dalam kegiatan, mengumpulkan poin, mengasah wawasan lewat konten edukasi dan kuis, serta menukar poin dengan merchandise menarik.',
     },
     {
-        question: 'Bagaimana sistem pembayaran dan keamanannya?',
-        answer: 'Untuk kemudahan dan keamanan transaksi, kami menggunakan layanan pembayaran Midtrans. Anda dapat membayar melalui berbagai metode seperti transfer bank, e-wallet, QRIS, dan kartu kredit.',
+        question: 'Apa saja yang bisa saya lakukan di Sobat Bumi?',
+        answer: 'Di SobatBumi, kamu bisa berpartisipasi dalam kegiatan atau misi seperti penanaman pohon, bersih pantai, dan aksi sosial lainnya. Kamu juga bisa membaca berbagai konten edukasi tentang lingkungan, menjawab kuis untuk mengasah pengetahuan, serta mengumpulkan poin dari berbagai aktivitas yang kamu ikuti. Poin tersebut nantinya bisa ditukar dengan merchandise eksklusif. Selain itu, kamu juga bisa berdonasi untuk mendukung program-program sosial yang dijalankan oleh komunitas.',
     },
     {
-        question: 'Berapa lama waktu pengiriman untuk produk lokal?',
-        answer: 'Pengiriman disesuaikan dengan lokasi penerima. Estimasi waktu dan ongkos kirim akan muncul saat pemesanan.',
+        question: 'Siapa saja yang bisa bergabung dalam aksi lingkungan?',
+        answer: 'Semua orang bisa bergabung, baik pelajar, mahasiswa, relawan komunitas, hingga masyarakat umum yang peduli lingkungan.',
+    },
+    {
+        question: 'Bagaimana sistem poin dan penukaran hadiah bekerja?',
+        answer: 'Setiap aktivitas yang kamu lakukan di SobatBumi akan menghasilkan poin, mulai dari laporan terverifikasi, menyelesaikan misi, dan mengerjakan kuis. Poin ini bisa kamu akumulasikan dan tukarkan dengan hadiah berupa merchandise resmi. Sistem ini kami bangun untuk memberikan semangat dan motivasi dalam berbuat kebaikan.',
     },
     {
         question:
-            'Bagaimana jika saya tidak puas dengan produk/jasa yang diterima?',
-        answer: 'Jika Anda merasa tidak puas dengan produk atau layanan yang diterima, Anda dapat memberikan ulasan berisi masukan atau saran perbaikan. Selain itu, Anda juga dapat langsung menghubungi penjual terkait untuk menyampaikan keluhan atau mencari solusi bersama.',
+            'Apakah saya akan mendapatkan penghargaan setelah mengikuti aktivitas?',
+        answer: 'Ya, setiap partisipasi kamu di Sobat Bumi tidak hanya berdampak bagi lingkungan dan masyarakat, tapi juga memberikan apresiasi pribadi. Setelah menyelesaikan misi atau kontribusi tertentu, kamu akan mendapatkan sertifikat digital sebagai bukti keikutsertaan, yang bisa digunakan untuk portofolio atau kebutuhan profesional lainnya. Selain itu, kamu juga akan memperoleh badges digital yang menunjukkan pencapaianmu, seperti "Pahlawan Lingkungan", "Donatur Aktif", atau "Pembelajar Hijau". Semua penghargaan ini akan tampil di profil kamu sebagai bentuk pengakuan dan motivasi agar terus aktif berkontribusi.',
     },
     {
-        question:
-            'Apakah bisa melakukan pemesanan dalam jumlah besar (grosir)?',
-        answer: 'Untuk saat ini, kami belum menyediakan harga khusus untuk pembelian grosir. Namun, Anda tetap bisa memesan dalam jumlah banyak dengan harga normal.',
+        question: 'Apa tujuan fitur donasi di SobatBumi?',
+        answer: 'Fitur donasi dibuat sebagai bentuk solidaritas dan dukungan terhadap aksi-aksi sosial yang membutuhkan bantuan nyata. Dengan berdonasi, kamu bisa ikut membantu korban bencana, mendukung gerakan penghijauan, atau membantu komunitas yang sedang membutuhkan. Donasi bisa dilakukan dengan nominal kecil sekalipun, karena setiap kontribusi berarti besar bagi mereka yang membutuhkan.',
     },
 ];
 
@@ -91,7 +94,7 @@ const QnASection = () => {
                                 </div>
                             </button>
                             {openIndex === index && (
-                                <div className="faq-content bg-blue-50 px-8 pb-6 text-lg leading-relaxed text-gray-600">
+                                <div className="faq-content bg-amber-50 px-8 py-6 text-justify text-lg leading-relaxed text-gray-600">
                                     <p>{faq.answer}</p>
                                 </div>
                             )}

@@ -10,12 +10,11 @@ import {
 } from '@/components/ui/select';
 import { Province } from '@/types/area/interface';
 import { Mission } from '@/types/report/mission';
-import { formatDateOnly } from '@/utils/formatDate';
+import { formatFullDateTime } from '@/utils/formatDate';
 import { getStatusColor } from '@/utils/missionStatusColor';
 import { getMissionStatusLabel } from '@/utils/missionStatusLabel';
 import { router as Inertia } from '@inertiajs/react';
 import {
-    Calendar,
     Eye,
     MapPin,
     RefreshCcw,
@@ -104,7 +103,7 @@ const MissionPage = ({
         // Apply date range filter
         if (filters.startDate) {
             filtered = filtered.filter((mission) => {
-                const missionDate = new Date(mission.created_at);
+                const missionDate = new Date(mission.scheduled_date);
                 const startDate = new Date(filters.startDate);
                 return missionDate >= startDate;
             });
@@ -112,7 +111,7 @@ const MissionPage = ({
 
         if (filters.endDate) {
             filtered = filtered.filter((mission) => {
-                const missionDate = new Date(mission.created_at);
+                const missionDate = new Date(mission.scheduled_date);
                 const endDate = new Date(filters.endDate);
                 return missionDate <= endDate;
             });
@@ -123,13 +122,13 @@ const MissionPage = ({
             switch (sortBy) {
                 case 'newest':
                     return (
-                        new Date(b.created_at).getTime() -
-                        new Date(a.created_at).getTime()
+                        new Date(b.scheduled_date).getTime() -
+                        new Date(a.scheduled_date).getTime()
                     );
                 case 'oldest':
                     return (
-                        new Date(a.created_at).getTime() -
-                        new Date(b.created_at).getTime()
+                        new Date(a.scheduled_date).getTime() -
+                        new Date(b.scheduled_date).getTime()
                     );
                 case 'title':
                     return (a.title || '').localeCompare(b.title || '');
@@ -275,7 +274,7 @@ const MissionPage = ({
                             </div>
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-gray-700">
-                                    Tanggal Mulai
+                                    Rentang Awal Tanggal
                                 </label>
                                 <input
                                     type="date"
@@ -291,7 +290,7 @@ const MissionPage = ({
                             </div>
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-gray-700">
-                                    Tanggal Selesai
+                                    Rentang Akhir Tanggal
                                 </label>
 
                                 <input
@@ -456,13 +455,10 @@ const MissionPage = ({
 
                                                 <div className="mb-4 flex items-center justify-between">
                                                     <div className="flex items-center text-sm text-gray-500">
-                                                        <Calendar
-                                                            size={14}
-                                                            className="mr-1"
-                                                        />
                                                         <span>
-                                                            {formatDateOnly(
-                                                                mission.created_at,
+                                                            Pelaksanaan:{' '}
+                                                            {formatFullDateTime(
+                                                                mission.scheduled_date,
                                                             )}
                                                         </span>
                                                     </div>

@@ -35,21 +35,21 @@ class LeaderboardController extends Controller
             });
 
         // Top Donor
-        $top3Donors = User::withSum('donations', 'amount')
-            ->orderByDesc('donations_sum_amount')
+        $top3Donors = User::withSum('paidDonations', 'amount')
+            ->orderByDesc('paid_donations_sum_amount')
             ->take(3)
             ->get()
             ->map(function ($user) {
-                $user->total_donation = $user->donations_sum_amount;
+                $user->total_donation = $user->paid_donations_sum_amount;
                 return $user;
             });
 
-        $top10Donors = User::withSum('donations', 'amount')
-            ->orderByDesc('donations_sum_amount')
+        $top10Donors = User::withSum('paidDonations', 'amount')
+            ->orderByDesc('paid_donations_sum_amount')
             ->take(10)
             ->get()
             ->map(function ($user) {
-                $user->total_donation = $user->donations_sum_amount;
+                $user->total_donation = $user->paid_donations_sum_amount;
                 return $user;
             });
 

@@ -1,144 +1,147 @@
 @extends('admin.layouts.app')
 
 @section('content')
-<div class="container mx-auto px-4 py-6">
-    <!-- Header -->
-    <div class="flex items-center justify-between mb-6">
-        <div>
-            <h1 class="text-2xl font-bold text-gray-900">Detail Report #{{ $report->id }}</h1>
-            <p class="text-sm text-gray-600 mt-1">Dilaporkan pada {{ $report->created_at->format('d M Y, H:i') }}</p>
-        </div>
-        <div class="flex space-x-2">
-            <a href="{{ route('report.show', $report->id) }}" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-colors">
-                Lihat Detail
-            </a>
-            <a href="{{ route('admin.reports.index') }}" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors">
-                Kembali
-            </a>
-            @if($report->status !== 'completed')
-            {{-- <a href="{{ route('admin.reports.edit', $report->id) }}" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors">
+    <div class="container px-4 py-8 mx-auto">
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-6">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">Detail Report #{{ $report->id }}</h1>
+                <p class="mt-1 text-sm text-gray-600">Dilaporkan pada {{ $report->created_at->format('d M Y, H:i') }}</p>
+            </div>
+            <div class="flex space-x-2">
+                <a href="{{ route('report.show', $report->id) }}"
+                    class="px-4 py-2 text-white transition-colors bg-green-500 rounded-lg hover:bg-green-600">
+                    Lihat Detail
+                </a>
+                <a href="{{ route('admin.reports.index') }}"
+                    class="px-4 py-2 text-white transition-colors bg-gray-500 rounded-lg hover:bg-gray-600">
+                    Kembali
+                </a>
+                @if ($report->status !== 'completed')
+                    {{-- <a href="{{ route('admin.reports.edit', $report->id) }}" class="px-4 py-2 text-white transition-colors bg-blue-500 rounded-lg hover:bg-blue-600">
                 Edit Status
             </a> --}}
-            @endif
+                @endif
+            </div>
         </div>
-    </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Main Content -->
-        <div class="lg:col-span-2 space-y-6">
-            <!-- Report Information -->
-            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <h2 class="text-lg font-semibold text-gray-900 mb-4">Informasi Laporan</h2>
+        <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+            <!-- Main Content -->
+            <div class="space-y-6 lg:col-span-2">
+                <!-- Report Information -->
+                <div class="p-6 bg-white border border-gray-200 rounded-lg shadow-sm">
+                    <h2 class="mb-4 text-lg font-semibold text-gray-900">Informasi Laporan</h2>
 
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Judul</label>
-                        <p class="text-gray-900 font-medium">{{ $report->title }}</p>
-                    </div>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block mb-1 text-sm font-medium text-gray-700">Judul</label>
+                            <p class="font-medium text-gray-900">{{ $report->title }}</p>
+                        </div>
 
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Deskripsi</label>
-                        <p class="text-gray-900 leading-relaxed">{{ $report->description }}</p>
-                    </div>
+                        <div>
+                            <label class="block mb-1 text-sm font-medium text-gray-700">Deskripsi</label>
+                            <p class="leading-relaxed text-gray-900">{{ $report->description }}</p>
+                        </div>
 
-                    @if($report->category)
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Kategori</label>
-                        <span class="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
-                            {{ $report->category }}
-                        </span>
-                    </div>
-                    @endif
-
-                    @if($report->completion_details)
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Detail Penyelesaian</label>
-                        <p class="text-gray-900 leading-relaxed">{{ $report->completion_details }}</p>
-                    </div>
-                    @endif
-                </div>
-            </div>
-
-            <!-- Location Information -->
-            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <h2 class="text-lg font-semibold text-gray-900 mb-4">Lokasi</h2>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Provinsi</label>
-                        <p class="text-gray-900">{{ $report->province->name ?? 'Tidak diketahui' }}</p>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Kota</label>
-                        <p class="text-gray-900">{{ $report->city->name }}</p>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Kecamatan</label>
-                        <p class="text-gray-900">{{ $report->district->name }}</p>
-                    </div>
-                </div>
-
-                @if($report->address)
-                <div class="mt-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Alamat Lengkap</label>
-                    <p class="text-gray-900">{{ $report->address }}</p>
-                </div>
-                @endif
-
-                @if($report->latitude && $report->longitude)
-                <div class="mt-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Koordinat</label>
-                    <p class="text-gray-900">{{ $report->latitude }}, {{ $report->longitude }}</p>
-                    <a href="https://maps.google.com/?q={{ $report->latitude }},{{ $report->longitude }}"
-                       target="_blank"
-                       class="text-blue-600 hover:text-blue-800 text-sm">
-                        Lihat di Google Maps →
-                    </a>
-                </div>
-                @endif
-            </div>
-
-            <!-- Media Files -->
-            @if($report->media && $report->media->count() > 0)
-            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <h2 class="text-lg font-semibold text-gray-900 mb-4">Media Lampiran</h2>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    @foreach($report->media as $media)
-                        @if($media->media_type === 'image')
-                            <div class="border border-gray-200 rounded-lg overflow-hidden">
-                                <img src="{{ asset('storage/' . $media->media_url) }}"
-                                     alt="Report Image"
-                                     class="w-full h-48 object-cover">
-                                <div class="p-2">
-                                    <span class="text-xs text-gray-500">Gambar</span>
-                                </div>
-                            </div>
-                        @elseif($media->media_type === 'video')
-                            <div class="border border-gray-200 rounded-lg overflow-hidden">
-                                <video controls class="w-full h-48">
-                                    <source src="{{ $media->media_url }}" type="video/mp4">
-                                    Browser Anda tidak mendukung video.
-                                </video>
-                                <div class="p-2">
-                                    <span class="text-xs text-gray-500">Video</span>
-                                </div>
+                        @if ($report->category)
+                            <div>
+                                <label class="block mb-1 text-sm font-medium text-gray-700">Kategori</label>
+                                <span class="inline-block px-2 py-1 text-xs text-blue-800 bg-blue-100 rounded-full">
+                                    {{ $report->category }}
+                                </span>
                             </div>
                         @endif
-                    @endforeach
+
+                        @if ($report->completion_details)
+                            <div>
+                                <label class="block mb-1 text-sm font-medium text-gray-700">Detail Penyelesaian</label>
+                                <p class="leading-relaxed text-gray-900">{{ $report->completion_details }}</p>
+                            </div>
+                        @endif
+                    </div>
                 </div>
-            </div>
-            @endif
+
+                <!-- Location Information -->
+                <div class="p-6 bg-white border border-gray-200 rounded-lg shadow-sm">
+                    <h2 class="mb-4 text-lg font-semibold text-gray-900">Lokasi</h2>
+
+                    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                        <div>
+                            <label class="block mb-1 text-sm font-medium text-gray-700">Provinsi</label>
+                            <p class="text-gray-900">{{ $report->province->name ?? 'Tidak diketahui' }}</p>
+                        </div>
+
+                        <div>
+                            <label class="block mb-1 text-sm font-medium text-gray-700">Kota</label>
+                            <p class="text-gray-900">{{ $report->city->name }}</p>
+                        </div>
+
+                        <div>
+                            <label class="block mb-1 text-sm font-medium text-gray-700">Kecamatan</label>
+                            <p class="text-gray-900">{{ $report->district->name }}</p>
+                        </div>
+                    </div>
+
+                    @if ($report->address)
+                        <div class="mt-4">
+                            <label class="block mb-1 text-sm font-medium text-gray-700">Alamat Lengkap</label>
+                            <p class="text-gray-900">{{ $report->address }}</p>
+                        </div>
+                    @endif
+
+                    @if ($report->latitude && $report->longitude)
+                        <div class="mt-4">
+                            <label class="block mb-1 text-sm font-medium text-gray-700">Koordinat</label>
+                            <p class="text-gray-900">{{ $report->latitude }}, {{ $report->longitude }}</p>
+                            <a href="https://maps.google.com/?q={{ $report->latitude }},{{ $report->longitude }}"
+                                target="_blank" class="text-sm text-blue-600 hover:text-blue-800">
+                                Lihat di Google Maps →
+                            </a>
+                        </div>
+                    @endif
+                </div>
+
+                <!-- Media Files -->
+                @if ($report->media && $report->media->count() > 0)
+                    <div class="p-6 bg-white border border-gray-200 rounded-lg shadow-sm">
+                        <h2 class="mb-4 text-lg font-semibold text-gray-900">Media Lampiran</h2>
+
+                        <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+                            @foreach ($report->media as $media)
+                                @if ($media->media_type === 'image')
+                                    <div class="overflow-hidden border border-gray-200 rounded-lg">
+                                        <img src="{{ asset('storage/' . $media->media_url) }}" alt="Report Image"
+                                            class="object-cover w-full h-48">
+                                        <div class="p-2">
+                                            <span class="text-xs text-gray-500">Gambar</span>
+                                        </div>
+                                    </div>
+                                @elseif($media->media_type === 'video')
+                                    <div class="overflow-hidden border border-gray-200 rounded-lg">
+                                        <video controls class="w-full h-48">
+                                            <source src="{{ $media->media_url }}" type="video/mp4">
+                                            Browser Anda tidak mendukung video.
+                                        </video>
+                                        <div class="p-2">
+                                            <span class="text-xs text-gray-500">Video</span>
+                                        </div>
+                                    </div>
+                                @endif
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
+
 
             <!-- Donation Management -->
             <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <div class="flex items-center justify-between mb-6">
                     <h2 class="text-lg font-semibold text-gray-900">Manajemen Donasi</h2>
 
+
                     <form action="{{ route('admin.reports.toggle-donation', $report->id) }}" method="POST" class="inline-block">
                         @csrf
+
                         @method('PUT')
                         <button type="submit"
                                 class="px-4 py-2 rounded-lg text-sm font-medium transition-colors
@@ -174,8 +177,10 @@
                                         </dd>
                                     </dl>
                                 </div>
+
                             </div>
                         </div>
+
 
                         <div class="bg-blue-50 p-4 rounded-lg">
                             <div class="flex items-center">
@@ -192,8 +197,10 @@
                                         </dd>
                                     </dl>
                                 </div>
+
                             </div>
                         </div>
+
 
                         <div class="bg-yellow-50 p-4 rounded-lg">
                             <div class="flex items-center">
@@ -210,9 +217,11 @@
                                         </dd>
                                     </dl>
                                 </div>
+
                             </div>
                         </div>
                     </div>
+
 
 
                 </div>
@@ -299,6 +308,7 @@
                                     @endforeach
                                 </tbody>
                             </table>
+
                         </div>
                     </div>
                     @else
@@ -313,28 +323,31 @@
             </div>
 
 
+
         </div>
 
-        <!-- Sidebar -->
-        <div class="space-y-6">
-            <!-- Status Card -->
-            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <h2 class="text-lg font-semibold text-gray-900 mb-4">Status</h2>
 
-                <div class="space-y-3">
-                    <div class="flex items-center justify-between">
-                        <span class="text-sm font-medium text-gray-700">Status Saat Ini</span>
-                        <span class="px-3 py-1 rounded-full text-sm font-medium
-                            @if($report->status === 'pending') bg-yellow-100 text-yellow-800
+            <!-- Sidebar -->
+            <div class="space-y-6">
+                <!-- Status Card -->
+                <div class="p-6 bg-white border border-gray-200 rounded-lg shadow-sm">
+                    <h2 class="mb-4 text-lg font-semibold text-gray-900">Status</h2>
+
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm font-medium text-gray-700">Status Saat Ini</span>
+                            <span
+                                class="px-3 py-1 rounded-full text-sm font-medium
+                            @if ($report->status === 'pending') bg-yellow-100 text-yellow-800
                             @elseif($report->status === 'verified') bg-blue-100 text-blue-800
                             @elseif($report->status === 'on-progress') bg-purple-100 text-purple-800
                             @elseif($report->status === 'rejected') bg-red-100 text-red-800
                             @elseif($report->status === 'completed') bg-green-100 text-green-800
-                            @elseif($report->status === 'under-authority') bg-orange-100 text-orange-800
-                            @endif">
-                            {{ ucfirst(str_replace('-', ' ', $report->status)) }}
-                        </span>
-                    </div>
+                            @elseif($report->status === 'under-authority') bg-orange-100 text-orange-800 @endif">
+                                {{ ucfirst(str_replace('-', ' ', $report->status)) }}
+                            </span>
+                        </div>
+
 
                     <div class="flex items-center justify-between">
                         <span class="text-sm font-medium text-gray-700">Status Donasi</span>
@@ -348,56 +361,60 @@
                     <div class="flex items-center justify-between">
                         <span class="text-sm font-medium text-gray-700">Diverifikasi</span>
                         <span class="text-sm text-gray-900">{{ $report->verified_at->format('d M Y') }}</span>
-                    </div>
-                    @endif
-                </div>
-            </div>
 
-            <!-- Reporter Information -->
-            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <h2 class="text-lg font-semibold text-gray-900 mb-4">Pelapor</h2>
-
-                <div class="space-y-3">
-                    <div class="flex items-center space-x-3">
-                        <div class="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
-                            <span class="text-sm font-medium text-gray-700">
-                                {{ substr($report->reporter->name, 0, 1) }}
-                            </span>
-                        </div>
-                        <div>
-                            <p class="font-medium text-gray-900">{{ $report->reporter->name }}</p>
-                            <p class="text-sm text-gray-600">{{ $report->reporter->email }}</p>
-                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Votes Information -->
-            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <h2 class="text-lg font-semibold text-gray-900 mb-4">Voting</h2>
+                <!-- Reporter Information -->
+                <div class="p-6 bg-white border border-gray-200 rounded-lg shadow-sm">
+                    <h2 class="mb-4 text-lg font-semibold text-gray-900">Pelapor</h2>
 
-                <div class="space-y-3">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center space-x-2">
-                            <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z" clip-rule="evenodd"></path>
-                            </svg>
-                            <span class="text-sm font-medium text-gray-700">Upvotes</span>
+                    <div class="space-y-3">
+                        <div class="flex items-center space-x-3">
+                            <div class="flex items-center justify-center w-10 h-10 bg-gray-300 rounded-full">
+                                <span class="text-sm font-medium text-gray-700">
+                                    {{ substr($report->reporter->name, 0, 1) }}
+                                </span>
+                            </div>
+                            <div>
+                                <p class="font-medium text-gray-900">{{ $report->reporter->name }}</p>
+                                <p class="text-sm text-gray-600">{{ $report->reporter->email }}</p>
+                            </div>
                         </div>
-                        <span class="text-sm font-medium text-gray-900">{{ $report->upvotes_count }}</span>
-                    </div>
-
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center space-x-2">
-                            <svg class="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-11.293a1 1 0 00-1.414-1.414L9 8.586 5.707 5.293a1 1 0 00-1.414 1.414L7.586 10l-3.293 3.293a1 1 0 101.414 1.414L9 11.414l3.293 3.293a1 1 0 001.414-1.414L10.414 10l3.293-3.293z" clip-rule="evenodd"></path>
-                            </svg>
-                            <span class="text-sm font-medium text-gray-700">Dislikes</span>
-                        </div>
-                        <span class="text-sm font-medium text-gray-900">{{ $report->dislikes_count }}</span>
                     </div>
                 </div>
-            </div>
+
+                <!-- Votes Information -->
+                <div class="p-6 bg-white border border-gray-200 rounded-lg shadow-sm">
+                    <h2 class="mb-4 text-lg font-semibold text-gray-900">Voting</h2>
+
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-2">
+                                <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                                <span class="text-sm font-medium text-gray-700">Upvotes</span>
+                            </div>
+                            <span class="text-sm font-medium text-gray-900">{{ $report->upvotes_count }}</span>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-2">
+                                <svg class="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-11.293a1 1 0 00-1.414-1.414L9 8.586 5.707 5.293a1 1 0 00-1.414 1.414L7.586 10l-3.293 3.293a1 1 0 101.414 1.414L9 11.414l3.293 3.293a1 1 0 001.414-1.414L10.414 10l3.293-3.293z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                                <span class="text-sm font-medium text-gray-700">Dislikes</span>
+                            </div>
+                            <span class="text-sm font-medium text-gray-900">{{ $report->dislikes_count }}</span>
+                        </div>
+                    </div>
+                </div>
+
 
 
 
@@ -455,15 +472,17 @@
                     </div>
                     @endif
 
-                    @if($report->completedByUser)
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Diselesaikan oleh</label>
-                        <p class="text-gray-900">{{ $report->completedByUser->name }}</p>
-                    </div>
+
+                            @if ($report->completedByUser)
+                                <div>
+                                    <label class="block mb-1 text-sm font-medium text-gray-700">Diselesaikan oleh</label>
+                                    <p class="text-gray-900">{{ $report->completedByUser->name }}</p>
+                                </div>
+                            @endif
+                        </div>
                     @endif
                 </div>
-            @endif
-        </div>
+
 
         @if ($mission)
                 <a href="{{ route('admin.missions.edit', $mission->id) }}"
@@ -474,12 +493,13 @@
 
 
 
+
         </div>
     </div>
-</div>
 @endsection
 
 @section('scripts')
+
 <!-- DataTables CSS & JS -->
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.tailwindcss.min.css">
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
@@ -497,25 +517,47 @@
                 const overlay = document.createElement('div');
                 overlay.className = 'fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50';
                 overlay.innerHTML = `
+
                     <div class="max-w-4xl max-h-full p-4">
-                        <img src="${this.src}" alt="Report Image" class="max-w-full max-h-full object-contain">
-                        <button class="absolute top-4 right-4 text-white text-2xl" onclick="this.parentElement.parentElement.remove()">×</button>
+                        <img src="${this.src}" alt="Report Image" class="object-contain max-w-full max-h-full">
+                        <button class="absolute text-2xl text-white top-4 right-4" onclick="this.parentElement.parentElement.remove()">×</button>
                     </div>
                 `;
 
-                document.body.appendChild(overlay);
+                    document.body.appendChild(overlay);
 
-                // Tutup dengan klik di luar gambar
-                overlay.addEventListener('click', function(e) {
-                    if (e.target === overlay) {
-                        overlay.remove();
-                    }
+                    // Tutup dengan klik di luar gambar
+                    overlay.addEventListener('click', function(e) {
+                        if (e.target === overlay) {
+                            overlay.remove();
+                        }
+                    });
                 });
+
+                // Ubah cursor menjadi pointer
+                img.style.cursor = 'pointer';
             });
 
-            // Ubah cursor menjadi pointer
-            img.style.cursor = 'pointer';
-        });
+            // Script untuk toggle mission form
+            const toggleBtn = document.getElementById('toggleMissionForm');
+            const missionForm = document.getElementById('missionForm');
+            const toggleText = document.getElementById('toggleText');
+            const cancelBtn = document.getElementById('cancelMission');
+
+            toggleBtn.addEventListener('click', function() {
+                if (missionForm.classList.contains('hidden')) {
+                    missionForm.classList.remove('hidden');
+                    toggleText.textContent = 'Sembunyikan Form';
+                    toggleBtn.classList.remove('bg-green-500', 'hover:bg-green-600');
+                    toggleBtn.classList.add('bg-gray-500', 'hover:bg-gray-600');
+                } else {
+                    missionForm.classList.add('hidden');
+                    toggleText.textContent = 'Buat Misi';
+                    toggleBtn.classList.remove('bg-gray-500', 'hover:bg-gray-600');
+                    toggleBtn.classList.add('bg-green-500', 'hover:bg-green-600');
+                }
+            });
+
 
         // Initialize DataTable for donations
         $('#donationsTable').DataTable({
@@ -546,4 +588,5 @@
 
     });
 </script>
+
 @endsection
