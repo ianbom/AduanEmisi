@@ -62,9 +62,9 @@
                                 name="content_type"
                                 class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('content_type') border-red-500 @enderror">
                             <option value="">Pilih tipe konten</option>
-                            <option value="article" {{ old('content_type', $content->content_type) == 'article' ? 'selected' : '' }}>Artikel</option>
-                            <option value="news" {{ old('content_type', $content->content_type) == 'news' ? 'selected' : '' }}>Berita</option>
-                            <option value="guide" {{ old('content_type', $content->content_type) == 'guide' ? 'selected' : '' }}>Panduan</option>
+                            <option value="artikel" {{ old('content_type', $content->content_type) == 'article' ? 'selected' : '' }}>Artikel</option>
+                            <option value="modul" {{ old('content_type', $content->content_type) == 'modul' ? 'selected' : '' }}>Modul</option>
+                            <option value="video" {{ old('content_type', $content->content_type) == 'video' ? 'selected' : '' }}>Video</option>
                         </select>
                         @error('content_type')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -141,15 +141,13 @@
                            class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
                             Kembali
                         </a>
-                        <a href="{{ route('admin.contents.show', $content->id) }}"
+                        <a href="{{ route('content.show', $content->id) }}"
                            class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
                             Lihat Detail
                         </a>
                     </div>
                     <div class="flex space-x-3">
-                        <button type="button" onclick="resetForm()" class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
-                            Reset
-                        </button>
+
                         <button type="submit"
                                 id="submitBtn"
                                 class="px-4 py-2 bg-blue-600 border border-transparent rounded-md text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
@@ -228,511 +226,144 @@
 
 @push('scripts')
  <script src="https://cdn.ckeditor.com/ckeditor5/41.4.2/classic/ckeditor.js"></script>
+@push('scripts')
+<script src="https://cdn.ckeditor.com/ckeditor5/41.4.2/classic/ckeditor.js"></script>
 
 <script>
-
-       document.addEventListener('DOMContentLoaded', function() {
-        ClassicEditor
-            .create(document.querySelector('#body'), {
-                // Konfigurasi toolbar bisa ditambahkan di sini jika perlu
-                toolbar: {
-                    items: [
-                        'heading', '|',
-                        'bold', 'italic', 'underline', '|',
-                        'link', 'bulletedList', 'numberedList', '|',
-                        'blockQuote', 'insertTable', '|',
-                        'undo', 'redo'
-                    ]
-                },
-                language: 'id' // Menggunakan bahasa Indonesia jika tersedia
-            })
-            .then(editor => {
-                console.log('CKEditor berhasil diinisialisasi.', editor);
-            })
-            .catch(error => {
-                console.error('Terjadi error saat inisialisasi CKEditor:', error);
-            });
-    });
-    
-let selectedFiles = [];
-let deletedMediaIds = [];
-const maxFileSize = 10 * 1024 * 1024; // 10MB
-const allowedImageTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/svg+xml', 'image/webp'];
-const allowedVideoTypes = ['video/mp4', 'video/mov', 'video/avi', 'video/mkv', 'video/wmv'];
-const allowedDocumentTypes = ['application/pdf'];
-
-// Store original values for reset functionality
-const originalValues = {
-    title: document.getElementById('title').value,
-    body: document.getElementById('body').value,
-    content_type: document.getElementById('content_type').value
-};
-
-// Character counter for title
-document.getElementById('title').addEventListener('input', function() {
-    const count = this.value.length;
-    document.getElementById('titleCount').textContent = count;
-
-    if (count > 255) {
-        this.classList.add('border-red-500');
-        document.getElementById('titleCount').classList.add('text-red-600');
-    } else {
-        this.classList.remove('border-red-500');
-        document.getElementById('titleCount').classList.remove('text-red-600');
-    }
-});
-
-// Character counter for body
-document.getElementById('body').addEventListener('input', function() {
-    const count = this.value.length;
-    document.getElementById('bodyCount').textContent = count.toLocaleString();
-});
-
-// Remove existing media
-function removeExistingMedia(mediaId) {
-    if (confirm('Apakah Anda yakin ingin menghapus media ini?')) {
-        deletedMediaIds.push(mediaId);
-
-        // Hide the media element
-        const mediaElement = document.querySelector(`[data-media-id="${mediaId}"]`);
-        if (mediaElement) {
-            mediaElement.style.display = 'none';
-        }
-
-        // Update hidden input
-        document.getElementById('deleteMediaIds').value = deletedMediaIds.join(',');
-
-        // Show notification
-        showNotification('Media akan dihapus saat form disimpan', 'warning');
-    }
-}
-
-// Reset form to original values
-function resetForm() {
-    if (confirm('Apakah Anda yakin ingin mereset form ke nilai awal?')) {
-        document.getElementById('title').value = originalValues.title;
-        document.getElementById('body').value = originalValues.body;
-        document.getElementById('content_type').value = originalValues.content_type;
-
-        // Reset character counters
-        document.getElementById('titleCount').textContent = originalValues.title.length;
-        document.getElementById('bodyCount').textContent = originalValues.body.length.toLocaleString();
-
-        // Reset file inputs
-        selectedFiles = [];
-        document.getElementById('mediaInput').value = '';
-        document.getElementById('filePreview').innerHTML = '';
-
-        // Reset deleted media
-        deletedMediaIds = [];
-        document.getElementById('deleteMediaIds').value = '';
-
-        // Show all existing media again
-        const existingMediaElements = document.querySelectorAll('#existingMedia [data-media-id]');
-        existingMediaElements.forEach(element => {
-            element.style.display = 'block';
+document.addEventListener('DOMContentLoaded', function() {
+    // Inisialisasi CKEditor
+    ClassicEditor
+        .create(document.querySelector('#body'), {
+            toolbar: {
+                items: [
+                    'heading', '|', 'bold', 'italic', 'underline', '|',
+                    'link', 'bulletedList', 'numberedList', '|',
+                    'blockQuote', 'insertTable', '|', 'undo', 'redo'
+                ]
+            },
+            language: 'id'
+        })
+        .catch(error => {
+            console.error('Error inisialisasi CKEditor:', error);
         });
 
-        showNotification('Form berhasil direset', 'success');
-    }
-}
+    // --- LOGIKA UPLOAD DAN PREVIEW FILE BARU ---
 
-function getFileType(file) {
-    if (allowedImageTypes.includes(file.type)) {
-        return 'image';
-    } else if (allowedVideoTypes.includes(file.type)) {
-        return 'video';
-    } else if (allowedDocumentTypes.includes(file.type)) {
-        return 'document';
-    }
-    return 'unknown';
-}
-
-function handleFileSelect(input) {
-    const files = Array.from(input.files);
+    const mediaInput = document.getElementById('mediaInput');
     const filePreview = document.getElementById('filePreview');
-    const uploadProgress = document.getElementById('uploadProgress');
+    const dropZone = document.getElementById('dropZone');
 
-    // Show progress
-    uploadProgress.classList.remove('hidden');
+    // Gunakan DataTransfer.files untuk menyimpan file yang akan diupload
+    let fileStore = new DataTransfer();
 
-    // Clear previous previews
-    filePreview.innerHTML = '';
-    selectedFiles = [];
-
-    let processedFiles = 0;
-    const totalFiles = files.length;
-
-    files.forEach((file, index) => {
-        // Validate file
-        if (!validateFile(file)) {
-            processedFiles++;
-            updateProgress(processedFiles, totalFiles);
+    // Fungsi untuk merender preview file
+    const renderPreviews = () => {
+        filePreview.innerHTML = ''; // Kosongkan preview
+        if (fileStore.files.length === 0) {
+            filePreview.classList.add('hidden');
             return;
         }
 
-        selectedFiles.push(file);
+        filePreview.classList.remove('hidden');
 
-        const fileItem = document.createElement('div');
-        fileItem.className = 'relative bg-gray-100 rounded-lg p-4 border hover:shadow-md transition-shadow';
+        Array.from(fileStore.files).forEach((file, index) => {
+            const previewCard = document.createElement('div');
+            previewCard.className = 'relative bg-gray-100 rounded-lg p-3 border hover:shadow-md transition-shadow flex items-start space-x-3';
 
-        const fileType = getFileType(file);
+            let thumbnailHTML = '';
+            if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = previewCard.querySelector('.preview-thumbnail');
+                    if(img) img.src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+                thumbnailHTML = `<img src="" class="w-16 h-16 object-cover rounded preview-thumbnail" alt="Preview">`;
+            } else if (file.type.startsWith('video/')) {
+                thumbnailHTML = `<div class="w-16 h-16 bg-gray-200 rounded flex items-center justify-center"><svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg></div>`;
+            } else { // Document (PDF, etc.)
+                thumbnailHTML = `<div class="w-16 h-16 bg-red-100 rounded flex items-center justify-center"><svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg></div>`;
+            }
 
-        if (fileType === 'image') {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                fileItem.innerHTML = `
-                    <div class="relative">
-                        <img src="${e.target.result}" class="w-full h-24 object-cover rounded mb-2">
-                        <div class="absolute top-1 left-1 bg-green-500 text-white text-xs px-2 py-1 rounded">
-                            NEW
-                        </div>
-                    </div>
-                    <p class="text-sm text-gray-600 truncate font-medium">${file.name}</p>
-                    <p class="text-xs text-gray-500">${formatFileSize(file.size)}</p>
-                    <button type="button" onclick="removeFile(${index})" class="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600 transition-colors">
-                        ×
-                    </button>
-                `;
-                processedFiles++;
-                updateProgress(processedFiles, totalFiles);
-            };
-            reader.readAsDataURL(file);
-        } else if (fileType === 'video') {
-            fileItem.innerHTML = `
-                <div class="relative">
-                    <div class="w-full h-24 bg-gray-200 rounded flex items-center justify-center mb-2">
-                        <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
-                        </svg>
-                    </div>
-                    <div class="absolute top-1 left-1 bg-green-500 text-white text-xs px-2 py-1 rounded">
-                        NEW
-                    </div>
+            previewCard.innerHTML = `
+                ${thumbnailHTML}
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm text-gray-800 font-medium truncate">${file.name}</p>
+                    <p class="text-xs text-gray-500">${(file.size / 1024 / 1024).toFixed(2)} MB</p>
                 </div>
-                <p class="text-sm text-gray-600 truncate font-medium">${file.name}</p>
-                <p class="text-xs text-gray-500">${formatFileSize(file.size)}</p>
-                <button type="button" onclick="removeFile(${index})" class="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600 transition-colors">
+                <button type="button" class="absolute top-2 right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600 transition-colors" data-index="${index}">
                     ×
                 </button>
             `;
-            processedFiles++;
-            updateProgress(processedFiles, totalFiles);
-        } else if (fileType === 'document') {
-            fileItem.innerHTML = `
-                <div class="relative">
-                    <div class="w-full h-24 bg-red-100 rounded flex items-center justify-center mb-2">
-                        <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                        </svg>
-                    </div>
-                    <div class="absolute top-1 left-1 bg-green-500 text-white text-xs px-2 py-1 rounded">
-                        NEW
-                    </div>
-                </div>
-                <p class="text-sm text-gray-600 truncate font-medium">${file.name}</p>
-                <p class="text-xs text-gray-500">${formatFileSize(file.size)}</p>
-                <button type="button" onclick="removeFile(${index})" class="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600 transition-colors">
-                    ×
-                </button>
-            `;
-            processedFiles++;
-            updateProgress(processedFiles, totalFiles);
-        }
 
-        filePreview.appendChild(fileItem);
-    });
-
-    updateFileInput();
-}
-
-function validateFile(file) {
-    // Check file size
-    if (file.size > maxFileSize) {
-        showError(`File "${file.name}" terlalu besar. Maksimal 10MB.`);
-        return false;
-    }
-
-    // Check file type
-    const isValidImage = allowedImageTypes.includes(file.type);
-    const isValidVideo = allowedVideoTypes.includes(file.type);
-    const isValidDocument = allowedDocumentTypes.includes(file.type);
-
-    if (!isValidImage && !isValidVideo && !isValidDocument) {
-        showError(`File "${file.name}" format tidak didukung.`);
-        return false;
-    }
-
-    return true;
-}
-
-function showError(message) {
-    showNotification(message, 'error');
-}
-
-function showNotification(message, type = 'info') {
-    const colors = {
-        success: 'bg-green-500',
-        error: 'bg-red-500',
-        warning: 'bg-yellow-500',
-        info: 'bg-blue-500'
+            filePreview.appendChild(previewCard);
+        });
     };
 
-    const errorDiv = document.createElement('div');
-    errorDiv.className = `fixed top-4 right-4 ${colors[type]} text-white px-4 py-2 rounded-md shadow-lg z-50`;
-    errorDiv.textContent = message;
-
-    document.body.appendChild(errorDiv);
-
-    // Remove after 5 seconds
-    setTimeout(() => {
-        errorDiv.remove();
-    }, 5000);
-}
-
-function updateProgress(processed, total) {
-    const percentage = (processed / total) * 100;
-    document.getElementById('progressBar').style.width = percentage + '%';
-    document.getElementById('progressText').textContent = Math.round(percentage) + '%';
-
-    if (processed === total) {
-        setTimeout(() => {
-            document.getElementById('uploadProgress').classList.add('hidden');
-        }, 1000);
-    }
-}
-
-function removeFile(index) {
-    selectedFiles.splice(index, 1);
-    updateFileInput();
-    refreshPreview();
-}
-
-function refreshPreview() {
-    const filePreview = document.getElementById('filePreview');
-    filePreview.innerHTML = '';
-
-    selectedFiles.forEach((file, newIndex) => {
-        const fileItem = document.createElement('div');
-        fileItem.className = 'relative bg-gray-100 rounded-lg p-4 border hover:shadow-md transition-shadow';
-
-        const fileType = getFileType(file);
-
-        if (fileType === 'image') {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                fileItem.innerHTML = `
-                    <div class="relative">
-                        <img src="${e.target.result}" class="w-full h-24 object-cover rounded mb-2">
-                        <div class="absolute top-1 left-1 bg-green-500 text-white text-xs px-2 py-1 rounded">
-                            NEW
-                        </div>
-                    </div>
-                    <p class="text-sm text-gray-600 truncate font-medium">${file.name}</p>
-                    <p class="text-xs text-gray-500">${formatFileSize(file.size)}</p>
-                    <button type="button" onclick="removeFile(${newIndex})" class="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600 transition-colors">
-                        ×
-                    </button>
-                `;
-            };
-            reader.readAsDataURL(file);
-        } else if (fileType === 'video') {
-            fileItem.innerHTML = `
-                <div class="relative">
-                    <div class="w-full h-24 bg-gray-200 rounded flex items-center justify-center mb-2">
-                        <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
-                        </svg>
-                    </div>
-                    <div class="absolute top-1 left-1 bg-green-500 text-white text-xs px-2 py-1 rounded">
-                        NEW
-                    </div>
-                </div>
-                <p class="text-sm text-gray-600 truncate font-medium">${file.name}</p>
-                <p class="text-xs text-gray-500">${formatFileSize(file.size)}</p>
-                <button type="button" onclick="removeFile(${newIndex})" class="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600 transition-colors">
-                    ×
-                </button>
-            `;
-        } else if (fileType === 'document') {
-           fileItem.innerHTML = `
-                        <div class="relative">
-                            <div class="flex items-center justify-center w-full h-24 mb-2 bg-red-100 rounded">
-                                <svg class="w-8 h-8 text-red-600" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path>
-                                </svg>
-                            </div>
-                            <div class="absolute px-2 py-1 text-xs text-white bg-red-600 rounded top-1 left-1">
-                                PDF
-                            </div>
-                        </div>
-                        <p class="text-sm font-medium text-gray-600 truncate" title="${file.name}">${file.name}</p>
-                        <p class="text-xs text-gray-500">${formatFileSize(file.size)}</p>
-                        <button type="button" onclick="removeFile(${newIndex})" class="absolute flex items-center justify-center w-6 h-6 text-xs text-white transition-colors bg-red-500 rounded-full top-2 right-2 hover:bg-red-600">
-                            ×
-                        </button>
-                    `;
-                }
-                   filePreview.appendChild(fileItem);
-            });
-        }
-
-        function updateFileInput() {
-            const input = document.getElementById('mediaInput');
-            const dt = new DataTransfer();
-
-            selectedFiles.forEach(file => {
-                dt.items.add(file);
-            });
-
-            input.files = dt.files;
-        }
-
-        function formatFileSize(bytes) {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-}
-
-function updateFileInput() {
-    const dataTransfer = new DataTransfer();
-    selectedFiles.forEach(file => dataTransfer.items.add(file));
-    document.getElementById('mediaInput').files = dataTransfer.files;
-}
-
-// Drag and drop functionality
-const dropZone = document.getElementById('dropZone');
-
-['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-    dropZone.addEventListener(eventName, preventDefaults, false);
-});
-
-function preventDefaults(e) {
-    e.preventDefault();
-    e.stopPropagation();
-}
-
-['dragenter', 'dragover'].forEach(eventName => {
-    dropZone.addEventListener(eventName, highlight, false);
-});
-
-['dragleave', 'drop'].forEach(eventName => {
-    dropZone.addEventListener(eventName, unhighlight, false);
-});
-
-function highlight() {
-    dropZone.classList.add('border-blue-400', 'bg-blue-50');
-}
-
-function unhighlight() {
-    dropZone.classList.remove('border-blue-400', 'bg-blue-50');
-}
-
-dropZone.addEventListener('drop', handleDrop, false);
-
-function handleDrop(e) {
-    const dt = e.dataTransfer;
-    const files = dt.files;
-    document.getElementById('mediaInput').files = files;
-    handleFileSelect(document.getElementById('mediaInput'));
-}
-
-// Form submission handler
-document.getElementById('contentForm').addEventListener('submit', function(e) {
-    const submitBtn = document.getElementById('submitBtn');
-    const submitText = document.getElementById('submitText');
-    const submitLoader = document.getElementById('submitLoader');
-
-    // Show loading state
-    submitBtn.disabled = true;
-    submitText.textContent = 'Menyimpan...';
-    submitLoader.classList.remove('hidden');
-
-    // Validate form
-    const title = document.getElementById('title').value.trim();
-    const body = document.getElementById('body').value.trim();
-
-    if (!title || title.length === 0) {
-        e.preventDefault();
-        showNotification('Judul konten wajib diisi', 'error');
-        submitBtn.disabled = false;
-        submitText.textContent = 'Update Konten';
-        submitLoader.classList.add('hidden');
-        return;
-    }
-
-    if (!body || body.length === 0) {
-        e.preventDefault();
-        showNotification('Konten wajib diisi', 'error');
-        submitBtn.disabled = false;
-        submitText.textContent = 'Update Konten';
-        submitLoader.classList.add('hidden');
-        return;
-    }
-
-    // If everything is OK, form will submit normally
-});
-
-// Initialize character counters on page load
-document.addEventListener('DOMContentLoaded', function() {
-    // Title counter
-    const title = document.getElementById('title').value;
-    document.getElementById('titleCount').textContent = title.length;
-
-    // Body counter
-    const body = document.getElementById('body').value;
-    document.getElementById('bodyCount').textContent = body.length.toLocaleString();
-
-    // Set up existing media removal
-    document.querySelectorAll('#existingMedia button[type="submit"]').forEach(button => {
-        button.addEventListener('click', function(e) {
-            if (!confirm('Apakah Anda yakin ingin menghapus media ini?')) {
-                e.preventDefault();
+    // Fungsi untuk menambah file ke store
+    const addFiles = (files) => {
+        const existingFileNames = Array.from(fileStore.files).map(f => f.name);
+        for (const file of files) {
+            // Cek duplikasi file
+            if (!existingFileNames.includes(file.name)) {
+                fileStore.items.add(file);
             }
-        });
+        }
+        mediaInput.files = fileStore.files; // Update input file dengan file baru
+        renderPreviews();
+    };
+
+    // Event listener untuk tombol hapus pada preview
+    filePreview.addEventListener('click', function(e) {
+        if (e.target.tagName === 'BUTTON') {
+            const indexToRemove = parseInt(e.target.getAttribute('data-index'));
+            const newFiles = new DataTransfer();
+            Array.from(fileStore.files).forEach((file, index) => {
+                if (index !== indexToRemove) {
+                    newFiles.items.add(file);
+                }
+            });
+            fileStore = newFiles;
+            mediaInput.files = fileStore.files; // Update input file
+            renderPreviews();
+        }
     });
+
+    // Event listener untuk input file
+    mediaInput.addEventListener('change', function() {
+        addFiles(this.files);
+    });
+
+    // Fungsionalitas Drag & Drop
+    dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.classList.add('border-blue-500', 'bg-blue-50');
+    });
+
+    dropZone.addEventListener('dragleave', () => {
+        dropZone.classList.remove('border-blue-500', 'bg-blue-50');
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('border-blue-500', 'bg-blue-50');
+        if (e.dataTransfer.files.length) {
+            addFiles(e.dataTransfer.files);
+        }
+    });
+
+    // Fungsi untuk reset form
+    window.resetForm = function() {
+        document.getElementById('contentForm').reset();
+        // Reset CKEditor
+        const editor = document.querySelector('.ck-editor__editable').ckeditor;
+        editor.setData(`{{ addslashes(old('body', $content->body)) }}`);
+        // Reset preview file
+        fileStore = new DataTransfer();
+        mediaInput.files = fileStore.files;
+        renderPreviews();
+    };
 });
-
-// Initialize drop zone
-document.addEventListener('DOMContentLoaded', function() {
-    const dropZone = document.getElementById('dropZone');
-
-    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-        dropZone.addEventListener(eventName, preventDefaults, false);
-        document.body.addEventListener(eventName, preventDefaults, false);
-    });
-
-    ['dragenter', 'dragover'].forEach(eventName => {
-        dropZone.addEventListener(eventName, highlight, false);
-    });
-
-    ['dragleave', 'drop'].forEach(eventName => {
-        dropZone.addEventListener(eventName, unhighlight, false);
-    });
-
-    dropZone.addEventListener('drop', handleDrop, false);
-});
-
-function preventDefaults(e) {
-    e.preventDefault();
-    e.stopPropagation();
-}
-
-function highlight() {
-    dropZone.classList.add('border-blue-400', 'bg-blue-50');
-}
-
-function unhighlight() {
-    dropZone.classList.remove('border-blue-400', 'bg-blue-50');
-}
-
-function handleDrop(e) {
-    const dt = e.dataTransfer;
-    const files = dt.files;
-    document.getElementById('mediaInput').files = files;
-    handleFileSelect(document.getElementById('mediaInput'));
-}
 </script>
+@endpush
 @endpush
