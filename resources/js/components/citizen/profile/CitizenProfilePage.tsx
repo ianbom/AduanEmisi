@@ -44,6 +44,9 @@ import {
     Trophy,
 } from 'lucide-react';
 import { useState } from 'react';
+import AchievementCard from './AchievementCard';
+import { UserBadge } from '@/types/user/user-badge';
+import { UserCertificate } from '@/types/user/user-certificate';
 interface CitizenProfilePageProps {
     user: User | null;
     myReports: Report[];
@@ -52,6 +55,8 @@ interface CitizenProfilePageProps {
     myMissionCounts: number;
     myDonations: Donation[];
     myPoints: Point[];
+    myBadges: UserBadge[];
+    myCertificates: UserCertificate[];
 }
 
 const CitizenProfilePage = ({
@@ -62,6 +67,8 @@ const CitizenProfilePage = ({
     myMissionCounts,
     myDonations,
     myPoints,
+    myBadges,
+    myCertificates
 }: CitizenProfilePageProps) => {
     const [activeTab, setActiveTab] = useState('reports');
     const [activeTabAchievements, setActiveTabAchievements] =
@@ -959,130 +966,10 @@ const CitizenProfilePage = ({
                         </Tabs>
                     </CardContent>
                 </Card>
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Riwayat Pencapaian</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <Tabs
-                            value={activeTabAchievements}
-                            onValueChange={setActiveTabAchievements}
-                        >
-                            <TabsList className="hidden w-full grid-cols-2 md:grid">
-                                <TabsTrigger value="certificates">
-                                    Sertifikat Saya
-                                </TabsTrigger>
-                                <TabsTrigger value="badges">
-                                    Koleksi Badges
-                                </TabsTrigger>
-                            </TabsList>
-                            <div className="mb-4 md:hidden">
-                                <Select
-                                    value={activeTabAchievements}
-                                    onValueChange={setActiveTabAchievements}
-                                >
-                                    <SelectTrigger className="w-full">
-                                        <SelectValue placeholder="Pilih aktivitas" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="certificates">
-                                            Sertifikat Saya
-                                        </SelectItem>
-                                        <SelectItem value="badges">
-                                            Koleksi Badges
-                                        </SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                            <TabsContent value="certificates" className="mt-6">
-                                <div className="mb-4 flex flex-col items-start justify-between gap-2 sm:flex-row sm:items-center">
-                                    <div></div>{' '}
-                                    <div className="flex items-center gap-2">
-                                        <Select>
-                                            <SelectTrigger className="w-[140px]">
-                                                <SelectValue placeholder="Tampilkan" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="asc">
-                                                    Terbaru
-                                                </SelectItem>
-                                                <SelectItem value="desc">
-                                                    Terlama
-                                                </SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                        <Input
-                                            type="text"
-                                            placeholder="Cari sertifikat..."
-                                            className="w-40"
-                                        />
-                                    </div>
-                                </div>
-                                <div className="py-8 text-center">
-                                    <Award className="mx-auto mb-4 h-12 w-12 text-gray-400" />
-                                    <p className="text-gray-600">
-                                        Belum ada sertifikat yang diterima
-                                    </p>
-                                </div>
-                            </TabsContent>
-                            <TabsContent value="badges" className="mt-6">
-                                <div className="mb-4 flex flex-col items-start justify-between gap-2 sm:flex-row sm:items-center">
-                                    <div></div>{' '}
-                                    <div className="flex items-center gap-2">
-                                        <Select>
-                                            <SelectTrigger className="w-[140px]">
-                                                <SelectValue placeholder="Tampilkan" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="asc">
-                                                    Terbaru
-                                                </SelectItem>
-                                                <SelectItem value="desc">
-                                                    Terlama
-                                                </SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                        <Input
-                                            type="text"
-                                            placeholder="Cari badge..."
-                                            className="w-40"
-                                        />
-                                    </div>
-                                </div>
-                                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                                    {badges.map((badge) => (
-                                        <Card
-                                            key={badge.id}
-                                            className={`border-2 ${getRarityColor(badge.rarity)}`}
-                                        >
-                                            <CardContent className="p-4 text-center sm:p-6">
-                                                <div className="mb-3 text-3xl sm:text-4xl">
-                                                    {badge.icon}
-                                                </div>
-                                                <h3 className="mb-2 text-sm font-semibold text-gray-900 sm:text-base">
-                                                    {badge.title}
-                                                </h3>
-                                                <p className="mb-3 text-xs text-gray-600 sm:text-sm">
-                                                    {badge.description}
-                                                </p>
-                                                <Badge
-                                                    variant="outline"
-                                                    className="mb-2 text-xs"
-                                                >
-                                                    {badge.rarity}
-                                                </Badge>
-                                                <p className="text-xs text-gray-500">
-                                                    Diterima:{' '}
-                                                    {badge.dateReceived}
-                                                </p>
-                                            </CardContent>
-                                        </Card>
-                                    ))}
-                                </div>
-                            </TabsContent>
-                        </Tabs>
-                    </CardContent>
-                </Card>
+                <AchievementCard
+                myBadges={myBadges}
+                myCertificates={myCertificates}
+            />
             </div>
         </div>
     );

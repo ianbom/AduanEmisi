@@ -17,7 +17,7 @@ const FeatureSection = () => {
             title: 'Bergabung dengan Gerakan Lingkungan',
             description:
                 'Temukan Misi dan Jadilah bagian dari Gerakan Lingkungan Indonesia',
-            link: '/reports/create',
+            link: '/mission',
         },
         {
             icon: <Map className="h-8 w-8 text-blue-600" />,

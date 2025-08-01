@@ -18,6 +18,8 @@ use Inertia\Inertia;
 use Pest\Plugins\Profile;
 use App\Models\Donation;
 use App\Models\Point;
+use App\Models\UserBadge;
+use App\Models\UserCertificate;
 
 class ProfileController extends Controller
 {
@@ -42,6 +44,8 @@ class ProfileController extends Controller
             ->where('user_id', $user->id)
             ->orderByDesc('created_at')
             ->get();
+         $myCertificates = UserCertificate::with('user')->where('user_id', $user->id)->get();
+        $myBadges = UserBadge::with('user', 'badge')->where('user_id', $user->id)->get();
         return Inertia::render('Citizen/Profile/ProfilePage', [
             'auth' => [
                 'user' => $user,
@@ -51,7 +55,9 @@ class ProfileController extends Controller
             'myMissions' => $myMissions,
             'myMissionCounts' => $myMissionCounts,
             'myDonations' => $myDonations,
-            'myPoints' => $myPoints
+            'myPoints' => $myPoints,
+            'myCertificates' => $myCertificates,
+            'myBadges' => $myBadges,
         ]);
     }
 

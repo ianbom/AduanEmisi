@@ -4,6 +4,8 @@ import { PageProps } from '@/types';
 import { Report } from '@/types/report';
 import { Mission } from '@/types/report/mission';
 import { User } from '@/types/user/interface';
+import { UserBadge } from '@/types/user/user-badge';
+import { UserCertificate } from '@/types/user/user-certificate';
 import { usePage } from '@inertiajs/react';
 
 interface ProfilePageRouteProps {
@@ -11,6 +13,8 @@ interface ProfilePageRouteProps {
     myReportsCount: number;
     myMissions: Mission[];
     myMissionCounts: number;
+    myBadges: UserBadge;
+    myCertificates: UserCertificate;
     [key: string]: unknown;
 }
 const ProfilePageRoute = () => {
@@ -20,6 +24,12 @@ const ProfilePageRoute = () => {
     const myReportsCount = props.myReportsCount;
     const myMissions = props.myMissions;
     const myMissionCounts = props.myMissionCounts;
+    const myBadges = props.myBadges;
+    const myCertificates = props.myCertificates;
+
+    console.log('badge:', myBadges);
+    console.log('sertif:', myCertificates);
+
     return (
         <CommunityLayout currentPage="community/profile">
             <CommunityProfilePage
@@ -28,6 +38,8 @@ const ProfilePageRoute = () => {
                 myReportsCount={myReportsCount}
                 myMissions={myMissions}
                 myMissionCounts={myMissionCounts}
+                myBadges={myBadges}
+                myCertificates={myCertificates}
             />
         </CommunityLayout>
     );
