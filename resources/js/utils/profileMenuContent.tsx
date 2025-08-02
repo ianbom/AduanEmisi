@@ -26,9 +26,6 @@ export function getProfileMenuContent({
     onProfileClick,
     onLogoutClick,
 }: Props): React.ReactNode {
-    const role = user?.role || 'citizen';
-    const routePrefix = role === 'community' ? '/community' : '';
-
     return (
         <>
             <div className="px-3 py-2.5">
@@ -57,62 +54,40 @@ export function getProfileMenuContent({
                 RIWAYAT
             </DropdownMenuLabel>
             <DropdownMenuItem
-                onClick={() => (location.href = `${routePrefix}/my-report`)}
+                onClick={() => (location.href = `/my-report`)}
                 className="flex cursor-pointer items-center gap-2"
             >
                 <FileText className="h-4 w-4" />
                 <span>Laporan Saya</span>
             </DropdownMenuItem>
             <DropdownMenuItem
-                onClick={() => (location.href = `${routePrefix}/my-mission`)}
+                onClick={() => (location.href = `/my-mission`)}
                 className="flex cursor-pointer items-center gap-2"
             >
                 <Target className="h-4 w-4" />
                 <span>Misi yang Diikuti</span>
             </DropdownMenuItem>
             <DropdownMenuItem
-                onClick={() => (location.href = `${routePrefix}/my-donations`)}
+                onClick={() => (location.href = `/my-donations`)}
                 className="flex cursor-pointer items-center gap-2"
             >
                 <Heart className="h-4 w-4" />
                 <span>Donasi Saya</span>
             </DropdownMenuItem>
             <DropdownMenuItem
-                onClick={() =>
-                    (location.href = `${routePrefix}/my-merchandise`)
-                }
+                onClick={() => (location.href = `/my-merchandise`)}
                 className="flex cursor-pointer items-center gap-2"
             >
                 <ShoppingBag className="h-4 w-4" />
                 <span>Merchandise Saya</span>
             </DropdownMenuItem>
             <DropdownMenuItem
-                onClick={() =>
-                    (location.href = `${routePrefix}/my-quiz-attempt`)
-                }
+                onClick={() => (location.href = `/my-quiz-attempt`)}
                 className="flex cursor-pointer items-center gap-2"
             >
                 <Lightbulb className="h-4 w-4" />
                 <span>Kuis yang Dikerjakan</span>
             </DropdownMenuItem>
-            {/* <DropdownMenuLabel className="px-3 py-1.5 text-xs font-medium uppercase tracking-wider text-gray-500">
-                PENGHARGAAN
-            </DropdownMenuLabel>
-            <DropdownMenuItem
-                onClick={() => (location.href = `${routePrefix}/my-badge`)}
-                className="flex items-center gap-2 cursor-pointer"
-            >
-                <Award className="w-4 h-4" />
-                <span>Sertifikat Saya</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem
-                onClick={() => (location.href = `${routePrefix}/my-badge`)}
-                className="flex items-center gap-2 cursor-pointer"
-            >
-                <Trophy className="w-4 h-4" />
-                <span>Badge Saya</span>
-            </DropdownMenuItem>
-*/}
             <DropdownMenuSeparator />
             <DropdownMenuItem
                 onClick={onLogoutClick}

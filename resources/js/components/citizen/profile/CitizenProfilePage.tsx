@@ -2,7 +2,6 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
 import {
     Select,
     SelectContent,
@@ -17,7 +16,8 @@ import { Point } from '@/types/reedem/point';
 import { Report } from '@/types/report';
 import { Mission } from '@/types/report/mission';
 import { User } from '@/types/user/interface';
-import { getRarityColor } from '@/utils/badgeRarityColor';
+import { UserBadge } from '@/types/user/user-badge';
+import { UserCertificate } from '@/types/user/user-certificate';
 import { getStatusClass } from '@/utils/badgeStatusDonationColor';
 import { formatFullDateTime } from '@/utils/formatDate';
 import { getStatusColor as getMissionStatusColor } from '@/utils/missionStatusColor';
@@ -25,10 +25,10 @@ import { getMissionStatusLabel } from '@/utils/missionStatusLabel';
 import { getStatusColor } from '@/utils/reportStatusColor';
 import { getStatusLabel } from '@/utils/reportStatusLabel';
 import { getStatusDonationLabel } from '@/utils/statusDonationLabel';
+
 import { Link, router } from '@inertiajs/react';
 import {
     ArrowRight,
-    Award,
     Calendar,
     Clock,
     FileText,
@@ -45,8 +45,6 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import AchievementCard from './AchievementCard';
-import { UserBadge } from '@/types/user/user-badge';
-import { UserCertificate } from '@/types/user/user-certificate';
 interface CitizenProfilePageProps {
     user: User | null;
     myReports: Report[];
@@ -57,6 +55,7 @@ interface CitizenProfilePageProps {
     myPoints: Point[];
     myBadges: UserBadge[];
     myCertificates: UserCertificate[];
+    myBadgeCounts: number;
 }
 
 const CitizenProfilePage = ({
@@ -68,17 +67,11 @@ const CitizenProfilePage = ({
     myDonations,
     myPoints,
     myBadges,
-    myCertificates
+    myCertificates,
+    myBadgeCounts,
 }: CitizenProfilePageProps) => {
     const [activeTab, setActiveTab] = useState('reports');
-    const [activeTabAchievements, setActiveTabAchievements] =
-        useState('certificates');
     const [activeTabPoints, setActiveTabPoints] = useState('all-points');
-    // console.log(myMissionCounts);
-    // console.log(myMissions);
-    // console.log(myReportsCount);
-    // console.log(myDonations);
-    // console.log(`myPoints : ${myPoints}`);
     const stats = [
         {
             label: 'LAPORAN DIBUAT',
@@ -94,38 +87,11 @@ const CitizenProfilePage = ({
         },
         {
             label: 'KOLEKSI BADGE',
-            value: '20',
+            value: myBadgeCounts ?? 0,
             icon: Trophy,
             color: 'text-purple-600',
         },
     ];
-    const badges = [
-        {
-            id: 1,
-            title: 'Pelapor Aktif',
-            description: 'Membuat 10+ laporan lingkungan',
-            icon: '🏆',
-            dateReceived: '2024-01-15',
-            rarity: 'Gold',
-        },
-        {
-            id: 2,
-            title: 'Penggerak Komunitas',
-            description: 'Mengikuti 5+ misi volunteer',
-            icon: '🤝',
-            dateReceived: '2024-01-10',
-            rarity: 'Silver',
-        },
-        {
-            id: 3,
-            title: 'Pelindung Sungai',
-            description: 'Melaporkan 3+ kasus pencemaran air',
-            icon: '🌊',
-            dateReceived: '2024-01-05',
-            rarity: 'Bronze',
-        },
-    ];
-
     return (
         <div className="min-h-screen">
             <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
@@ -967,9 +933,9 @@ const CitizenProfilePage = ({
                     </CardContent>
                 </Card>
                 <AchievementCard
-                myBadges={myBadges}
-                myCertificates={myCertificates}
-            />
+                    myBadges={myBadges}
+                    myCertificates={myCertificates}
+                />
             </div>
         </div>
     );

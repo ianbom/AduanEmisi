@@ -36,8 +36,6 @@ interface Merchandise {
 interface MerchandisePageProps {
     merchandise: Merchandise[];
     userPoints: number;
-    // onViewDetails: (id: number) => void;
-    onPurchase: (id: number, address: string) => Promise<void>;
 }
 
 interface FilterOptions {
@@ -47,12 +45,7 @@ interface FilterOptions {
     endDate: string;
 }
 
-const MerchandisePage = ({
-    merchandise,
-    userPoints,
-    // onViewDetails,
-    // onPurchase,
-}: MerchandisePageProps) => {
+const MerchandisePage = ({ merchandise, userPoints }: MerchandisePageProps) => {
     const [sortBy, setSortBy] = useState('newest');
     const [searchQuery, setSearchQuery] = useState('');
     const [filters, setFilters] = useState<FilterOptions>({
@@ -112,8 +105,6 @@ const MerchandisePage = ({
                 }
             });
         }
-
-        // Apply date range filter
         if (filters.startDate) {
             filtered = filtered.filter((item) => {
                 const itemDate = new Date(item.created_at);
@@ -129,8 +120,6 @@ const MerchandisePage = ({
                 return itemDate <= endDate;
             });
         }
-
-        // Apply sorting
         const sorted = [...filtered].sort((a, b) => {
             switch (sortBy) {
                 case 'newest':

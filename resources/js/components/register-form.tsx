@@ -6,32 +6,37 @@ import { cn } from '@/lib/utils';
 import { Link, useForm } from '@inertiajs/react';
 import { useState } from 'react';
 
-interface RegisterFormData {
-    name: string;
-    email: string;
-    password: string;
-    password_confirmation: string;
-    user_type: string;
-}
-
 type UserType = 'citizen' | 'community';
-
 export function RegisterForm({
     className,
     ...props
 }: React.ComponentProps<'div'>) {
     const [userType, setUserType] = useState<UserType>('citizen');
-    const { data, setData, post, processing, errors, reset } =
-        useForm<RegisterFormData>({
-            name: '',
-            email: '',
-            password: '',
-            password_confirmation: '',
-            user_type: 'citizen',
-        });
+    const { data, setData, post, processing, errors, reset } = useForm({
+        name: '',
+        email: '',
+        password: '',
+        password_confirmation: '',
+        user_type: 'citizen' as UserType,
+    });
+
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        setData(name as keyof RegisterFormData, value);
+
+        if (name === 'name') {
+            setData('name', value);
+        } else if (name === 'email') {
+            setData('email', value);
+        } else if (name === 'password') {
+            setData('password', value);
+        } else if (name === 'password_confirmation') {
+            setData('password_confirmation', value);
+        }
+    };
+
+    const handleUserTypeSelect = (type: UserType) => {
+        setUserType(type);
+        setData('user_type', type);
     };
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -42,12 +47,6 @@ export function RegisterForm({
             onError: () => {},
         });
     };
-
-    const handleUserTypeSelect = (type: UserType) => {
-        setUserType(type);
-        setData('user_type', type);
-    };
-
     return (
         <div className={cn('flex flex-col gap-6', className)} {...props}>
             <Card className="overflow-hidden">

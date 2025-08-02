@@ -65,17 +65,15 @@ export default function FloatingChat() {
             return { x: 0, y: 0 };
         }
     });
-
-    // Inisialisasi riwayat pesan dari localStorage
     const [messages, setMessages] = useState<Message[]>(() => {
         try {
             const storedMessages = localStorage.getItem(CHAT_STORAGE_KEY);
             if (storedMessages) {
-                const parsedMessages = JSON.parse(storedMessages) as Omit<
+                const parsedMessages = JSON.parse(storedMessages) as (Omit<
                     Message,
                     'timestamp'
-                > &
-                    { timestamp: string }[];
+                > & { timestamp: string })[];
+
                 return parsedMessages.map((msg) => ({
                     ...msg,
                     timestamp: new Date(msg.timestamp),
@@ -418,20 +416,6 @@ export default function FloatingChat() {
                     </div>
                 </div>
             </div>
-            {/* <Button
-                onClick={toggleChat}
-                onMouseDown={handleFabDragStart}
-                onTouchStart={handleFabDragStart}
-                style={{
-                    transform: `translate(${fabPosition.x}px, ${fabPosition.y}px)`,
-                }}
-                className={`fixed bottom-6 right-6 z-50 flex h-14 w-14 transform items-center justify-center rounded-full bg-emerald-600 text-white shadow-lg hover:bg-emerald-700 ${
-                    isOpen ? 'rotate-[360deg] scale-90' : 'rotate-0'
-                } ${isFabDragging ? 'cursor-grabbing transition-none' : 'cursor-grab transition-all duration-300 ease-in-out'}`}
-                size="icon"
-            >
-                {isOpen ? <X size={24} /> : <MessageCircle size={24} />}
-            </Button> */}
             <Button
                 onClick={toggleChat}
                 onMouseDown={handleFabDragStart}

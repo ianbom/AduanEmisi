@@ -1,3 +1,5 @@
+import { User } from '../user/interface';
+
 export interface Notification {
     id: number;
     user_id: number;
@@ -14,12 +16,12 @@ export interface NotificationData {
     notifications: Notification[];
 }
 
-// Extend PageProps untuk include notifications
 declare module '@inertiajs/inertia' {
     interface PageProps {
         notifications: NotificationData;
         auth: {
-            user: any; // Sesuaikan dengan tipe User Anda
+            // user: any;
+            user: User;
         };
     }
 }
