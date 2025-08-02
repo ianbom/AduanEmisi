@@ -6,7 +6,7 @@ import { Content } from '@/types/content';
 import { getContentTypeLabel } from '@/utils/contentTypeLabel';
 import { getTypeColor, getTypeIcon } from '@/utils/educationColor';
 import { formatFullDateTime } from '@/utils/formatDate';
-import { ArrowLeft, FileText, Share2 } from 'lucide-react';
+import { ArrowLeft, FileText } from 'lucide-react';
 import Badge from '../core/Badge';
 import ImageWithPopup from '../core/ImageWithPopup';
 import RenderHTML from '../RenderHtml';
@@ -74,13 +74,6 @@ const ContentDetailsPage = ({ content, onBack }: ContentDetailsPageProps) => {
                                     </div>
                                 </div>
                             </div>
-
-                            <div className="mt-4 flex gap-2 md:mt-0">
-                                <Button variant="outline" size="sm">
-                                    <Share2 size={16} className="mr-2" />
-                                    Bagikan
-                                </Button>
-                            </div>
                         </div>
                         <CardContent className="px-0 py-4">
                             <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -147,7 +140,7 @@ const ContentDetailsPage = ({ content, onBack }: ContentDetailsPageProps) => {
                             <h2 className="mb-4 text-2xl font-bold text-gray-900"></h2>
                             <RenderHTML
                                 htmlString={content.body}
-                                className="text-justify leading-relaxed text-gray-700"
+                                className="prose prose-li:text-black prose-table:border prose-th:border prose-td:border max-w-none"
                             />
                         </div>
                     </CardContent>

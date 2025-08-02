@@ -347,7 +347,6 @@ export default function LeaderboardPage(
         user,
         rank,
         metric,
-        category,
     }: {
         user: LeaderboardUser;
         rank: number;
@@ -359,15 +358,7 @@ export default function LeaderboardPage(
         >
             <div className="text-center">
                 <div className="mb-3 text-4xl">{getRankEmoji(rank)}</div>
-                <div className="relative mb-4">
-                    {/* <Image
-            src={user.profile_url || "/placeholder.svg?height=80&width=80&query=avatar"}
-            alt={user.name}
-            width={80}
-            height={80}
-            className="mx-auto border-4 border-white rounded-full shadow-lg"
-          /> */}
-                </div>
+                <div className="relative mb-4"></div>
                 <h3 className="mb-2 text-lg font-bold text-white">
                     {user.name}
                 </h3>

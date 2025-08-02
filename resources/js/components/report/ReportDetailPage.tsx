@@ -20,7 +20,6 @@ import {
     LocateFixed,
     MapPin,
     MessageCircle,
-    Share2,
     ThumbsDown,
     ThumbsUp,
     User as UserIcon,
@@ -45,7 +44,7 @@ interface Leader {
 
 interface ReportDetailPageProps {
     report: Report;
-    donations: Donation | null;
+    donations: Donation[];
     myParticipation:
         | (User & {
               pivot: {
@@ -60,12 +59,13 @@ interface ReportDetailPageProps {
               };
           })
         | null;
-    confirmedLeader: User | null;
+    confirmedLeader?: User[] | null;
     comments: Comment[];
     volunteers: User[];
     volunteerCounts: number;
     your_vote: 'upvote' | 'dislike' | null;
-    user: User[] | null;
+    // user: User[] | null;
+    user: User | null;
     onBack: () => void;
 }
 
@@ -85,6 +85,7 @@ const ReportDetailPage = ({
     const [hasDownvoted, setHasDownvoted] = useState(your_vote === 'dislike');
     const [reportState, setReport] = useState(report);
     const [replying, setReplying] = useState<string | number | null>(null);
+    const safeConfirmedLeader = confirmedLeader ?? [];
     console.log(confirmedLeader);
     const {
         data: replyData,
@@ -111,13 +112,6 @@ const ReportDetailPage = ({
         {} as Record<string, typeof report.mission.documentation>,
     );
     const docEntries = Object.entries(groupedDocs || {});
-    // const displayedDocs = showAllDocs
-    //     ? (docEntries ?? [])
-    //     : docEntries.slice(0, INITIAL_DOCS_COUNT);
-    // const hasMoreDocs = docEntries.length > INITIAL_DOCS_COUNT;
-    // const displayedComments = showAll
-    //     ? comments
-    //     : comments.slice(0, INITIAL_COMMENTS_COUNT);
     const displayedDocs = showAllDocs
         ? (docEntries ?? [])
         : (docEntries ?? []).slice(0, INITIAL_DOCS_COUNT);
@@ -168,10 +162,6 @@ const ReportDetailPage = ({
             });
 
             const { upvotes_count, dislikes_count, your_vote } = response.data;
-            console.log('Vote response:', response.data);
-            console.log('Type:', type);
-            console.log('New your_vote:', your_vote);
-
             setReport((prev) => ({
                 ...prev,
                 upvotes_count,
@@ -340,13 +330,7 @@ const ReportDetailPage = ({
                                             </span>
                                         </div>
                                     </div>
-                                </div>
-                                <div className="mt-4 flex gap-2 md:mt-0">
-                                    <Button variant="outline" size="sm">
-                                        <Share2 size={16} className="mr-2" />
-                                        Bagikan
-                                    </Button>
-                                </div>
+                                </div>{' '}
                             </div>
                             <h3 className="mb-3 text-lg font-semibold">
                                 Media Pendukung
@@ -520,7 +504,7 @@ const ReportDetailPage = ({
                                     <div className="flex items-center">
                                         <UserIcon size={16} className="mr-2" />
                                         <span>
-                                            Misi dibuat oleh:{' '}
+                                            Diverifikasi oleh:{' '}
                                             {report.mission?.creator?.name}
                                         </span>
                                     </div>
@@ -542,7 +526,7 @@ const ReportDetailPage = ({
                                             className="mr-2 mt-0.5"
                                         />
                                         <span>
-                                            Misi terjadwal:{' '}
+                                            Pelaksanaan:{' '}
                                             {formatFullDateTime(
                                                 report.mission?.scheduled_date,
                                             )}
@@ -637,9 +621,10 @@ const ReportDetailPage = ({
                                                     </h3>
                                                 </div>
 
-                                                {confirmedLeader.length > 0 ? (
+                                                {safeConfirmedLeader.length >
+                                                0 ? (
                                                     <div className="space-y-2">
-                                                        {confirmedLeader.map(
+                                                        {safeConfirmedLeader.map(
                                                             (
                                                                 leader: Leader,
                                                             ) => (

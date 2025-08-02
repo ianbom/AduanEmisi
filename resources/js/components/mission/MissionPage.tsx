@@ -261,7 +261,7 @@ const MissionPage = ({
                                         <SelectItem value="semua">
                                             Semua Provinsi
                                         </SelectItem>
-                                        {provinces.map((province) => (
+                                        {provinces?.map((province) => (
                                             <SelectItem
                                                 key={province.id}
                                                 value={province.name}
@@ -437,7 +437,7 @@ const MissionPage = ({
                                                 </p>
                                                 <div className="mb-3 flex items-center justify-between text-xs text-gray-500">
                                                     <span>
-                                                        Oleh:{' '}
+                                                        Diverifikasi:{' '}
                                                         {mission.creator?.name}
                                                     </span>
                                                 </div>
@@ -469,7 +469,7 @@ const MissionPage = ({
                                                     onClick={(e) => {
                                                         e.stopPropagation();
                                                         Inertia.visit(
-                                                            `/report/${mission.id}`,
+                                                            `/report/${mission.report.id}`,
                                                         );
                                                     }}
                                                 >
@@ -483,15 +483,6 @@ const MissionPage = ({
                                         </Card>
                                     ),
                                 )}
-                            </div>
-                            <div className="mt-8 text-center">
-                                <Button
-                                    variant="outline"
-                                    size="lg"
-                                    className="min-w-32"
-                                >
-                                    Muat Lebih Banyak
-                                </Button>
                             </div>
                         </>
                     ) : (

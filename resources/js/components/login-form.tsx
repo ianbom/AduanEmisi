@@ -11,7 +11,16 @@ export function LoginForm({
     className,
     ...props
 }: React.ComponentProps<'div'>) {
-    const { data, setData, post, processing, errors, reset } = useForm({
+    // const { data, setData, post, processing, errors, reset } = useForm({
+    //     email: '',
+    //     password: '',
+    //     remember: false,
+    // });
+    const { data, setData, post, processing, errors, reset } = useForm<{
+        email: string;
+        password: string;
+        remember: boolean;
+    }>({
         email: '',
         password: '',
         remember: false,

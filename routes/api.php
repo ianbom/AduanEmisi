@@ -27,17 +27,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/report/update/{id}', [CtzReportController::class, 'update']);
     Route::post('comment-create', [CtzCommentController::class, 'store']);
     Route::get('comment/by-report/{id}', [CtzCommentController::class, 'getByReport']);
-
     Route::post('create-mission', [MissionController::class, 'store']);
-
     Route::post('register-volunteer', [CtzReportController::class, 'registerAsVolunteer']);
     Route::post('register-leader-volunteer', [CtzReportController::class, 'registerAsLeaderVolunteer']);
-
-
-
 });
- Route::post('payment-success/{donationId}', [DonationController::class, 'paymentSuccess'])->name('payment.success');
- Route::post('/donate/report/{id}', [DonationController::class, 'donateReport']);
- Route::post('chatbot/send', [ChatBotController::class, 'send'])->name('chatbot.send');
 
- Route::post('payment-callback', [DonationController::class, 'callBackAfterPayment']);
+Route::post('payment-success/{donationId}', [DonationController::class, 'paymentSuccess'])->name('payment.success');
+Route::post('/donate/report/{id}', [DonationController::class, 'donateReport']);
+Route::post('chatbot/send', [ChatBotController::class, 'send'])->name('chatbot.send');
+Route::post('payment-callback', [DonationController::class, 'callBackAfterPayment']);

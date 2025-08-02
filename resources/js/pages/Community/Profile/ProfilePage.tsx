@@ -1,21 +1,25 @@
 // @ts-nocheck
 import CommunityProfilePage from '@/components/community/CommunityProfilePage';
-import CommunityLayout from '@/components/layouts/CommunityLayout';
+import CitizenLayout from '@/components/layouts/CitizenLayout';
 import { PageProps } from '@/types';
+import { Donation } from '@/types/donation/interface';
+import { Point } from '@/types/reedem/point';
 import { Report } from '@/types/report';
 import { Mission } from '@/types/report/mission';
 import { User } from '@/types/user/interface';
 import { UserBadge } from '@/types/user/user-badge';
 import { UserCertificate } from '@/types/user/user-certificate';
 import { usePage } from '@inertiajs/react';
-
 interface ProfilePageRouteProps {
     myReports: Report[];
     myReportsCount: number;
     myMissions: Mission[];
     myMissionCounts: number;
-    myBadges: UserBadge;
-    myCertificates: UserCertificate;
+    myBadges: UserBadge[];
+    myDonations: Donation[];
+    myPoints: Point[];
+    myCertificates: UserCertificate[];
+    myBadgeCounts: number;
     [key: string]: unknown;
 }
 const ProfilePageRoute = () => {
@@ -27,22 +31,29 @@ const ProfilePageRoute = () => {
     const myMissionCounts = props.myMissionCounts;
     const myBadges = props.myBadges;
     const myCertificates = props.myCertificates;
+    const myDonations = props.myDonations;
+    const myPoints = props.myPoints;
+    const myBadgeCounts = props.myBadgeCounts;
 
+    console.log('jumlah bagde:', myBadgeCounts);
     console.log('badge:', myBadges);
     console.log('sertif:', myCertificates);
 
     return (
-        <CommunityLayout currentPage="community/profile">
+        <CitizenLayout currentPage="community/profile">
             <CommunityProfilePage
                 user={user as User}
                 myReports={myReports}
                 myReportsCount={myReportsCount}
                 myMissions={myMissions}
                 myMissionCounts={myMissionCounts}
-                myBadges={myBadges}
                 myCertificates={myCertificates}
+                myDonations={myDonations}
+                myBadges={myBadges}
+                myPoints={myPoints}
+                myBadgeCounts={myBadgeCounts}
             />
-        </CommunityLayout>
+        </CitizenLayout>
     );
 };
 export default ProfilePageRoute;

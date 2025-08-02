@@ -553,7 +553,7 @@ const QuizzesPage = ({
                                         </div>
 
                                         <Button
-                                            className="mt-auto w-full bg-emerald-600 transition-colors duration-200 hover:bg-emerald-700"
+                                            className="mt-auto w-full bg-amber-600 transition-colors duration-200 hover:bg-amber-700"
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 onViewDetails(quiz.id);

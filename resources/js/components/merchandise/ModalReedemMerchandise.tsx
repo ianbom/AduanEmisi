@@ -1,6 +1,4 @@
-import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
 import {
     Dialog,
     DialogContent,
@@ -9,15 +7,17 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
+import { Textarea } from '@/components/ui/textarea';
+import { router } from '@inertiajs/react';
 import {
-    ShoppingBag,
-    Star,
-    MapPin,
-    RefreshCcw,
     AlertCircle,
     CheckCircle,
+    MapPin,
+    RefreshCcw,
+    ShoppingBag,
+    Star,
 } from 'lucide-react';
-import { router } from '@inertiajs/react';
+import React, { useState } from 'react';
 import { toast } from 'sonner'; // Optional: for better notifications
 
 interface Merchandise {
@@ -89,7 +89,9 @@ const ModalRedeemMerchandise: React.FC<ModalRedeemMerchandiseProps> = ({
                     onSuccess: (page) => {
                         // Show success message
                         if (typeof toast !== 'undefined') {
-                            toast.success('Redeem berhasil! Merchandise akan segera diproses.');
+                            toast.success(
+                                'Redeem berhasil! Merchandise akan segera diproses.',
+                            );
                         }
 
                         // Call success callback if provided
@@ -111,20 +113,23 @@ const ModalRedeemMerchandise: React.FC<ModalRedeemMerchandiseProps> = ({
                         } else if (errors.message) {
                             setError(errors.message);
                         } else {
-                            setError('Terjadi kesalahan saat melakukan redeem. Silakan coba lagi.');
+                            setError(
+                                'Terjadi kesalahan saat melakukan redeem. Silakan coba lagi.',
+                            );
                         }
 
                         reject(errors);
                     },
                     onFinish: () => {
                         setIsProcessing(false);
-                    }
+                    },
                 });
             });
-
         } catch (error) {
             console.error('Exchange failed:', error);
-            setError('Terjadi kesalahan saat melakukan redeem. Silakan coba lagi.');
+            setError(
+                'Terjadi kesalahan saat melakukan redeem. Silakan coba lagi.',
+            );
             setIsProcessing(false);
         }
     };
@@ -141,7 +146,8 @@ const ModalRedeemMerchandise: React.FC<ModalRedeemMerchandiseProps> = ({
                         Tukar Merchandise
                     </DialogTitle>
                     <DialogDescription>
-                        Masukkan alamat pengiriman untuk melakukan penukaran merchandise
+                        Masukkan alamat pengiriman untuk melakukan penukaran
+                        merchandise
                     </DialogDescription>
                 </DialogHeader>
 
@@ -149,10 +155,12 @@ const ModalRedeemMerchandise: React.FC<ModalRedeemMerchandiseProps> = ({
                     <div className="space-y-4">
                         {/* Error Message */}
                         {error && (
-                            <div className="rounded-lg bg-red-50 border border-red-200 p-3">
+                            <div className="rounded-lg border border-red-200 bg-red-50 p-3">
                                 <div className="flex items-start gap-2">
-                                    <AlertCircle className="h-4 w-4 text-red-600 mt-0.5 flex-shrink-0" />
-                                    <p className="text-sm text-red-700">{error}</p>
+                                    <AlertCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-red-600" />
+                                    <p className="text-sm text-red-700">
+                                        {error}
+                                    </p>
                                 </div>
                             </div>
                         )}
@@ -173,9 +181,15 @@ const ModalRedeemMerchandise: React.FC<ModalRedeemMerchandiseProps> = ({
                                         {merchandise.description}
                                     </p>
                                     <div className="mt-2 flex items-center text-emerald-600">
-                                        <Star size={14} className="mr-1 fill-current" />
+                                        <Star
+                                            size={14}
+                                            className="mr-1 fill-current"
+                                        />
                                         <span className="font-semibold">
-                                            {merchandise.points_cost.toLocaleString('id-ID')} Poin
+                                            {merchandise.points_cost.toLocaleString(
+                                                'id-ID',
+                                            )}{' '}
+                                            Poin
                                         </span>
                                     </div>
                                 </div>
@@ -184,25 +198,43 @@ const ModalRedeemMerchandise: React.FC<ModalRedeemMerchandiseProps> = ({
 
                         {/* Points Information */}
                         <div className="rounded-lg bg-gray-50 p-4">
-                            <h5 className="mb-3 font-medium text-gray-900">Informasi Poin</h5>
+                            <h5 className="mb-3 font-medium text-gray-900">
+                                Informasi Poin
+                            </h5>
                             <div className="space-y-2 text-sm">
                                 <div className="flex justify-between">
-                                    <span className="text-gray-600">Poin Saat Ini:</span>
+                                    <span className="text-gray-600">
+                                        Poin Saat Ini:
+                                    </span>
                                     <span className="font-semibold text-emerald-600">
-                                        {userPoints.toLocaleString('id-ID')} Poin
+                                        {userPoints.toLocaleString('id-ID')}{' '}
+                                        Poin
                                     </span>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span className="text-gray-600">Biaya Penukaran:</span>
+                                    <span className="text-gray-600">
+                                        Biaya Penukaran:
+                                    </span>
                                     <span className="font-semibold text-red-600">
-                                        -{merchandise.points_cost.toLocaleString('id-ID')} Poin
+                                        -
+                                        {merchandise.points_cost.toLocaleString(
+                                            'id-ID',
+                                        )}{' '}
+                                        Poin
                                     </span>
                                 </div>
                                 <hr className="my-2" />
                                 <div className="flex justify-between">
-                                    <span className="text-gray-600">Sisa Poin:</span>
-                                    <span className={`font-semibold ${remainingPoints >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
-                                        {remainingPoints.toLocaleString('id-ID')} Poin
+                                    <span className="text-gray-600">
+                                        Sisa Poin:
+                                    </span>
+                                    <span
+                                        className={`font-semibold ${remainingPoints >= 0 ? 'text-emerald-600' : 'text-red-600'}`}
+                                    >
+                                        {remainingPoints.toLocaleString(
+                                            'id-ID',
+                                        )}{' '}
+                                        Poin
                                     </span>
                                 </div>
                             </div>
@@ -227,9 +259,12 @@ const ModalRedeemMerchandise: React.FC<ModalRedeemMerchandiseProps> = ({
                             />
                             <div className="flex justify-between">
                                 <p className="text-xs text-gray-500">
-                                    Pastikan alamat yang Anda masukkan sudah benar dan lengkap
+                                    Pastikan alamat yang Anda masukkan sudah
+                                    benar dan lengkap
                                 </p>
-                                <p className={`text-xs ${address.length >= 10 ? 'text-green-600' : 'text-gray-400'}`}>
+                                <p
+                                    className={`text-xs ${address.length >= 10 ? 'text-green-600' : 'text-gray-400'}`}
+                                >
                                     {address.length}/10 minimum
                                 </p>
                             </div>
@@ -237,12 +272,17 @@ const ModalRedeemMerchandise: React.FC<ModalRedeemMerchandiseProps> = ({
 
                         {/* Insufficient Points Warning */}
                         {!hasEnoughPoints && (
-                            <div className="rounded-lg bg-red-50 border border-red-200 p-3">
+                            <div className="rounded-lg border border-red-200 bg-red-50 p-3">
                                 <div className="flex items-start gap-2">
-                                    <AlertCircle className="h-4 w-4 text-red-600 mt-0.5 flex-shrink-0" />
+                                    <AlertCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-red-600" />
                                     <p className="text-sm text-red-700">
-                                        Poin Anda tidak mencukupi untuk melakukan penukaran ini.
-                                        Anda membutuhkan {(merchandise.points_cost - userPoints).toLocaleString('id-ID')} poin lagi.
+                                        Poin Anda tidak mencukupi untuk
+                                        melakukan penukaran ini. Anda
+                                        membutuhkan{' '}
+                                        {(
+                                            merchandise.points_cost - userPoints
+                                        ).toLocaleString('id-ID')}{' '}
+                                        poin lagi.
                                     </p>
                                 </div>
                             </div>
@@ -250,11 +290,12 @@ const ModalRedeemMerchandise: React.FC<ModalRedeemMerchandiseProps> = ({
 
                         {/* Success Conditions */}
                         {hasEnoughPoints && isAddressValid && (
-                            <div className="rounded-lg bg-green-50 border border-green-200 p-3">
+                            <div className="rounded-lg border border-green-200 bg-green-50 p-3">
                                 <div className="flex items-start gap-2">
-                                    <CheckCircle className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                                    <CheckCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-green-600" />
                                     <p className="text-sm text-green-700">
-                                        Siap untuk ditukar! Pastikan alamat sudah benar sebelum melanjutkan.
+                                        Siap untuk ditukar! Pastikan alamat
+                                        sudah benar sebelum melanjutkan.
                                     </p>
                                 </div>
                             </div>
@@ -272,7 +313,9 @@ const ModalRedeemMerchandise: React.FC<ModalRedeemMerchandiseProps> = ({
                     </Button>
                     <Button
                         onClick={handleConfirm}
-                        disabled={!isAddressValid || !hasEnoughPoints || isProcessing}
+                        disabled={
+                            !isAddressValid || !hasEnoughPoints || isProcessing
+                        }
                         className="bg-emerald-600 hover:bg-emerald-700 disabled:bg-gray-400"
                     >
                         {isProcessing ? (

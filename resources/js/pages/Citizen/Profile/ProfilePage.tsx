@@ -17,9 +17,10 @@ interface ProfilePageRouteProps {
     myMissionCounts: number;
     myDonations: Donation[];
     myPoints: Point[];
+    myBadges: UserBadge[];
+    myBadgeCounts: number;
+    myCertificates: UserCertificate[];
     [key: string]: unknown;
-     myBadges: UserBadge;
-    myCertificates: UserCertificate;
 }
 const ProfilePageRoute = () => {
     const { props } = usePage<PageProps<ProfilePageRouteProps>>();
@@ -28,11 +29,13 @@ const ProfilePageRoute = () => {
     const myReportsCount = props.myReportsCount;
     const myMissions = props.myMissions;
     const myMissionCounts = props.myMissionCounts;
+    const myBadges = props.myBadges;
+    const myCertificates = props.myCertificates;
     const myDonations = props.myDonations;
     const myPoints = props.myPoints;
-        const myBadges = props.myBadges;
-    const myCertificates = props.myCertificates;
+    const myBadgeCounts = props.myBadgeCounts;
 
+    console.log('jumlah bagde:', myBadgeCounts);
     console.log('Bagde:', myBadges);
     console.log('Sertif:', myCertificates);
 
@@ -48,6 +51,7 @@ const ProfilePageRoute = () => {
                 myDonations={myDonations}
                 myBadges={myBadges}
                 myCertificates={myCertificates}
+                myBadgeCounts={myBadgeCounts}
             />
         </CitizenLayout>
     );

@@ -17,29 +17,19 @@ interface Merchandise {
 
 interface MerchandisePageRouteProps {
     merchandise: Merchandise[];
+    userPoints: number;
     [key: string]: unknown;
 }
 
 const MerchandisePageRoute = () => {
     const { props } = usePage<PageProps<MerchandisePageRouteProps>>();
     const merchandise = props.merchandise || [];
-    const userPoints = props.userPoints;
-    // const handleViewDetails = (merchandiseId: number) => {
-    //     Inertia.visit(route('merchandise.show', { id: merchandiseId }));
-    // };
-
+    const userPoints = Number(props.userPoints ?? 0);
     console.log('point', userPoints);
-
-    // const handlePurchase = (merchandiseId: number) => {
-
-    //     Inertia.post(route('merchandise.purchase', { id: merchandiseId }));
-    // };
-
     return (
         <CitizenLayout currentPage="merchandise">
             <MerchandisePage
                 merchandise={merchandise}
-                // onViewDetails={handleViewDetails}
                 userPoints={userPoints}
             />
         </CitizenLayout>
