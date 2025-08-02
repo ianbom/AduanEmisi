@@ -2,8 +2,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { router as Inertia } from '@inertiajs/react';
-
 import {
     Select,
     SelectContent,
@@ -12,6 +10,8 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { Province } from '@/types/area/interface';
+import { router as Inertia } from '@inertiajs/react';
 import {
     ArrowLeft,
     Camera,
@@ -25,17 +25,6 @@ import {
 import { lazy, useState } from 'react';
 
 const MapPicker = lazy(() => import('../map/MapPicker'));
-
-interface Province {
-    id: number;
-    name: string;
-    cities: {
-        id: number;
-        name: string;
-        districts: { id: number; name: string }[];
-    }[];
-}
-
 interface PageProps {
     provinces: Province[];
     onBack: () => void;

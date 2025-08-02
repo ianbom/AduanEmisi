@@ -323,7 +323,7 @@ const MyQuizPage = ({ myQuizAttempts }: MyQuizPageProps) => {
                                     {attempt.score < 100 && (
                                         <Button
                                             onClick={() =>
-                                                retakeQuiz(attempt.id)
+                                                retakeQuiz(attempt.quiz.id)
                                             }
                                             className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700"
                                             size="sm"

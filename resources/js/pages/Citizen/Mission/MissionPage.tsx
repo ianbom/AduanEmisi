@@ -18,7 +18,7 @@ const MissionPageRoute = () => {
     const { props } = usePage<PageProps<MissionPageRouteProps>>();
     const missions = props.missions?.data || [];
     const myMissions = props.myMissions;
-    const provinces = props.provinces;
+    const provinces = props.provinces.provinces ?? [];
     const handleViewDetails = (reportId: number | null) => {
         if (reportId) {
             Inertia.visit(route('report.show', { id: reportId }));
@@ -26,6 +26,7 @@ const MissionPageRoute = () => {
             alert('Laporan tidak tersedia untuk misi ini.');
         }
     };
+    // console.log('props.provinces', props.provinces);
 
     // console.log('misi-provinsi', provinces);
 

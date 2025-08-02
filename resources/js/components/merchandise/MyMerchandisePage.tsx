@@ -227,7 +227,7 @@ const MyMerchandisePage = ({ reedems, auth }: MyMerchandisePageProps) => {
                                     <img
                                         src={`/storage/${reedem.merchandise?.image_url}`}
                                         alt={reedem.merchandise?.name}
-                                        className="h-16 w-16 rounded-md border border-gray-300 object-contain"
+                                        className="h-16 w-16 rounded-md object-contain"
                                     />
                                     <div>
                                         <p className="text-sm text-gray-500">

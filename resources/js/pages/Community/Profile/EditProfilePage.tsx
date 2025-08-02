@@ -1,5 +1,5 @@
 import EditProfilePage from '@/components/community/EditProfilePage';
-import CommunityLayout from '@/components/layouts/CommunityLayout';
+import CitizenLayout from '@/components/layouts/CitizenLayout';
 import { PageProps } from '@/types';
 import { Province } from '@/types/area/interface';
 import { router as Inertia, usePage } from '@inertiajs/react';
@@ -13,18 +13,17 @@ const EditProfilePageRoute = () => {
     const { props } = usePage<PageProps<EditProfilePageRouteProps>>();
     // const user = props.auth?.user ?? null;
     const user = usePage<PageProps>().props.auth?.user;
-
     const provinces = props.provinces ?? [];
     if (!user) return null;
 
     return (
-        <CommunityLayout currentPage="community/edit-profile">
+        <CitizenLayout currentPage="community/edit-profile">
             <EditProfilePage
                 auth={{ user }}
                 provinces={provinces}
-                onBack={() => Inertia.visit('/profile')}
+                onBack={() => Inertia.visit('/community/profile')}
             />
-        </CommunityLayout>
+        </CitizenLayout>
     );
 };
 export default EditProfilePageRoute;

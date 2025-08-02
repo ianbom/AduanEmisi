@@ -1,12 +1,18 @@
-import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Award, Download, Calendar } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { UserBadge } from '@/types/user/user-badge';
 import { UserCertificate } from '@/types/user/user-certificate';
+import { Award, Calendar, Download } from 'lucide-react';
+import { useState } from 'react';
 
 // Updated interface to include badge information
 interface Badge {
@@ -27,12 +33,16 @@ interface AchievementCardProps {
     myCertificates: UserCertificate[];
 }
 
-const AchievementCard = ({ myBadges, myCertificates }: AchievementCardProps) => {
-    const [activeTabAchievements, setActiveTabAchievements] = useState("certificates");
-    const [certificateSearch, setCertificateSearch] = useState("");
-    const [badgeSearch, setBadgeSearch] = useState("");
-    const [certificateSort, setCertificateSort] = useState("desc");
-    const [badgeSort, setBadgeSort] = useState("desc");
+const AchievementCard = ({
+    myBadges,
+    myCertificates,
+}: AchievementCardProps) => {
+    const [activeTabAchievements, setActiveTabAchievements] =
+        useState('certificates');
+    const [certificateSearch, setCertificateSearch] = useState('');
+    const [badgeSearch, setBadgeSearch] = useState('');
+    const [certificateSort, setCertificateSort] = useState('desc');
+    const [badgeSort, setBadgeSort] = useState('desc');
 
     // Function to get badge icon - now uses icon_url from badge data
     const getBadgeIcon = (badge: Badge) => {
@@ -41,7 +51,7 @@ const AchievementCard = ({ myBadges, myCertificates }: AchievementCardProps) => 
                 <img
                     src={`/storage/${badge.icon_url}`}
                     alt={badge.title}
-                    className="w-12 h-12 mx-auto object-contain"
+                    className="mx-auto h-12 w-12 object-contain"
                     onError={(e) => {
                         // Fallback to emoji if image fails to load
                         const target = e.target as HTMLImageElement;
@@ -52,17 +62,18 @@ const AchievementCard = ({ myBadges, myCertificates }: AchievementCardProps) => 
             );
         }
         // Fallback emoji if no icon_url
-        return "🏅";
+        return '🏅';
     };
 
     // Function to get badge rarity based on badge title or description
     const getBadgeRarity = (badge: Badge) => {
         // You can customize this logic based on your badge system
         const title = badge.title.toLowerCase();
-        if (title.includes('legendary') || title.includes('master')) return "Legendary";
-        if (title.includes('epic') || title.includes('expert')) return "Epic";
-        if (title.includes('rare') || title.includes('advanced')) return "Rare";
-        return "";
+        if (title.includes('legendary') || title.includes('master'))
+            return 'Legendary';
+        if (title.includes('epic') || title.includes('expert')) return 'Epic';
+        if (title.includes('rare') || title.includes('advanced')) return 'Rare';
+        return '';
     };
 
     // Function to get rarity color
@@ -86,12 +97,15 @@ const AchievementCard = ({ myBadges, myCertificates }: AchievementCardProps) => 
         return new Date(dateString).toLocaleDateString('id-ID', {
             day: '2-digit',
             month: '2-digit',
-            year: 'numeric'
+            year: 'numeric',
         });
     };
 
     // Function to handle certificate download
-    const handleDownloadCertificate = (certificateUrl: string, title: string) => {
+    const handleDownloadCertificate = (
+        certificateUrl: string,
+        title: string,
+    ) => {
         // Create a temporary link element to trigger download
         const link = document.createElement('a');
         link.href = `/storage/${certificateUrl}`; // Adjust path based on your Laravel storage setup
@@ -104,28 +118,40 @@ const AchievementCard = ({ myBadges, myCertificates }: AchievementCardProps) => 
 
     // Filter and sort certificates
     const filteredCertificates = myCertificates
-        .filter(cert =>
-            cert.title.toLowerCase().includes(certificateSearch.toLowerCase())
+        .filter((cert) =>
+            cert.title.toLowerCase().includes(certificateSearch.toLowerCase()),
         )
         .sort((a, b) => {
-            if (certificateSort === "desc") {
-                return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+            if (certificateSort === 'desc') {
+                return (
+                    new Date(b.created_at).getTime() -
+                    new Date(a.created_at).getTime()
+                );
             } else {
-                return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+                return (
+                    new Date(a.created_at).getTime() -
+                    new Date(b.created_at).getTime()
+                );
             }
         });
 
     // Filter and sort badges
     const filteredBadges = myBadges
-        .filter(badge =>
+        .filter((badge) =>
             // Since we don't have badge title in the data, we'll use badge_id for search
-            badge.badge_id.toString().includes(badgeSearch)
+            badge.badge_id.toString().includes(badgeSearch),
         )
         .sort((a, b) => {
-            if (badgeSort === "desc") {
-                return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+            if (badgeSort === 'desc') {
+                return (
+                    new Date(b.created_at).getTime() -
+                    new Date(a.created_at).getTime()
+                );
             } else {
-                return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+                return (
+                    new Date(a.created_at).getTime() -
+                    new Date(b.created_at).getTime()
+                );
             }
         });
 
@@ -143,9 +169,7 @@ const AchievementCard = ({ myBadges, myCertificates }: AchievementCardProps) => 
                         <TabsTrigger value="certificates">
                             Sertifikat Saya
                         </TabsTrigger>
-                        <TabsTrigger value="badges">
-                            Koleksi Badges
-                        </TabsTrigger>
+                        <TabsTrigger value="badges">Koleksi Badges</TabsTrigger>
                     </TabsList>
                     <div className="mb-4 md:hidden">
                         <Select
@@ -171,7 +195,10 @@ const AchievementCard = ({ myBadges, myCertificates }: AchievementCardProps) => 
                         <div className="mb-4 flex flex-col items-start justify-between gap-2 sm:flex-row sm:items-center">
                             <div></div>
                             <div className="flex items-center gap-2">
-                                <Select value={certificateSort} onValueChange={setCertificateSort}>
+                                <Select
+                                    value={certificateSort}
+                                    onValueChange={setCertificateSort}
+                                >
                                     <SelectTrigger className="w-[140px]">
                                         <SelectValue placeholder="Tampilkan" />
                                     </SelectTrigger>
@@ -189,7 +216,9 @@ const AchievementCard = ({ myBadges, myCertificates }: AchievementCardProps) => 
                                     placeholder="Cari sertifikat..."
                                     className="w-40"
                                     value={certificateSearch}
-                                    onChange={(e) => setCertificateSearch(e.target.value)}
+                                    onChange={(e) =>
+                                        setCertificateSearch(e.target.value)
+                                    }
                                 />
                             </div>
                         </div>
@@ -198,13 +227,18 @@ const AchievementCard = ({ myBadges, myCertificates }: AchievementCardProps) => 
                             <div className="py-8 text-center">
                                 <Award className="mx-auto mb-4 h-12 w-12 text-gray-400" />
                                 <p className="text-gray-600">
-                                    {certificateSearch ? 'Tidak ada sertifikat yang cocok dengan pencarian' : 'Belum ada sertifikat yang diterima'}
+                                    {certificateSearch
+                                        ? 'Tidak ada sertifikat yang cocok dengan pencarian'
+                                        : 'Belum ada sertifikat yang diterima'}
                                 </p>
                             </div>
                         ) : (
                             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                                 {filteredCertificates.map((certificate) => (
-                                    <Card key={certificate.id} className="border-2 border-blue-200">
+                                    <Card
+                                        key={certificate.id}
+                                        className="border-2 border-blue-200"
+                                    >
                                         <CardContent className="p-4 text-center sm:p-6">
                                             <div className="mb-3 text-3xl sm:text-4xl">
                                                 📜
@@ -215,12 +249,20 @@ const AchievementCard = ({ myBadges, myCertificates }: AchievementCardProps) => 
                                             <div className="mb-3 flex items-center justify-center gap-1 text-xs text-gray-600">
                                                 <Calendar className="h-3 w-3" />
                                                 <span>
-                                                    Diterima: {formatDate(certificate.created_at)}
+                                                    Diterima:{' '}
+                                                    {formatDate(
+                                                        certificate.created_at,
+                                                    )}
                                                 </span>
                                             </div>
                                             <button
-                                                onClick={() => handleDownloadCertificate(certificate.certificate_url, certificate.title)}
-                                                className="flex items-center justify-center gap-2 w-full bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-md text-xs transition-colors"
+                                                onClick={() =>
+                                                    handleDownloadCertificate(
+                                                        certificate.certificate_url,
+                                                        certificate.title,
+                                                    )
+                                                }
+                                                className="flex w-full items-center justify-center gap-2 rounded-md bg-blue-500 px-3 py-2 text-xs text-white transition-colors hover:bg-blue-600"
                                             >
                                                 <Download className="h-3 w-3" />
                                                 Download
@@ -237,7 +279,10 @@ const AchievementCard = ({ myBadges, myCertificates }: AchievementCardProps) => 
                         <div className="mb-4 flex flex-col items-start justify-between gap-2 sm:flex-row sm:items-center">
                             <div></div>
                             <div className="flex items-center gap-2">
-                                <Select value={badgeSort} onValueChange={setBadgeSort}>
+                                <Select
+                                    value={badgeSort}
+                                    onValueChange={setBadgeSort}
+                                >
                                     <SelectTrigger className="w-[140px]">
                                         <SelectValue placeholder="Tampilkan" />
                                     </SelectTrigger>
@@ -255,7 +300,9 @@ const AchievementCard = ({ myBadges, myCertificates }: AchievementCardProps) => 
                                     placeholder="Cari badge..."
                                     className="w-40"
                                     value={badgeSearch}
-                                    onChange={(e) => setBadgeSearch(e.target.value)}
+                                    onChange={(e) =>
+                                        setBadgeSearch(e.target.value)
+                                    }
                                 />
                             </div>
                         </div>
@@ -264,22 +311,28 @@ const AchievementCard = ({ myBadges, myCertificates }: AchievementCardProps) => 
                             <div className="py-8 text-center">
                                 <Award className="mx-auto mb-4 h-12 w-12 text-gray-400" />
                                 <p className="text-gray-600">
-                                    {badgeSearch ? 'Tidak ada badge yang cocok dengan pencarian' : 'Belum ada badge yang diterima'}
+                                    {badgeSearch
+                                        ? 'Tidak ada badge yang cocok dengan pencarian'
+                                        : 'Belum ada badge yang diterima'}
                                 </p>
                             </div>
                         ) : (
                             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                                 {filteredBadges.map((userBadge) => {
-                                    const rarity = getBadgeRarity(userBadge.badge);
+                                    const rarity = getBadgeRarity(
+                                        userBadge.badge,
+                                    );
                                     return (
                                         <Card
                                             key={userBadge.id}
                                             className={`border-2 ${getRarityColor(rarity)}`}
                                         >
                                             <CardContent className="p-4 text-center sm:p-6">
-                                                <div className="mb-3 flex items-center justify-center h-12">
-                                                    {getBadgeIcon(userBadge.badge)}
-                                                    <span className="text-3xl sm:text-4xl hidden">
+                                                <div className="mb-3 flex h-12 items-center justify-center">
+                                                    {getBadgeIcon(
+                                                        userBadge.badge,
+                                                    )}
+                                                    <span className="hidden text-3xl sm:text-4xl">
                                                         🏅
                                                     </span>
                                                 </div>
@@ -287,7 +340,9 @@ const AchievementCard = ({ myBadges, myCertificates }: AchievementCardProps) => 
                                                     {userBadge.badge.title}
                                                 </h3>
                                                 <p className="mb-3 text-xs text-gray-600 sm:text-sm">
-                                                    {userBadge.badge.description || "Achievement badge earned through platform activities"}
+                                                    {userBadge.badge
+                                                        .description ||
+                                                        'Achievement badge earned through platform activities'}
                                                 </p>
                                                 <Badge
                                                     variant="outline"
@@ -298,7 +353,10 @@ const AchievementCard = ({ myBadges, myCertificates }: AchievementCardProps) => 
                                                 <div className="flex items-center justify-center gap-1 text-xs text-gray-500">
                                                     <Calendar className="h-3 w-3" />
                                                     <span>
-                                                        Diterima: {formatDate(userBadge.created_at)}
+                                                        Diterima:{' '}
+                                                        {formatDate(
+                                                            userBadge.created_at,
+                                                        )}
                                                     </span>
                                                 </div>
                                             </CardContent>

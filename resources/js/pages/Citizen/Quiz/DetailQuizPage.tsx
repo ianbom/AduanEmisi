@@ -74,10 +74,14 @@ const QuizTakingRoute = () => {
                 answers: answers,
             },
             {
-                onSuccess: (page) => {
+                onSuccess: () => {
                     // Redirect ke halaman hasil atau kembali ke daftar quiz
                     // Backend bisa return redirect ke hasil quiz
                 },
+                // onSuccess: (page) => {
+                //     // Redirect ke halaman hasil atau kembali ke daftar quiz
+                //     // Backend bisa return redirect ke hasil quiz
+                // },
                 onError: (errors) => {
                     console.error('Error submitting quiz:', errors);
                     // Handle error, mungkin tampilkan toast atau alert

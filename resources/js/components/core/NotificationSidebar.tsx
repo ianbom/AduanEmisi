@@ -3,39 +3,7 @@ import { Notification } from '@/types/notification/interface';
 import { router, usePage } from '@inertiajs/react';
 import { AlertCircle, CheckCircle, Heart, Info, Trash2, X } from 'lucide-react';
 import React from 'react';
-
-// ... komponen Button dan ScrollArea tetap sama ...
-const Button = ({
-    children,
-    variant = 'ghost',
-    size = 'sm',
-    onClick,
-    className = '',
-    ...props
-}: any) => {
-    const baseStyles =
-        'inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
-    const variantStyles: { [key: string]: string } = {
-        ghost: 'hover:bg-gray-100 text-gray-600 hover:text-gray-900',
-        outline:
-            'border border-gray-300 bg-white hover:bg-gray-50 text-gray-700',
-    };
-    const sizeStyles: { [key: string]: string } = {
-        sm: 'h-8 px-3 text-xs',
-        md: 'h-10 px-4 py-2',
-    };
-
-    return (
-        <button
-            onClick={onClick}
-            className={`${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${className}`}
-            {...props}
-        >
-            {children}
-        </button>
-    );
-};
-
+import Button from './Button';
 const ScrollArea = ({
     children,
     className = '',
@@ -232,7 +200,9 @@ const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
                                                     variant="ghost"
                                                     size="sm"
                                                     className="mt-2 h-auto p-0 text-xs font-semibold text-blue-600 hover:underline"
-                                                    onClick={(e) =>
+                                                    onClick={(
+                                                        e: React.MouseEvent<HTMLButtonElement>,
+                                                    ) =>
                                                         handleMarkAsRead(
                                                             e,
                                                             notification.id,
@@ -250,7 +220,9 @@ const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
                                         variant="ghost"
                                         size="sm"
                                         className="absolute right-2 top-2 h-auto p-1 text-gray-400 opacity-0 transition-opacity hover:bg-red-50 hover:text-red-600 group-hover:opacity-100"
-                                        onClick={(e) =>
+                                        onClick={(
+                                            e: React.MouseEvent<HTMLButtonElement>,
+                                        ) =>
                                             handleDeleteNotification(
                                                 e,
                                                 notification.id,

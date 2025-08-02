@@ -1,8 +1,3 @@
-import { router, useForm, usePage } from '@inertiajs/react';
-import axios from 'axios';
-import type React from 'react';
-import { useEffect, useState } from 'react';
-
 import { Button } from '@/components/ui/button';
 import {
     Card,
@@ -21,8 +16,12 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { PageProps } from '@/types';
+import { router, useForm, usePage } from '@inertiajs/react';
+import axios from 'axios';
 import { Leaf, Mail, MapPin, Phone, UserIcon } from 'lucide-react';
-
+import type React from 'react';
+import { useEffect, useState } from 'react';
 // Type definitions
 interface Province {
     id: number;
@@ -52,21 +51,26 @@ interface User {
     address: string | null;
 }
 
-interface PageProps {
+// interface CompleteProfilePageProps {
+//     user: User;
+//     provinces: Province[];
+//     initialCities?: City[];
+//     initialDistricts?: District[];
+// }
+interface CompleteProfilePageProps extends Record<string, unknown> {
     user: User;
     provinces: Province[];
-    initialCities?: City[];
-    initialDistricts?: District[];
+    initialCities: City[];
+    initialDistricts: District[];
 }
 
-// Declare global route function (from Ziggy)
-declare global {
-    function route(name: string, params?: any): string;
-}
+// declare global {
+//     function route(name: string, params?: any): string;
+// }
 
 export default function CompleteProfile() {
     // Get props from Inertia
-    const { props } = usePage<PageProps>();
+    const { props } = usePage<PageProps<CompleteProfilePageProps>>();
     const {
         user,
         provinces,
