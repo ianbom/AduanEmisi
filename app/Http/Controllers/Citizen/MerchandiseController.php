@@ -22,7 +22,7 @@ class MerchandiseController extends Controller
 
     public function index()
     {
-        $userPoints = Auth::user()->points_balance ?? 0;
+        $userPoints = Auth::user()->points_balance ?? 100;
         $merchandise = Merchandise::where('is_active', true)->get();
         return Inertia::render('Citizen/Merchandise/MerchandisePage', ['merchandise' => $merchandise, 'userPoints' => $userPoints]);
     }
