@@ -44,8 +44,9 @@ class ProfileController extends Controller
             ->where('user_id', $user->id)
             ->orderByDesc('created_at')
             ->get();
-         $myCertificates = UserCertificate::with('user')->where('user_id', $user->id)->get();
+        $myCertificates = UserCertificate::with('user')->where('user_id', $user->id)->get();
         $myBadges = UserBadge::with('user', 'badge')->where('user_id', $user->id)->get();
+        $myBadgeCounts = $myBadges->count();
         return Inertia::render('Citizen/Profile/ProfilePage', [
             'auth' => [
                 'user' => $user,
@@ -54,10 +55,11 @@ class ProfileController extends Controller
             'myReportsCount' => $myReportCount,
             'myMissions' => $myMissions,
             'myMissionCounts' => $myMissionCounts,
+            'myCertificates' => $myCertificates,
             'myDonations' => $myDonations,
             'myPoints' => $myPoints,
-            'myCertificates' => $myCertificates,
             'myBadges' => $myBadges,
+            'myBadgeCounts' => $myBadgeCounts
         ]);
     }
 
@@ -116,32 +118,13 @@ class ProfileController extends Controller
                 ->withInput();
         }
     }
-
-
-
-    // public function updateCompleteProfile(ProfileRequest $request)
-    // {
-    //     $data = $request->validated();
-    //     try {
-    //         $this->profileService->updateProfile($data);
-    //         return redirect()
-    //             ->route('profile.show')
-    //             ->with('success', 'Profile berhasil diperbarui');
-    //     } catch (Throwable $th) {
-    //         return back()
-    //             ->withErrors(['error' => 'Gagal memperbarui profile. ' . $th->getMessage()])
-    //             ->withInput();
-    //     }
-    // }
     public function updateCompleteProfile(ProfileRequest $request)
     {
         $data = $request->validated();
         try {
             $user = Auth::user();
-
             if ($user->role === 'community') {
                 $this->profileService->updateProfileDataCommunity($data);
-
                 return redirect()
                     ->route('community.profile.show')
                     ->with('success', 'Data profil berhasil diperbarui');

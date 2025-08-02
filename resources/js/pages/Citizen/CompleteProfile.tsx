@@ -3,10 +3,11 @@ import SelectField from '@/components/form/SelectField';
 import { City, District, Province } from '@/types/area/interface';
 import { Head, useForm, usePage } from '@inertiajs/react';
 import { FormEventHandler, useEffect, useMemo, useState } from 'react';
-
-interface PageProps {
-    provinces: Province[];
-    auth: {
+export default function CompleteProfile() {
+    // const { provinces, auth } = usePage<PageProps>().props;
+    const page = usePage();
+    const provinces = page.props.provinces as Province[];
+    const auth = page.props.auth as {
         user: {
             id: number;
             name: string;
@@ -18,21 +19,6 @@ interface PageProps {
             address: string | null;
         };
     };
-}
-
-interface FormData {
-    province_id: string;
-    city_id: string;
-    district_id: string;
-    address: string;
-    phone: string;
-    name: string;
-    email: string;
-}
-
-export default function CompleteProfile() {
-    const { provinces, auth } = usePage<PageProps>().props;
-
     const cities = useMemo(
         () => provinces.flatMap((p) => p.cities ?? []),
         [provinces],
@@ -44,11 +30,10 @@ export default function CompleteProfile() {
 
     const [filteredCities, setFilteredCities] = useState<City[]>([]);
     const [filteredDistricts, setFilteredDistricts] = useState<District[]>([]);
-
-    const { data, setData, post, processing, errors } = useForm<FormData>({
-        province_id: auth.user.province_id ?? '',
-        city_id: auth.user.city_id ?? '',
-        district_id: auth.user.district_id ?? '',
+    const { data, setData, post, processing, errors } = useForm({
+        province_id: auth.user.province_id?.toString() ?? '',
+        city_id: auth.user.city_id?.toString() ?? '',
+        district_id: auth.user.district_id?.toString() ?? '',
         address: auth.user.address ?? '',
         phone: auth.user.phone ?? '',
         name: auth.user.name ?? '',
@@ -166,7 +151,6 @@ export default function CompleteProfile() {
                                         disabled
                                     />
                                 </div>
-
                                 <InputField
                                     label="Nomor Telepon"
                                     id="phone"

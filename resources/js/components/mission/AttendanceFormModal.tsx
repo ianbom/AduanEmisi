@@ -55,7 +55,7 @@ export default function AttendanceFormModal({
 
     const handleSave = () => {
         const hadirIds = Object.entries(attendance)
-            .filter(([_, value]) => value)
+            .filter(([, value]) => value)
             .map(([id]) => parseInt(id));
 
         Inertia.post(

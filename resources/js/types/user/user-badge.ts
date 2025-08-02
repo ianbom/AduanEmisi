@@ -6,5 +6,5 @@ export interface UserBadge {
     badge_id: number;
     created_at: string;
     updated_at: string;
-    badge: Badge; // Include the badge relation
+    badge: Badge;
 }

@@ -9,8 +9,8 @@ import { router as Inertia, usePage } from '@inertiajs/react';
 interface ReportDetailPageRouteProps {
     report: Report;
     your_vote: 'upvote' | 'dislike' | null;
-    donations: Donation | null;
-
+    // donations: Donation | null;
+    donations: Donation[]; // ← array, bukan Donation tunggal
     myParticipation:
         | (User & {
               pivot: {

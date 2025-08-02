@@ -43,9 +43,9 @@ class MerchandiseController extends Controller
     public function viewMyMerchandise()
     {
         $user = Auth::user();
-        $redeems = $user->reedems()->with('merchandise')->latest()->get();
+        $reedems = $user->reedems()->with('merchandise')->latest()->get();
         return Inertia::render('Citizen/Merchandise/MyMerchandisePage', [
-            'redeems' => $redeems
+            'reedems' => $reedems
         ]);
     }
 }

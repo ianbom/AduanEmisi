@@ -425,6 +425,4 @@ class ReportController extends Controller
             'your_vote' => $yourVote,
         ]);
     }
-
-
 }

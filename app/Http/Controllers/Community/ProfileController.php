@@ -17,6 +17,8 @@ use App\Models\UserBadge;
 use App\Models\UserCertificate;
 use Throwable;
 use Inertia\Inertia;
+use App\Models\Donation;
+use App\Models\Point;
 
 class ProfileController extends Controller
 {
@@ -30,15 +32,20 @@ class ProfileController extends Controller
     public function showProfile()
     {
         $user = User::with('province', 'city', 'district', 'community')->find(Auth::id());
-
         $myReports = Report::with(['reporter'])->where('reporter_id', $user->id)->get();
         $myReportCount = Report::where('reporter_id', $user->id)->count();
-        // $myMissions = $user->volunteeredMissions()->with('pivot')->get();
-        $myMissions = $user->volunteeredMissions; // otomatis get()
-        $myMissionCounts = $myMissions->count(); // hitung dari hasil atas
-        // $myMissionCounts = $user->volunteeredMissions()->count();
-        $myCertificates = UserCertificate::where('user_id', $user->id)->get();
-        $myBadges = UserBadge::where('user_id', $user->id)->get();
+        $myMissions = $user->volunteeredMissions;
+        $myMissionCounts = $myMissions->count();
+        $myDonations = Donation::with('report')
+            ->where('user_id', $user->id)
+            ->latest()->get();
+        $myPoints = Point::with('pointable')
+            ->where('user_id', $user->id)
+            ->orderByDesc('created_at')
+            ->get();
+        $myCertificates = UserCertificate::with('user')->where('user_id', $user->id)->get();
+        $myBadges = UserBadge::with('user', 'badge')->where('user_id', $user->id)->get();
+        $myBadgeCounts = $myBadges->count();
         return Inertia::render('Community/Profile/ProfilePage', [
             'auth' => [
                 'user' => $user,
@@ -48,7 +55,10 @@ class ProfileController extends Controller
             'myMissions' => $myMissions,
             'myMissionCounts' => $myMissionCounts,
             'myCertificates' => $myCertificates,
+            'myDonations' => $myDonations,
             'myBadges' => $myBadges,
+            'myPoints' => $myPoints,
+            'myBadgeCounts' => $myBadgeCounts
         ]);
     }
     public function editProfile()

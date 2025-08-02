@@ -56,7 +56,9 @@ interface Quiz {
 
 interface QuizTakingPageProps {
     quiz: Quiz;
-    timeLimit?: number; // in minutes
+    onSubmitQuiz: (answers: Record<number, number>) => void;
+    onExitQuiz: () => void;
+    timeLimit: number;
 }
 
 const QuizTakingPage = ({ quiz, timeLimit = 30 }: QuizTakingPageProps) => {
@@ -70,7 +72,10 @@ const QuizTakingPage = ({ quiz, timeLimit = 30 }: QuizTakingPageProps) => {
     const [isQuizFinished, setIsQuizFinished] = useState(false);
 
     // Inertia form untuk submit quiz
-    const { data, setData, post, processing, errors, reset } = useForm({
+    // const { data, setData, post, processing, errors, reset } = useForm({
+    //     answers: {} as Record<string, number>,
+    // });
+    const { setData, post, processing, errors } = useForm({
         answers: {} as Record<string, number>,
     });
 

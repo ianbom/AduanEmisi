@@ -1,7 +1,15 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Link } from '@inertiajs/react';
-import { ArrowRight, FileText, Map, Newspaper, Target } from 'lucide-react';
+import {
+    ArrowRight,
+    FileText,
+    Lightbulb,
+    Map,
+    Newspaper,
+    ShoppingBag,
+    Target,
+} from 'lucide-react';
 
 const FeatureSection = () => {
     const features = [
@@ -10,13 +18,13 @@ const FeatureSection = () => {
             title: 'Laporkan Isu Lingkungan',
             description:
                 'Laporkan masalah lingkungan di sekitar Anda dengan mudah dan cepat',
-            link: '/reports/create',
+            link: '/report',
         },
         {
             icon: <Target className="h-8 w-8 text-red-600" />,
-            title: 'Bergabung dengan Gerakan Lingkungan',
+            title: 'Bergabung dalam Misi',
             description:
-                'Temukan Misi dan Jadilah bagian dari Gerakan Lingkungan Indonesia',
+                'Temukan Misi dan Jadilah bagian dari Gerakan peduli lingkungan Indonesia',
             link: '/mission',
         },
         {
@@ -30,8 +38,22 @@ const FeatureSection = () => {
             icon: <Newspaper className="h-8 w-8 text-amber-600" />,
             title: 'Konten Edukasi',
             description:
-                'Akses berbagai materi edukasi tentang pelestarian lingkungan',
+                'Akses berbagai edukasi tentang kepedulian terhadap lingkungan',
             link: '/education',
+        },
+        {
+            icon: <Lightbulb className="h-8 w-8 text-purple-600" />,
+            title: 'Kuis Edukasi',
+            description:
+                'Akses dan kerjakan berbagai kuis edukasi tentang  lingkungan',
+            link: '/quiz',
+        },
+        {
+            icon: <ShoppingBag className="h-8 w-8 text-sky-900" />,
+            title: 'Merchandise',
+            description:
+                'Dapatkan merchandise resmi dari SobatBumi dan tukarkan poinmu',
+            link: '/merchandise',
         },
     ];
 
@@ -60,7 +82,7 @@ const FeatureSection = () => {
                     </div>
                 </div>
 
-                <div className="grid gap-8 md:grid-cols-2 lg:gap-12">
+                <div className="grid gap-8 md:grid-cols-3 lg:gap-12">
                     {features.map((feature, index) => (
                         <Card
                             key={index}

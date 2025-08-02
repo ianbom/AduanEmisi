@@ -10,9 +10,12 @@ interface CreateReportPageRouteProps {
 const CreateReportPageRoute = () => {
     const { props } = usePage<PageProps<CreateReportPageRouteProps>>();
     const provinces = props.provinces || [];
+    console.log(provinces.map((prov) => prov.cities));
+
     const handleBack = () => {
         Inertia.visit(route('report'));
     };
+    console.log(props.provinces);
     return (
         <CitizenLayout currentPage="create-report">
             <CreateReportPage onBack={handleBack} provinces={provinces} />
