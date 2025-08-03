@@ -48,7 +48,7 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 // Route untuk akses fitur peran warga
-Route::prefix('')->middleware(['auth', 'isProfileComplete'])->group(function () {
+Route::prefix('')->middleware(['auth'])->group(function () {
     // Route landing page
     Route::get('/homepage', function () {
         return Inertia::render('Citizen/HomePage');
