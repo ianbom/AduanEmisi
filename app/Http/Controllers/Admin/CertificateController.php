@@ -25,14 +25,27 @@ class CertificateController extends Controller
         $this->certificateService = $certificateService;
     }
 
-    public function generateCertificate(){
+public function generateCertificate()
+    {
 
-        $pdf = Pdf::loadView('admin.certificate.template.template_1');
-        $pdf->setPaper('a4', 'landscape');
-        return $pdf->download('certificate'.'.pdf');
+        $logoPath = storage_path('public/LogoSobatBumi.png');
 
-        // return view('admin.certificate.template.template_1');
+        // if (!file_exists($logoPath)) {
 
+        //     abort(500, 'File logo tidak ditemukan di storage.');
+        // }
+
+        // $logoData = base64_encode(file_get_contents($logoPath));
+        // $logoBase64 = 'data:image/png;base64,' . $logoData;
+
+
+        $pdf = Pdf::loadView('admin.certificate.template.template_2', [
+
+        ]);
+
+        $pdf->setPaper('a4', 'portrait');
+        return $pdf->download('certificate.pdf');
+        return view('admin.certificate.template.template_2');
     }
 
 

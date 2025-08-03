@@ -288,7 +288,7 @@
                                     </td>
                                     <td class="px-6 py-4 text-sm font-medium whitespace-nowrap">
                                         <div class="flex items-center space-x-3">
-                                            <a href="{{ route('admin.contents.show', $item->id) }}"
+                                            <a href="{{ route('content.show', $item->id) }}"
                                                 class="text-blue-600 transition-colors duration-150 hover:text-blue-800">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor"
                                                     viewBox="0 0 24 24">

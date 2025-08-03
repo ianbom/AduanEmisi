@@ -18,7 +18,7 @@
             <div class="space-y-4">
                 <div class="flex items-center space-x-4">
                     @if($user->profile_url)
-                        <img src="{{ $user->profile_url }}" alt="Profile" class="w-20 h-20 rounded-full object-cover">
+                        <img src="{{ asset('storage/' . $user->profile_url) }}" alt="Profile" class="w-20 h-20 rounded-full object-cover">
                     @else
                         <div class="w-20 h-20 rounded-full bg-gray-300 flex items-center justify-center">
                             <i class="fas fa-user text-gray-600 text-2xl"></i>
@@ -66,7 +66,7 @@
     </div>
 
     <!-- Statistics Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
         <div class="bg-white rounded-lg shadow-md p-6">
             <div class="flex items-center">
                 <div class="bg-yellow-100 rounded-full p-3 mr-4">
@@ -87,6 +87,19 @@
                 <div>
                     <p class="text-2xl font-bold text-gray-800">{{ $donations->count() }}</p>
                     <p class="text-gray-600">Total Donasi</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="flex items-center">
+                <div class="bg-purple-100 rounded-full p-3 mr-4">
+                    <!-- Menggunakan Font Awesome, pastikan library ini sudah dimuat -->
+                    <i class="fas fa-file-alt text-purple-600 text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-2xl font-bold text-gray-800">{{ $reports->count() }}</p>
+                    <p class="text-gray-600">Total Laporan</p>
                 </div>
             </div>
         </div>

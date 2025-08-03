@@ -24,11 +24,7 @@ class ContentController extends Controller
      public function index(Request $request)
     {
         $filters = $this->contentService->buildFilter($request);
-
-        // 2. Ambil data konten menggunakan filter
         $contents = $this->contentService->getContentByFilter($filters);
-
-        // 3. Kirim data ke view
         return view('admin.content.index', ['content' => $contents]);
     }
 
@@ -91,6 +87,19 @@ class ContentController extends Controller
             return redirect()->back()->with('success', 'Media kontent berhasil dihapus');
         } catch (\Throwable $th) {
             return redirect()->back()->with('error', 'Terjadi kesalahan');
+        }
+    }
+
+    public function destroy(Content $content){
+
+        DB::beginTransaction();
+        try {
+            $content->delete();
+            DB::commit();
+            return redirect()->back()->with('success', 'Konten berhasil dihapus');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat menghapus konten');
         }
     }
 }
