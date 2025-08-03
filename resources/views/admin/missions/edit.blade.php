@@ -472,18 +472,19 @@
                         <div class="p-6">
                             <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
                                 <!-- Certificate Signer Title -->
-                                {{-- <div>
-                                    <label for="certificate_title"
-                                        class="block mb-2 text-sm font-medium text-gray-700">Jabatan Penanda Tangan <span
-                                            class="text-red-500">*</span></label>
+                                {{-- <div> --}}
+                                    {{-- <label for="certificate_title"
+                                        class="block mb-2 text-sm font-medium text-gray-700">Title Misi <span
+                                            class="text-red-500">*</span></label> --}}
                                     <input type="text" name="title" id="certificate_title"
-                                        placeholder="cth: Ketua Pelaksana"
+                                        placeholder="Misi Surabaya"
                                         class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                        required>
-                                    @error('title')
+                                        required value="misi" hidden>
+
+                                    {{-- @error('title')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
-                                </div> --}}
+                                    @enderror --}}
+                                {{-- </div> --}}
 
                                 <!-- Certificate Date -->
                                 <div>
