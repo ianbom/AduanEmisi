@@ -1,0 +1,1 @@
+import{j as r}from"./app-Biokbn3-.js";import{L as i}from"./login-form-DXq5Y_5k.js";import"./input-BmzPGz0o.js";import"./index-YgKgrX43.js";import"./card-CJK5yq3U.js";import"./label-C0-rD2lT.js";function e(){return r.jsx("div",{children:r.jsx("div",{children:r.jsx(i,{})})})}export{e as default};

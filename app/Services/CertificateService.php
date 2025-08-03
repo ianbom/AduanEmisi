@@ -60,15 +60,18 @@ class CertificateService
                     continue;
                 }
 
+                $uniqueCode = $this->generateUniqueCertificateCode();
 
-                $pdf = Pdf::loadView('admin.certificate.template.template_1', [
+                $pdf = Pdf::loadView('admin.certificate.template.template_2', [
                     'volunteerName'    => $volunteer->user->name,
                     'missionTitle'     => $mission->title,
                     'certificateTitle' => $certificateTitle,
                     'certificateDate'  => $certificateDate,
+                    'signerName'       => 'SobatBumi',
+                    'certificateCode'  => $uniqueCode,
 
                 ]);
-                $pdf->setPaper('a4', 'landscape');
+                $pdf->setPaper('a4', 'portrait');
 
                 $pdfFileName = 'sertifikat-' . Str::slug($mission->title) . '-' . Str::slug($volunteer->user->name) . '-' . time() . '.pdf';
                 $filePath = 'certificates/' . $pdfFileName;

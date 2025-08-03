@@ -472,7 +472,7 @@
                         <div class="p-6">
                             <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
                                 <!-- Certificate Signer Title -->
-                                <div>
+                                {{-- <div>
                                     <label for="certificate_title"
                                         class="block mb-2 text-sm font-medium text-gray-700">Jabatan Penanda Tangan <span
                                             class="text-red-500">*</span></label>
@@ -483,7 +483,7 @@
                                     @error('title')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
-                                </div>
+                                </div> --}}
 
                                 <!-- Certificate Date -->
                                 <div>

@@ -184,10 +184,10 @@
                     <div class="flex flex-col justify-end pt-6 space-y-3 border-t border-gray-100 sm:flex-row sm:space-y-0 sm:space-x-4">
                         <a href="{{ route('admin.redeems.index') }}" class="px-6 py-3 font-medium text-center text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200">Reset Filter</a>
                         <button type="submit" class="px-6 py-3 font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700">Terapkan Filter</button>
-                        <button type="button" id="exportRedeems" class="inline-flex items-center px-6 py-3 font-medium text-white bg-green-600 rounded-lg hover:bg-green-700">
+                        {{-- <button type="button" id="exportRedeems" class="inline-flex items-center px-6 py-3 font-medium text-white bg-green-600 rounded-lg hover:bg-green-700">
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                             Export Data
-                        </button>
+                        </button> --}}
                     </div>
                 </form>
             </div>
@@ -268,13 +268,13 @@
                                 <td class="px-6 py-4 text-sm whitespace-nowrap">{{ $redeem->created_at->format('d M Y') }}</td>
                                 <td class="px-6 py-4 text-sm font-medium whitespace-nowrap">
                                     <div class="flex items-center space-x-3">
-                                        <a href="{{ route('admin.redeems.show', $redeem->id) }}" class="text-blue-600 hover:text-blue-800" title="Lihat Detail">
+                                        {{-- <a href="{{ route('admin.redeems.show', $redeem->id) }}" class="text-blue-600 hover:text-blue-800" title="Lihat Detail">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                                        </a>
+                                        </a> --}}
                                         <a href="{{ route('admin.redeems.edit', $redeem->id) }}" class="text-green-600 hover:text-green-800" title="Update Status">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                         </a>
-                                        @if($redeem->status === 'pending')
+                                        {{-- @if($redeem->status === 'pending')
                                             <form action="{{ route('admin.redeems.destroy', $redeem->id) }}" method="POST" class="inline">
                                                 @csrf
                                                 @method('DELETE')
@@ -282,7 +282,7 @@
                                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                                 </button>
                                             </form>
-                                        @endif
+                                        @endif --}}
                                     </div>
                                 </td>
                             </tr>
