@@ -350,6 +350,11 @@
     "file": "assets/marker-icon-hN30_KVU.png",
     "src": "node_modules/leaflet/dist/images/marker-icon.png"
   },
+  "resources/css/app.css": {
+    "file": "assets/app-DR5vNCwx.css",
+    "src": "resources/css/app.css",
+    "isEntry": true
+  },
   "resources/js/Pages/Auth/ForgotPassword.tsx": {
     "file": "assets/ForgotPassword-B2U_hfvl.js",
     "name": "ForgotPassword",
