@@ -115,14 +115,14 @@
                                 Terapkan Filter
                             </button>
 
-                            <a href="{{ route('admin.certificates.create') }}"
+                            {{-- <a href="{{ route('admin.certificates.create') }}"
                                 class="inline-flex items-center px-6 py-3 font-medium text-white transition-all duration-200 bg-green-600 rounded-lg hover:bg-green-700">
                                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M12 4v16m8-8H4"></path>
                                 </svg>
                                 Buat Sertifikat
-                            </a>
+                            </a> --}}
                         </div>
                     </form>
                 </div>
@@ -191,7 +191,7 @@
                                                     </path>
                                                 </svg>
                                             </a>
-                                            <a href="{{ route('admin.certificates.edit', $certificate->id) }}"
+                                            {{-- <a href="{{ route('admin.certificates.edit', $certificate->id) }}"
                                                 class="text-green-600 transition-colors duration-150 hover:text-green-800"
                                                 title="Edit">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor"
@@ -200,8 +200,8 @@
                                                         d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
                                                     </path>
                                                 </svg>
-                                            </a>
-                                            <form action="{{ route('admin.certificates.destroy', $certificate->id) }}"
+                                            </a> --}}
+                                            {{-- <form action="{{ route('admin.certificates.destroy', $certificate->id) }}"
                                                 method="POST" class="inline">
                                                 @csrf
                                                 @method('DELETE')
@@ -217,7 +217,7 @@
                                                         </path>
                                                     </svg>
                                                 </button>
-                                            </form>
+                                            </form> --}}
                                         </div>
                                     </td>
                                 </tr>

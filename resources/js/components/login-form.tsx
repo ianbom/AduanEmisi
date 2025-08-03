@@ -123,7 +123,7 @@ export function LoginForm({
                                 </span>
                             </div>
 
-                            <div className="grid grid-cols-1 gap-4">
+                            {/* <div className="grid grid-cols-1 gap-4">
                                 <a
                                     href={route('auth.google.redirect')}
                                     className={cn(
@@ -142,7 +142,7 @@ export function LoginForm({
                                     </svg>
                                     <span>Lanjutkan dengan Google</span>
                                 </a>
-                            </div>
+                            </div> */}
 
                             <div className="text-center text-sm">
                                 Belum memiliki akun?{' '}

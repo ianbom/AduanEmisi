@@ -105,7 +105,7 @@ Route::prefix('community')->as('community.')->middleware(['auth'])->group(functi
 });
 
 // Route untuk akses fitur peran admin
-Route::prefix('admin')->as('admin.')->middleware(['auth',])->group(function () {
+Route::prefix('admin')->as('admin.')->middleware(['auth', 'role:admin'])->group(function () {
     Route::resource('missions', AdmMissionController::class);
     Route::put('missions/update/volunteer/{missionVolunteer}', [AdmMissionController::class, 'updateStatusVolunteer'])->name('update.volunteerStatus');
     Route::put('missions/share-point/{mission}', [AdmMissionController::class, 'shareMissionPoint'])->name('missions.sharePoint');
