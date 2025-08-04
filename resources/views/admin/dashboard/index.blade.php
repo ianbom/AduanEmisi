@@ -102,7 +102,7 @@
                 <div class="bg-white rounded-lg shadow-md">
                     <div class="px-6 py-4 border-b border-gray-200">
                         <h2 class="text-xl font-semibold text-gray-900">Laporan Perlu Verifikasi</h2>
-                        <p class="text-sm text-gray-600">5 laporan terbaru menunggu persetujuan</p>
+                        <p class="text-sm text-gray-600">Laporan terbaru menunggu persetujuan</p>
                     </div>
                     <div class="p-6">
                         <div class="space-y-4">
@@ -160,7 +160,7 @@
                             </div>
                         @endforeach
                         <div class="mt-4 text-center">
-                            <a href="/admin/communities?status=pending"
+                            <a href="{{ route('admin.users.index') }}"
                                 class="font-medium text-blue-600 hover:text-blue-700">
                                 Lihat Semua Pendaftaran →
                             </a>

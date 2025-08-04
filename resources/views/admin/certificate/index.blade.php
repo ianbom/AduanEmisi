@@ -150,10 +150,10 @@
                                     class="px-6 py-4 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase">
                                     Tanggal Dibuat
                                 </th>
-                                <th
+                                {{-- <th
                                     class="px-6 py-4 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase">
                                     Aksi
-                                </th>
+                                </th> --}}
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
@@ -179,7 +179,7 @@
                                     </td>
                                     <td class="px-6 py-4 text-sm font-medium whitespace-nowrap">
                                         <div class="flex items-center space-x-3">
-                                            <a href="{{ route('admin.certificates.show', $certificate->id) }}"
+                                            {{-- <a href="{{ route('admin.certificates.show', $certificate->id) }}"
                                                 class="text-blue-600 transition-colors duration-150 hover:text-blue-800"
                                                 title="Lihat">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor"
@@ -190,7 +190,7 @@
                                                         d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
                                                     </path>
                                                 </svg>
-                                            </a>
+                                            </a> --}}
                                             {{-- <a href="{{ route('admin.certificates.edit', $certificate->id) }}"
                                                 class="text-green-600 transition-colors duration-150 hover:text-green-800"
                                                 title="Edit">
